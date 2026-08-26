@@ -1,48 +1,57 @@
-# Keep the knowledge graph focused on code, not prose or tooling.
-# Merged with .gitignore (! re-includes).
-# Use docs/* (not docs/) so the ! lines below can re-include specific files.
+# Keep the knowledge graph focused on our code. Merged with .gitignore (! re-includes).
+#
+# Config churn drowns real architecture: on the bare scaffold a first run comes out
+# mostly package.json / tsconfig / biome entries. Excluded on purpose.
 
-# Docs — reference prose, not code. Nothing re-included yet; add ! lines
-# for a PRD/TRD once they exist.
-docs/*
-
-# Agent + tooling config — high token cost, zero structural signal.
 .agents/
 .claude/
 .codex/
+.github/
 .husky/
-_research/
-AGENTS.md
-CLAUDE.md
-GEMINI.md
-RTK.md
-.cursorrules
-.windsurfrules
+graphify-out/
+node_modules/
+dist/
+/agent/
 
-# Lockfiles + tool config
-bun.lock
-bun.lockb
-uv.lock
+# Config noise
 package.json
+bun.lock
+skills-lock.json
 pyproject.toml
+uv.lock
 tsconfig.json
 biome.json
 commitlint.config.js
 .prettierrc
 .python-version
 .env.example
-LICENSE
 
-# Binary + media
+# Prose, not architecture. docs/ is the brief, the organizer transcripts and the
+# research log: none of it describes how the code fits together.
+docs/
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+RTK.md
+LICENSE
+.cursorrules
+.windsurfrules
+
+# Nested READMEs are conventions, not architecture.
+README.md
+
+# Binaries and media
 *.pdf
+*.mp4
+*.mp3
+*.wav
+*.m4a
 *.png
 *.jpg
 *.jpeg
 *.gif
 *.webp
-*.ico
 *.svg
-*.mp4
-*.mp3
+*.ico
 assets/
 public/assets/

@@ -73,12 +73,12 @@ curl -s https://api.gonkarouter.io/v1/messages \
 
 ```
 docs/
-  README.md       this file — the GitHub-facing readme
-  brief.md        hackathon facts — the working reference
-  source/         organizer material (append-only record)
-.agents/skills/   hackathon-* skills (committed source of truth)
-.claude/skills/   symlinks into .agents/skills/
-_research/        local scratch (gitignored)
+  README.md              this file - the GitHub-facing readme
+  brief.md               hackathon facts - the working reference
+  source/                organizer material (append-only record)
+  superpowers/research/  cited findings from concept exploration
+.agents/skills/          skills (committed source of truth)
+.claude/skills/          symlinks into .agents/skills/
 ```
 
 The repo root deliberately has **no README** — it lives here.

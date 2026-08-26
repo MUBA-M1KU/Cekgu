@@ -37,10 +37,13 @@ Gateway setup, model ids, client wiring and rate limits: `docs/source/gonkaroute
 ## Repo Layout
 
 ```
-docs/             brief.md (event reference), README.md (GitHub-facing), source/ (organizer material)
-_research/        local scratch (gitignored; deliverables live in docs/)
-.agents/skills/   committed, tool-agnostic hackathon-* skills (source of truth)
-.claude/skills/   symlinks into .agents/skills/
+docs/
+  README.md              GitHub-facing readme (the repo root has none by design)
+  brief.md               the hackathon in one page - the working reference
+  source/                organizer material, verbatim and append-only
+  superpowers/research/  cited findings from concept exploration
+.agents/skills/          committed, tool-agnostic skills (source of truth)
+.claude/skills/          symlinks into .agents/skills/
 ```
 
 Source layout is not decided yet. Add it here when it is — do not pre-declare directories that do not exist.
