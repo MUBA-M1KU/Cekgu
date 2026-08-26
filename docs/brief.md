@@ -32,11 +32,26 @@
 | **5 Sept** | **11:59 PM**      | **Submission deadline** — and extended registration deadline |
 | **6 Sept** | 8:00 AM – 6:00 PM | **Demo Day @ APU** — physical                                |
 
-Workshops run on **Microsoft Teams**; each has its own Luma registration link.
-
 > ⚠️ **Registration was extended** from 25 Aug to **5 Sept 11:59 PM** — announced at the ceremony, not yet on the website.
 
 **Demo Day run sheet:** 08:00 registration · 09:00 opening · 10:00 pitching 1 · 13:00 lunch · 14:00 pitching 2 · 17:00 results · 17:30 closing & winners · 18:00 end.
+
+---
+
+<a id="live-sessions"></a>
+
+## 🎥 Live sessions — Microsoft Teams
+
+All online sessions run on **Microsoft Teams**, not the platform originally announced. Join links below; each also has its own Luma registration page.
+
+| Session                     | When                | Speaker(s)                        | Join                                                                               |
+| --------------------------- | ------------------- | --------------------------------- | ---------------------------------------------------------------------------------- |
+| Opening ceremony            | 26 Aug, 8:00 PM     | Richard (MC) + sponsor reps       | [Teams](https://teams.microsoft.com/meet/482246276338881?p=plXqBqoKk4MS7PO9Qn)     |
+| Thetanuts Finance workshop  | 27 Aug, 8:00 PM     | Sean + Benjamin                   | [Teams](https://teams.microsoft.com/meet/456497881747566?p=GwDwiV2omVke0iuTFa)     |
+| 🎯 **GonkaRouter workshop** | **27 Aug, 9:00 PM** | **Jack** — Tech Lead, GonkaRouter | [**Teams**](https://teams.microsoft.com/meet/433187713146886?p=sv72xzbv19gF5r8p3V) |
+| Sui workshop                | 31 Aug, 9:00 PM     | Rafael — Mysten Labs              | [Teams](https://teams.microsoft.com/meet/443261481200322?p=MA1J7VtyBw1UAmFbeX)     |
+
+🎯 = our track. The other two are other tracks and are optional.
 
 ---
 
@@ -188,14 +203,14 @@ Supporting sponsors: **StarGlobal** (Web3 recruitment) · **GCC** (EVM-compatibl
 
 ## 🔗 Channels
 
-| Channel                                                     | Use                                                                                |
-| ----------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| **Discord**                                                 | Rules (`hackathon-rules`), per-track mentor channels, Q&A follow-ups, team-finding |
-| **[Devfolio](https://muba-hackathon.devfolio.co/overview)** | Registration **and** submission — the disqualification gate. Free to enter         |
-| **Luma**                                                    | Workshop registration (per workshop)                                               |
-| **Microsoft Teams**                                         | Where workshops actually run (changed from the original platform)                  |
-| **Instagram**                                               | `MUBA 2026` — announcements & updates                                              |
-| **Slido**                                                   | Live Q&A during sessions                                                           |
+| Channel                                                     | Use                                                                                     |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **Discord**                                                 | Rules (`hackathon-rules`), per-track mentor channels, Q&A follow-ups, team-finding      |
+| **[Devfolio](https://muba-hackathon.devfolio.co/overview)** | Registration **and** submission — the disqualification gate. Free to enter              |
+| **Luma**                                                    | Per-workshop registration page                                                          |
+| **Microsoft Teams**                                         | Where every online session actually runs. Join links in [Live sessions](#live-sessions) |
+| **Instagram**                                               | `MUBA 2026` — announcements & updates                                                   |
+| **Slido**                                                   | Live Q&A during sessions                                                                |
 
 ---
 

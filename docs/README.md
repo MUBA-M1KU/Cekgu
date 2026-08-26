@@ -103,6 +103,6 @@ The repo root deliberately has **no README** — it lives here.
 
 - [ ] Register the team on [Devfolio](https://muba-hackathon.devfolio.co/overview) · everyone submits LinkedIn for verification
 - [ ] Join the Discord GonkaRouter track channel
-- [ ] **GonkaRouter workshop — 27 Aug, 9 PM, Microsoft Teams** (register on Luma)
+- [ ] **GonkaRouter workshop — 27 Aug, 9 PM** · [join on Teams](https://teams.microsoft.com/meet/433187713146886?p=sv72xzbv19gF5r8p3V)
 - [ ] Create an API key, run the smoke test above
 - [ ] Lock the concept → record the application stack in `../AGENTS.md`
