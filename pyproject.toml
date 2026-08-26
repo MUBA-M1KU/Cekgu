@@ -14,6 +14,9 @@ dev = [
 [tool.ruff]
 line-length = 120
 target-version = "py312"
+# Vendored skills and agent config are third-party trees, same as in biome.json
+# and .prettierignore. Not ours to lint.
+extend-exclude = [".agents", ".claude", ".venv", "node_modules"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "ASYNC"]

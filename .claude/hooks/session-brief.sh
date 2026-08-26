@@ -16,5 +16,5 @@ dirty=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
 left=$(( ( $(date -d 2026-09-05 +%s) - $(date +%s) ) / 86400 ))
 
 echo "MUBA/GonkaRouter | branch=${branch:-?} | uncommitted=${dirty:-0} | ${left}d to submission"
-echo "Rules, deadlines and judging: docs/brief.md. Organizer transcripts: docs/source/."
+echo "TODOs live in GitHub Issues (gh issue list). Rules and judging: docs/brief.md."
 exit 0

@@ -17,7 +17,7 @@ Repo: `github.com/MUBA-M1KU/dev` (private).
 | **Team size**           | 2–4 members; no solo entries                                                                                                   |
 | **Originality**         | Built from scratch during the hackathon window. Prior projects and privately pre-built frameworks are explicitly disqualifying |
 
-Event facts live in `docs/brief.md`. Organizer source material lives in `docs/source/` — treat it as the append-only record of what was actually said.
+Event facts live in `docs/brief.md`. Organizer source material lives in `docs/source/`.
 
 ---
 
@@ -70,6 +70,9 @@ still sitting on a branch on 5 September.**
 
 If you are behind, **cut scope, do not cut the quality of what ships.** Half a
 feature that works demos fine. A whole feature that throws does not.
+
+**Demo-first.** If it will not appear in the 2-minute video or the 5-minute
+pitch, it is not a priority.
 
 ---
 
@@ -128,7 +131,7 @@ Confirmed and installed:
 | **graphify**                         | Knowledge graph over the codebase; `.graphifyignore` keeps docs and tooling out    |
 | **GonkaRouter**                      | The only permitted inference path (see Track Requirements)                         |
 
-**Application framework, database and hosting are not chosen yet.** Record them here once they are, with the reason, rather than in a separate architecture doc.
+**Application framework, database and hosting are not chosen yet.** Record them here once they are, with the reason.
 
 ---
 
@@ -144,11 +147,7 @@ uv sync              # install Python deps (only once Python code exists)
 uv run ruff check .  # lint Python
 ```
 
-```bash
-graphify .           # build the knowledge graph (code-only, no API key needed)
-graphify . --update  # refresh after notable code changes
-graphify query "…"   # ask architecture/relationship questions before grepping
-```
+Knowledge-graph commands are in the Graphify appendix.
 
 ---
 
@@ -189,9 +188,7 @@ diff is exactly the thing that gets lost.
 - **Types:** No `any`; prefer `unknown` plus narrowing. Validate at system boundaries.
 - **Error handling:** Validate at boundaries; do not wrap internal framework calls in try/catch.
 - **Comments:** Default to none. Comment only when the _why_ is non-obvious. Never describe _what_ the code does.
-- **Changes are surgical:** touch only what the task requires, match surrounding style, don't refactor what isn't broken.
-
-> Full behavioral coding guidelines (Andrej Karpathy) are inherited from the user's global config.
+- **Changes are surgical.** See Karpathy guideline 3 in the appendix.
 
 ---
 
@@ -285,14 +282,44 @@ report completion.
 
 ---
 
-## Working Conventions
+## How Work Ships
 
-- **Deadline beats polish.** Hard stop on 5 Sept. A complete, narrow, demoable thing beats an ambitious half-thing.
-- **Demo-first.** If it will not appear in the 2-minute video, it is not a priority.
-- **CLI-first.** Configure via CLI over GUI where possible.
-- **State the assumption, do not wait on it.** Surfacing a tradeoff is required; blocking on an answer is not. See Proceed Without Asking.
-- **No secrets in the repo.** `.env.example` is committed; `.env` is gitignored. The GonkaRouter `sk-…` key lives in `.env` only, never in `.env.example`.
-- **Graphify first for structure questions.** Once `graphify-out/graph.json` exists, treat "how does X work" / "what calls Y" as a `graphify query` before grepping or reading many files.
+**`main` is PR-gated. No stray commits.** `.claude/hooks/guard-git.sh` enforces it
+by blocking `git push origin main` and any force push to `main`; the only push to
+`main` that ever happened was the initial scaffold.
+
+1. **Branch.** `<type>/<short-slug>`, matching the commit types below:
+   `feat/consensus-panel`, `fix/request-id-missing`, `docs/pitch-script`.
+2. **Commit** in Conventional Commits form. commitlint runs on `commit-msg`.
+3. **Push the branch** and open a PR with `gh pr create`.
+4. **Merge with** `gh pr merge --squash --delete-branch`, so no residue is left.
+
+**Small fixes still go through a branch.** The overhead is one command and the
+alternative is a `main` nobody can review or revert cleanly.
+
+`gh pr merge` is in the `permissions.deny` list in `.claude/settings.json`.
+Merging is a human action - propose the PR, do not merge it yourself.
+
+## TODOs Live In GitHub Issues
+
+**The repository Issues page is the TODO board.** Not a markdown checklist, not a
+`docs/plan.md`, not a comment in the code.
+
+```bash
+gh issue list                          # what is open
+gh issue create -t "..." -b "..."      # add one
+gh issue view <n>                      # read one
+gh issue close <n>                     # done
+```
+
+Why: a checklist in a file goes stale, conflicts on merge, and is invisible to
+whoever is not in that file. Issues are visible to the whole team, link to the PR
+that closes them, and survive a context reset.
+
+**Reference the issue in the PR** so merging closes it: `Closes #12`.
+
+A short-lived, in-session task list is fine and does not belong in Issues. Anything
+that outlives the session does.
 
 ---
 
@@ -300,8 +327,10 @@ report completion.
 
 - **Do not** call an AI provider directly — everything goes through GonkaRouter.
 - **Do not** import or adapt code written before 26 Aug 2026.
-- **Do not** commit `.env` or any `sk-…` key.
-- **Do not** push, force-push, rewrite published history, or delete branches without explicit human authorization.
+- **Do not** commit `.env` or any `sk-…` key. `.env.example` is committed and carries the key names, never the values.
+- **Do not** commit directly to `main`, force-push, rewrite published history, or delete a branch other than a merged feature branch.
+- **Do not** merge your own PR. Propose it; a human merges.
+- **Do not** track TODOs in a markdown file. They go in GitHub Issues.
 - **Do not** hardcode model ids without verifying them against `/v1/models` — they are case- and slash-sensitive.
 - **Do not** create `docs/architecture.md` or a second README. Architecture decisions go in this file; the README lives at `docs/README.md`.
 - **Do not** rewrite `docs/source/` transcripts. They are the verbatim record.
@@ -361,7 +390,7 @@ a broken guard must never wedge a session.
 
 | Hook               | Fires             | Does                                                                             |
 | ------------------ | ----------------- | -------------------------------------------------------------------------------- |
-| `session-brief.sh` | SessionStart      | Stage, branch, uncommitted count, days to the deadline                           |
+| `session-brief.sh` | SessionStart      | Branch, uncommitted count, days to the deadline                                  |
 | `env-drift.mjs`    | SessionStart      | Reports a local `.env` disagreeing with `.env.example`. Names keys, never values |
 | `guard-git.sh`     | PreToolUse(Bash)  | Blocks direct and force pushes to `main`, and `git add .env`                     |
 | `format-edited.sh` | PostToolUse(Edit) | Biome-formats edited JS/TS. Silent, never blocks                                 |
@@ -377,7 +406,7 @@ A fifth hook, `no-em-dash-or-emoji.mjs`, is present but **not wired** - see
 
 Allowed types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `style`, `perf`.
 
-Enforced locally by commitlint via the husky `commit-msg` hook. Commit when a unit of work is complete and verified. **Never push unprompted.**
+Enforced locally by commitlint via the husky `commit-msg` hook. Commit when a unit of work is complete and verified.
 
 ---
 

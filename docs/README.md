@@ -67,6 +67,10 @@ curl -s https://api.gonkarouter.io/v1/messages \
 | `uv run ruff check .` | Python lint                        |
 | `graphify .`          | Build the codebase knowledge graph |
 
+**`main` is PR-gated.** Branch as `<type>/<slug>`, open a PR with `gh pr create`,
+merge with `gh pr merge --squash --delete-branch`. **TODOs live in the Issues tab**
+(`gh issue list`), not in a markdown checklist.
+
 ---
 
 ## Layout
