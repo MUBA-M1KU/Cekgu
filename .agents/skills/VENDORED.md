@@ -182,7 +182,7 @@ anyway. Already available globally if a task turns out to need real phase planni
 
 | Hook | Event | Status |
 | ---- | ----- | ------ |
-| `session-brief.sh` | SessionStart | ✅ Wired. Prints stage, branch, uncommitted count, days to deadline |
+| `session-brief.sh` | SessionStart | ✅ Wired. Prints branch, uncommitted count, days to deadline |
 | `env-drift.mjs` | SessionStart | ✅ Wired. Reports a local `.env` disagreeing with `.env.example`. Names keys, never values |
 | `guard-git.sh` | PreToolUse(Bash) | ✅ Wired. Blocks direct/force push to `main` and `git add .env` |
 | `format-edited.sh` | PostToolUse(Edit) | ✅ Wired. Biome-formats edited JS/TS. Silent, never blocks |
@@ -195,5 +195,3 @@ event brief leans on emoji as scan markers. Turning it on would block the next e
 to any of them. To adopt it, first normalise `docs/`, then add a `PreToolUse` entry
 matching `Edit|Write|MultiEdit` to `.claude/settings.json`.
 
-`session-brief.sh` reads `docs/STAGE`. Update that one line as the project moves
-`SCAFFOLD -> IDEATION -> BUILD -> TESTING -> PITCH`.

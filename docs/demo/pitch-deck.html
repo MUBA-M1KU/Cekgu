@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- TITLE: <Product> - Team <name> - MUBA 2026 Pitch Deck -->
+    <title>TBD - MUBA Blockchain Hackathon 2026 Pitch Deck</title>
+
+    <!--
+      ============================================================================
+      BAREBONES DECK TEMPLATE
+      ============================================================================
+
+      Self-contained by design. Inline the CSS and the JS. Google Fonts may be
+      linked; everything else is either inline SVG or a file in ./assets/.
+      Never embed a base64 raster here - it costs a third more bytes than the
+      file and it inflates the PDF too. Base64 is fine for SVG.
+
+      WHY FIXED 1920x1080
+      Authoring at a fixed pixel size is what makes the deck predictable. What
+      you see at any window size is exactly what the projector shows, and the
+      PDF print matches because the page size is the same 1920x1080.
+
+      THE 30/70 RULE, NON-NEGOTIABLE
+      Every slide is at most 30% text and at least 70% visual. Not an average
+      across the deck - every single slide. Per slide that means:
+        - one headline, at most eight words
+        - at most three supporting lines, at most twelve words each
+        - everything else is the visual
+      If a slide needs more words than that, it is two slides, or the words
+      belong in pitch-script.md where they are spoken rather than read.
+      A judge reading your slide is a judge not listening to you.
+
+      BEFORE YOU BUILD
+      Run design-taste-frontend first and state the one-line Design Read.
+      Then execute with impeccable. Starting with impeccable is the usual way
+      this fails. See ../../.agents/skills/VENDORED.md.
+
+      KEYS
+        arrows / space / click   advance
+        Home / End               first / last slide
+        N                        toggle speaker notes
+        T                        start / pause rehearsal timer
+        R                        reset timer
+      Notes and timer are off by default and never appear in the PDF.
+
+      EXPORT TO PDF
+      Drive Chromium headless with printBackground: true, width 1920px,
+      height 1080px, preferCSSPageSize: true. The @page rule below matches, so
+      nothing is resampled. Budget: docs/demo/ under 3 MB, PDF under 2 MB.
+      Measure with `du -h docs/demo/pitch-deck.pdf` and `du -sh docs/demo/`.
+      ============================================================================
+    -->
+
+    <style>
+      /* ======================================================================
+         TOKENS
+         Replace every value below. Do not ship this palette.
+         If docs/ records a design system, use it - do not invent a second one
+         for the deck. Anti-slop: no purple-to-blue gradient hero, no Inter as
+         the safe default, nothing centre aligned by reflex.
+         ====================================================================== */
+      :root {
+        --bg: #ffffff;
+        --surface: #f4f4f5;
+        --ink: #101014;
+        --ink-muted: #5b5b66;
+        --line: #e4e4e8;
+        --accent: #101014; /* TODO: the one colour that carries the brand */
+
+        --font-display: ui-sans-serif, system-ui, sans-serif; /* TODO */
+        --font-sans: ui-sans-serif, system-ui, sans-serif; /* TODO */
+        --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+        --radius: 20px;
+        --pad: 96px; /* slide gutter. 1920x1080 is big - do not crowd it */
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+        font-family: var(--font-sans);
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ======================================================================
+         STAGE
+         One 1920x1080 slide at a time, scaled to the viewport by the JS below.
+         overflow:hidden on both the stage and each slide, so a long line clips
+         visibly while authoring instead of silently reflowing on stage.
+         ====================================================================== */
+      #stage {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        background: #000;
+      }
+
+      section.slide {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 1920px;
+        height: 1080px;
+        transform-origin: center center;
+        box-sizing: border-box;
+        overflow: hidden;
+        display: none;
+        padding: var(--pad);
+        background: var(--bg);
+        color: var(--ink);
+      }
+      section.slide.active {
+        display: block;
+      }
+
+      /* Optional inverted variant for section breaks and the cover. */
+      section.slide.dark {
+        background: var(--ink);
+        color: var(--bg);
+      }
+
+      /* ======================================================================
+         TYPE SCALE
+         Sized for 1920x1080 viewed across a room. If a headline needs to drop
+         below 56px to fit, the headline is too long - cut words, not size.
+         ====================================================================== */
+      .eyebrow {
+        font-family: var(--font-mono);
+        font-size: 22px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-muted);
+        margin: 0 0 28px;
+      }
+      h1 {
+        font-family: var(--font-display);
+        font-size: 116px;
+        line-height: 1.02;
+        letter-spacing: -0.03em;
+        margin: 0;
+      }
+      h2 {
+        font-family: var(--font-display);
+        font-size: 76px;
+        line-height: 1.06;
+        letter-spacing: -0.02em;
+        margin: 0 0 40px;
+      }
+      p.lead {
+        font-size: 34px;
+        line-height: 1.4;
+        color: var(--ink-muted);
+        max-width: 22ch; /* a hard stop on the 30% text budget */
+        margin: 0;
+      }
+
+      /* ======================================================================
+         LAYOUT HELPERS
+         Two-up is the workhorse: words left, visual right. Vary it - a deck
+         where every slide is text-left/visual-right reads as a template.
+         ====================================================================== */
+      .two-up {
+        display: grid;
+        grid-template-columns: 1fr 1.4fr; /* visual gets the larger share */
+        gap: 88px;
+        align-items: center;
+        height: 100%;
+      }
+      .visual {
+        /* The 70%. Inline SVG, a chart, a screenshot, or deliberate empty
+           space that gives the visual room to breathe. */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      /* ======================================================================
+         CHROME
+         Progress bar, slide number, speaker notes, rehearsal timer.
+         All hidden in print.
+         ====================================================================== */
+      #bar {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        height: 4px;
+        width: 0;
+        background: var(--accent);
+        z-index: 10;
+        transition: width 0.25s ease;
+      }
+      #notes {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: none;
+        padding: 18px 24px;
+        background: rgba(0, 0, 0, 0.86);
+        color: #fff;
+        font-family: var(--font-mono);
+        font-size: 15px;
+        z-index: 20;
+      }
+      body.show-notes #notes {
+        display: block;
+      }
+      #timer {
+        position: fixed;
+        top: 16px;
+        right: 20px;
+        display: none;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.86);
+        color: #fff;
+        font-family: var(--font-mono);
+        font-size: 18px;
+        z-index: 20;
+      }
+      body.show-timer #timer {
+        display: block;
+      }
+      #timer.warn {
+        color: #ffd166;
+      }
+      #timer.over {
+        color: #ff6b6b;
+      }
+
+      /* ======================================================================
+         PRINT
+         Page size matches the slide size exactly, so nothing is resampled.
+         ====================================================================== */
+      @page {
+        size: 1920px 1080px;
+        margin: 0;
+      }
+      @media print {
+        html,
+        body {
+          background: #fff;
+        }
+        #stage {
+          position: static;
+          overflow: visible;
+        }
+        section.slide {
+          display: block !important;
+          position: relative;
+          top: auto;
+          left: auto;
+          transform: none !important;
+          page-break-after: always;
+          break-after: page;
+        }
+        #bar,
+        #notes,
+        #timer {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="stage">
+      <!--
+        ====================================================================
+        SLIDE ORDER
+        A shape that works for a 5-minute pitch. Cut before you add - the
+        script owns the words, the deck owns the picture.
+
+          1  Cover           who we are, what we built, one line
+          2  The problem     one scene, not a statistic dump
+          3  The product     the demo moment, as a still
+          4  How it works    architecture. All SVG, hand-written
+          5  Why us          the differentiator, named
+          6  Close           the ask, the link, the QR. Park here for Q&A
+
+        data-budget       seconds this slide gets. Sums to the pitch length
+        data-speaker-notes  one line, shown by N, never printed, never read
+        ====================================================================
+      -->
+
+      <!-- ============================ 01 COVER ============================ -->
+      <section
+        class="slide dark active"
+        data-budget="15"
+        data-speaker-notes="Handshake, not a beat. Do not read the URL aloud."
+      >
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%">
+          <p class="eyebrow">MUBA Blockchain Hackathon 2026 &middot; GonkaRouter Track</p>
+          <h1>Product Name</h1>
+          <p class="lead" style="margin-top: 40px; max-width: 34ch">One sentence. What it does, for whom.</p>
+          <!-- Team names go bottom-left. Keep them small; nobody is here for the roster. -->
+        </div>
+      </section>
+
+      <!-- ========================== 02 THE PROBLEM ======================== -->
+      <section
+        class="slide"
+        data-budget="45"
+        data-speaker-notes="One specific person, one specific Tuesday. Local and concrete beats generic."
+      >
+        <div class="two-up">
+          <div>
+            <p class="eyebrow">The Problem</p>
+            <h2>Eight Words, No More</h2>
+            <p class="lead">One supporting line. Twelve words at the outside.</p>
+          </div>
+          <div class="visual">
+            <!-- TODO: the 70%. Inline SVG here, not a stock photo. -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================= 03 THE PRODUCT ========================= -->
+      <section
+        class="slide"
+        data-budget="45"
+        data-speaker-notes="This is the still of the live demo. If the demo dies, this slide carries it."
+      >
+        <div class="two-up">
+          <div>
+            <p class="eyebrow">What We Built</p>
+            <h2>The Demo Moment</h2>
+            <p class="lead">The one thing a judge should remember.</p>
+          </div>
+          <div class="visual">
+            <!-- TODO: product screenshot. Resize to display size before shipping:
+                 bunx --bun sharp-cli -i assets/raw.png -o assets/shot.png resize 1200 --withoutEnlargement
+                 Prefer WebP for photographic assets. -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================== 04 HOW IT WORKS ========================= -->
+      <section
+        class="slide dark"
+        data-budget="60"
+        data-speaker-notes="Track rules land here: all inference through GonkaRouter, two models, request IDs shown."
+      >
+        <p class="eyebrow" style="color: inherit; opacity: 0.6">Architecture</p>
+        <h2>How It Works</h2>
+        <!-- TODO: hand-written inline SVG. Vector is a few KB, stays sharp at any
+             projector resolution, and costs no extra request. Diagrams, flows,
+             icons and charts are all SVG. This is most of the deck. -->
+        <svg viewBox="0 0 1200 420" width="100%" height="auto" role="img" aria-label="System architecture">
+          <!-- placeholder frame - replace entirely -->
+          <rect x="1" y="1" width="1198" height="418" rx="16" fill="none" stroke="currentColor" stroke-opacity=".25" />
+          <text x="600" y="215" text-anchor="middle" fill="currentColor" fill-opacity=".45" font-size="24">
+            architecture diagram
+          </text>
+        </svg>
+      </section>
+
+      <!-- =========================== 05 WHY US ============================ -->
+      <section
+        class="slide"
+        data-budget="45"
+        data-speaker-notes="Name the incumbent, then name what they structurally cannot do."
+      >
+        <div class="two-up">
+          <div>
+            <p class="eyebrow">The Differentiator</p>
+            <h2>Why This, Not That</h2>
+            <p class="lead">Name it. Do not imply it.</p>
+          </div>
+          <div class="visual"></div>
+        </div>
+      </section>
+
+      <!-- ============================ 06 CLOSE ============================ -->
+      <section
+        class="slide dark"
+        data-budget="30"
+        data-speaker-notes="Park here for the full 5 minutes of Q&A. Links must be readable from the back row."
+      >
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%">
+          <h2>The Slogan, Five Seconds</h2>
+          <p class="lead" style="max-width: 40ch">Live demo &middot; GitHub &middot; the ask</p>
+          <!-- TODO: QR codes as inline SVG. Generated PNG QR codes are wasteful. -->
+        </div>
+      </section>
+    </div>
+
+    <div id="bar"></div>
+    <div id="timer">0:00</div>
+    <div id="notes"></div>
+
+    <script>
+      ;(function () {
+        var slides = Array.prototype.slice.call(document.querySelectorAll('section.slide'))
+        var bar = document.getElementById('bar')
+        var timerEl = document.getElementById('timer')
+        var notesEl = document.getElementById('notes')
+        var i = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1), 10) || 1) - 1))
+
+        // Scale the fixed 1920x1080 slide to whatever the viewport is.
+        function fit() {
+          var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080)
+          slides.forEach(function (el) {
+            el.style.transform = 'translate(-50%, -50%) scale(' + s + ')'
+          })
+        }
+
+        function show(n) {
+          i = Math.max(0, Math.min(slides.length - 1, n))
+          slides.forEach(function (el, k) {
+            el.classList.remove('active')
+            if (k === i) {
+              void el.offsetWidth // restart any entrance animation on advance
+              el.classList.add('active')
+            }
+          })
+          bar.style.width = ((i + 1) / slides.length) * 100 + '%'
+          notesEl.textContent =
+            '[' +
+            (slides[i].getAttribute('data-budget') || '?') +
+            's] ' +
+            (slides[i].getAttribute('data-speaker-notes') || '')
+          history.replaceState(null, '', '#' + (i + 1))
+        }
+
+        // Rehearsal stopwatch. Off by default; T toggles, R resets.
+        // TOTAL is the pitch length in seconds - 300 for MUBA's 5 minutes.
+        var TOTAL = 300
+        var t0 = null
+        var elapsed = 0
+        function tick() {
+          var s = elapsed + (t0 === null ? 0 : Math.floor((Date.now() - t0) / 1000))
+          timerEl.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0')
+          timerEl.className = s > TOTAL ? 'over' : s > TOTAL - 30 ? 'warn' : ''
+        }
+        setInterval(tick, 250)
+
+        window.addEventListener('resize', fit)
+        window.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') show(i + 1)
+          if (e.key === 'ArrowLeft' || e.key === 'PageUp') show(i - 1)
+          if (e.key === 'Home') show(0)
+          if (e.key === 'End') show(slides.length - 1)
+          if (e.key === 'n' || e.key === 'N') document.body.classList.toggle('show-notes')
+          if (e.key === 't' || e.key === 'T') {
+            if (!document.body.classList.contains('show-timer')) {
+              document.body.classList.add('show-timer')
+              t0 = Date.now()
+            } else if (t0 === null) {
+              t0 = Date.now()
+            } else {
+              elapsed += Math.floor((Date.now() - t0) / 1000)
+              t0 = null
+            }
+          }
+          if (e.key === 'r' || e.key === 'R') {
+            elapsed = 0
+            t0 = null
+            tick()
+          }
+        })
+
+        // Capture on the window, not bubble from the stage: a click landing on
+        // a card never reaches a stage listener, so on a full slide only the
+        // thin margin above and below it would advance. Interactive elements
+        // opt out via [data-no-nav].
+        window.addEventListener(
+          'click',
+          function (e) {
+            if (e.target.closest('a, button, input, textarea, select, [data-no-nav]')) return
+            show(e.clientX > window.innerWidth / 2 ? i + 1 : i - 1)
+          },
+          true
+        )
+
+        fit()
+        show(i)
+      })()
+    </script>
+  </body>
+</html>

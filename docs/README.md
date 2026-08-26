@@ -75,11 +75,12 @@ curl -s https://api.gonkarouter.io/v1/messages \
 docs/
   README.md              this file - the GitHub-facing readme
   brief.md               hackathon facts - the working reference
-  STAGE                  one line: SCAFFOLD -> IDEATION -> BUILD -> TESTING -> PITCH
   source/                organizer material (append-only record)
   superpowers/research/  cited findings from concept exploration
+  demo/                  pitch script, deck template, assets
 .agents/skills/          36 skills (committed source of truth)
 .claude/skills/          symlinks into .agents/skills/, plus impeccable as a real dir
+.claude/agents/          pitch-smith
 .claude/hooks/           session brief, env drift, git guard, formatter
 ```
 
