@@ -26,9 +26,14 @@ commitlint.config.js
 .python-version
 .env.example
 
-# Prose, not architecture. docs/ is the brief, the organizer transcripts and the
-# research log: none of it describes how the code fits together.
-docs/
+# Prose, not architecture. Most of docs/ is the brief, the organizer transcripts
+# and the research log - none of it describes how the code fits together.
+# docs/* rather than docs/, so the ! lines below can re-include specific files.
+docs/*
+!docs/TRD.md
+!docs/PRODUCT.md
+!docs/PRD.md
+!docs/DESIGN.md
 AGENTS.md
 CLAUDE.md
 GEMINI.md

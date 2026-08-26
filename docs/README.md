@@ -71,6 +71,11 @@ curl -s https://api.gonkarouter.io/v1/messages \
 merge with `gh pr merge --squash --delete-branch`. **TODOs live in the Issues tab**
 (`gh issue list`), not in a markdown checklist.
 
+**Implementation is gated on three docs.** `PRODUCT.md` (who and why), `PRD.md`
+(what, and what is out of scope) and `TRD.md` (how) must all exist before any
+build work starts. `DESIGN.md` joins them when frontend work does. See
+[`../AGENTS.md`](../AGENTS.md).
+
 ---
 
 ## Layout

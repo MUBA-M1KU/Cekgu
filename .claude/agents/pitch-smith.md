@@ -43,6 +43,8 @@ there is no time to redo them.
 
 ## Read First
 
+- `docs/PRODUCT.md` for the user, the problem, the demo moment and the scope
+  ladder. **This is the spine of the script** - do not invent a different framing.
 - `docs/brief.md` for judging criteria, timings and the submission checklist
 - `docs/source/gonkarouter-challenge.md` for the track's own submission criteria
 - `docs/source/opening-ceremony-transcript.md` for what the organisers actually
@@ -52,6 +54,8 @@ there is no time to redo them.
   demonstrable on screen. If you cannot find the code that does a thing, it does
   not go in the script.
 - `docs/superpowers/research/` for the positioning the concept was chosen on
+- `docs/TRD.md` for the architecture slide, and `docs/DESIGN.md` for the palette
+  and type pairing if one is recorded
 
 ---
 
@@ -180,8 +184,7 @@ Read `AGENTS.md` and `.agents/skills/VENDORED.md`. Short version:
 
 - `design-taste-frontend` sets the design read **before** you build. Then
   `impeccable` executes. Starting with `impeccable` is the usual way this fails.
-- If the project has recorded a design system, use it. Do not invent a second
-  palette for the deck.
+- If `docs/DESIGN.md` exists, use it. Do not invent a second palette for the deck.
 - Anti-slop: no purple-to-blue gradient hero, no Inter as the safe default,
   nothing centre aligned by reflex.
 - TitleCase for headings and labels, sentence case for anything that is a sentence.

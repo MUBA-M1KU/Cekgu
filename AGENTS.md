@@ -76,6 +76,40 @@ pitch, it is not a priority.
 
 ---
 
+## The Gate Before Implementation
+
+**No implementation starts until `docs/` holds all three of these.** They are
+cheap to write and expensive to skip: without them the first days produce code
+nobody agreed to, and the deck's required sections get invented at the end from
+whatever happened to get built.
+
+| File              | Answers                                                                                         | Owns                                                  |
+| ----------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `docs/PRODUCT.md` | **Who and why.** The user, their problem, the demo moment, the scope ladder                     | The spine. Everything downstream cites it             |
+| `docs/PRD.md`     | **What.** Requirements, user stories, acceptance criteria, what is explicitly out of scope      | Scope. What `hackathon-scope-cutter` cuts against     |
+| `docs/TRD.md`     | **How.** Architecture, API contracts, data models, schemas, pipeline detail, decision rationale | Technical truth. Canonical over anything in this file |
+
+A fourth arrives when frontend work starts:
+
+| File             | Answers                                                                                   | Owns                                                          |
+| ---------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `docs/DESIGN.md` | **What it looks like.** Palette, type pairing, radius and border treatment, spacing scale | The design system. Written once, then recorded not reinvented |
+
+**The gate is binary.** If `PRODUCT.md`, `PRD.md` and `TRD.md` are not all present,
+the answer to "can I start building" is no. Say so, and write the missing one.
+
+Three consequences worth stating outright:
+
+- **`docs/TRD.md` is canonical for architecture**, not this file and not a
+  `docs/architecture.md`. Once it exists, technical decisions get recorded there.
+- **The PRD is what scope gets cut against.** "Out of scope", written down on day
+  one, is the only thing that makes a day-eight cut a decision rather than a panic.
+- **The deck's five required sections map onto these.** Problem Statement and
+  Overall Concept come from `PRODUCT.md`, Technology Stacks from `TRD.md`. Writing
+  them now is writing the deck early, not extra work.
+
+---
+
 ## How To Report
 
 If reading your message takes longer than doing the thing, you have cost time.
@@ -102,6 +136,10 @@ That is the failure mode to avoid.
 docs/
   README.md              GitHub-facing readme (the repo root has none by design)
   brief.md               the hackathon in one page - the working reference
+  PRODUCT.md             who, why, the demo moment - written before implementation
+  PRD.md                 what: requirements, acceptance criteria, out of scope
+  TRD.md                 how: architecture, contracts, schemas. Canonical
+  DESIGN.md              the design system, once frontend work starts
   source/                organizer material, verbatim and append-only
   superpowers/research/  cited findings from concept exploration
   demo/                  the pitch script, the deck, the PDF, and its assets
@@ -131,7 +169,7 @@ Confirmed and installed:
 | **graphify**                         | Knowledge graph over the codebase; `.graphifyignore` keeps docs and tooling out    |
 | **GonkaRouter**                      | The only permitted inference path (see Track Requirements)                         |
 
-**Application framework, database and hosting are not chosen yet.** Record them here once they are, with the reason.
+**Application framework, database and hosting are not chosen yet.** They get chosen and justified in `docs/TRD.md`; this table stays an inventory of what is installed.
 
 ---
 
@@ -202,6 +240,66 @@ diff is exactly the thing that gets lost.
 - **`docs/source/` is append-only.** Do not rewrite it to match later beliefs; corrections belong in `brief.md`.
 - **`docs/README.md` is the GitHub-facing README.** The repo root has no README by design.
 - Never create a second file that overlaps an existing one. Update the existing file.
+
+### README vs TRD
+
+`docs/README.md` and `docs/TRD.md` may both describe architecture. They differ in
+**depth and audience**, not in subject.
+
+|              | `docs/README.md`                                                                                      | `docs/TRD.md`                                                            |
+| ------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **Audience** | Readers - judges, external reviewers, anyone landing on the repo                                      | Developers implementing against it                                       |
+| **Depth**    | High-level narrative: the WHATs, HOWs and WHYs                                                        | Canonical implementation-level technical reference                       |
+| **Contains** | Architecture overview, diagrams for notable components and pipelines, setup, constraints, limitations | API contracts, data models, schemas, pipeline detail, decision rationale |
+| **Rule**     | Anything an outside reader legitimately needs must live here                                          | Never duplicate the README's narrative. Go deeper instead                |
+
+Both are committed, so "it is in the TRD" is a valid answer for implementation
+detail - but **not** for anything a reviewer needs to understand the system.
+**A judge reads the README.** The track brief asks for "clean code with clear
+documentation on the GonkaRouter integration", and this is where they look.
+
+`README.md` lives in **`docs/`**, not the repo root. GitHub renders
+`docs/README.md` as the repository landing page, so it is still the front door -
+keep links relative to `docs/`.
+
+### README Structure And Density
+
+The README is **scanned, not studied.** A reviewer decides what to read from
+headings, tables and bold lead-ins, so a section that is correct but dense is a
+section that does not get read. These rules apply to `docs/README.md`
+specifically and are stricter than the general Conciseness rule above.
+
+**Density, in order of how often each is broken:**
+
+- **No prose block over four lines.** If a paragraph runs longer it is a list, a
+  table, or two paragraphs. Split on the seam between the claim and its
+  justification: the claim leads, the reasoning follows.
+- **Three or more consecutive bolded-lead-in paragraphs are a table.** A run of
+  `**Claim.** explanation` blocks reads as a wall. Two columns - claim, and how it
+  is enforced - says the same thing and can be skimmed.
+- **An enumeration inside a sentence is a list.** Any sentence naming three or
+  more vendors, fields, states or controls belongs in bullets or a table.
+  Semicolons separating list items are the tell.
+- **One idea per block.** A paragraph that states a rule, justifies it, then cites
+  a section is three blocks.
+- **Trim before restructuring** when the content is not load-bearing, but **never
+  drop a measured figure, a citation, a section reference, or a limitation** to
+  save space. Reformatting must be lossless - verify by grepping the claims out of
+  the old version and back into the new.
+
+**Navigation, applied to every top-level (`##`) section:**
+
+- **A `---` divider before each section**, so the page reads as blocks rather than
+  a scroll.
+- **A back-to-top link at the foot of each section**, right-aligned, pointing at an
+  `<a id="top"></a>` anchor on the first line of the file:
+  ```html
+  <div align="right"><a href="#top">&#8593;&nbsp;Back to top</a></div>
+  ```
+- **Any heading that is linked to needs an explicit `<a id="..."></a>` above it.**
+  GitHub's auto-generated slug drops a leading emoji but keeps the hyphen the
+  space left behind, and an emoji carrying a variation selector makes the result
+  unpredictable. A reviewer clicks a broken anchor once and does not try again.
 
 ---
 
@@ -332,7 +430,8 @@ that outlives the session does.
 - **Do not** merge your own PR. Propose it; a human merges.
 - **Do not** track TODOs in a markdown file. They go in GitHub Issues.
 - **Do not** hardcode model ids without verifying them against `/v1/models` — they are case- and slash-sensitive.
-- **Do not** create `docs/architecture.md` or a second README. Architecture decisions go in this file; the README lives at `docs/README.md`.
+- **Do not** create `docs/architecture.md` or a second README. Architecture lives in `docs/TRD.md`; the README lives at `docs/README.md`.
+- **Do not** start implementation before `docs/PRODUCT.md`, `docs/PRD.md` and `docs/TRD.md` all exist.
 - **Do not** rewrite `docs/source/` transcripts. They are the verbatim record.
 - **Do not** edit `docs/demo/` outside the `pitch-smith` subagent. It owns those files.
 - **Do not** burn GonkaRouter tokens on idle experimentation.
