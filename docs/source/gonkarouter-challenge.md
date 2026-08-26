@@ -7,14 +7,14 @@
 
 ## TL;DR
 
-|                      |                                                                                       |
-| -------------------- | ------------------------------------------------------------------------------------- |
-| **Track**            | AI for Society — real-world AI in the public domain                                   |
-| **Hard requirement** | **All** AI reasoning must run on the Gonka Network via GonkaRouter                    |
-| **Scope**            | Open-ended — the four directions below are _inspiration, not constraints_             |
-| **Flagship example** | AI Fact Checker (explicitly called a **preferred application**)                       |
-| **Prizes**           | 1st **1,200 USDT** · 2nd **800 USDT** · Top 10 → 20M free tokens/month for 3–6 months |
-| **Tagline**          | _"Verify the World on Gonka.ai"_                                                      |
+|                      |                                                                                                |
+| -------------------- | ---------------------------------------------------------------------------------------------- |
+| **Track**            | AI for Society — real-world AI in the public domain                                            |
+| **Hard requirement** | **All** AI reasoning must run on the Gonka Network via GonkaRouter                             |
+| **Scope**            | Open-ended — the four directions below are _inspiration, not constraints_                      |
+| **Flagship example** | AI Fact Checker — this doc calls it a **preferred application**; the live track reveal did not |
+| **Prizes**           | 1st **1,200 USDT** · 2nd **800 USDT** · Top 10 → 20M free tokens/month for 3–6 months          |
+| **Tagline**          | _"Verify the World on Gonka.ai"_                                                               |
 
 ---
 
@@ -27,7 +27,11 @@
 | **AI Accessibility Tools**           | Assistants for users with visual, hearing, or cognitive impairments                                                             |
 | **Open Knowledge Engine**            | Decentralised Q&A / knowledge-retrieval system on Gonka inference                                                               |
 
-⭐ = the doc singles this out and spends the rest of its length specifying it, which is a strong signal about what judges expect.
+⭐ = **the doc's own word is "preferred"**, and it spends the rest of its length specifying this one direction.
+
+> **Do not read that as what the judges want.** At the opening ceremony, Carol — GonkaRouter's own track-reveal speaker, alongside judges Jack and Rain — never named a fact checker as a direction. She mentioned "fact checking" once, as a **capability of Kimi-K2.6**, and closed with: _"The core idea of our track is actually very simple: use AI to build something truly useful and solve real-world problems."_ See [`opening-ceremony-transcript.md`](opening-ceremony-transcript.md) §00:27.
+>
+> Written brief says "preferred example". Live track reveal says "open". **Both are primary sources and they do not agree.** Treat the fact checker as the best-specified option, not as the expected answer.
 
 ---
 
@@ -109,5 +113,5 @@ Gonka's decentralised network is positioned as the answer: a **neutral, verifiab
 
 - **The Request ID is the differentiator.** Every team will produce a score; far fewer will surface per-step provenance. It's mentioned twice — in core functionality _and_ in the tips.
 - **"Consensus Logic" is the named bonus.** Disagreement handling should be a visible, explainable feature, not an averaging function buried in a helper.
-- **The track is open-ended but the doc isn't.** ~80% of the text specifies the Fact Checker. A non-fact-checker submission needs to map itself onto the same rubric (multi-model, traceable, transparent, publicly useful).
+- **The written brief and the live reveal disagree on how open the track is.** ~80% of this doc specifies the Fact Checker and calls it "preferred". The track reveal at the ceremony framed it as open and named no direction at all. Whatever we build, it has to satisfy the same explicit requirements — multi-model, traceable, transparent, publicly useful — because those are stated in §2 and §3 and are not in dispute.
 - **Post-event token grants imply they want something that keeps running.** Judges will likely favour projects with a plausible life after Demo Day.

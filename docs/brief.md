@@ -156,7 +156,9 @@ Judges also weigh: functionality · potential impact · novelty · UX · composa
 
 ### Suggested directions
 
-**AI Fact Checker** ⭐ (the doc's preferred example) · Multilingual AI Public Assistant · AI Accessibility Tools · Open Knowledge Engine
+**AI Fact Checker** · Multilingual AI Public Assistant · AI Accessibility Tools · Open Knowledge Engine
+
+The challenge doc calls the Fact Checker a "preferred application" and specifies it at length. The track reveal at the ceremony named no direction, and closed with _"use AI to build something truly useful and solve real-world problems"_. The four directions are stated as **inspiration, not constraints**.
 
 ### Available models
 
