@@ -1,0 +1,38 @@
+# https://github.com/github/gitignore
+
+# JS / Bun
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+.vite/
+.next/
+.turbo/
+
+# Python / uv
+__pycache__/
+*.py[cod]
+.venv/
+.ruff_cache/
+.pytest_cache/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# Local research scratch (deliverables live in docs/)
+_research/
+
+# Local tooling scratch
+tmp/
+output/
+
+# Graphify knowledge graph output
+graphify-out/
+
+# OS / editor
+.DS_Store
+__MACOSX/
+.idea/
+*.swp

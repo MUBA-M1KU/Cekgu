@@ -1,0 +1,48 @@
+# Keep the knowledge graph focused on code, not prose or tooling.
+# Merged with .gitignore (! re-includes).
+# Use docs/* (not docs/) so the ! lines below can re-include specific files.
+
+# Docs — reference prose, not code. Nothing re-included yet; add ! lines
+# for a PRD/TRD once they exist.
+docs/*
+
+# Agent + tooling config — high token cost, zero structural signal.
+.agents/
+.claude/
+.codex/
+.husky/
+_research/
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+RTK.md
+.cursorrules
+.windsurfrules
+
+# Lockfiles + tool config
+bun.lock
+bun.lockb
+uv.lock
+package.json
+pyproject.toml
+tsconfig.json
+biome.json
+commitlint.config.js
+.prettierrc
+.python-version
+.env.example
+LICENSE
+
+# Binary + media
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.ico
+*.svg
+*.mp4
+*.mp3
+assets/
+public/assets/
