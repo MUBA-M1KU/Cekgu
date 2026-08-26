@@ -3,12 +3,12 @@
 Workspace for our entry to the **MUBA Blockchain Hackathon 2026**, competing in the
 **GonkaRouter — AI for Society** track.
 
-|                         |                                                      |
-| ----------------------- | ---------------------------------------------------- |
-| **Submission deadline** | 5 September 2026, 23:59 MYT (Devfolio)               |
-| **Demo Day**            | 6 September 2026 — APU, physical attendance required |
-| **Track prize**         | 1,200 USDT (1st) · 800 USDT (2nd)                    |
-| **Status**              | 📋 Concept not locked — application stack not chosen |
+|                         |                                                                                       |
+| ----------------------- | ------------------------------------------------------------------------------------- |
+| **Submission deadline** | 5 September 2026, 23:59 MYT ([Devfolio](https://muba-hackathon.devfolio.co/overview)) |
+| **Demo Day**            | 6 September 2026 — APU, physical attendance required                                  |
+| **Track prize**         | 1,200 USDT (1st) · 800 USDT (2nd)                                                     |
+| **Status**              | 📋 Concept not locked — application stack not chosen                                  |
 
 ---
 
@@ -42,7 +42,7 @@ Plus: **≥2 models cross-verifying**, and **Gonka Request IDs surfaced in the U
 
 ```bash
 bun install                  # dev tooling + husky hooks
-cp .env.example .env.local   # then paste your GonkaRouter sk-… key
+cp .env.example .env         # then paste your GonkaRouter sk-… key
 ```
 
 Verify the gateway before writing any code:
@@ -75,11 +75,15 @@ curl -s https://api.gonkarouter.io/v1/messages \
 docs/
   README.md              this file - the GitHub-facing readme
   brief.md               hackathon facts - the working reference
+  STAGE                  one line: SCAFFOLD -> IDEATION -> BUILD -> TESTING -> PITCH
   source/                organizer material (append-only record)
   superpowers/research/  cited findings from concept exploration
-.agents/skills/          skills (committed source of truth)
-.claude/skills/          symlinks into .agents/skills/
+.agents/skills/          36 skills (committed source of truth)
+.claude/skills/          symlinks into .agents/skills/, plus impeccable as a real dir
+.claude/hooks/           session brief, env drift, git guard, formatter
 ```
+
+Skill provenance and what each hook does: [`../.agents/skills/VENDORED.md`](../.agents/skills/VENDORED.md).
 
 The repo root deliberately has **no README** — it lives here.
 
@@ -87,7 +91,7 @@ The repo root deliberately has **no README** — it lives here.
 
 ## Next Up
 
-- [ ] Register the team on Devfolio · everyone submits LinkedIn for verification
+- [ ] Register the team on [Devfolio](https://muba-hackathon.devfolio.co/overview) · everyone submits LinkedIn for verification
 - [ ] Join the Discord GonkaRouter track channel
 - [ ] **GonkaRouter workshop — 27 Aug, 9 PM, Microsoft Teams** (register on Luma)
 - [ ] Create an API key, run the smoke test above

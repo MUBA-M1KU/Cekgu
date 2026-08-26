@@ -1,7 +1,7 @@
 # MUBA Blockchain Hackathon 2026 — Brief
 
 > Everything we need to know, in one page. Sourced from the official site, the opening ceremony (26 Aug), and the GonkaRouter challenge doc.
-> Full detail lives in [`docs/source/`](./source/). **Last updated 2026-08-26.**
+> Full detail lives in [`source/`](./source/). This file records what the organizers stated; it is not a status page.
 
 ---
 
@@ -15,20 +15,24 @@
 | **Format**    | 11 days online build → **physical pitch day**                                    |
 | **Our track** | 🎯 **GonkaRouter — AI for Society**                                              |
 | **Site**      | [mubahack.xyz](https://www.mubahack.xyz/official_landing_page/code.html)         |
+| **Devfolio**  | [muba-hackathon.devfolio.co](https://muba-hackathon.devfolio.co/overview)        |
+| **Entry fee** | None                                                                             |
 
 ---
 
 ## ⏰ Dates that matter
 
-| Date       | Time              | What                                                              | Status      |
-| ---------- | ----------------- | ----------------------------------------------------------------- | ----------- |
-| 26 Aug     | 8:00 PM           | Opening ceremony                                                  | ✅ done     |
-| **27 Aug** | **9:00 PM**       | **GonkaRouter workshop** (Jack, Tech Lead) — _on Microsoft Teams_ | 🔴 **next** |
-| 27 Aug     | 8:00 PM           | Thetanuts workshop (other track)                                  | optional    |
-| 31 Aug     | 9:00 PM           | Sui workshop (other track)                                        | optional    |
-| 1 Sept     | 5:00 PM           | UTAR Kampar bus reservation deadline                              | if relevant |
-| **5 Sept** | **11:59 PM**      | **Submission deadline** — _and_ extended registration deadline    | 🔴 **hard** |
-| **6 Sept** | 8:00 AM – 6:00 PM | **Demo Day @ APU** — physical                                     | 🔴 **hard** |
+| Date       | Time              | What                                                         |
+| ---------- | ----------------- | ------------------------------------------------------------ |
+| 26 Aug     | 8:00 PM           | Opening ceremony                                             |
+| 27 Aug     | 8:00 PM           | Thetanuts Finance workshop                                   |
+| **27 Aug** | **9:00 PM**       | **GonkaRouter workshop** — Jack, Tech Lead                   |
+| 31 Aug     | 9:00 PM           | Sui workshop — Rafael, Mysten Labs                           |
+| 1 Sept     | 5:00 PM           | UTAR Kampar bus reservation deadline                         |
+| **5 Sept** | **11:59 PM**      | **Submission deadline** — and extended registration deadline |
+| **6 Sept** | 8:00 AM – 6:00 PM | **Demo Day @ APU** — physical                                |
+
+Workshops run on **Microsoft Teams**; each has its own Luma registration link.
 
 > ⚠️ **Registration was extended** from 25 Aug to **5 Sept 11:59 PM** — announced at the ceremony, not yet on the website.
 
@@ -61,7 +65,7 @@
 
 ## 📦 What we must submit (by 5 Sept, 11:59 PM)
 
-Submission goes on **Devfolio**. _No Devfolio submission = disqualified from pitching._
+Submission goes on **[Devfolio](https://muba-hackathon.devfolio.co/overview)**. _No Devfolio submission = disqualified from pitching._
 
 | #   | Deliverable              | Notes                                            |
 | --- | ------------------------ | ------------------------------------------------ |
@@ -184,14 +188,14 @@ Supporting sponsors: **StarGlobal** (Web3 recruitment) · **GCC** (EVM-compatibl
 
 ## 🔗 Channels
 
-| Channel             | Use                                                                                |
-| ------------------- | ---------------------------------------------------------------------------------- |
-| **Discord**         | Rules (`hackathon-rules`), per-track mentor channels, Q&A follow-ups, team-finding |
-| **Devfolio**        | Registration **and** submission — the disqualification gate                        |
-| **Luma**            | Workshop registration (per workshop)                                               |
-| **Microsoft Teams** | Where workshops actually run (changed from the original platform)                  |
-| **Instagram**       | `MUBA 2026` — announcements & updates                                              |
-| **Slido**           | Live Q&A during sessions                                                           |
+| Channel                                                     | Use                                                                                |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| **Discord**                                                 | Rules (`hackathon-rules`), per-track mentor channels, Q&A follow-ups, team-finding |
+| **[Devfolio](https://muba-hackathon.devfolio.co/overview)** | Registration **and** submission — the disqualification gate. Free to enter         |
+| **Luma**                                                    | Workshop registration (per workshop)                                               |
+| **Microsoft Teams**                                         | Where workshops actually run (changed from the original platform)                  |
+| **Instagram**                                               | `MUBA 2026` — announcements & updates                                              |
+| **Slido**                                                   | Live Q&A during sessions                                                           |
 
 ---
 
@@ -200,14 +204,3 @@ Supporting sponsors: **StarGlobal** (Web3 recruitment) · **GCC** (EVM-compatibl
 - **Prize payout:** within **14 working days**
 - **Certificates:** digital, issued to participants
 - **UTAR Kampar bus:** gather 5 AM → depart 6 AM → arrive APU 10 AM → return ~12 AM. Book by **1 Sept 5 PM**; runs if >20 sign up. Seat holders get the limited lanyard + T-shirt
-
----
-
-## ✅ Immediate next steps
-
-- [ ] Register the team on **Devfolio** (deadline 5 Sept, but do it now)
-- [ ] Everyone submits their **LinkedIn** for verification
-- [ ] Join **Discord** → GonkaRouter track channel
-- [ ] Register for the **GonkaRouter workshop on Luma** (27 Aug, 9 PM, Teams)
-- [ ] Create a **GonkaRouter API key** and run the smoke test → [`gonkarouter-tutorial.md`](./source/gonkarouter-tutorial.md) §3
-- [ ] Lock the product concept — then fill in the tech stack in `AGENTS.md`

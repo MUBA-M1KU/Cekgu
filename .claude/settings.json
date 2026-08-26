@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "description": "Shared with all collaborators. Rapid-development posture: the allow list is deliberately broad so the harness does not stop to ask during the build sprint. Guards that remain: git guard blocks direct and force pushes to main and staging .env; env-drift reports a local .env disagreeing with the repo, naming keys never values; edited JS/TS is formatted; impeccable checks UI changes. Merging a PR and force-pushing stay denied because they are the two actions a human should own. The house-style guard at .claude/hooks/no-em-dash-or-emoji.mjs is present but NOT wired - see .agents/skills/VENDORED.md.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"${CLAUDE_PROJECT_DIR}/.claude/hooks/session-brief.sh\" ] || bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/session-brief.sh\"",
+            "timeout": 10,
+            "statusMessage": "Reading project stage"
+          },
+          {
+            "type": "command",
+            "command": "[ ! -f \"${CLAUDE_PROJECT_DIR}/.claude/hooks/env-drift.mjs\" ] || node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/env-drift.mjs\"",
+            "timeout": 10,
+            "statusMessage": "Checking .env against the repo"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-git.sh\" ] || bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-git.sh\"",
+            "timeout": 5,
+            "statusMessage": "Checking git command"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"${CLAUDE_PROJECT_DIR}/.claude/hooks/format-edited.sh\" ] || bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/format-edited.sh\"",
+            "timeout": 30,
+            "statusMessage": "Formatting"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/hook.mjs\" ] || node \"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/hook.mjs\"",
+            "timeout": 10,
+            "statusMessage": "Checking UI changes"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/hook.mjs\" ] || node \"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/hook.mjs\"",
+            "timeout": 30,
+            "statusMessage": "Design deep pass"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(bun:*)",
+      "Bash(bunx:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(uv:*)",
+      "Bash(uvx:*)",
+      "Bash(ruff:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(git switch:*)",
+      "Bash(git branch:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git merge:*)",
+      "Bash(git stash:*)",
+      "Bash(git restore:*)",
+      "Bash(git rebase:*)",
+      "Bash(git push:*)",
+      "Bash(git worktree:*)",
+      "Bash(gh issue:*)",
+      "Bash(gh pr:*)",
+      "Bash(gh api:*)",
+      "Bash(gh repo view:*)",
+      "Bash(gh label:*)",
+      "Bash(gh run:*)",
+      "Bash(rtk:*)",
+      "Bash(graphify:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(sed:*)",
+      "Bash(awk:*)",
+      "Bash(jq:*)",
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(touch:*)",
+      "Bash(chmod:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(mktemp:*)",
+      "Bash(diff:*)",
+      "Bash(echo:*)",
+      "WebSearch",
+      "WebFetch",
+      "Skill",
+      "Agent",
+      "TodoWrite",
+      "Glob",
+      "Grep",
+      "Read(./**)",
+      "Edit(./**)",
+      "Write(./**)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Bash(rm -rf /*)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(gh repo delete:*)",
+      "Bash(gh pr merge:*)"
+    ]
+  }
+}

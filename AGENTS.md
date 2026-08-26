@@ -119,7 +119,7 @@ graphify query "…"   # ask architecture/relationship questions before grepping
 - **Demo-first.** If it will not appear in the 2-minute video, it is not a priority.
 - **CLI-first.** Configure via CLI over GUI where possible.
 - **Ask before assuming.** State assumptions explicitly and surface tradeoffs rather than silently picking.
-- **No secrets in the repo.** `.env.example` is committed; `.env` and `.env.local` are gitignored. The GonkaRouter `sk-…` key lives in `.env.local` only.
+- **No secrets in the repo.** `.env.example` is committed; `.env` is gitignored. The GonkaRouter `sk-…` key lives in `.env` only, never in `.env.example`.
 - **Graphify first for structure questions.** Once `graphify-out/graph.json` exists, treat "how does X work" / "what calls Y" as a `graphify query` before grepping or reading many files.
 
 ---
@@ -128,7 +128,7 @@ graphify query "…"   # ask architecture/relationship questions before grepping
 
 - **Do not** call an AI provider directly — everything goes through GonkaRouter.
 - **Do not** import or adapt code written before 26 Aug 2026.
-- **Do not** commit `.env`, `.env.local`, or any `sk-…` key.
+- **Do not** commit `.env` or any `sk-…` key.
 - **Do not** push, force-push, rewrite published history, or delete branches without explicit human authorization.
 - **Do not** hardcode model ids without verifying them against `/v1/models` — they are case- and slash-sensitive.
 - **Do not** create `docs/architecture.md` or a second README. Architecture decisions go in this file; the README lives at `docs/README.md`.
@@ -136,19 +136,52 @@ graphify query "…"   # ask architecture/relationship questions before grepping
 
 ---
 
-## Project Skills (Proactive)
+## Project Skills
 
-Committed under `.agents/skills/` (source of truth; `.claude/skills/` symlinks into it). **Invoke them proactively when their situation arises — do not wait to be asked.**
+37 skills are committed: 36 under `.agents/skills/` (source of truth;
+`.claude/skills/` symlinks into it) plus `impeccable`. **Optional** - invoke one
+when the task matches, not as a checkpoint before every action.
 
-| Situation                                                | Skill                        |
-| -------------------------------------------------------- | ---------------------------- |
-| Product concept still open or being rethought            | `hackathon-idea-generator`   |
-| Candidate concepts exist, need ranking                   | `hackathon-idea-scoring`     |
-| Plan or feature list growing past the days remaining     | `hackathon-scope-cutter`     |
-| Concept locked; shaping the demo                         | `hackathon-wow-detector`     |
-| Preparing the 2-min video or 5-min pitch                 | `hackathon-demo-script`      |
-| Deck drafted or demo scripted — harden before submission | `hackathon-judge-simulator`  |
-| Need winning patterns, demo psychology, MVP strategy     | `hackathon-shared-resources` |
+| Group                      | Skills                                                                                                                                                       | Reach For                                                                                        |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| **Hackathon** (7)          | `hackathon-idea-generator`, `-idea-scoring`, `-scope-cutter`, `-wow-detector`, `-demo-script`, `-judge-simulator`, `-shared-resources`                       | Concept selection, scope control, the demo and the pitch                                         |
+| **Business** (8)           | `startup-validator`, `competitor-analysis`, `strategy-red-team`, `value-proposition`, `jobs-to-be-done`, `beachhead-segment`, `lean-canvas`, `market-sizing` | Deciding whether a concept is worth building, and the deck's business sections                   |
+| **Superpowers** (14)       | `brainstorming`, `writing-plans`, `executing-plans`, `dispatching-parallel-agents`, `verification-before-completion`, `systematic-debugging`, and 8 more     | Process. Sets an approach before implementation carries it out                                   |
+| **Taste** (3)              | `design-taste-frontend`, `high-end-visual-design`, `image-to-code`                                                                                           | Frontend that does not look templated                                                            |
+| **Utility** (4)            | `diagnose`, `handoff`, `graphify`, `claude-in-chrome`                                                                                                        | Stuck bugs, context handoff, architecture questions, real-browser work                           |
+| **`.claude/skills/` only** | `impeccable`                                                                                                                                                 | Building and fixing an actual interface. Real directory, not a symlink - a hook points inside it |
+
+Three things worth knowing before reaching for one:
+
+- **`brainstorming` is not the ideation skill.** It shapes a build once a concept
+  is locked. The eight business skills are what concept selection runs on.
+- **Taste sets the target, `impeccable` hits it.** Do not start with `impeccable`.
+- **The `hackathon-*` skills were retargeted.** They came from a different event and
+  their bodies still name its rules. The `> ## This Event` block at the top of each
+  wins wherever they disagree.
+
+`.agents/skills/VENDORED.md` records where every skill came from, what was
+retargeted, what was deliberately not taken, and what each hook does.
+
+---
+
+## Hooks
+
+`.claude/settings.json` wires four guards. Each exits 0 on any internal failure -
+a broken guard must never wedge a session.
+
+| Hook               | Fires             | Does                                                                             |
+| ------------------ | ----------------- | -------------------------------------------------------------------------------- |
+| `session-brief.sh` | SessionStart      | Stage, branch, uncommitted count, days to the deadline                           |
+| `env-drift.mjs`    | SessionStart      | Reports a local `.env` disagreeing with `.env.example`. Names keys, never values |
+| `guard-git.sh`     | PreToolUse(Bash)  | Blocks direct and force pushes to `main`, and `git add .env`                     |
+| `format-edited.sh` | PostToolUse(Edit) | Biome-formats edited JS/TS. Silent, never blocks                                 |
+
+`docs/STAGE` carries one line the session brief reads. Update it as the project
+moves `SCAFFOLD -> IDEATION -> BUILD -> TESTING -> PITCH`.
+
+A fifth hook, `no-em-dash-or-emoji.mjs`, is present but **not wired** - see
+`VENDORED.md` for why and how to turn it on.
 
 ---
 
