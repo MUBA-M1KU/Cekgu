@@ -6,7 +6,7 @@
     "prepare": "husky",
     "lint": "biome check .",
     "format": "biome format --write . && prettier --write .",
-    "typecheck": "test -d src && tsc --noEmit || echo 'no src/ yet, nothing to typecheck'"
+    "typecheck": "if [ -d src ]; then tsc --noEmit; else echo 'no src/ yet, nothing to typecheck'; fi"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": ["biome check --write --no-errors-on-unmatched"],
