@@ -12,7 +12,7 @@ export const staticHtml = {
   name: 'static-html',
 
   detect() {
-    return { via: 'fallback' }
+    return { via: 'fallback' };
   },
 
   inject: { kind: 'tag' },
@@ -21,6 +21,6 @@ export const staticHtml = {
     extensions: ['.html', '.htm'],
     preview: 'source',
     styleMode: 'scoped',
-    commentSyntax: 'html'
-  }
-}
+    commentSyntax: 'html',
+  },
+};

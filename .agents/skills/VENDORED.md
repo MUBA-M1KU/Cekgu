@@ -16,6 +16,13 @@ Everything here is **optional**. Invoke a skill when the task matches it.
 
 ## Retargeted From A Prior Hackathon
 
+> **These seven cannot be reinstalled, and these copies are the only ones that
+> exist.** Their source, `bernieweb3/hackathon-ai-devkit`, 404s on GitHub. skills.sh
+> still indexes it, but the registry only stores an index and clones from GitHub for
+> content, so `skills add` and `skills use` both fail. They are deliberately **not**
+> in `skills-lock.json`: a lock entry would invite `skills update` to overwrite the
+> retargeting below. If they are ever deleted, recover them from git history.
+
 | Skill | Use For |
 | ----- | ------- |
 | `hackathon-idea-generator` | Concept exploration before anything locks |
@@ -41,8 +48,25 @@ because the surrounding advice is generic; the `This Event` block is the overrid
 
 ## Business And Strategy
 
-Vendored from [TolongLabs/agentic-ai-hackathon](https://github.com/TolongLabs/agentic-ai-hackathon).
 These, not `brainstorming`, are what concept selection actually runs on.
+
+Originally vendored from `TolongLabs/agentic-ai-hackathon`, **which now 404s.**
+Content-matching against the registry found the real upstreams, and all eight are
+reinstalled from them and tracked in `skills-lock.json`:
+
+| Source | Skills |
+| ------ | ------ |
+| [`phuryn/pm-skills`](https://github.com/phuryn/pm-skills) | `competitor-analysis`, `strategy-red-team`, `beachhead-segment`, `lean-canvas`, `market-sizing`, `value-proposition` |
+| [`ailabs-393/ai-labs-claude-skills`](https://github.com/ailabs-393/ai-labs-claude-skills) | `startup-validator` |
+| [`owl-listener/designer-skills`](https://github.com/owl-listener/designer-skills) | `jobs-to-be-done` |
+
+TolongLabs was a fork of `phuryn/pm-skills`: every difference between the vendored
+copies and phuryn upstream was **an em dash replaced with a comma**, the same
+plain-ASCII house style the removed `no-em-dash-or-emoji.mjs` hook enforced.
+Nothing substantive had diverged.
+
+Name alone would have picked wrong. `jobs-to-be-done` had three same-named
+candidates in the registry, at 1.3%, 1.0% and **99.9%** content similarity.
 
 | Skill | Use For |
 | ----- | ------- |
@@ -98,12 +122,16 @@ fifth of the score.
 
 ## Utility
 
-| Skill | Use For |
-| ----- | ------- |
-| `diagnose` | A bug that resisted the first fix. Reproduce, minimise, instrument |
-| `handoff` | Compacting context for another agent or session |
-| `graphify` | Architecture questions once there is enough code to graph |
-| `claude-in-chrome` | Driving the real Windows browser. Read before any browser tool call |
+| Skill | Source | Use For |
+| ----- | ------ | ------- |
+| `diagnosing-bugs` | [`mattpocock/skills`](https://github.com/mattpocock/skills) | A bug that resisted the first fix. Reproduce, minimise, instrument |
+| `handoff` | [`mattpocock/skills`](https://github.com/mattpocock/skills) | Compacting context for another agent or session |
+| `graphify` | [`graphify-labs/graphify`](https://github.com/graphify-labs/graphify) | Architecture questions once there is enough code to graph |
+| `claude-in-chrome` | none - see below | Driving the real browser. Read before any browser tool call |
+
+**`diagnose` was renamed to `diagnosing-bugs`**, its upstream name, when it was
+reinstalled. The local copy was only 73% similar to upstream, the weakest match of
+the set - treat it as a best-guess identification rather than a confirmed one.
 
 `claude-in-chrome` is transcribed from the version Claude Code ships **inside its
 binary** - there was nothing on disk to symlink. It can drift as Claude Code
@@ -123,7 +151,7 @@ implementation skills carry it out.
 | ----- | ------- |
 | `verification-before-completion` | Before claiming anything is done. Evidence before assertions |
 | `using-git-worktrees` | Isolating parallel work. Two agents in one tree collide |
-| `systematic-debugging` | A bug that resisted the first fix. Overlaps `diagnose`; pick one, not both |
+| `systematic-debugging` | A bug that resisted the first fix. Overlaps `diagnosing-bugs`; pick one, not both |
 | `brainstorming` | Shaping a build once the concept is locked. **Not** concept selection |
 | `writing-plans` / `executing-plans` | A multi-step task worth writing down first |
 | `dispatching-parallel-agents` | Two or more genuinely independent tasks |
@@ -162,6 +190,38 @@ not an obligation to use them for every file that lands there.
 | Skill | Why |
 | ----- | --- |
 | `impeccable` | Ships a detector hook. `.claude/settings.json` points at `.claude/skills/impeccable/scripts/hook.mjs`, so it must be a real directory at that path, not a symlink |
+
+Source: [`pbakaus/impeccable`](https://github.com/pbakaus/impeccable). The CLI
+installs it to `.claude/skills/` as a real directory, which is exactly what the hook
+path needs - so unlike every other skill it is **not** relocated into
+`.agents/skills/` afterwards.
+
+---
+
+## Installing And Updating
+
+`skills-lock.json` tracks **29 of the 37**. The other eight have no reachable
+source: the seven `hackathon-*` (dead repo) and `claude-in-chrome` (never a repo).
+
+```bash
+bunx skills add <owner/repo> -a claude-code -s <skill> -s <skill> -y
+```
+
+Four things the CLI does that this repo's layout does not want:
+
+| Behaviour | What To Do |
+| --------- | ---------- |
+| `-s a,b,c` silently matches nothing | Pass **one `-s` per skill**. A comma list fails with "No matching skills found" |
+| Installs to `.claude/skills/<name>/` as a **real directory** | Move it to `.agents/skills/<name>/`, then `ln -s ../../.agents/skills/<name> .claude/skills/<name>` |
+| Installs **every** skill in the repo without `-s` | Always pass `-s`. `phuryn/pm-skills` carries 68 and `owl-listener/designer-skills` over 100; a long skill list makes an agent pick worse |
+| `-a universal` writes the gitignored `/agent/` tree | Never use it. `-a claude-code` only |
+
+`impeccable` is the one exception to the relocation: it stays a real directory in
+`.claude/skills/`, because that is where its hook path points.
+
+**Re-verify after any install:** every `.claude/skills/*` entry resolves,
+`.claude/skills/impeccable/scripts/hook.mjs` still exists, and the seven
+`hackathon-*` skills still carry their `> ## This Event` block.
 
 ---
 

@@ -19,7 +19,7 @@ If the user provides market research, industry reports, financial data, or compe
 
 ### Analysis Steps (Think Step by Step)
 
-1. **Market Definition**: Define the market boundaries, what problem space, which customer segments, what geography or constraints apply
+1. **Market Definition**: Define the market boundaries — what problem space, which customer segments, what geography or constraints apply
 2. **Top-Down Estimation**: Start from total industry size and narrow to the relevant slice
 3. **Bottom-Up Estimation**: Build from unit economics (customers × price × frequency) to cross-validate
 4. **SAM Scoping**: Identify which portion of TAM is realistically serviceable given product capabilities, channels, and constraints
@@ -73,7 +73,7 @@ If the user provides market research, industry reports, financial data, or compe
 
 - Always provide both top-down and bottom-up estimates to triangulate
 - Use web search for current industry data, analyst reports, and market benchmarks
-- Cite sources for market data, avoid unsupported numbers
+- Cite sources for market data — avoid unsupported numbers
 - Be explicit about assumptions; label estimates vs. data
 - Distinguish between value-based (revenue) and volume-based (users/units) sizing
 - Consider currency and purchasing power parity for international markets
