@@ -1,12 +1,8 @@
 # Feature Spec: [Feature Name]
 
-**Project:** [Project name]
-**Feature ID:** FS-[NUMBER]
-**Author:** [Name]
-**Date:** YYYY-MM-DD
-**Status:** [Draft | Approved | In Progress | Complete]
-**Parent PRD:** [Link or reference]
-**Priority:** [P0 — Must Have | P1 — Should Have | P2 — Nice to Have]
+**Project:** [Project name] **Feature ID:** FS-[NUMBER] **Author:** [Name] **Date:** YYYY-MM-DD **Status:** [Draft |
+Approved | In Progress | Complete] **Parent PRD:** [Link or reference] **Priority:** [P0 — Must Have | P1 — Should Have
+| P2 — Nice to Have]
 
 ---
 
@@ -18,9 +14,7 @@
 
 ## User Story
 
-**As a** [type of user],
-**I want to** [perform some action],
-**so that** [I achieve some outcome].
+**As a** [type of user], **I want to** [perform some action], **so that** [I achieve some outcome].
 
 ---
 
@@ -128,7 +122,8 @@ All criteria must be verifiable by a team member in under 5 minutes.
 
 ## Implementation Notes
 
-[Technical notes for the developer implementing this feature. Include library recommendations, known pitfalls, or shortcuts acceptable for the hackathon.]
+[Technical notes for the developer implementing this feature. Include library recommendations, known pitfalls, or
+shortcuts acceptable for the hackathon.]
 
 **Acceptable shortcuts for hackathon:**
 
@@ -143,14 +138,12 @@ All criteria must be verifiable by a team member in under 5 minutes.
 
 ## Dependencies
 
-| Dependency | Type | Status |
-| ---------------------- | --------- | ------------- | ------ | ----------- | -------- |
-| [Feature / Task / API] | [Blocking | Non-blocking] | [Ready | In Progress | Blocked] |
+| Dependency             | Type                       | Status                            |
+| ---------------------- | -------------------------- | --------------------------------- |
+| [Feature / Task / API] | [Blocking \| Non-blocking] | [Ready \| In Progress \| Blocked] |
 
 ---
 
 ## Estimated Effort
 
-**Estimate:** [X hours]
-**Assigned to:** [Name or role]
-**Target completion:** H+[N] (hour offset from hackathon start)
+**Estimate:** [X hours] **Assigned to:** [Name or role] **Target completion:** H+[N] (hour offset from hackathon start)
