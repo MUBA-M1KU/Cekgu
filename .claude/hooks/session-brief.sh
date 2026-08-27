@@ -1,20 +1,15 @@
 #!/usr/bin/env bash
-# SessionStart: orient a fresh session, or a teammate, in two lines.
-#
-# Any internal failure exits 0 without output. A broken guard must never be able
-# to wedge a session.
+# SessionStart: one line of orientation. Exits 0 on any internal failure.
 set -uo pipefail
 
 root="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null)}"
-[[ -z "$root" || ! -d "$root" ]] && exit 0
+[[ -d "${root:-}" ]] || exit 0
 cd "$root" || exit 0
 
-branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+# 2026-09-05 23:59 MYT. Hardcoded: `date -d` is GNU-only and fails on macOS.
+left=$(( (1788623940 - $(date +%s)) / 86400 ))
+branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '?')
 dirty=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
 
-# Days until the Devfolio submission deadline, 5 Sept 2026 23:59 MYT.
-left=$(( ( $(date -d 2026-09-05 +%s) - $(date +%s) ) / 86400 ))
-
-echo "MUBA/GonkaRouter | branch=${branch:-?} | uncommitted=${dirty:-0} | ${left}d to submission"
+echo "MUBA/GonkaRouter | branch=$branch | uncommitted=$dirty | ${left}d to submission"
 echo "TODOs live in GitHub Issues (gh issue list). Rules and judging: docs/brief.md."
-exit 0
