@@ -98,8 +98,9 @@ const main = () => {
   }
 
   const mainRoot = mainCheckoutRoot(root)
-  const mainText = mainRoot && read(resolve(mainRoot, '.env'))
-  if (mainText) {
+  // An empty .env there is still a real disagreement, so test against null, not truthiness.
+  const mainText = mainRoot === null ? null : read(resolve(mainRoot, '.env'))
+  if (mainText !== null) {
     const found = vsMain(local, parseEnv(mainText))
     if (found.length) sections.push(`This worktree disagrees with the main checkout at ${mainRoot}:\n${found.join('\n')}`)
   }
