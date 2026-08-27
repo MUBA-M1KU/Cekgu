@@ -6,12 +6,18 @@
     "prepare": "husky",
     "lint": "biome check .",
     "format": "biome format --write . && prettier --write .",
-    "typecheck": "test -d src && tsc --noEmit || echo 'no src/ yet, nothing to typecheck'"
+    "typecheck": "if [ -d src ]; then tsc --noEmit; else echo 'no src/ yet, nothing to typecheck'; fi"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": ["biome check --write --no-errors-on-unmatched"],
-    "*.{css,json}": ["biome format --write --no-errors-on-unmatched"],
-    "*.{md,yaml,yml}": ["prettier --write"]
+    "*.{ts,tsx,js,jsx}": [
+      "biome check --write --no-errors-on-unmatched"
+    ],
+    "*.{css,json}": [
+      "biome format --write --no-errors-on-unmatched"
+    ],
+    "*.{md,yaml,yml}": [
+      "prettier --write"
+    ]
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
@@ -23,5 +29,7 @@
     "prettier": "^3.4.2",
     "typescript": "^5.7.2"
   },
-  "trustedDependencies": ["@biomejs/biome"]
+  "trustedDependencies": [
+    "@biomejs/biome"
+  ]
 }
