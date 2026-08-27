@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# PostToolUse(Edit|Write|MultiEdit): keep the tree lint-clean so `bun run check`
+# PostToolUse(Edit|Write|MultiEdit): keep the tree lint-clean so `bun run lint`
 # never fails on formatting alone during a crunch. Silent, and never blocks.
 #
 # Any internal failure exits 0 without a verdict.

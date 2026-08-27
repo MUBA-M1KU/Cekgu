@@ -2,10 +2,12 @@
 // SessionStart guard: report a local .env that disagrees with the repository.
 //
 // .env is gitignored, so no diff and no reviewer can ever say that two
-// checkouts hold different values. Four people on a one-day build will each
-// hold their own copy with their own ModelScope token, and a stale QWEN_BASE_URL
-// or QWEN_MODEL boots clean and then fails somewhere else. That is strictly
-// worse than an empty .env, which fails loudly at boot in src/config.ts.
+// checkouts hold different values. Each teammate holds their own copy with
+// their own GONKA_API_KEY, and a stale GONKA_BASE_URL or GONKA_MODEL_PRIMARY
+// starts clean and then fails somewhere further in. A model id that no longer
+// exists in the gateway catalog is the likely one: they are case- and
+// slash-sensitive, and the failure surfaces as a request error, not a config
+// error.
 //
 // Two comparisons, because neither covers the other:
 //
@@ -75,14 +77,15 @@ const parseEnv = (text) => {
 }
 
 // A key is safe to compare by value only if .env.example assigns it one. The
-// example is tracked, so any value in it is already published; the secrets are
-// exactly the entries left empty (MODELSCOPE_API_KEY=, DEVIN_API_KEY=). Angle
-// brackets are the repo's placeholder convention, which no real .env matches.
+// example is tracked, so any value in it is already published; the secret is
+// the entry left empty (GONKA_API_KEY=). Angle brackets are the repo's
+// placeholder convention, which no real .env matches.
 const isPublic = (value) => value !== '' && !(value.includes('<') && value.includes('>'))
 
-// Absence is safe: an unset key falls through to the zod default in
-// src/config.ts, which carries the pinned value. Only a stale override is
-// dangerous, so only keys the local .env actually sets are compared.
+// Absence is not reported: .env.example is tracked and carries the pinned
+// value, so a key nobody set locally is readable from the repository. Only a
+// stale override is dangerous, so only keys the local .env actually sets are
+// compared.
 const checkAgainstExample = (local, example) => {
   const findings = []
   for (const [key, value] of example) {
