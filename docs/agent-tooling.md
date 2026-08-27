@@ -1,8 +1,8 @@
 # Agent Tooling: RTK And Graphify
 
-> Standing reference, moved out of `AGENTS.md` so it is not reloaded into every
-> session. Both tools are **optional and per-machine**: neither is a dependency
-> of this repo, and every command below works without them.
+Standing reference, moved out of `AGENTS.md` so it is not reloaded into every
+session. Both tools are **optional and per-machine**: neither is a dependency of
+this repo, and every command below works without them.
 
 | Tool         | Check            | If Missing                                    |
 | ------------ | ---------------- | --------------------------------------------- |
@@ -54,10 +54,6 @@ It **does** defeat the `permissions.deny` list in `.claude/settings.json`, which
 is prefix-matched: `Bash(git push --force*)` does not match `rtk git push
 --force`. The hook is what actually stops that one, which is why both exist.
 
-<!-- rtk-instructions v2 -->
-
-<!-- graphify-instructions v1 -->
-
 ---
 
 ## Graphify: Codebase Knowledge Graph
@@ -102,5 +98,3 @@ agent instructions and vendored skills — a graph full of prose and dependency
 entries dilutes every query run against it.
 
 **Not worth building on the bare scaffold.** Build it once there is real code.
-
-<!-- graphify-instructions v1 -->

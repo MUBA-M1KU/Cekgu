@@ -1,19 +1,18 @@
 # Coding Guidelines (Andrej Karpathy)
 
-> Standing reference, moved out of `AGENTS.md` so it is not reloaded into every
-> session. **`AGENTS.md` outranks this file wherever they disagree**, and the
-> callout below is the place they actually do.
+Standing reference, moved out of `AGENTS.md` so it is not reloaded into every
+session. **`AGENTS.md` outranks this file wherever they disagree**, and the
+callout below is where they actually do.
 
 Behavioural guidelines that reduce common LLM coding mistakes, from
 [Karpathy's observations](https://x.com/karpathy/status/2015883857489522876).
 
-> **Where This Conflicts With [Proceed Without Asking](../AGENTS.md#proceed-without-asking), That Section Wins.**
-> Guideline 1 below says to stop and ask when something is unclear. In this repo,
-> across a ten day build, you do not. Pick the reading that ships, state the
-> assumption, and keep going. Stop only for the six cases in **Stop And Ask Only
-> For These**. The rest of guideline 1 — surfacing tradeoffs and not hiding
-> confusion — still applies: say the assumption out loud, just do not wait on an
-> answer.
+> **Where this conflicts with [How To Work](../AGENTS.md#how-to-work), that section wins.**
+> Guideline 1 says to stop and ask when something is unclear. In this repo, across
+> a ten day build, you do not. Pick the reading that ships, state the assumption,
+> and keep going. Stop only for the six cases in **Stop and ask only for these**.
+> The rest of guideline 1, surfacing tradeoffs and not hiding confusion, still
+> applies: say the assumption out loud, just do not wait on an answer.
 
 ## 1. Think Before Coding
 
@@ -56,7 +55,3 @@ Turn tasks into verifiable goals, then loop until verified.
 
 Strong success criteria let you loop on your own. Weak criteria force check-ins,
 which is exactly the cost **Proceed Without Asking** exists to avoid.
-
-<!-- andrej-karpathy-skills -->
-
-<!-- rtk-instructions v2 -->
