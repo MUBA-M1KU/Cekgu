@@ -10,5 +10,8 @@ case "$file" in
   *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs|*.json|*.jsonc|*.css|*.html)
     bunx --bun biome check --write --no-errors-on-unmatched "$file" >/dev/null 2>&1
     ;;
+  *.md|*.markdown|*.yaml|*.yml)
+    bunx prettier --write "$file" >/dev/null 2>&1
+    ;;
 esac
 exit 0
