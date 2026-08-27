@@ -1,3 +1,5 @@
+<a id="top"></a>
+
 # MUBA Blockchain Hackathon 2026 — GonkaRouter Track
 
 Workspace for our entry to the **MUBA Blockchain Hackathon 2026**, competing in the
@@ -12,6 +14,8 @@ Workspace for our entry to the **MUBA Blockchain Hackathon 2026**, competing in 
 
 ---
 
+<a id="the-one-rule-that-governs-everything"></a>
+
 ## The One Rule That Governs Everything
 
 > **All AI reasoning must run through GonkaRouter** (`https://api.gonkarouter.io`).
@@ -19,7 +23,11 @@ Workspace for our entry to the **MUBA Blockchain Hackathon 2026**, competing in 
 
 Plus: **≥2 models cross-verifying**, and **Gonka Request IDs surfaced in the UI** for every inference step.
 
+<div align="right"><a href="#top">&#8593;&nbsp;Back to top</a></div>
+
 ---
+
+<a id="start-here"></a>
 
 ## Start Here
 
@@ -27,6 +35,9 @@ Plus: **≥2 models cross-verifying**, and **Gonka Request IDs surfaced in the U
 | ------------------------------ | ----------------------------------------------------------------------------- |
 | **[`brief.md`](brief.md)**     | The whole hackathon in one page — dates, rules, deliverables, judging, people |
 | [`../AGENTS.md`](../AGENTS.md) | Project instructions for agentic tools (and humans)                           |
+
+**Work in progress lives in the [Issues board](https://github.com/MUBA-M1KU/dev/issues)**
+(`gh issue list`), not in a checklist in this file.
 
 ### Source Material From The Organizers
 
@@ -36,7 +47,11 @@ Plus: **≥2 models cross-verifying**, and **Gonka Request IDs surfaced in the U
 | [`source/gonkarouter-challenge.md`](source/gonkarouter-challenge.md)             | Official track challenge doc                                       |
 | [`source/gonkarouter-tutorial.md`](source/gonkarouter-tutorial.md)               | GonkaRouter setup — API, models, client wiring, limits             |
 
+<div align="right"><a href="#top">&#8593;&nbsp;Back to top</a></div>
+
 ---
+
+<a id="getting-started"></a>
 
 ## Getting Started
 
@@ -58,25 +73,40 @@ curl -s https://api.gonkarouter.io/v1/messages \
 
 ### Commands
 
-| Command               | Does                               |
-| --------------------- | ---------------------------------- |
-| `bun run lint`        | Biome check                        |
-| `bun run format`      | Biome + Prettier write             |
-| `bun run typecheck`   | `tsc --noEmit`                     |
-| `uv sync`             | Python deps                        |
-| `uv run ruff check .` | Python lint                        |
-| `graphify .`          | Build the codebase knowledge graph |
+| Command             | Does                                       |
+| ------------------- | ------------------------------------------ |
+| `bun install`       | Dev tooling, and wires the husky git hooks |
+| `bun run lint`      | Biome check                                |
+| `bun run format`    | Biome + Prettier write                     |
+| `bun run typecheck` | `tsc --noEmit`, once `src/` exists         |
+| `gh issue list`     | The TODO board                             |
+
+There is no Python stack — the application stack is not chosen yet, and gets
+decided in `TRD.md`. Two optional per-machine tools, `rtk` and `graphify`, are
+documented in [`agent-tooling.md`](agent-tooling.md); neither is a dependency.
+
+<div align="right"><a href="#top">&#8593;&nbsp;Back to top</a></div>
+
+---
+
+<a id="how-work-ships"></a>
+
+## How Work Ships
 
 **`main` is PR-gated.** Branch as `<type>/<slug>`, open a PR with `gh pr create`,
-merge with `gh pr merge --squash --delete-branch`. **TODOs live in the Issues tab**
-(`gh issue list`), not in a markdown checklist.
+merge with `gh pr merge --squash --delete-branch`. A human merges; nobody merges
+their own PR.
 
 **Implementation is gated on three docs.** `PRODUCT.md` (who and why), `PRD.md`
 (what, and what is out of scope) and `TRD.md` (how) must all exist before any
 build work starts. `DESIGN.md` joins them when frontend work does. See
 [`../AGENTS.md`](../AGENTS.md).
 
+<div align="right"><a href="#top">&#8593;&nbsp;Back to top</a></div>
+
 ---
+
+<a id="layout"></a>
 
 ## Layout
 
@@ -84,6 +114,12 @@ build work starts. `DESIGN.md` joins them when frontend work does. See
 docs/
   README.md              this file - the GitHub-facing readme
   brief.md               hackathon facts - the working reference
+  PRODUCT.md             who, why, the demo moment - written before implementation
+  PRD.md                 what: requirements, acceptance criteria, out of scope
+  TRD.md                 how: architecture, contracts, schemas. Canonical
+  DESIGN.md              the design system, once frontend work starts
+  coding-guidelines.md   behavioural coding rules, referenced by AGENTS.md
+  agent-tooling.md       rtk and graphify, both optional and per-machine
   source/                organizer material (append-only record)
   superpowers/research/  cited findings from concept exploration
   demo/                  pitch script, deck template, assets
@@ -93,16 +129,12 @@ docs/
 .claude/hooks/           session brief, env drift, git guard, formatter
 ```
 
+`PRODUCT.md`, `PRD.md`, `TRD.md` and `DESIGN.md` are listed above but **not written
+yet** — see [issue #5](https://github.com/MUBA-M1KU/dev/issues/5). Source layout is
+not decided; add it here when it is.
+
 Skill provenance and what each hook does: [`../.agents/skills/VENDORED.md`](../.agents/skills/VENDORED.md).
 
 The repo root deliberately has **no README** — it lives here.
 
----
-
-## Next Up
-
-- [ ] Register the team on [Devfolio](https://muba-hackathon.devfolio.co/overview) · everyone submits LinkedIn for verification
-- [ ] Join the Discord GonkaRouter track channel
-- [ ] **GonkaRouter workshop — 27 Aug, 9 PM** · [join on Teams](https://teams.microsoft.com/meet/433187713146886?p=sv72xzbv19gF5r8p3V)
-- [ ] Create an API key, run the smoke test above
-- [ ] Lock the concept → record the application stack in `../AGENTS.md`
+<div align="right"><a href="#top">&#8593;&nbsp;Back to top</a></div>

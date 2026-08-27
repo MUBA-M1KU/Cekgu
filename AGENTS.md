@@ -10,14 +10,13 @@
 **MUBA Blockchain Hackathon 2026** entry — track: **GonkaRouter — AI for Society**.
 Repo: `github.com/MUBA-M1KU/dev` (private).
 
-| Constraint              | Value                                                                                                                          |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| **Submission deadline** | **5 Sept 2026, 23:59 MYT** — on Devfolio, or disqualified from pitching                                                        |
-| **Demo Day**            | 6 Sept 2026, APU — physical                                                                                                    |
-| **Team size**           | 2–4 members; no solo entries                                                                                                   |
-| **Originality**         | Built from scratch during the hackathon window. Prior projects and privately pre-built frameworks are explicitly disqualifying |
+**Submission deadline: 5 Sept 2026, 23:59 MYT**, on Devfolio. No submission means
+disqualification from pitching.
 
-Event facts live in `docs/brief.md`. Organizer source material lives in `docs/source/`.
+Every other event fact — Demo Day, team size, the originality rule, the rubric,
+the prize pool — lives in [`docs/brief.md`](docs/brief.md), which is the single
+source of truth for them. It is not restated here, because two copies drift.
+Organizer source material lives in `docs/source/`.
 
 ---
 
@@ -132,24 +131,12 @@ That is the failure mode to avoid.
 
 ## Repo Layout
 
-```
-docs/
-  README.md              GitHub-facing readme (the repo root has none by design)
-  brief.md               the hackathon in one page - the working reference
-  PRODUCT.md             who, why, the demo moment - written before implementation
-  PRD.md                 what: requirements, acceptance criteria, out of scope
-  TRD.md                 how: architecture, contracts, schemas. Canonical
-  DESIGN.md              the design system, once frontend work starts
-  source/                organizer material, verbatim and append-only
-  superpowers/research/  cited findings from concept exploration
-  demo/                  the pitch script, the deck, the PDF, and its assets
-.agents/skills/          committed, tool-agnostic skills (source of truth)
-.claude/skills/          symlinks into .agents/skills/, plus impeccable as a real dir
-.claude/agents/          pitch-smith
-.claude/hooks/           session brief, env drift, git guard, formatter
-```
+**The layout tree lives in [`docs/README.md`](docs/README.md#layout)**, because a
+reviewer must be able to read it without opening this file. Keep it there, not
+here.
 
-Source layout is not decided yet. Add it here when it is — do not pre-declare directories that do not exist.
+Source layout is not decided yet. Add it to that tree when it is — do not
+pre-declare directories that do not exist.
 
 ---
 
@@ -157,17 +144,15 @@ Source layout is not decided yet. Add it here when it is — do not pre-declare 
 
 Confirmed and installed:
 
-| Tool                                 | Role                                                                               |
-| ------------------------------------ | ---------------------------------------------------------------------------------- |
-| **Bun**                              | JS package manager and script runner (`bun install`, `bun run`, `bunx`)            |
-| **Biome**                            | Lint + format for JS/TS/JSON                                                       |
-| **Prettier**                         | Format for Markdown/YAML                                                           |
-| **TypeScript**                       | `tsc --noEmit` typecheck; strict, `noUncheckedIndexedAccess`                       |
-| **uv**                               | Python dependency + venv management, if and where Python is used                   |
-| **Ruff**                             | Python lint + format (line length 120, target py312)                               |
-| **commitlint + husky + lint-staged** | Conventional Commits enforced on `commit-msg`; staged files linted on `pre-commit` |
-| **graphify**                         | Knowledge graph over the codebase; `.graphifyignore` keeps docs and tooling out    |
-| **GonkaRouter**                      | The only permitted inference path (see Track Requirements)                         |
+| Tool                                 | Role                                                                                  |
+| ------------------------------------ | ------------------------------------------------------------------------------------- |
+| **Bun**                              | JS package manager and script runner (`bun install`, `bun run`, `bunx`)               |
+| **Biome**                            | Lint + format for JS/TS/JSON                                                          |
+| **Prettier**                         | Format for Markdown/YAML                                                              |
+| **TypeScript**                       | `tsc --noEmit` typecheck; strict, `noUncheckedIndexedAccess`                          |
+| **commitlint + husky + lint-staged** | Conventional Commits enforced on `commit-msg`; staged files linted on `pre-commit`    |
+| **graphify**                         | Optional, per-machine. Knowledge graph over the codebase; `.graphifyignore` scopes it |
+| **GonkaRouter**                      | The only permitted inference path (see Track Requirements)                            |
 
 **Application framework, database and hosting are not chosen yet.** They get chosen and justified in `docs/TRD.md`; this table stays an inventory of what is installed.
 
@@ -179,21 +164,24 @@ Confirmed and installed:
 bun install          # install dev tooling; also wires husky hooks
 bun run lint         # biome check .
 bun run format       # biome format --write . && prettier --write .
-bun run typecheck    # tsc --noEmit
-
-uv sync              # install Python deps (only once Python code exists)
-uv run ruff check .  # lint Python
+bun run typecheck    # tsc --noEmit, once src/ exists
 ```
 
-Knowledge-graph commands are in the Graphify appendix.
+There is no Python stack. If Python is chosen in `docs/TRD.md`, `uv init` sets one
+up; nothing is pre-configured for it. RTK and Graphify commands, both optional and
+per-machine, are in [`docs/agent-tooling.md`](docs/agent-tooling.md).
+
+These four also appear in [`docs/README.md`](docs/README.md#commands), which has to
+stand alone for a reviewer. That mirror is deliberate and the list is short and
+stable - if you change a script name, change it in both.
 
 ---
 
 ## CLI First, Always
 
 Reach for a CLI before a dashboard: `gh` for anything GitHub, `bun` for everything
-Node, `uv` for Python. Clicking through a dashboard leaves no trace, cannot be
-handed to a teammate, and cannot be repeated tomorrow.
+Node. Clicking through a dashboard leaves no trace, cannot be handed to a
+teammate, and cannot be repeated tomorrow.
 
 **If the CLI is missing, say so immediately and give the install command.** Do not
 route a human through the web UI as a workaround, and do not go quiet about it.
@@ -226,7 +214,7 @@ diff is exactly the thing that gets lost.
 - **Types:** No `any`; prefer `unknown` plus narrowing. Validate at system boundaries.
 - **Error handling:** Validate at boundaries; do not wrap internal framework calls in try/catch.
 - **Comments:** Default to none. Comment only when the _why_ is non-obvious. Never describe _what_ the code does.
-- **Changes are surgical.** See Karpathy guideline 3 in the appendix.
+- **Changes are surgical.** See [guideline 3](docs/coding-guidelines.md#3-surgical-changes).
 
 ---
 
@@ -445,16 +433,12 @@ that outlives the session does.
 `.claude/skills/` symlinks into it) plus `impeccable`. **Optional** - invoke one
 when the task matches, not as a checkpoint before every action.
 
-| Group                      | Skills                                                                                                                                                       | Reach For                                                                                        |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| **Hackathon** (7)          | `hackathon-idea-generator`, `-idea-scoring`, `-scope-cutter`, `-wow-detector`, `-demo-script`, `-judge-simulator`, `-shared-resources`                       | Concept selection, scope control, the demo and the pitch                                         |
-| **Business** (8)           | `startup-validator`, `competitor-analysis`, `strategy-red-team`, `value-proposition`, `jobs-to-be-done`, `beachhead-segment`, `lean-canvas`, `market-sizing` | Deciding whether a concept is worth building, and the deck's business sections                   |
-| **Superpowers** (14)       | `brainstorming`, `writing-plans`, `executing-plans`, `dispatching-parallel-agents`, `verification-before-completion`, `systematic-debugging`, and 8 more     | Process. Sets an approach before implementation carries it out                                   |
-| **Taste** (3)              | `design-taste-frontend`, `high-end-visual-design`, `image-to-code`                                                                                           | Frontend that does not look templated                                                            |
-| **Utility** (4)            | `diagnose`, `handoff`, `graphify`, `claude-in-chrome`                                                                                                        | Stuck bugs, context handoff, architecture questions, real-browser work                           |
-| **`.claude/skills/` only** | `impeccable`                                                                                                                                                 | Building and fixing an actual interface. Real directory, not a symlink - a hook points inside it |
+**The full inventory is in [`.agents/skills/VENDORED.md`](.agents/skills/VENDORED.md)**,
+grouped and annotated. It is not repeated here: every agentic tool already lists
+the skills it can see, with descriptions, so a second copy in this file is one
+more thing to keep in sync.
 
-Three things worth knowing before reaching for one:
+Three things worth knowing before reaching for one, none of which the listing tells you:
 
 - **`brainstorming` is not the ideation skill.** It shapes a build once a concept
   is locked. The eight business skills are what concept selection runs on.
@@ -484,18 +468,14 @@ already works. It does not touch `src/`, open issues, review PRs, or edit
 
 ## Hooks
 
-`.claude/settings.json` wires four guards. Each exits 0 on any internal failure -
-a broken guard must never wedge a session.
+Four guards are wired in `.claude/settings.json`. Each exits 0 on any internal
+failure - a broken guard must never wedge a session.
 
-| Hook               | Fires             | Does                                                                             |
-| ------------------ | ----------------- | -------------------------------------------------------------------------------- |
-| `session-brief.sh` | SessionStart      | Branch, uncommitted count, days to the deadline                                  |
-| `env-drift.mjs`    | SessionStart      | Reports a local `.env` disagreeing with `.env.example`. Names keys, never values |
-| `guard-git.sh`     | PreToolUse(Bash)  | Blocks direct and force pushes to `main`, and `git add .env`                     |
-| `format-edited.sh` | PostToolUse(Edit) | Biome-formats edited JS/TS. Silent, never blocks                                 |
+Only one of them can stop you: **`guard-git.sh` blocks a direct or force push to
+`main` and `git add .env`.** The other three are informational - the session
+brief, the `.env` drift report, and the Biome formatter on edited JS/TS.
 
-A fifth hook, `no-em-dash-or-emoji.mjs`, is present but **not wired** - see
-`VENDORED.md` for why and how to turn it on.
+What each does in full: [`.agents/skills/VENDORED.md`](.agents/skills/VENDORED.md#hooks).
 
 ---
 
@@ -509,161 +489,25 @@ Enforced locally by commitlint via the husky `commit-msg` hook. Commit when a un
 
 ---
 
-# Appendix: Reference Blocks
+# Appendix: Standing References
 
-The three blocks below are standing references, not the primary directives.
-**The sections above outrank them wherever they disagree.** One place they do is
-called out immediately below.
+Three reference blocks used to sit inline here. They are standing references, not
+primary directives, and reloading roughly 150 lines of them into every session
+cost more than it returned. **The sections above outrank them wherever they
+disagree.**
 
-<!-- andrej-karpathy-skills -->
+| Reference                               | Lives In                                                                           | Applies                                                                                             |
+| --------------------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| **Coding Guidelines (Andrej Karpathy)** | [`docs/coding-guidelines.md`](docs/coding-guidelines.md)                           | Always. Guideline 1 is overridden by **Proceed Without Asking** above - the file says so at the top |
+| **RTK (Rust Token Killer)**             | [`docs/agent-tooling.md`](docs/agent-tooling.md#rtk-rust-token-killer)             | Only if `which rtk` finds it                                                                        |
+| **Graphify (Codebase Knowledge Graph)** | [`docs/agent-tooling.md`](docs/agent-tooling.md#graphify-codebase-knowledge-graph) | Only if `which graphify` finds it, and only once there is real code                                 |
 
-# Coding Guidelines (Andrej Karpathy)
+The two rules from those blocks that change behaviour even when you do not open
+them:
 
-Behavioural guidelines that reduce common LLM coding mistakes, from
-[Karpathy's observations](https://x.com/karpathy/status/2015883857489522876).
-
-> **Where This Conflicts With Proceed Without Asking, That Section Wins.**
-> Guideline 1 below says to stop and ask when something is unclear. In this repo,
-> across a ten day build, you do not. Pick the reading that ships, state the
-> assumption, and keep going. Stop only for the six cases in **Stop And Ask Only
-> For These**. The rest of guideline 1 — surfacing tradeoffs and not hiding
-> confusion — still applies: say the assumption out loud, just do not wait on an
-> answer.
-
-## 1. Think Before Coding
-
-- State assumptions explicitly.
-- If multiple interpretations exist, say so, then pick one and proceed.
-- If a simpler approach exists, say so. Push back when warranted.
-
-## 2. Simplicity First
-
-Minimum code that solves the problem. Nothing speculative.
-
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No flexibility or configurability that was not requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
-
-Ask: would a senior engineer call this overcomplicated? If yes, simplify.
-
-## 3. Surgical Changes
-
-Touch only what you must. Clean up only your own mess.
-
-- Do not improve adjacent code, comments, or formatting.
-- Do not refactor what is not broken.
-- Match existing style even if you would do it differently.
-- Notice unrelated dead code? Mention it, do not delete it.
-- Remove imports and variables that **your** change orphaned. Leave pre-existing
-  dead code alone unless asked.
-
-The test: every changed line traces directly to what was asked.
-
-## 4. Goal-Driven Execution
-
-Turn tasks into verifiable goals, then loop until verified.
-
-- "Add validation" becomes "write tests for invalid inputs, then make them pass"
-- "Fix the bug" becomes "write a test that reproduces it, then make it pass"
-- "Refactor X" becomes "ensure tests pass before and after"
-
-Strong success criteria let you loop on your own. Weak criteria force check-ins,
-which is exactly the cost **Proceed Without Asking** exists to avoid.
-
-<!-- andrej-karpathy-skills -->
-
-<!-- rtk-instructions v2 -->
-
-# RTK (Rust Token Killer)
-
-## Golden Rule
-
-**Only if `rtk` is installed** (`which rtk`). Not every teammate has it. If it is
-missing, run commands directly and ignore this whole section.
-
-**Prefix commands with `rtk`.** If RTK has a filter for that command it uses it,
-otherwise it passes through unchanged. It is always safe to use.
-
-Use it inside chains too:
-
-```bash
-# Wrong
-git add . && git commit -m "msg" && git push
-
-# Correct
-rtk git add . && rtk git commit -m "msg" && rtk git push
-```
-
-## Commands That Matter Here
-
-```bash
-rtk git status / log / diff / add / commit / push    # 59 to 80 percent smaller
-rtk gh pr view <n> / pr checks / issue list          # 26 to 87 percent
-rtk tsc                                              # TS errors grouped by file
-rtk lint                                             # Biome violations grouped
-rtk bun run test                                     # failures only
-rtk ls / read / grep / find                          # 60 to 75 percent
-rtk err <cmd>                                        # errors only from any command
-rtk gain                                             # savings so far
-```
-
-Git and `gh` passthrough works for every subcommand, including ones not listed.
-
-`rtk` does not defeat the git guard. `.claude/hooks/guard-git.sh` matches on the
-command substring, so `rtk git push origin main` and `rtk git add .env` are both
-blocked exactly like their bare forms. Verified 2026-08-26.
-
-It **does** defeat the `permissions.deny` list in `.claude/settings.json`, which
-is prefix-matched: `Bash(git push --force*)` does not match `rtk git push
---force`. The hook is what actually stops that one, which is why both exist.
-
-<!-- rtk-instructions v2 -->
-
-<!-- graphify-instructions v1 -->
-
-# Graphify: Codebase Knowledge Graph
-
-## Golden Rule
-
-**Only if `graphify` is installed** (`which graphify`). Not every teammate has it.
-If it is missing, ignore this section and navigate the codebase normally.
-
-Graphify builds a persistent, queryable map of the project so you answer
-architecture questions from a compact graph instead of grepping and reading many
-files.
-
-## When to Use It
-
-If `graphify-out/graph.json` exists, treat architecture and relationship questions
-("how does X work", "what calls Y", "trace the data flow") as a **`graphify query`
-first**, before grep or read:
-
-```bash
-graphify query "how does the router client reach config"   # BFS over the graph
-graphify query "..." --budget 1500                          # cap the answer
-graphify path "GonkaClient" "loadConfig"                    # shortest path
-graphify explain "SomeNode"                                 # plain-language summary
-```
-
-Then drop to grep or Read for exact `file:line` evidence. **The graph gives you
-the file, not the line.**
-
-**Applies to every agent**, subagents included.
-
-## Building and Refreshing
-
-```bash
-graphify .              # first build, about a minute, roughly 6 cents
-graphify . --update     # incremental, after notable code changes
-```
-
-`graphify-out/` is derived and gitignored, so it is per-checkout and regenerating
-is on you. Scope is set by `.graphifyignore`, which excludes config, `docs/`,
-agent instructions and vendored skills — a graph full of prose and dependency
-entries dilutes every query run against it.
-
-**Not worth building on the bare scaffold.** Build it once there is real code.
-
-<!-- graphify-instructions v1 -->
+- **Changes are surgical.** Every changed line traces to what was asked. Do not
+  refactor, reformat, or improve adjacent code you were not sent to touch.
+- **`rtk` does not defeat the git guard, but it does defeat the deny list.**
+  `.claude/hooks/guard-git.sh` matches on the command substring, so
+  `rtk git push origin main` is blocked. The `permissions.deny` entries are
+  prefix-matched and are not. That is why both exist.
