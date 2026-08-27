@@ -17,13 +17,10 @@ dist/
 package.json
 bun.lock
 skills-lock.json
-pyproject.toml
-uv.lock
 tsconfig.json
 biome.json
 commitlint.config.js
 .prettierrc
-.python-version
 .env.example
 
 # Prose, not architecture. Most of docs/ is the brief, the organizer transcripts

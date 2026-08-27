@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "description": "Shared with all collaborators. Rapid-development posture: the allow list is deliberately broad so the harness does not stop to ask during the build sprint. Guards that remain: git guard blocks direct and force pushes to main and staging .env; env-drift reports a local .env disagreeing with the repo, naming keys never values; edited JS/TS is formatted; impeccable checks UI changes. Merging a PR and force-pushing stay denied because they are the two actions a human should own. The house-style guard at .claude/hooks/no-em-dash-or-emoji.mjs is present but NOT wired - see .agents/skills/VENDORED.md.",
+  "description": "Shared with all collaborators. Rapid-development posture: the allow list is deliberately broad so the harness does not stop to ask during the build sprint. Guards that remain: git guard blocks direct and force pushes to main and staging .env; env-drift reports a local .env disagreeing with the repo, naming keys never values; edited JS/TS is formatted; impeccable checks UI files as they are edited. Merging a PR and force-pushing stay denied because they are the two actions a human should own. The impeccable Stop hook (whole-session design pass) is deliberately absent until frontend work starts - see .agents/skills/VENDORED.md.",
   "hooks": {
     "SessionStart": [
       {
@@ -54,18 +54,6 @@
             "command": "[ ! -f \"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/hook.mjs\" ] || node \"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/hook.mjs\"",
             "timeout": 10,
             "statusMessage": "Checking UI changes"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ ! -f \"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/hook.mjs\" ] || node \"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/hook.mjs\"",
-            "timeout": 30,
-            "statusMessage": "Design deep pass"
           }
         ]
       }

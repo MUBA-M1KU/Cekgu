@@ -178,20 +178,42 @@ anyway. Already available globally if a task turns out to need real phase planni
 
 ## Hooks
 
-`.claude/hooks/` carries four wired guards plus one that is present but **not wired**.
+`.claude/hooks/` carries four guards. All four are wired, and each exits 0 on any
+internal failure so a broken guard can never wedge a session.
 
-| Hook | Event | Status |
-| ---- | ----- | ------ |
-| `session-brief.sh` | SessionStart | ✅ Wired. Prints branch, uncommitted count, days to deadline |
-| `env-drift.mjs` | SessionStart | ✅ Wired. Reports a local `.env` disagreeing with `.env.example`. Names keys, never values |
-| `guard-git.sh` | PreToolUse(Bash) | ✅ Wired. Blocks direct/force push to `main` and `git add .env` |
-| `format-edited.sh` | PostToolUse(Edit) | ✅ Wired. Biome-formats edited JS/TS. Silent, never blocks |
-| `no-em-dash-or-emoji.mjs` | PreToolUse(Edit) | ⚠️ **Present, not wired** |
+| Hook | Event | Does |
+| ---- | ----- | ---- |
+| `session-brief.sh` | SessionStart | Prints branch, uncommitted count, days to deadline |
+| `env-drift.mjs` | SessionStart | Reports a local `.env` disagreeing with `.env.example`. Names keys, never values |
+| `guard-git.sh` | PreToolUse(Bash) | Blocks direct/force push to `main` and `git add .env`. The only one that can stop you |
+| `format-edited.sh` | PostToolUse(Edit) | Biome-formats edited JS/TS. Silent, never blocks |
 
-**Why the house-style guard is off.** It refuses any edit that *introduces* an em
-dash or an emoji. The source repo runs plain-ASCII house style; every document in
-`docs/` here was written with em dashes and emoji as deliberate formatting, and the
-event brief leans on emoji as scan markers. Turning it on would block the next edit
-to any of them. To adopt it, first normalise `docs/`, then add a `PreToolUse` entry
-matching `Edit|Write|MultiEdit` to `.claude/settings.json`.
+A fifth hook shipped with the vendored set and has been **removed**:
+`no-em-dash-or-emoji.mjs`, which refused any edit introducing an em dash or an
+emoji. The source repo runs plain-ASCII house style. This repo does not: every
+document in `docs/` uses em dashes as deliberate formatting, the event brief leans
+on emoji as scan markers, and `AGENTS.md` itself never states such a rule. Keeping
+an unenforced guard for a style nobody follows was the worst of both. Recover it
+from git history if the house style is ever adopted for real.
+
+**The impeccable `Stop` hook is also deliberately absent.** `.claude/settings.json`
+wires impeccable's detector on `PostToolUse(Edit|Write|MultiEdit)`, where it
+self-filters to UI files. The `Stop` entry ran a whole-session design pass on every
+turn end, including sessions that touched no UI at all. Restore it when frontend
+work starts:
+
+```json
+"Stop": [
+  {
+    "hooks": [
+      {
+        "type": "command",
+        "command": "[ ! -f \"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/hook.mjs\" ] || node \"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/hook.mjs\"",
+        "timeout": 30,
+        "statusMessage": "Design deep pass"
+      }
+    ]
+  }
+]
+```
 
