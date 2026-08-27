@@ -272,6 +272,7 @@ gh issue close <n>                     # done
 - **Do not** create `docs/architecture.md` or a second README
 - **Do not** start implementation before `PRODUCT.md`, `PRD.md` and `TRD.md` all exist
 - **Do not** rewrite `docs/source/`. It is the verbatim record
+- **Do not** commit a path that only exists on your machine. `~/CS/...`, `/home/<you>/...`, `C:\Users\...`, `\\wsl.localhost\...` and scratch dirs under `/tmp` are invisible to everyone else. Name the tool, not your copy of it. Machine-independent locations like `~/.claude/` are fine
 - **Do not** edit `docs/demo/` outside the `pitch-smith` subagent. It owns those files
 - **Do not** burn GonkaRouter tokens on idle experimentation
 - **Do not** miss the Devfolio submission. No submission means no pitching
