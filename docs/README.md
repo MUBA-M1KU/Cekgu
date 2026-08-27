@@ -1,7 +1,6 @@
 # MUBA Blockchain Hackathon 2026, GonkaRouter Track
 
-Our entry to the **MUBA Blockchain Hackathon 2026**, in the
-**GonkaRouter - AI for Society** track.
+Our entry to the **MUBA Blockchain Hackathon 2026**, in the **GonkaRouter - AI for Society** track.
 
 |                         |                                                                                       |
 | ----------------------- | ------------------------------------------------------------------------------------- |
@@ -14,12 +13,10 @@ Our entry to the **MUBA Blockchain Hackathon 2026**, in the
 
 ## The One Rule That Governs Everything
 
-> **All AI reasoning must run through GonkaRouter** (`https://api.gonkarouter.io`).
-> A direct call to OpenAI, Anthropic or Gemini anywhere in the product path
-> disqualifies the entry.
+> **All AI reasoning must run through GonkaRouter** (`https://api.gonkarouter.io`). A direct call to OpenAI, Anthropic
+> or Gemini anywhere in the product path disqualifies the entry.
 
-Plus **two or more models cross-verifying**, and **Gonka Request IDs surfaced in
-the UI** for every inference step.
+Plus **two or more models cross-verifying**, and **Gonka Request IDs surfaced in the UI** for every inference step.
 
 ---
 
@@ -30,16 +27,15 @@ the UI** for every inference step.
 | [`brief.md`](brief.md)         | The whole hackathon: dates, rules, deliverables, judging, people |
 | [`../AGENTS.md`](../AGENTS.md) | Project instructions for agentic tools, and humans               |
 
-Work in progress lives in the
-[Issues board](https://github.com/MUBA-M1KU/dev/issues), not in a checklist here.
+Work in progress lives in the [Issues board](https://github.com/MUBA-M1KU/dev/issues), not in a checklist here.
 
 ### Source Material From The Organizers
 
-| File                                                                             | Source                                                            |
-| -------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| File                                                                             | Source                                                              |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | [`source/opening-ceremony-transcript.md`](source/opening-ceremony-transcript.md) | Opening ceremony, 26 Aug. Whisper transcript, cleaned and sectioned |
-| [`source/gonkarouter-challenge.md`](source/gonkarouter-challenge.md)             | Official track challenge doc                                      |
-| [`source/gonkarouter-tutorial.md`](source/gonkarouter-tutorial.md)               | GonkaRouter setup: API, models, client wiring, limits             |
+| [`source/gonkarouter-challenge.md`](source/gonkarouter-challenge.md)             | Official track challenge doc                                        |
+| [`source/gonkarouter-tutorial.md`](source/gonkarouter-tutorial.md)               | GonkaRouter setup: API, models, client wiring, limits               |
 
 ---
 
@@ -63,25 +59,24 @@ curl -s https://api.gonkarouter.io/v1/messages \
 
 | Command             | Does                               |
 | ------------------- | ---------------------------------- |
-| `bun run lint`      | Biome check                        |
-| `bun run format`    | Biome format, writing in place     |
+| `bun run lint`      | Biome check, then Prettier check   |
+| `bun run format`    | Both formatters, writing in place  |
 | `bun run typecheck` | `tsc --noEmit`, once `src/` exists |
 | `gh issue list`     | The TODO board                     |
 
-Biome covers JS, TS, JSON, CSS and HTML. **Markdown and YAML are not formatted by
-anything** since Prettier was removed, so match the surrounding style by hand.
+Biome covers JS, TS, JSON, CSS and HTML; Prettier covers the Markdown and YAML it cannot, wrapping prose at 120 to match
+`biome.json`'s `lineWidth`. There is no `.prettierignore`, so every Markdown file is formatted, `docs/source/` and the
+vendored skills included. Only the contents of fenced code blocks are left alone.
 
 ---
 
 ## How Work Ships
 
-**`main` is PR-gated.** Branch as `<type>/<slug>`, open a PR with `gh pr create`,
-merge with `gh pr merge --squash --delete-branch`. A human merges; nobody merges
-their own PR.
+**`main` is PR-gated.** Branch as `<type>/<slug>`, open a PR with `gh pr create`, merge with
+`gh pr merge --squash --delete-branch`. A human merges; nobody merges their own PR.
 
-**Implementation is gated on three docs.** `PRODUCT.md` (who and why), `PRD.md`
-(what, and what is out of scope) and `TRD.md` (how) must all exist before build
-work starts. `DESIGN.md` joins them when frontend work does.
+**Implementation is gated on three docs.** `PRODUCT.md` (who and why), `PRD.md` (what, and what is out of scope) and
+`TRD.md` (how) must all exist before build work starts. `DESIGN.md` joins them when frontend work does.
 
 ---
 
@@ -106,10 +101,9 @@ docs/
 .claude/hooks/           session brief, env drift, git guard, formatter
 ```
 
-`PRODUCT.md`, `PRD.md`, `TRD.md` and `DESIGN.md` are listed but **not written
-yet**. Source layout is not decided; add it here when it is.
+`PRODUCT.md`, `PRD.md`, `TRD.md` and `DESIGN.md` are listed but **not written yet**. Source layout is not decided; add
+it here when it is.
 
-Skill provenance and what each hook does:
-[`../.agents/skills/VENDORED.md`](../.agents/skills/VENDORED.md).
+Skill provenance and what each hook does: [`../.agents/skills/VENDORED.md`](../.agents/skills/VENDORED.md).
 
 The repo root deliberately has **no README**. It lives here.
