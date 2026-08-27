@@ -1,11 +1,8 @@
-# Keep the knowledge graph focused on our code. Merged with .gitignore (! re-includes).
-#
-# Config churn drowns real architecture: on the bare scaffold a first run comes out
-# mostly package.json / tsconfig / biome entries. Excluded on purpose.
+# Scopes the knowledge graph to our code. Merged with .gitignore; ! re-includes.
+# Config and prose drown real architecture, so both are excluded.
 
 .agents/
 .claude/
-.codex/
 .github/
 .husky/
 graphify-out/
@@ -13,41 +10,18 @@ node_modules/
 dist/
 /agent/
 
-# Config noise
-package.json
-bun.lock
-skills-lock.json
-tsconfig.json
-biome.json
-commitlint.config.js
-.prettierrc
-.env.example
-
-# Prose, not architecture. Most of docs/ is the brief, the organizer transcripts
-# and the research log - none of it describes how the code fits together.
-# docs/* rather than docs/, so the ! lines below can re-include specific files.
-docs/*
-!docs/TRD.md
+*.json
+*.md
 !docs/PRODUCT.md
 !docs/PRD.md
+!docs/TRD.md
 !docs/DESIGN.md
-AGENTS.md
-CLAUDE.md
-GEMINI.md
-RTK.md
-LICENSE
-.cursorrules
-.windsurfrules
 
-# Nested READMEs are conventions, not architecture.
-README.md
+biome.json
+commitlint.config.js
+tsconfig.json
 
-# Binaries and media
 *.pdf
-*.mp4
-*.mp3
-*.wav
-*.m4a
 *.png
 *.jpg
 *.jpeg
@@ -55,5 +29,8 @@ README.md
 *.webp
 *.svg
 *.ico
+*.mp3
+*.mp4
+*.wav
+*.m4a
 assets/
-public/assets/
