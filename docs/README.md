@@ -1,48 +1,53 @@
-# MUBA Blockchain Hackathon 2026 — GonkaRouter Track
+# MUBA Blockchain Hackathon 2026, GonkaRouter Track
 
-Workspace for our entry to the **MUBA Blockchain Hackathon 2026**, competing in the
-**GonkaRouter — AI for Society** track.
+Our entry to the **MUBA Blockchain Hackathon 2026**, in the
+**GonkaRouter - AI for Society** track.
 
 |                         |                                                                                       |
 | ----------------------- | ------------------------------------------------------------------------------------- |
 | **Submission deadline** | 5 September 2026, 23:59 MYT ([Devfolio](https://muba-hackathon.devfolio.co/overview)) |
-| **Demo Day**            | 6 September 2026 — APU, physical attendance required                                  |
+| **Demo Day**            | 6 September 2026, APU, physical attendance required                                   |
 | **Track prize**         | 1,200 USDT (1st) · 800 USDT (2nd)                                                     |
-| **Status**              | 📋 Concept not locked — application stack not chosen                                  |
+| **Status**              | Concept not locked, application stack not chosen                                      |
 
 ---
 
 ## The One Rule That Governs Everything
 
 > **All AI reasoning must run through GonkaRouter** (`https://api.gonkarouter.io`).
-> A direct call to OpenAI, Anthropic or Gemini anywhere in the product path disqualifies the entry.
+> A direct call to OpenAI, Anthropic or Gemini anywhere in the product path
+> disqualifies the entry.
 
-Plus: **≥2 models cross-verifying**, and **Gonka Request IDs surfaced in the UI** for every inference step.
+Plus **two or more models cross-verifying**, and **Gonka Request IDs surfaced in
+the UI** for every inference step.
 
 ---
 
 ## Start Here
 
-| File                           | What's In It                                                                  |
-| ------------------------------ | ----------------------------------------------------------------------------- |
-| **[`brief.md`](brief.md)**     | The whole hackathon in one page — dates, rules, deliverables, judging, people |
-| [`../AGENTS.md`](../AGENTS.md) | Project instructions for agentic tools (and humans)                           |
+| File                           | What's In It                                                     |
+| ------------------------------ | ---------------------------------------------------------------- |
+| [`brief.md`](brief.md)         | The whole hackathon: dates, rules, deliverables, judging, people |
+| [`../AGENTS.md`](../AGENTS.md) | Project instructions for agentic tools, and humans               |
+
+Work in progress lives in the
+[Issues board](https://github.com/MUBA-M1KU/dev/issues), not in a checklist here.
 
 ### Source Material From The Organizers
 
-| File                                                                             | Source                                                             |
-| -------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| [`source/opening-ceremony-transcript.md`](source/opening-ceremony-transcript.md) | Opening ceremony, 26 Aug — Whisper transcript, cleaned & sectioned |
-| [`source/gonkarouter-challenge.md`](source/gonkarouter-challenge.md)             | Official track challenge doc                                       |
-| [`source/gonkarouter-tutorial.md`](source/gonkarouter-tutorial.md)               | GonkaRouter setup — API, models, client wiring, limits             |
+| File                                                                             | Source                                                            |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| [`source/opening-ceremony-transcript.md`](source/opening-ceremony-transcript.md) | Opening ceremony, 26 Aug. Whisper transcript, cleaned and sectioned |
+| [`source/gonkarouter-challenge.md`](source/gonkarouter-challenge.md)             | Official track challenge doc                                      |
+| [`source/gonkarouter-tutorial.md`](source/gonkarouter-tutorial.md)               | GonkaRouter setup: API, models, client wiring, limits             |
 
 ---
 
 ## Getting Started
 
 ```bash
-bun install                  # dev tooling + husky hooks
-cp .env.example .env         # then paste your GonkaRouter sk-… key
+bun install                  # dev tooling and the husky git hooks
+cp .env.example .env         # then paste your GonkaRouter key
 ```
 
 Verify the gateway before writing any code:
@@ -56,25 +61,27 @@ curl -s https://api.gonkarouter.io/v1/messages \
        "messages":[{"role":"user","content":"Reply with just: pong"}]}'
 ```
 
-### Commands
+| Command             | Does                               |
+| ------------------- | ---------------------------------- |
+| `bun run lint`      | Biome check                        |
+| `bun run format`    | Biome format, writing in place     |
+| `bun run typecheck` | `tsc --noEmit`, once `src/` exists |
+| `gh issue list`     | The TODO board                     |
 
-| Command               | Does                               |
-| --------------------- | ---------------------------------- |
-| `bun run lint`        | Biome check                        |
-| `bun run format`      | Biome + Prettier write             |
-| `bun run typecheck`   | `tsc --noEmit`                     |
-| `uv sync`             | Python deps                        |
-| `uv run ruff check .` | Python lint                        |
-| `graphify .`          | Build the codebase knowledge graph |
+Biome covers JS, TS, JSON, CSS and HTML. **Markdown and YAML are not formatted by
+anything** since Prettier was removed, so match the surrounding style by hand.
+
+---
+
+## How Work Ships
 
 **`main` is PR-gated.** Branch as `<type>/<slug>`, open a PR with `gh pr create`,
-merge with `gh pr merge --squash --delete-branch`. **TODOs live in the Issues tab**
-(`gh issue list`), not in a markdown checklist.
+merge with `gh pr merge --squash --delete-branch`. A human merges; nobody merges
+their own PR.
 
 **Implementation is gated on three docs.** `PRODUCT.md` (who and why), `PRD.md`
-(what, and what is out of scope) and `TRD.md` (how) must all exist before any
-build work starts. `DESIGN.md` joins them when frontend work does. See
-[`../AGENTS.md`](../AGENTS.md).
+(what, and what is out of scope) and `TRD.md` (how) must all exist before build
+work starts. `DESIGN.md` joins them when frontend work does.
 
 ---
 
@@ -82,27 +89,27 @@ build work starts. `DESIGN.md` joins them when frontend work does. See
 
 ```
 docs/
-  README.md              this file - the GitHub-facing readme
-  brief.md               hackathon facts - the working reference
-  source/                organizer material (append-only record)
+  README.md              this file, the GitHub-facing readme
+  brief.md               hackathon facts, the single source of truth
+  PRODUCT.md             who, why, the demo moment
+  PRD.md                 what: requirements, acceptance criteria, out of scope
+  TRD.md                 how: architecture, contracts, schemas. Canonical
+  DESIGN.md              the design system, once frontend work starts
+  coding-guidelines.md   behavioural coding rules, referenced by AGENTS.md
+  agent-tooling.md       rtk and graphify, both optional and per-machine
+  source/                organizer material, append-only
   superpowers/research/  cited findings from concept exploration
-  demo/                  pitch script, deck template, assets
-.agents/skills/          36 skills (committed source of truth)
+  demo/                  pitch script, deck, assets
+.agents/skills/          36 skills, the committed source of truth
 .claude/skills/          symlinks into .agents/skills/, plus impeccable as a real dir
 .claude/agents/          pitch-smith
 .claude/hooks/           session brief, env drift, git guard, formatter
 ```
 
-Skill provenance and what each hook does: [`../.agents/skills/VENDORED.md`](../.agents/skills/VENDORED.md).
+`PRODUCT.md`, `PRD.md`, `TRD.md` and `DESIGN.md` are listed but **not written
+yet**. Source layout is not decided; add it here when it is.
 
-The repo root deliberately has **no README** — it lives here.
+Skill provenance and what each hook does:
+[`../.agents/skills/VENDORED.md`](../.agents/skills/VENDORED.md).
 
----
-
-## Next Up
-
-- [ ] Register the team on [Devfolio](https://muba-hackathon.devfolio.co/overview) · everyone submits LinkedIn for verification
-- [ ] Join the Discord GonkaRouter track channel
-- [ ] **GonkaRouter workshop — 27 Aug, 9 PM** · [join on Teams](https://teams.microsoft.com/meet/433187713146886?p=sv72xzbv19gF5r8p3V)
-- [ ] Create an API key, run the smoke test above
-- [ ] Lock the concept → record the application stack in `../AGENTS.md`
+The repo root deliberately has **no README**. It lives here.
