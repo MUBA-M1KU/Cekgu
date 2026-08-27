@@ -433,6 +433,7 @@ that outlives the session does.
 - **Do not** create `docs/architecture.md` or a second README. Architecture lives in `docs/TRD.md`; the README lives at `docs/README.md`.
 - **Do not** start implementation before `docs/PRODUCT.md`, `docs/PRD.md` and `docs/TRD.md` all exist.
 - **Do not** rewrite `docs/source/` transcripts. They are the verbatim record.
+- **Do not** commit a path that only exists on your machine. `~/CS/...`, `/home/<you>/...`, `C:\Users\...`, `\\wsl.localhost\...` and scratch dirs under `/tmp` are all invisible to everyone else. Name the tool, not your copy of it. Standard, machine-independent locations like `~/.claude/` or `~/.codex/` are fine.
 - **Do not** edit `docs/demo/` outside the `pitch-smith` subagent. It owns those files.
 - **Do not** burn GonkaRouter tokens on idle experimentation.
 - **Do not** miss the Devfolio submission. No submission = disqualified from pitching, no exceptions.

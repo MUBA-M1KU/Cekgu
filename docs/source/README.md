@@ -17,7 +17,8 @@ disagree.
 - **One file per session or artifact.** Name it `<topic>.md`, or
   `<topic>-<YYYY-MM-DD>.md` when the same source recurs.
 - **Head every file with its provenance**: what the source was, how it was
-  captured, and when.
+  captured, and when. **Name the tool, not your path to it** - a
+  teammate does not have your `~/CS/...` or `C:\Users\...` layout.
 - **Transcribe, do not summarise.** Summaries belong in `docs/brief.md`.
 - **Mark uncertain audio as `[inaudible]`** rather than guessing. Where an ASR
   pass mangles proper nouns, record the corrections in a key rather than silently

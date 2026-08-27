@@ -1,7 +1,7 @@
 # Opening Ceremony — Transcript
 
 > **Source** — local recording `2026-08-26 19-55-18.mp4` (OBS capture, 1h 06m 07s).
-> **Method** — audio extracted with ffmpeg → OpenAI Whisper `small` on GPU via `~/CS/whisper-transcriber`, `language=en`.
+> **Method** — audio extracted with `ffmpeg`, transcribed with OpenAI Whisper (`small`, `language=en`) on GPU. Reproduce with any Whisper wrapper; the model and language are what matter.
 > **Editing** — timestamps preserved; filler and dead air trimmed; ASR-mangled proper nouns corrected (see key below).
 > Transcribed 2026-08-26.
 
