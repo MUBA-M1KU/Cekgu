@@ -20,6 +20,7 @@ dist/
 biome.json
 commitlint.config.js
 tsconfig.json
+.env.example
 
 *.pdf
 *.png
