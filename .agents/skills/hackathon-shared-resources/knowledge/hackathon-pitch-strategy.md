@@ -1,6 +1,7 @@
 # Hackathon Pitch Strategy
 
-Guidelines for constructing and delivering an effective hackathon pitch that persuades judges within strict time constraints.
+Guidelines for constructing and delivering an effective hackathon pitch that persuades judges within strict time
+constraints.
 
 ---
 

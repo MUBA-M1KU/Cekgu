@@ -1,6 +1,8 @@
 # Designing Hackathon Pitch Decks with React (Genspark Style)
 
-Instead of using traditional PowerPoint or Google Slides, top hackathon teams in 2026 build **interactive, web-based slide decks** using React. This approach allows you to run a working mock application or code preview directly inside your slides (similar to Genspark AI's interactive layout).
+Instead of using traditional PowerPoint or Google Slides, top hackathon teams in 2026 build **interactive, web-based
+slide decks** using React. This approach allows you to run a working mock application or code preview directly inside
+your slides (similar to Genspark AI's interactive layout).
 
 This guide details how to structure and style your React-based pitch deck.
 
@@ -8,10 +10,14 @@ This guide details how to structure and style your React-based pitch deck.
 
 ## Design Principles (Genspark Style)
 
-1. **Integrated Live Sandbox:** Embed interactive prototypes or mock UI interfaces right into the slide container. Judges can click and interact with your features without you switching tabs.
-2. **Glassmorphism & Bento Layouts:** Use semi-transparent dark cards with subtle borders (`backdrop-filter: blur()`), glowing gradients, and grid-based layouts to present data.
-3. **Smooth Micro-Animations:** Transition between slides with CSS transforms or Framer Motion to make the deck feel like a premium SaaS product.
-4. **Dynamic Side Panel:** Keep slide control keys, timeline, and speaker notes/transcript in a collapsible sidebar or fixed HUD overlay.
+1. **Integrated Live Sandbox:** Embed interactive prototypes or mock UI interfaces right into the slide container.
+   Judges can click and interact with your features without you switching tabs.
+2. **Glassmorphism & Bento Layouts:** Use semi-transparent dark cards with subtle borders (`backdrop-filter: blur()`),
+   glowing gradients, and grid-based layouts to present data.
+3. **Smooth Micro-Animations:** Transition between slides with CSS transforms or Framer Motion to make the deck feel
+   like a premium SaaS product.
+4. **Dynamic Side Panel:** Keep slide control keys, timeline, and speaker notes/transcript in a collapsible sidebar or
+   fixed HUD overlay.
 
 ---
 

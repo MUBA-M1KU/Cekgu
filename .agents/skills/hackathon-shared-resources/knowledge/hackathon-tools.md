@@ -1,6 +1,7 @@
 # Hackathon Tools
 
-Recommended tools for rapid development during hackathons, organized by category. All tools listed prioritize speed of setup over production maturity.
+Recommended tools for rapid development during hackathons, organized by category. All tools listed prioritize speed of
+setup over production maturity.
 
 ---
 
@@ -16,7 +17,8 @@ Recommended tools for rapid development during hackathons, organized by category
 | **Hugging Face Inference API** | Specialized models (NLP, vision, audio)                | <20 min    |
 | **LangChain / LlamaIndex**     | RAG pipelines, memory, agent frameworks                | <30 min    |
 
-**Hackathon tip:** Use OpenAI or Anthropic for their reliability. Use Groq when response latency matters for the demo experience.
+**Hackathon tip:** Use OpenAI or Anthropic for their reliability. Use Groq when response latency matters for the demo
+experience.
 
 ---
 
@@ -30,7 +32,8 @@ Recommended tools for rapid development during hackathons, organized by category
 | **Next.js API Routes** | TypeScript | Combined frontend/backend in one project   | <15 min    |
 | **Hono**               | TypeScript | Edge-native APIs, Cloudflare Workers       | <10 min    |
 
-**Hackathon tip:** FastAPI for Python-heavy teams (ML integration is easiest). Next.js API routes for JS teams (eliminates a separate backend repo).
+**Hackathon tip:** FastAPI for Python-heavy teams (ML integration is easiest). Next.js API routes for JS teams
+(eliminates a separate backend repo).
 
 ---
 
@@ -44,7 +47,8 @@ Recommended tools for rapid development during hackathons, organized by category
 | **Gradio**              | AI model demos; instant UI for ML models                      | <5 min     |
 | **Expo (React Native)** | Mobile demos on iOS/Android                                   | <20 min    |
 
-**Hackathon tip:** Streamlit and Gradio are game-changers for AI/ML teams with no frontend experience. A Streamlit app demoed on a laptop beats a half-finished React app every time.
+**Hackathon tip:** Streamlit and Gradio are game-changers for AI/ML teams with no frontend experience. A Streamlit app
+demoed on a laptop beats a half-finished React app every time.
 
 ---
 
@@ -59,7 +63,8 @@ Recommended tools for rapid development during hackathons, organized by category
 | **Pinecone**           | Vector DB           | Semantic search, RAG pipelines            | <20 min    |
 | **ChromaDB**           | Vector DB (local)   | Local RAG without cloud API               | <10 min    |
 
-**Hackathon tip:** Redis for anything that needs to persist across requests. SQLite for simple structured data. Pinecone or ChromaDB if the demo involves semantic search.
+**Hackathon tip:** Redis for anything that needs to persist across requests. SQLite for simple structured data. Pinecone
+or ChromaDB if the demo involves semantic search.
 
 ---
 
@@ -75,7 +80,8 @@ Recommended tools for rapid development during hackathons, organized by category
 | **Hugging Face Spaces** | Gradio / Streamlit apps                     | Yes       | <10 min     |
 | **Cloudflare Pages**    | Static sites + Workers                      | Yes       | <10 min     |
 
-**Hackathon tip:** Railway is the fastest path from "runs locally" to "runs on a URL." Use it as the default unless a sponsor offers credits elsewhere.
+**Hackathon tip:** Railway is the fastest path from "runs locally" to "runs on a URL." Use it as the default unless a
+sponsor offers credits elsewhere.
 
 ---
 
@@ -89,7 +95,8 @@ Recommended tools for rapid development during hackathons, organized by category
 | **NextAuth.js**       | Auth for Next.js apps                    | <15 min    |
 | **Hardcoded session** | Skip auth for demo; one user only        | <1 min     |
 
-**Hackathon tip:** Skip auth unless it is part of the demo. Use a hardcoded demo session. Auth is almost never worth the time cost in a hackathon.
+**Hackathon tip:** Skip auth unless it is part of the demo. Use a hardcoded demo session. Auth is almost never worth the
+time cost in a hackathon.
 
 ---
 
@@ -115,7 +122,8 @@ Recommended tools for rapid development during hackathons, organized by category
 | **Tailwind CSS** | Any       | Utility-first styling, no design needed        | <5 min     |
 | **DaisyUI**      | Tailwind  | Pre-built Tailwind component themes            | <5 min     |
 
-**Hackathon tip:** shadcn/ui + Tailwind is the fastest path to a polished-looking UI for React teams. Copy the components you need; don't install what you don't.
+**Hackathon tip:** shadcn/ui + Tailwind is the fastest path to a polished-looking UI for React teams. Copy the
+components you need; don't install what you don't.
 
 ---
 
@@ -157,13 +165,15 @@ Recommended tools for rapid development during hackathons, organized by category
 | **Bolt.new** | Instant browser-based app scaffolding   | <5 min           |
 | **Canva**    | Pitch deck design, social graphics      | <5 min           |
 
-**Hackathon tip:** v0.dev can generate a passable starting UI component from a text description in under 2 minutes. Use it to unblock frontend development while the backend is being built.
+**Hackathon tip:** v0.dev can generate a passable starting UI component from a text description in under 2 minutes. Use
+it to unblock frontend development while the backend is being built.
 
 ---
 
 ## Recommended Hackathon Stack
 
-This stack is optimized for three things: minimal infrastructure setup time, fast deployment, and reliable live demos. It can be fully operational within 30 minutes from a blank project.
+This stack is optimized for three things: minimal infrastructure setup time, fast deployment, and reliable live demos.
+It can be fully operational within 30 minutes from a blank project.
 
 ### Frontend — Vercel
 
@@ -200,7 +210,8 @@ Use one or more of the following depending on model requirements:
 | **Nvidia NIM** | GPU-accelerated inference for open models   | Low                | Yes (trial)   |
 
 - **Groq:** Use when demo UX depends on near-instant LLM responses (chat, autocomplete, real-time suggestions)
-- **OpenRouter:** Use when model flexibility is needed or sponsor requires a specific model; one API key routes to any provider
+- **OpenRouter:** Use when model flexibility is needed or sponsor requires a specific model; one API key routes to any
+  provider
 - **Nvidia NIM:** Use when running open-weight models (Llama, Mistral) with high throughput requirements
 
 ### Stack Summary
@@ -230,4 +241,5 @@ Use one or more of the following depending on model requirements:
 
 **Total stack operational:** ~20–30 minutes from scratch
 
-**Reference architecture:** See `knowledge/hackathon-reference-architecture.md` for a detailed request flow diagram and implementation notes.
+**Reference architecture:** See `knowledge/hackathon-reference-architecture.md` for a detailed request flow diagram and
+implementation notes.

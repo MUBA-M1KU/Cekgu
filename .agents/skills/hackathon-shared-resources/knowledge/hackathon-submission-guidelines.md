@@ -1,6 +1,7 @@
 # Hackathon Submission Guidelines
 
-Best practices for writing, assembling, and submitting a hackathon project that scores well on both automated platform review and human judge evaluation.
+Best practices for writing, assembling, and submitting a hackathon project that scores well on both automated platform
+review and human judge evaluation.
 
 ---
 

@@ -1,16 +1,12 @@
 # Pitch Deck Outline: [Project Name]
 
-**Hackathon:** [Name]
-**Track:** [Track name]
-**Pitch duration:** [X] minutes
-**Team:** [Team name]
+**Hackathon:** [Name] **Track:** [Track name] **Pitch duration:** [X] minutes **Team:** [Team name]
 
 ---
 
 ## Slide 1: Hook / Opening
 
-**Type:** Hook
-**Time budget:** 15 seconds
+**Type:** Hook **Time budget:** 15 seconds
 
 **Content:**
 
@@ -25,8 +21,7 @@
 
 ## Slide 2: Problem
 
-**Type:** Problem
-**Time budget:** 20–30 seconds
+**Type:** Problem **Time budget:** 20–30 seconds
 
 **Content:**
 
@@ -43,8 +38,7 @@
 
 ## Slide 3: Solution
 
-**Type:** Solution
-**Time budget:** 15–20 seconds
+**Type:** Solution **Time budget:** 15–20 seconds
 
 **Content:**
 
@@ -60,8 +54,7 @@
 
 ## Slide 4: Live Demo
 
-**Type:** Demo
-**Time budget:** [60–120 seconds depending on pitch length]
+**Type:** Demo **Time budget:** [60–120 seconds depending on pitch length]
 
 **Content:**
 
@@ -76,15 +69,14 @@
 
 **Speaker note:**
 
-> [Narrate outcomes, not clicks. Slow down at the wow moment.]
-> [Recovery if demo fails: "As you can see in this recording..."]
+> [Narrate outcomes, not clicks. Slow down at the wow moment.] [Recovery if demo fails: "As you can see in this
+> recording..."]
 
 ---
 
 ## Slide 5: How It Works (Technology)
 
-**Type:** Technology
-**Time budget:** 15–20 seconds
+**Type:** Technology **Time budget:** 15–20 seconds
 
 **Content:**
 
@@ -100,8 +92,7 @@
 
 ## Slide 6: Impact / Vision
 
-**Type:** Vision
-**Time budget:** 15–20 seconds
+**Type:** Vision **Time budget:** 15–20 seconds
 
 **Content:**
 
@@ -117,8 +108,7 @@
 
 ## Slide 7: Team
 
-**Type:** Team
-**Time budget:** 10–15 seconds
+**Type:** Team **Time budget:** 10–15 seconds
 
 **Content:**
 
@@ -134,8 +124,7 @@
 
 ## Slide 8: Call to Action / Close
 
-**Type:** CTA
-**Time budget:** 10 seconds
+**Type:** CTA **Time budget:** 10 seconds
 
 **Content:**
 

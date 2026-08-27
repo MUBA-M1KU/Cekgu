@@ -1,18 +1,16 @@
 # Coding Guidelines (Andrej Karpathy)
 
-Standing reference, moved out of `AGENTS.md` so it is not reloaded into every
-session. **`AGENTS.md` outranks this file wherever they disagree**, and the
-callout below is where they actually do.
+Standing reference, moved out of `AGENTS.md` so it is not reloaded into every session. **`AGENTS.md` outranks this file
+wherever they disagree**, and the callout below is where they actually do.
 
 Behavioural guidelines that reduce common LLM coding mistakes, from
 [Karpathy's observations](https://x.com/karpathy/status/2015883857489522876).
 
-> **Where this conflicts with [How To Work](../AGENTS.md#how-to-work), that section wins.**
-> Guideline 1 says to stop and ask when something is unclear. In this repo, across
-> a ten day build, you do not. Pick the reading that ships, state the assumption,
-> and keep going. Stop only for the six cases in **Stop and ask only for these**.
-> The rest of guideline 1, surfacing tradeoffs and not hiding confusion, still
-> applies: say the assumption out loud, just do not wait on an answer.
+> **Where this conflicts with [How To Work](../AGENTS.md#how-to-work), that section wins.** Guideline 1 says to stop and
+> ask when something is unclear. In this repo, across a ten day build, you do not. Pick the reading that ships, state
+> the assumption, and keep going. Stop only for the six cases in **Stop and ask only for these**. The rest of guideline
+> 1, surfacing tradeoffs and not hiding confusion, still applies: say the assumption out loud, just do not wait on an
+> answer.
 
 ## 1. Think Before Coding
 
@@ -40,8 +38,7 @@ Touch only what you must. Clean up only your own mess.
 - Do not refactor what is not broken.
 - Match existing style even if you would do it differently.
 - Notice unrelated dead code? Mention it, do not delete it.
-- Remove imports and variables that **your** change orphaned. Leave pre-existing
-  dead code alone unless asked.
+- Remove imports and variables that **your** change orphaned. Leave pre-existing dead code alone unless asked.
 
 The test: every changed line traces directly to what was asked.
 
@@ -53,5 +50,5 @@ Turn tasks into verifiable goals, then loop until verified.
 - "Fix the bug" becomes "write a test that reproduces it, then make it pass"
 - "Refactor X" becomes "ensure tests pass before and after"
 
-Strong success criteria let you loop on your own. Weak criteria force check-ins,
-which is exactly the cost **Proceed Without Asking** exists to avoid.
+Strong success criteria let you loop on your own. Weak criteria force check-ins, which is exactly the cost **Proceed
+Without Asking** exists to avoid.

@@ -1,10 +1,7 @@
 # PRD: [Project Name]
 
-**Version:** 1.0
-**Date:** YYYY-MM-DD
-**Authors:** [Team members]
-**Status:** [Draft | Final]
-**Hackathon:** [Hackathon name and track]
+**Version:** 1.0 **Date:** YYYY-MM-DD **Authors:** [Team members] **Status:** [Draft | Final] **Hackathon:** [Hackathon
+name and track]
 
 ---
 

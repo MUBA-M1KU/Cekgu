@@ -6,31 +6,30 @@ description: >-
 
 > ## This Event
 >
-> This skill was vendored from a prior hackathon repo and **retargeted**. The
-> generic method below is unchanged; these are the real constraints. Where the
-> body still names another event's rules, this block wins.
+> This skill was vendored from a prior hackathon repo and **retargeted**. The generic method below is unchanged; these
+> are the real constraints. Where the body still names another event's rules, this block wins.
 >
-> | | |
-> | --- | --- |
-> | **Event** | MUBA Blockchain Hackathon 2026 |
-> | **Track** | GonkaRouter - AI for Society |
-> | **Build window** | 26 Aug to 5 Sept 2026, ~10 days, remote |
-> | **Submission** | Devfolio by 5 Sept, 23:59 MYT. No submission = disqualified |
-> | **Deliverables** | Pitch deck, GitHub repo, socials link, deployed URL, MVP video (~2 min) |
-> | **Demo Day** | 6 Sept, APU, physical. 5 min pitch + 5 min Q&A |
-> | **Rubric** | Technical Implementation 30 / Practicality & Impact 30 / Presentation & Clarity 20 / UX & Design 10 / Originality |
-> | **Track rules** | All inference through GonkaRouter; >= 2 models cross-verifying; Gonka Request IDs shown per step |
+> |                  |                                                                                                                   |
+> | ---------------- | ----------------------------------------------------------------------------------------------------------------- |
+> | **Event**        | MUBA Blockchain Hackathon 2026                                                                                    |
+> | **Track**        | GonkaRouter - AI for Society                                                                                      |
+> | **Build window** | 26 Aug to 5 Sept 2026, ~10 days, remote                                                                           |
+> | **Submission**   | Devfolio by 5 Sept, 23:59 MYT. No submission = disqualified                                                       |
+> | **Deliverables** | Pitch deck, GitHub repo, socials link, deployed URL, MVP video (~2 min)                                           |
+> | **Demo Day**     | 6 Sept, APU, physical. 5 min pitch + 5 min Q&A                                                                    |
+> | **Rubric**       | Technical Implementation 30 / Practicality & Impact 30 / Presentation & Clarity 20 / UX & Design 10 / Originality |
+> | **Track rules**  | All inference through GonkaRouter; >= 2 models cross-verifying; Gonka Request IDs shown per step                  |
 >
-> **There is no on-site rebuild.** Any instruction about a 2-hour rebuild, a
-> 1080x1080 poster, community voting, a Qwen model, or a Creativity 50 /
-> Presentation 30 / Qwen Integration 20 rubric belongs to a different event and
-> does not apply. Full rules: `docs/brief.md`.
+> **There is no on-site rebuild.** Any instruction about a 2-hour rebuild, a 1080x1080 poster, community voting, a Qwen
+> model, or a Creativity 50 / Presentation 30 / Qwen Integration 20 rubric belongs to a different event and does not
+> apply. Full rules: `docs/brief.md`.
 
 # hackathon-wow-detector
 
 ## Goal
 
-Identify and amplify the single strongest wow-factor moment in a hackathon project, ensuring it is front-loaded in the demo and pitch for maximum judge impact.
+Identify and amplify the single strongest wow-factor moment in a hackathon project, ensuring it is front-loaded in the
+demo and pitch for maximum judge impact.
 
 ---
 

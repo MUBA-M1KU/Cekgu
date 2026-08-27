@@ -1,6 +1,7 @@
 # Hackathon MVP Strategy
 
-The MVP-first principle for hackathon development: ship the smallest thing that demonstrates real value and survives a live demo.
+The MVP-first principle for hackathon development: ship the smallest thing that demonstrates real value and survives a
+live demo.
 
 ---
 
@@ -8,7 +9,8 @@ The MVP-first principle for hackathon development: ship the smallest thing that 
 
 > Ship the demonstration of value, not the product.
 
-A hackathon MVP is not a minimum viable product in the startup sense. It is the minimum demonstrable proof of concept — the smallest working slice that makes judges believe the idea works.
+A hackathon MVP is not a minimum viable product in the startup sense. It is the minimum demonstrable proof of concept —
+the smallest working slice that makes judges believe the idea works.
 
 ---
 

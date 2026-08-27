@@ -1,6 +1,7 @@
 # Hackathon Workflow Orchestration
 
-Defines the recommended skill execution order for a complete hackathon project lifecycle. Use this as the master orchestration guide when running the devkit end-to-end.
+Defines the recommended skill execution order for a complete hackathon project lifecycle. Use this as the master
+orchestration guide when running the devkit end-to-end.
 
 ---
 
@@ -68,8 +69,10 @@ Defines the recommended skill execution order for a complete hackathon project l
 
 **Skills:**
 
-- [`hackathon-team-recruiter`](../../hackathon-team-recruiter/SKILL.md) — Run if the team is incomplete or needs specific sponsor technology skills. Writes social recruitment messages.
-- [`hackathon-role-allocator`](../../hackathon-role-allocator/SKILL.md) — Run once the team is formed. Allocates ownership of frontend, backend, design, AI, and pitch based on skill profiles.
+- [`hackathon-team-recruiter`](../../hackathon-team-recruiter/SKILL.md) — Run if the team is incomplete or needs
+  specific sponsor technology skills. Writes social recruitment messages.
+- [`hackathon-role-allocator`](../../hackathon-role-allocator/SKILL.md) — Run once the team is formed. Allocates
+  ownership of frontend, backend, design, AI, and pitch based on skill profiles.
 
 ---
 
@@ -79,7 +82,8 @@ Defines the recommended skill execution order for a complete hackathon project l
 
 **Skills:**
 
-- [`hackathon-track-analyzer`](../../hackathon-track-analyzer/SKILL.md) — Parse track description, sponsor briefs, and rubrics.
+- [`hackathon-track-analyzer`](../../hackathon-track-analyzer/SKILL.md) — Parse track description, sponsor briefs, and
+  rubrics.
 
 ---
 
@@ -120,16 +124,22 @@ Defines the recommended skill execution order for a complete hackathon project l
 
 ## Phase 5: Build
 
-**Objective:** Scaffold the project, enforce git structure, integrate sponsor APIs, load seed data, code features, and monitor progress.
+**Objective:** Scaffold the project, enforce git structure, integrate sponsor APIs, load seed data, code features, and
+monitor progress.
 
 **Skills:**
 
-1. [`hackathon-repo-bootstrap`](../../hackathon-repo-bootstrap/SKILL.md) — Scaffold project files and environment templates.
-2. [`hackathon-git-master`](../../hackathon-git-master/SKILL.md) — Set up rapid collaboration workflow (trunk-based development) and diagnose merge conflicts.
-3. [`hackathon-sponsor-integrator`](../../hackathon-sponsor-integrator/SKILL.md) — Integrate sponsor SDKs/APIs quickly using minimal boilerplate examples.
-4. [`hackathon-mock-data-generator`](../../hackathon-mock-data-generator/SKILL.md) — Generate realistic seed/mock data aligned to the demo flow (warns if mock data is forbidden by rules).
+1. [`hackathon-repo-bootstrap`](../../hackathon-repo-bootstrap/SKILL.md) — Scaffold project files and environment
+   templates.
+2. [`hackathon-git-master`](../../hackathon-git-master/SKILL.md) — Set up rapid collaboration workflow (trunk-based
+   development) and diagnose merge conflicts.
+3. [`hackathon-sponsor-integrator`](../../hackathon-sponsor-integrator/SKILL.md) — Integrate sponsor SDKs/APIs quickly
+   using minimal boilerplate examples.
+4. [`hackathon-mock-data-generator`](../../hackathon-mock-data-generator/SKILL.md) — Generate realistic seed/mock data
+   aligned to the demo flow (warns if mock data is forbidden by rules).
 5. [`hackathon-code-implementer`](../../hackathon-code-implementer/SKILL.md) — Drive implementation of individual tasks.
-6. [`hackathon-milestone-monitor`](../../hackathon-milestone-monitor/SKILL.md) — Monitor progress at 25/50/75/90% checkpoints.
+6. [`hackathon-milestone-monitor`](../../hackathon-milestone-monitor/SKILL.md) — Monitor progress at 25/50/75/90%
+   checkpoints.
 7. [`hackathon-test-generator`](../../hackathon-test-generator/SKILL.md) — Generate demo-protecting test cases.
 
 ---
@@ -140,9 +150,11 @@ Defines the recommended skill execution order for a complete hackathon project l
 
 **Skills:**
 
-- [`hackathon-demo-script`](../../hackathon-demo-script/SKILL.md) — Generate narrative with timing indicators (`estimated_duration_seconds`).
+- [`hackathon-demo-script`](../../hackathon-demo-script/SKILL.md) — Generate narrative with timing indicators
+  (`estimated_duration_seconds`).
 - [`hackathon-demo-video`](../../hackathon-demo-video/SKILL.md) — Script and time a recorded video.
-- [`hackathon-pitchdeck`](../../hackathon-pitchdeck/SKILL.md) — Construct slide layouts and content. Generates interactive React slide components when requested.
+- [`hackathon-pitchdeck`](../../hackathon-pitchdeck/SKILL.md) — Construct slide layouts and content. Generates
+  interactive React slide components when requested.
 
 ---
 
@@ -152,7 +164,8 @@ Defines the recommended skill execution order for a complete hackathon project l
 
 **Skills:**
 
-- [`hackathon-judge-simulator`](../../hackathon-judge-simulator/SKILL.md) — Generate Q&A responses and score predictions.
+- [`hackathon-judge-simulator`](../../hackathon-judge-simulator/SKILL.md) — Generate Q&A responses and score
+  predictions.
 
 ---
 
@@ -172,7 +185,8 @@ Defines the recommended skill execution order for a complete hackathon project l
 
 **Skills:**
 
-- [`hackathon-submission-prep`](../../hackathon-submission-prep/SKILL.md) — Build submission page description and verify checklist.
+- [`hackathon-submission-prep`](../../hackathon-submission-prep/SKILL.md) — Build submission page description and verify
+  checklist.
 
 ---
 
@@ -182,7 +196,8 @@ Defines the recommended skill execution order for a complete hackathon project l
 
 **Skills:**
 
-- [`hackathon-post-mortem`](../../hackathon-post-mortem/SKILL.md) — Pause databases, scrub exposed API keys from history, and draft a public-facing README.
+- [`hackathon-post-mortem`](../../hackathon-post-mortem/SKILL.md) — Pause databases, scrub exposed API keys from
+  history, and draft a public-facing README.
 
 ---
 

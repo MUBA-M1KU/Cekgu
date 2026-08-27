@@ -1,6 +1,7 @@
 # Hackathon Reference Architecture
 
-A simple, proven architecture for hackathon projects using the recommended stack. Optimized for minimal setup time, reliable demos, and fast iteration.
+A simple, proven architecture for hackathon projects using the recommended stack. Optimized for minimal setup time,
+reliable demos, and fast iteration.
 
 ---
 

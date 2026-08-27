@@ -13,12 +13,14 @@
      that does a thing, it does not go in the script.
 -->
 
-> **Format:** **5 minutes presentation + 5 minutes Q&A.** Source: opening ceremony, [`../source/opening-ceremony-transcript.md`](../source/opening-ceremony-transcript.md).
-> **Budget:** TBD deck &middot; TBD live demo &middot; last word by **4:45**. The final 15s is buffer, never content.
-> **Deck:** [`pitch-deck.html`](pitch-deck.html) - N slides. PDF backup: [`pitch-deck.pdf`](pitch-deck.pdf). Arrow keys or click to advance. `N` speaker notes, `T` rehearsal timer, `R` reset - all off by default and never in the PDF.
-> **Speakers:** **SPEAKER** (narration, owns the deck and the clock) &middot; **DRIVER** (keyboard, owns the app).
-> **Convention:** plain text = **spoken** &middot; _italics_ = on-stage action &middot; `NOTE:` = internal, never spoken.
-> **Never present a recording as live.** If something fails, say so out loud and take the fallback ladder in the last section.
+> **Format:** **5 minutes presentation + 5 minutes Q&A.** Source: opening ceremony,
+> [`../source/opening-ceremony-transcript.md`](../source/opening-ceremony-transcript.md). **Budget:** TBD deck &middot;
+> TBD live demo &middot; last word by **4:45**. The final 15s is buffer, never content. **Deck:**
+> [`pitch-deck.html`](pitch-deck.html) - N slides. PDF backup: [`pitch-deck.pdf`](pitch-deck.pdf). Arrow keys or click
+> to advance. `N` speaker notes, `T` rehearsal timer, `R` reset - all off by default and never in the PDF. **Speakers:**
+> **SPEAKER** (narration, owns the deck and the clock) &middot; **DRIVER** (keyboard, owns the app). **Convention:**
+> plain text = **spoken** &middot; _italics_ = on-stage action &middot; `NOTE:` = internal, never spoken. **Never
+> present a recording as live.** If something fails, say so out loud and take the fallback ladder in the last section.
 
 ---
 
@@ -35,9 +37,9 @@
 | 4:30-4:45  | Close                     | Slide 6           | SPEAKER |
 | 5:00-10:00 | Judge Q&A                 | parked on Slide 6 | both    |
 
-`NOTE:` Word budget is measured, not estimated. Roughly 130 wpm for continuous
-speech, ~115 wpm where clicking and loading eat the window. If a rehearsal runs
-long, **cut words, never speed up.** Re-count and re-time after any line edit.
+`NOTE:` Word budget is measured, not estimated. Roughly 130 wpm for continuous speech, ~115 wpm where clicking and
+loading eat the window. If a rehearsal runs long, **cut words, never speed up.** Re-count and re-time after any line
+edit.
 
 ---
 
@@ -109,10 +111,10 @@ _Alt+Tab to the app._
 2. **Click:** `<the literal button label>`
 3. _Wait ~Ns. Two models run in parallel._
 4. **The moment:** _<what lands, and why a judge notices>_
-5. **Point at:** the Gonka Request ID per step - _this is the proof the reasoning ran on the network, not on our server._
+5. **Point at:** the Gonka Request ID per step - _this is the proof the reasoning ran on the network, not on our
+   server._
 
-`NOTE:` Read confidences and IDs off the screen as they render. Do not
-hard-commit to a number the screen will show.
+`NOTE:` Read confidences and IDs off the screen as they render. Do not hard-commit to a number the screen will show.
 
 ---
 
@@ -122,9 +124,8 @@ hard-commit to a number the screen will show.
 
 > "..."
 
-`NOTE:` The three track requirements land in this section, said out loud:
-all inference through GonkaRouter, at least two models cross-verifying, and a
-Gonka Request ID shown for every step.
+`NOTE:` The three track requirements land in this section, said out loud: all inference through GonkaRouter, at least
+two models cross-verifying, and a Gonka Request ID shown for every step.
 
 ---
 
@@ -134,8 +135,8 @@ Gonka Request ID shown for every step.
 
 > "..."
 
-`NOTE:` Name the incumbent, then name what they structurally cannot do. "Nobody
-does this" is almost always wrong and a judge will find them.
+`NOTE:` Name the incumbent, then name what they structurally cannot do. "Nobody does this" is almost always wrong and a
+judge will find them.
 
 ---
 

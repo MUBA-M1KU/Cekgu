@@ -1,16 +1,14 @@
 # ADR-[NUMBER]: [Decision Title]
 
-**Date:** YYYY-MM-DD
-**Status:** [Proposed | Accepted | Deprecated | Superseded]
-**Deciders:** [Team members involved in this decision]
-**Supersedes:** [ADR-NUMBER if applicable]
-**Superseded by:** [ADR-NUMBER if applicable]
+**Date:** YYYY-MM-DD **Status:** [Proposed | Accepted | Deprecated | Superseded] **Deciders:** [Team members involved in
+this decision] **Supersedes:** [ADR-NUMBER if applicable] **Superseded by:** [ADR-NUMBER if applicable]
 
 ---
 
 ## Context
 
-[Describe the situation, forces, and constraints that led to this decision. What is the problem or opportunity? What makes this decision necessary? Be specific about the technical or product context.]
+[Describe the situation, forces, and constraints that led to this decision. What is the problem or opportunity? What
+makes this decision necessary? Be specific about the technical or product context.]
 
 ---
 
@@ -89,4 +87,5 @@
 
 ## Review Checkpoint
 
-**When to revisit this decision:** [Condition that would trigger a review, e.g., "if real-time sync becomes a judging requirement"]
+**When to revisit this decision:** [Condition that would trigger a review, e.g., "if real-time sync becomes a judging
+requirement"]

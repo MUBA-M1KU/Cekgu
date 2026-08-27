@@ -1,7 +1,6 @@
 # 24-Hour Hackathon Playbook
 
-**Duration:** 24 hours
-**Philosophy:** Ruthless scope cuts. One wow moment. Demo-first.
+**Duration:** 24 hours **Philosophy:** Ruthless scope cuts. One wow moment. Demo-first.
 
 **Workflow reference:** [`hackathon-workflow.md`](hackathon-workflow.md)
 
@@ -11,9 +10,12 @@
 - [`hackathon-common-failures.md`](../knowledge/hackathon-common-failures.md) — failure patterns to avoid
 - [`hackathon-demo-psychology.md`](../knowledge/hackathon-demo-psychology.md) — how judges evaluate
 - [`hackathon-tools.md`](../knowledge/hackathon-tools.md) — rapid development tools
-- [`hackathon-reference-architecture.md`](../knowledge/hackathon-reference-architecture.md) — recommended stack architecture
-- [`hackathon-pitchdeck-winning-pattern.md`](../knowledge/hackathon-pitchdeck-winning-pattern.md) — pitchdeck structure and rule of three
-- [`hackathon-pitchdeck-design-with-react.md`](../knowledge/hackathon-pitchdeck-design-with-react.md) — React presentation deck design guide
+- [`hackathon-reference-architecture.md`](../knowledge/hackathon-reference-architecture.md) — recommended stack
+  architecture
+- [`hackathon-pitchdeck-winning-pattern.md`](../knowledge/hackathon-pitchdeck-winning-pattern.md) — pitchdeck structure
+  and rule of three
+- [`hackathon-pitchdeck-design-with-react.md`](../knowledge/hackathon-pitchdeck-design-with-react.md) — React
+  presentation deck design guide
 
 ---
 

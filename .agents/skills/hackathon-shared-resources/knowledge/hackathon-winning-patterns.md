@@ -1,6 +1,7 @@
 # Hackathon Winning Patterns
 
-Patterns consistently observed in hackathon-winning projects across major events (MLH, Devpost, HackMIT, ETHGlobal, AngelHack, and others).
+Patterns consistently observed in hackathon-winning projects across major events (MLH, Devpost, HackMIT, ETHGlobal,
+AngelHack, and others).
 
 ---
 
@@ -109,7 +110,9 @@ Judges score what they can see. Missing artifacts cost points automatically.
 Under the extreme time pressure of a hackathon, merge conflicts can break code right before the deadline.
 
 - Eliminate Pull Request (PR) reviews unless the team size is very large (5+ members).
-- Adopt a Trunk-Based Development approach: developers push direct commits to `main` or merge short-lived feature branches immediately.
+- Adopt a Trunk-Based Development approach: developers push direct commits to `main` or merge short-lived feature
+  branches immediately.
 - Run local builds and verify the demo path works before pulling or merging.
-- Commits must be small, frequent, and descriptively tagged (e.g., `feat(auth):`, `fix(ui):`) to easily isolate and revert breaking changes.
+- Commits must be small, frequent, and descriptively tagged (e.g., `feat(auth):`, `fix(ui):`) to easily isolate and
+  revert breaking changes.
 - Commits must never sit unmerged for more than 2 hours. Sync early, sync often.

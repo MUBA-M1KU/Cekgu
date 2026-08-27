@@ -1,6 +1,7 @@
 # Hackathon Judging Criteria
 
-Standard judging dimensions used across major hackathons. Actual weights vary per event; use `hackathon-track-analyzer` to extract event-specific weights.
+Standard judging dimensions used across major hackathons. Actual weights vary per event; use `hackathon-track-analyzer`
+to extract event-specific weights.
 
 ---
 

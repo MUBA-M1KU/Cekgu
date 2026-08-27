@@ -1,7 +1,7 @@
 # Source Material
 
-Raw organizer inputs, kept verbatim so we cite them instead of relying on memory.
-This is the record we check when a summary and reality disagree.
+Raw organizer inputs, kept verbatim so we cite them instead of relying on memory. This is the record we check when a
+summary and reality disagree.
 
 ---
 
@@ -17,13 +17,13 @@ This is the record we check when a summary and reality disagree.
 
 ## Conventions
 
-| Rule                   | Detail                                                                        |
-| ---------------------- | ----------------------------------------------------------------------------- |
-| **Append-only**        | Never rewrite these to match later beliefs. Corrections go in `../brief.md`   |
-| **Transcribe**         | Do not summarise. Summaries belong in `../brief.md`                           |
-| **One file per source** | `<topic>.md`, or `<topic>-<YYYY-MM-DD>.md` when the same source recurs        |
+| Rule                     | Detail                                                                                                                                                     |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Append-only**          | Never rewrite these to match later beliefs. Corrections go in `../brief.md`                                                                                |
+| **Transcribe**           | Do not summarise. Summaries belong in `../brief.md`                                                                                                        |
+| **One file per source**  | `<topic>.md`, or `<topic>-<YYYY-MM-DD>.md` when the same source recurs                                                                                     |
 | **Head with provenance** | What the source was, how it was captured, when. **Name the tool, not your path to it** - a teammate does not have your `~/CS/...` or `C:\Users\...` layout |
-| **Mark uncertainty**   | `[inaudible]` rather than a guess. Record ASR name corrections in a key       |
-| **Note the speaker**   | Where organiser vs sponsor vs participant changes the weight                  |
+| **Mark uncertainty**     | `[inaudible]` rather than a guess. Record ASR name corrections in a key                                                                                    |
+| **Note the speaker**     | Where organiser vs sponsor vs participant changes the weight                                                                                               |
 
 Audio and video are gitignored. **Commit the transcript, not the recording.**

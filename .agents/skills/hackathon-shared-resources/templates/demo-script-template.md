@@ -1,9 +1,7 @@
 # Demo Script: [Project Name]
 
-**Video length:** [X] seconds / [X] minutes
-**Format:** [Screen recording | Live demo | Narrated walkthrough]
-**Demo environment:** [Browser / Mobile / Desktop app / CLI]
-**Narrator:** [Name or "Team"]
+**Video length:** [X] seconds / [X] minutes **Format:** [Screen recording | Live demo | Narrated walkthrough] **Demo
+environment:** [Browser / Mobile / Desktop app / CLI] **Narrator:** [Name or "Team"]
 
 ---
 
@@ -88,8 +86,8 @@
 
 **Narration:**
 
-> "[Slow down. Let the result speak first, then explain it.]"
-> "[The result you see here is... / What just happened was...]"
+> "[Slow down. Let the result speak first, then explain it.]" "[The result you see here is... / What just happened
+> was...]"
 
 **Action:** [Trigger the wow feature. Pause 2–3 seconds after result appears.]
 
