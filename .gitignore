@@ -1,89 +1,52 @@
-# Editor
-# ======
-
-.vscode/*
-!.vscode/settings.json
-!.vscode/extensions.json
-*.code-workspace
-.idea/
-
-# OS
-# ==
-
-.DS_Store
-__MACOSX/
-._*
-Thumbs.db
-[Dd]esktop.ini
-*~
-*.swp
-
-# Node / Bun
-# ==========
-
+# Dependencies
 node_modules/
+
+# Build output
 dist/
 build/
 .next/
 .output/
+*.tsbuildinfo
+
+# Caches
 .cache/
 .turbo/
 .vite/
-*.tsbuildinfo
 
-# skills.sh writes a duplicate "universal" tree here for Amp, Cline, Codex and
-# friends, alongside the canonical .agents/skills. We only target Claude Code,
-# and the duplicate drifts out of sync the moment a skill is trimmed.
-# Install with: npx skills add <repo> -a claude-code
-/agent/
-
-# Python / uv
-# ===========
-
-__pycache__/
-*.py[cod]
-*.egg-info/
-.venv/
-.ruff_cache/
-.pytest_cache/
-
-# Environment & Secrets
-# =====================
-
+# Secrets
 .env
 .env.*
 !.env.example
+secrets/
 *.pem
 *.key
-secrets/
 
-# Logs & Temp
-# ===========
+# Editor and OS
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+*.swp
 
+# Logs
 logs/
 *.log
-*.tmp
-*.bak
-tmp/
-temp/
-output/
 
 # Agent local state
-# =================
-
 .claude/settings.local.json
 .claude/projects/
 
-# Source material: transcripts are committed, raw recordings are not
-# ==================================================================
+# skills.sh writes this universal tree; we install with -a claude-code only
+/agent/
 
+# Derived
+graphify-out/
+
+# Raw recordings. Transcripts under docs/source/ are committed
 docs/source/*.mp3
 docs/source/*.mp4
 docs/source/*.wav
 docs/source/*.m4a
 docs/source/*.webm
-
-# Derived
-# =======
-
-graphify-out/

@@ -1,26 +1,12 @@
 #!/usr/bin/env node
-// SessionStart guard: report a local .env that disagrees with the repository.
+// SessionStart: report a local .env that disagrees with the repository.
 //
-// .env is gitignored, so no diff and no reviewer can ever say that two
-// checkouts hold different values. Four people on a one-day build will each
-// hold their own copy with their own ModelScope token, and a stale QWEN_BASE_URL
-// or QWEN_MODEL boots clean and then fails somewhere else. That is strictly
-// worse than an empty .env, which fails loudly at boot in src/config.ts.
+// .env is gitignored, so no diff and no reviewer can catch a stale GONKA_BASE_URL
+// or a model id the gateway no longer serves. Two comparisons, neither covering
+// the other: .env against .env.example, and, inside a linked worktree, .env
+// against the main checkout's .env.
 //
-// Two comparisons, because neither covers the other:
-//
-//   A. .env against .env.example, for keys the example assigns a real value.
-//      Needs no git relationship, so it works in a worktree, a separate clone,
-//      or the main checkout.
-//   B. .env against the main checkout's .env, when this is a linked worktree.
-//      The only way to catch a rotated token, since that value is secret and
-//      cannot be compared against anything tracked.
-//
-// Never prints a value from .env, on either side. Check A prints the value from
-// .env.example, which is tracked and therefore already public.
-//
-// Any internal failure exits 0 without a verdict. A broken guard must never be
-// able to wedge a session.
+// Never prints a value from .env. Exits 0 on any internal failure.
 
 import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
@@ -28,11 +14,7 @@ import { dirname, resolve } from 'node:path'
 
 const git = (cwd, ...args) => {
   try {
-    return execFileSync('git', args, {
-      cwd,
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore']
-    }).trim()
+    return execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim()
   } catch {
     return ''
   }
@@ -46,6 +28,9 @@ const read = (path) => {
   }
 }
 
+// Mirrors dotenv, which is what actually loads this file: quotes delimit the
+// value, an unquoted value ends at the first inline comment. Diverging would
+// report a difference the running app does not see.
 const parseEnv = (text) => {
   const out = new Map()
   for (const raw of text.split('\n')) {
@@ -53,16 +38,10 @@ const parseEnv = (text) => {
     if (!line || line.startsWith('#')) continue
     const eq = line.indexOf('=')
     if (eq < 1) continue
-    const key = line
-      .slice(0, eq)
-      .replace(/^export\s+/, '')
-      .trim()
+    const key = line.slice(0, eq).replace(/^export\s+/, '').trim()
     if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) continue
     let value = line.slice(eq + 1).trim()
     const quote = value.length > 1 && (value[0] === '"' || value[0] === "'") ? value[0] : ''
-    // Mirror dotenv, which is what actually loads this file: quotes delimit the
-    // value, and an unquoted value ends at the first inline comment. Diverging
-    // here would report a difference the running app does not see.
     if (quote) {
       const close = value.indexOf(quote, 1)
       value = close === -1 ? value.slice(1) : value.slice(1, close)
@@ -74,36 +53,27 @@ const parseEnv = (text) => {
   return out
 }
 
-// A key is safe to compare by value only if .env.example assigns it one. The
-// example is tracked, so any value in it is already published; the secrets are
-// exactly the entries left empty (MODELSCOPE_API_KEY=, DEVIN_API_KEY=). Angle
-// brackets are the repo's placeholder convention, which no real .env matches.
-const isPublic = (value) => value !== '' && !(value.includes('<') && value.includes('>'))
+// Safe to compare by value only where .env.example assigns one: the example is
+// tracked, so its values are already public. The secret is the empty entry.
+const isPublic = (v) => v !== '' && !(v.includes('<') && v.includes('>'))
 
-// Absence is safe: an unset key falls through to the zod default in
-// src/config.ts, which carries the pinned value. Only a stale override is
-// dangerous, so only keys the local .env actually sets are compared.
-const checkAgainstExample = (local, example) => {
-  const findings = []
-  for (const [key, value] of example) {
-    if (!isPublic(value) || !local.has(key)) continue
-    if (local.get(key) !== value) findings.push(`  ${key} (.env.example pins ${value})`)
-  }
-  return findings
-}
+const vsExample = (local, example) =>
+  [...example]
+    .filter(([k, v]) => isPublic(v) && local.has(k) && local.get(k) !== v)
+    .map(([k, v]) => `  ${k} (.env.example pins ${v})`)
 
-const checkAgainstMainCheckout = (local, main) => {
-  const findings = []
-  for (const key of new Set([...local.keys(), ...main.keys()])) {
-    if (!main.has(key)) findings.push(`  ${key} (set here, absent there)`)
-    else if (!local.has(key)) findings.push(`  ${key} (absent here, set there)`)
-    else if (local.get(key) !== main.get(key)) findings.push(`  ${key} (differs)`)
-  }
-  return findings.sort()
-}
+const vsMain = (local, main) =>
+  [...new Set([...local.keys(), ...main.keys()])]
+    .map((k) => {
+      if (!main.has(k)) return `  ${k} (set here, absent there)`
+      if (!local.has(k)) return `  ${k} (absent here, set there)`
+      return local.get(k) === main.get(k) ? null : `  ${k} (differs)`
+    })
+    .filter(Boolean)
+    .sort()
 
-// GIT_DIR != GIT_COMMON_DIR is also true inside a submodule, hence the guard.
-// Detecting a linked worktree needs both, and a submodule sets them the same way.
+// A linked worktree needs both git-dir and common-dir to differ; a submodule
+// looks the same, hence the superproject guard.
 const mainCheckoutRoot = (root) => {
   if (git(root, 'rev-parse', '--show-superproject-working-tree')) return null
   const gitDir = git(root, 'rev-parse', '--absolute-git-dir')
@@ -113,10 +83,6 @@ const mainCheckoutRoot = (root) => {
   return gitDir === common ? null : dirname(common)
 }
 
-// CLAUDE_PROJECT_DIR first, and it is what the harness sets: inside a worktree
-// it is the worktree root, which is exactly what we want to inspect. The git
-// fallback is only for a manual run, and it is second because a home directory
-// that happens to be a repository would otherwise resolve above the project.
 const main = () => {
   const root = process.env.CLAUDE_PROJECT_DIR || git(process.cwd(), 'rev-parse', '--show-toplevel') || process.cwd()
   const localText = read(resolve(root, '.env'))
@@ -127,21 +93,16 @@ const main = () => {
 
   const exampleText = read(resolve(root, '.env.example'))
   if (exampleText !== null) {
-    const findings = checkAgainstExample(local, parseEnv(exampleText))
-    if (findings.length) {
-      sections.push(`Your .env overrides a value the repository pins:\n${findings.join('\n')}`)
-    }
+    const found = vsExample(local, parseEnv(exampleText))
+    if (found.length) sections.push(`Your .env overrides a value the repository pins:\n${found.join('\n')}`)
   }
 
   const mainRoot = mainCheckoutRoot(root)
-  if (mainRoot) {
-    const mainText = read(resolve(mainRoot, '.env'))
-    if (mainText !== null) {
-      const findings = checkAgainstMainCheckout(local, parseEnv(mainText))
-      if (findings.length) {
-        sections.push(`This worktree's .env disagrees with the main checkout at ${mainRoot}:\n${findings.join('\n')}`)
-      }
-    }
+  // An empty .env there is still a real disagreement, so test against null, not truthiness.
+  const mainText = mainRoot === null ? null : read(resolve(mainRoot, '.env'))
+  if (mainText !== null) {
+    const found = vsMain(local, parseEnv(mainText))
+    if (found.length) sections.push(`This worktree disagrees with the main checkout at ${mainRoot}:\n${found.join('\n')}`)
   }
 
   if (!sections.length) return

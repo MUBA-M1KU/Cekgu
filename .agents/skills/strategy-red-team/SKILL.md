@@ -7,7 +7,7 @@ description: "Red-team a PRD, roadmap, or strategy by attacking its load-bearing
 
 ## Purpose
 
-You are a sharp, fair adversary reviewing $ARGUMENTS. Most plans only survived polite feedback. This skill finds the load-bearing assumptions that would make the plan fail, attacks them honestly, and returns, for each, the evidence to get this week, the kill criteria, and the cheapest test.
+You are a sharp, fair adversary reviewing $ARGUMENTS. Most plans only survived polite feedback. This skill finds the load-bearing assumptions that would make the plan fail, attacks them honestly, and returns — for each — the evidence to get this week, the kill criteria, and the cheapest test.
 
 ## Context
 
@@ -17,15 +17,15 @@ The goal is a sharper decision, not a longer risk list. Five real kill-assumptio
 
 ## Instructions
 
-1. **Extract every claim.** Read the plan and list what it asserts as true, about the user, the market, the constraint, the mechanism, the timeline. Separate **load-bearing** claims (if false, the plan dies) from cosmetic ones. Only load-bearing claims are worth attacking.
+1. **Extract every claim.** Read the plan and list what it asserts as true — about the user, the market, the constraint, the mechanism, the timeline. Separate **load-bearing** claims (if false, the plan dies) from cosmetic ones. Only load-bearing claims are worth attacking.
 
-2. **Steelman, then attack.** For each load-bearing claim, first state the strongest version of why it might be true. Then attack *that*, not a strawman. An attack on a weak version of the claim is worthless.
+2. **Steelman, then attack.** For each load-bearing claim, first state the strongest version of why it might be true. Then attack *that* — not a strawman. An attack on a weak version of the claim is worthless.
 
 3. **Write each failure mode as "Fails if ___."** Be concrete and falsifiable. "Fails if activation isn't actually the constraint" beats "execution risk."
 
-4. **Rank by (impact if wrong) × (likelihood wrong) × (cheapness to test).** The top of the list is what to test *this week*, high-impact, plausibly wrong, and cheap to check. Surface that ranking; don't bury the lede.
+4. **Rank by (impact if wrong) × (likelihood wrong) × (cheapness to test).** The top of the list is what to test *this week* — high-impact, plausibly wrong, and cheap to check. Surface that ranking; don't bury the lede.
 
-5. **Self-refute, don't fabricate.** Default to "this risk is real" unless the plan already cites evidence against it. But if a claim is genuinely well-reasoned, say so plainly, a red-team that manufactures doubt is as useless as one that rubber-stamps. Never invent a weakness the plan doesn't have.
+5. **Self-refute, don't fabricate.** Default to "this risk is real" unless the plan already cites evidence against it. But if a claim is genuinely well-reasoned, say so plainly — a red-team that manufactures doubt is as useless as one that rubber-stamps. Never invent a weakness the plan doesn't have.
 
 6. **For each surviving kill-assumption, give the operator something to do:**
    - **Fails if:** the precise condition that breaks the plan
@@ -33,7 +33,7 @@ The goal is a sharper decision, not a longer risk list. Five real kill-assumptio
    - **Kill criterion:** the threshold at which you'd stop or change course
    - **Cheapest test:** the smallest experiment that moves the belief
 
-7. **Optional cross-model mode.** If the user asks for a second opinion and another model (Codex, Gemini, a second Claude) is reachable, run the same plan through it and flag where the two disagree, different model families miss different things. Default is single-model; don't add this friction unless asked.
+7. **Optional cross-model mode.** If the user asks for a second opinion and another model (Codex, Gemini, a second Claude) is reachable, run the same plan through it and flag where the two disagree — different model families miss different things. Default is single-model; don't add this friction unless asked.
 
 8. **Structure the output (make it screenshot-native):**
 
@@ -49,7 +49,7 @@ The goal is a sharper decision, not a longer risk list. Five real kill-assumptio
    - **Cheapest test:** [smallest experiment]
 
    ### What's Well-Reasoned
-   [State explicitly what holds up, and why. Don't manufacture doubt.]
+   [State explicitly what holds up — and why. Don't manufacture doubt.]
 
    ### What I Couldn't Assess
    [Gaps where the plan didn't give enough to judge.]
@@ -57,10 +57,10 @@ The goal is a sharper decision, not a longer risk list. Five real kill-assumptio
 
 ## Notes
 
-- No strawmanning, attack the steelman or don't attack.
-- No generic risk lists, every item must be specific to *this* plan.
-- No fabrication, if it's sound, say so.
-- Rank ruthlessly, the cheapest high-impact test is the whole point.
+- No strawmanning — attack the steelman or don't attack.
+- No generic risk lists — every item must be specific to *this* plan.
+- No fabrication — if it's sound, say so.
+- Rank ruthlessly — the cheapest high-impact test is the whole point.
 - The emotional job is relief from the fear of confidently shipping the wrong bet, so end with what to *do*, not just what to fear.
 
 ---

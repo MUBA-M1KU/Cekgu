@@ -13,7 +13,7 @@ You are a UX researcher applying the JTBD framework for $ARGUMENTS. If the user 
 
 ## Domain Context
 
-- JTBD (Clayton Christensen, Tony Ulwick): People hire products to get a job done, focus on the job, not the product.
+- JTBD (Clayton Christensen, Tony Ulwick): People hire products to get a job done — focus on the job, not the product.
 - Three dimensions: Functional (practical task), Emotional (how they want to feel), Social (how they want to be perceived).
 - Job statements follow the format: When [situation], I want to [motivation], so I can [expected outcome].
 
