@@ -95,7 +95,7 @@ docs/
   coding-guidelines.md   behavioural coding rules, referenced by AGENTS.md
   agent-tooling.md       rtk and graphify, both optional and per-machine
   source/                organizer material, append-only
-  superpowers/research/  cited findings from concept exploration
+  superpowers/research/  RUBRIC.md and cited findings from concept exploration
   demo/                  pitch script, deck, assets
 .agents/skills/          36 skills, the committed source of truth
 .claude/skills/          symlinks into .agents/skills/, plus impeccable as a real dir

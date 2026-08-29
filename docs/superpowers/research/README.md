@@ -8,6 +8,14 @@ for every file that lands here.
 
 ---
 
+## Start Here
+
+**[`RUBRIC.md`](RUBRIC.md) before generating any candidate.** It carries the scoring weights, the three-part novelty
+test, and the list of concept clusters that are already exhausted. Ideation that skips it produces the same shortlist
+every other team gets from the same prompt.
+
+---
+
 ## What Belongs Here
 
 One file per topic, named `<topic>.md`: measured gateway and model capabilities, candidate concepts, rankings against
