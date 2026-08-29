@@ -163,7 +163,8 @@ So: no application form for the unlimited tokens. Just register, and email if yo
 
 ## Deltas Against `docs/brief.md`
 
-Facts here that the brief does not yet carry:
+**All six are now promoted into [`../brief.md`](../brief.md)** — this table is kept as the record of where they came
+from. The brief is the working reference; this is the source.
 
 | Item                  | Brief says                        | Workshop said                                                                     |
 | --------------------- | --------------------------------- | --------------------------------------------------------------------------------- |

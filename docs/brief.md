@@ -69,6 +69,7 @@ Only the GonkaRouter workshop is ours. The other two are other tracks, and optio
 | **Verification**        | Each participant submits their LinkedIn                                                                                                           |
 | **Physical attendance** | The site says mandatory for all members; the ceremony clarified **at least one member must attend**, all strongly encouraged. Attend the full day |
 | **Team changes**        | Notify organizers via Discord if anyone withdraws                                                                                                 |
+| **Projects per team**   | **One.** A single project may enter multiple tracks; multiple projects may not. Richard said he would confirm and revert                          |
 | **IP**                  | Participants own their project IP                                                                                                                 |
 
 **Originality.** Must be built from scratch during the hackathon period. No prior projects and no copy-paste of past
@@ -80,7 +81,8 @@ code is not.
 ## What We Submit
 
 By **5 Sept, 11:59 PM**, on [Devfolio](https://muba-hackathon.devfolio.co/overview). **No Devfolio submission means
-disqualification from pitching.**
+disqualification from pitching.** If Devfolio itself has problems, the organizers will open a **Google Form** as a
+fallback route and announce it on Discord.
 
 | #   | Deliverable          | Notes                                   |
 | --- | -------------------- | --------------------------------------- |
@@ -93,8 +95,12 @@ disqualification from pitching.**
 **The deck must cover** the problem statement and project objective, motivation and challenges, commercialisation and
 business model, technology stack and track chosen, and the overall concept.
 
-**Our track adds** a live demo URL (paste a link or text, get a verification report), a GitHub repo with clear
-documentation on the GonkaRouter integration, and a 2-minute video pitch showing a live fact-check.
+**Our track adds** a live demo URL, a GitHub repo with clear documentation on the GonkaRouter integration, and a
+2-minute video pitch showing the product in action.
+
+> The challenge doc words these around its Fact Checker example ("paste a link and get a verification report", "a live
+> fact-check"). Since the track reveal and the workshop Q&A both confirmed the direction is open, read them as: a
+> working demo anyone can try, and a video of it doing its thing.
 
 ---
 
@@ -122,12 +128,34 @@ What sponsors said out loud, worth optimising for:
 > of."
 >
 > **Carol (GonkaRouter):** "Use AI to build something truly useful and solve real-world problems."
+>
+> **Jack (GonkaRouter), at the workshop:** "It should solve specific needs in real life. Not something that is not
+> practical at all. Or something that online or elsewhere is very common, where you just make a copy."
+>
+> **Jack:** "Now, for technology, there is no barrier to entry. So the main thing to consider is your thinking, and your
+> ideas."
+
+Richard's summary of both GonkaRouter judges: **marks weight most on how well the problem is identified, and whether the
+solution is genuinely applicable in real life.**
 
 ---
 
 ## Our Track: GonkaRouter, AI For Society
 
-Full brief: [`source/gonkarouter-challenge.md`](./source/gonkarouter-challenge.md).
+Full brief: [`source/gonkarouter-challenge.md`](./source/gonkarouter-challenge.md). Workshop material:
+[`source/gonkarouter-workshop-slides.md`](./source/gonkarouter-workshop-slides.md) (the authority on wiring and model
+ids) and [`source/gonkarouter-workshop-transcript.md`](./source/gonkarouter-workshop-transcript.md).
+
+### What The Track Does And Does Not Require
+
+Both asked directly at the 27 Aug workshop Q&A and answered on the record:
+
+| Question                                                    | Answer                                                                                                               |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **Must the solution include Web3 / blockchain components?** | **No.** Jack: "Not limited to Web3 at all." This is a blockchain hackathon, but this track is not a blockchain track |
+| **Must the social problem be specific to Malaysia?**        | **No.** Carol: any scope, not limited to Malaysia                                                                    |
+
+The four GonkaRouter requirements below still bind. Everything else about the problem domain is open.
 
 **Non-negotiable requirements.** Any of these missed disqualifies the entry:
 
@@ -148,13 +176,22 @@ Full brief: [`source/gonkarouter-challenge.md`](./source/gonkarouter-challenge.m
 Engine. The challenge doc calls the Fact Checker a "preferred application" and specifies it at length, but the track
 reveal named no direction and closed on "solve real-world problems". These are **inspiration, not constraints.**
 
-| Model                 | Best For (Per Carol)                              | Max Output |
-| --------------------- | ------------------------------------------------- | ---------- |
-| **Kimi-K2.6**         | Long-text analysis, summarization, fact checking  | 262K       |
-| **MiniMax-M2.7**      | Multi-turn conversation, AI agents and assistants | 192K       |
-| **DeepSeek-V4-Flash** | Logical reasoning, complex tasks                  | 1M         |
+| Model                 | Exact Id (case and slash sensitive)  | Best For                                                                              | Max Output |
+| --------------------- | ------------------------------------ | ------------------------------------------------------------------------------------- | ---------- |
+| **Kimi-K2.6**         | `moonshotai/Kimi-K2.6`               | Long-context reasoning, code-heavy work, strong agent behaviour. Vision               | 262K       |
+| **MiniMax-M2.7**      | `MiniMaxAI/MiniMax-M2.7`             | Agent-native, elite coding, stable long-chain tool calling                            | 192K       |
+| **DeepSeek-V4-Flash** | `deepseek-ai/DeepSeek-V4-Flash-0731` | Speed. Fast chat, summarisation, extraction. **Answers directly, no reasoning trace** | 1M         |
 
-Credits are unlimited free tokens for all participants during the hackathon. Setup:
+All three share one flat rate, input and output priced alike. **Verify ids against `/models` with your own key before
+hardcoding** — catalogs differ per plan.
+
+**Credits.** Every account gets a one-time
+**$20** on signup, which is effectively unlimited for this event: a real
+account they showed had spent under $2 across
+1.77M requests and 4.35B tokens. During the hackathon tokens are explicitly unlimited, and **if you exhaust the credit
+you email Jack for a top-up** — there is no form. Sign-in is email or Google; **no wallet is required.**
+
+Setup and client wiring: [`source/gonkarouter-workshop-slides.md`](./source/gonkarouter-workshop-slides.md) and
 [`source/gonkarouter-tutorial.md`](./source/gonkarouter-tutorial.md).
 
 ---
@@ -206,6 +243,7 @@ Supporting sponsors: **StarGlobal** (Web3 recruitment) and **GCC** (EVM-compatib
 ## Admin
 
 - **Prize payout** within 14 working days
-- **Certificates** are digital, issued to participants
+- **Certificates** are digital. Issued to any team that **submits on Devfolio and completes its pitching session**,
+  winning or not
 - **UTAR Kampar bus:** gather 5 AM, depart 6 AM, arrive APU 10 AM, return around 12 AM. Book by 1 Sept 5 PM; runs if
   more than 20 sign up. Seat holders get the limited lanyard and T-shirt
