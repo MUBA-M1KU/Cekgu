@@ -7,11 +7,13 @@ summary and reality disagree.
 
 ## What's Here
 
-| File                                                               | Source                                 | Captured   |
-| ------------------------------------------------------------------ | -------------------------------------- | ---------- |
-| [`opening-ceremony-transcript.md`](opening-ceremony-transcript.md) | Opening ceremony livestream, 66 min    | 2026-08-26 |
-| [`gonkarouter-challenge.md`](gonkarouter-challenge.md)             | Official track challenge Google Doc    | 2026-08-26 |
-| [`gonkarouter-tutorial.md`](gonkarouter-tutorial.md)               | GonkaRouter tutorial video + live docs | 2026-08-26 |
+| File                                                                       | Source                                 | Captured   |
+| -------------------------------------------------------------------------- | -------------------------------------- | ---------- |
+| [`opening-ceremony-transcript.md`](opening-ceremony-transcript.md)         | Opening ceremony livestream, 66 min    | 2026-08-26 |
+| [`gonkarouter-challenge.md`](gonkarouter-challenge.md)                     | Official track challenge Google Doc    | 2026-08-26 |
+| [`gonkarouter-tutorial.md`](gonkarouter-tutorial.md)                       | GonkaRouter tutorial video + live docs | 2026-08-26 |
+| [`gonkarouter-workshop-slides.md`](gonkarouter-workshop-slides.md)         | Workshop deck, 27 Aug, 26 slides       | 2026-08-29 |
+| [`gonkarouter-workshop-transcript.md`](gonkarouter-workshop-transcript.md) | Workshop recording, 78 min             | 2026-08-29 |
 
 ---
 

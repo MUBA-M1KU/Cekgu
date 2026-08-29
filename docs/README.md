@@ -31,11 +31,13 @@ Work in progress lives in the [Issues board](https://github.com/MUBA-M1KU/dev/is
 
 ### Source Material From The Organizers
 
-| File                                                                             | Source                                                              |
-| -------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| [`source/opening-ceremony-transcript.md`](source/opening-ceremony-transcript.md) | Opening ceremony, 26 Aug. Whisper transcript, cleaned and sectioned |
-| [`source/gonkarouter-challenge.md`](source/gonkarouter-challenge.md)             | Official track challenge doc                                        |
-| [`source/gonkarouter-tutorial.md`](source/gonkarouter-tutorial.md)               | GonkaRouter setup: API, models, client wiring, limits               |
+| File                                                                                     | Source                                                              |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| [`source/opening-ceremony-transcript.md`](source/opening-ceremony-transcript.md)         | Opening ceremony, 26 Aug. Whisper transcript, cleaned and sectioned |
+| [`source/gonkarouter-challenge.md`](source/gonkarouter-challenge.md)                     | Official track challenge doc                                        |
+| [`source/gonkarouter-tutorial.md`](source/gonkarouter-tutorial.md)                       | GonkaRouter setup: API, models, client wiring, limits               |
+| [`source/gonkarouter-workshop-slides.md`](source/gonkarouter-workshop-slides.md)         | Workshop deck, 27 Aug. The authority on model ids and wiring        |
+| [`source/gonkarouter-workshop-transcript.md`](source/gonkarouter-workshop-transcript.md) | Workshop recording. Q&A rulings not in the deck                     |
 
 ---
 
