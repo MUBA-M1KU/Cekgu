@@ -21,6 +21,7 @@ Plus **two or more models cross-verifying**, and **Gonka Request IDs surfaced in
 
 - [`brief.md`](brief.md) — the whole hackathon: dates, rules, deliverables, judging, people
 - [`TRD.md`](TRD.md) — the measured GonkaRouter reference: base URLs, model ids, provenance headers, limits
+- [`superpowers/research/README.md`](superpowers/research/README.md) — ten-round concept research and ranked candidates
 - [`../AGENTS.md`](../AGENTS.md) — project instructions for agentic tools, and humans
 
 Work in progress lives in the [Issues board](https://github.com/MUBA-M1KU/dev/issues), not in a checklist here.
@@ -59,12 +60,13 @@ curl -s https://api.gonkarouter.io/v1/messages \
        "messages":[{"role":"user","content":"Reply with just: pong"}]}'
 ```
 
-| Command             | Does                               |
-| ------------------- | ---------------------------------- |
-| `bun run lint`      | Biome check, then Prettier check   |
-| `bun run format`    | Both formatters, writing in place  |
-| `bun run typecheck` | `tsc --noEmit`, once `src/` exists |
-| `gh issue list`     | The TODO board                     |
+| Command              | Does                               |
+| -------------------- | ---------------------------------- |
+| `bun run test:guard` | Merge and main-branch guard tests  |
+| `bun run lint`       | Biome check, then Prettier check   |
+| `bun run format`     | Both formatters, writing in place  |
+| `bun run typecheck`  | `tsc --noEmit`, once `src/` exists |
+| `gh issue list`      | The TODO board                     |
 
 Biome covers JS, TS, JSON, CSS and HTML; Prettier covers the Markdown and YAML it cannot, wrapping prose at 120 to match
 `biome.json`'s `lineWidth`. There is no `.prettierignore`, so every Markdown file is formatted, `docs/source/` and the
@@ -72,8 +74,11 @@ vendored skills included. Only the contents of fenced code blocks are left alone
 
 ## How work ships
 
-**`main` is PR-gated.** Branch as `<type>/<slug>`, open a PR with `gh pr create`, merge with
-`gh pr merge --squash --delete-branch`. A human merges; nobody merges their own PR.
+**`main` is PR-gated.** Branch as `<type>/<slug>`, open a PR with `gh pr create`, then merge the verified head with
+`gh pr merge <number> --squash --delete-branch --match-head-commit <40-character-head-sha>`. Agents may merge without
+per-PR human approval when the PR is non-draft and mergeable, all required checks and fresh project verification pass,
+and there is no unresolved Critical or Important review finding or known regression. Direct and force pushes to `main`
+remain forbidden.
 
 **Implementation is gated on three docs.** `PRODUCT.md` (who and why), `PRD.md` (what, and what is out of scope) and
 [`TRD.md`](TRD.md) (how) must all exist before build work starts. `DESIGN.md` joins them when frontend work does.

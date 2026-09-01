@@ -107,6 +107,7 @@ If reading your message takes longer than doing the thing, you have cost time.
 
 ```bash
 bun install          # dev tooling; also wires husky hooks
+bun run test:guard   # regression tests for merge and main-branch enforcement
 bun run lint         # biome check . && prettier --check .
 bun run format       # biome format --write . && prettier --write .
 bun run typecheck    # tsc --noEmit, once src/ exists
@@ -242,8 +243,22 @@ rather than hand-writing a prompt.
    single imperative sentence, lowercase, no trailing period. Allowed types: `feat`, `fix`, `refactor`, `docs`, `test`,
    `chore`, `style`, `perf`
 1. **Push the branch** and open a PR with `gh pr create`
-1. **A human merges** with `gh pr merge --squash --delete-branch`. Merging is denied to agents in
-   `.claude/settings.json`
+1. **Merge** the verified head with
+   `gh pr merge <number> --squash --delete-branch --match-head-commit <40-character-head-sha>`. Capture `headRefOid`
+   from `gh pr view`, verify and review that exact SHA, then put its literal value in the merge command. Agents are
+   authorised to merge without per-PR human approval when all of these are true:
+   - The PR targets `main`, is not a draft and GitHub reports it mergeable
+   - Every required GitHub check passes
+   - Fresh project verification passes against the PR head
+   - There is no unresolved Critical or Important review finding and no known regression
+
+If any condition cannot be verified, leave the PR open and report the blocker. Direct and force pushes to `main` remain
+forbidden; autonomous merge authority does not bypass the PR gate. Never use `--admin` or `--auto` to override or defer
+the gate.
+
+Within this repository, this rule overrides any generic skill that presents integration as a human-choice menu. Once the
+requested work is ready and the gate passes, merge it without asking again unless the user explicitly asks to leave the
+PR open or in draft.
 
 Small fixes still go through a branch. The overhead is one command; the alternative is a `main` nobody can review or
 revert cleanly.
@@ -263,8 +278,9 @@ gh issue close <n>                     # done
 - **Do not** call an AI provider directly. Everything goes through GonkaRouter
 - **Do not** import or adapt code written before 26 Aug 2026
 - **Do not** commit `.env` or any `sk-…` key. `.env.example` carries key names, never values
-- **Do not** commit directly to `main`, rewrite published history, or delete a branch other than a merged feature branch
-- **Do not** merge your own PR. Propose it; a human merges
+- **Do not** commit directly to `main`, force-push, rewrite published history, or delete a branch other than a merged
+  feature branch
+- **Do not** merge a draft, conflicted, failing or known-breaking PR. Leave it open and report the blocker
 - **Do not** track TODOs in a markdown file
 - **Do not** hardcode model ids without verifying them against `/v1/models`. They are case- and slash-sensitive
 - **Do not** create `docs/architecture.md` or a second README
