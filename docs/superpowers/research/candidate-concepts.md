@@ -1,4 +1,4 @@
-# Candidate Concepts
+# Candidate concepts
 
 Ten rounds of concept exploration, scored against [`RUBRIC.md`](RUBRIC.md). **No concept is locked** — Round 10 is the
 current ranking, while earlier rounds remain in this document as research history.
@@ -8,31 +8,27 @@ spectacle), each carrying a ban list and a hard gate, then a hostile selection p
 material and attacked it; selection and scoring were done by hand, per
 [Do Not Let A Model Pick The Concept](RUBRIC.md#do-not-let-a-model-pick-the-concept).
 
----
+## What rounds 1 and 2 got wrong
 
-## What Rounds 1 And 2 Got Wrong
-
-| Round | Failure                                                                                                                                                                                                                             |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1** | Ranked by _what survives a hostile review_ instead of _what wins_. Produced small, safe utilities. Its top pick also failed the rubric's own kill criterion — a public database did the adjudicating, so the models were decoration |
-| **2** | Fixed the multi-model problem but produced **no hook**. The winner's name — "Blind-Control Description Audit" — was misread as a tool for blind people. If the name misleads in three seconds, the pitch dies in three seconds      |
+- **Round 1** ranked by _what survives a hostile review_ instead of _what wins_, and produced small, safe utilities. Its
+  top pick also failed the rubric's own kill criterion — a public database did the adjudicating, so the models were
+  decoration.
+- **Round 2** fixed the multi-model problem but produced **no hook**. The winner's name, "Blind-Control Description
+  Audit", was misread as a tool for blind people. If the name misleads in three seconds, the pitch dies in three
+  seconds.
 
 **The correction for round 3:** every concept must pass the **bus-stop test** — say the name and one sentence to a
 stranger, and if they do not say _"can I try that right now?"_, it is cut. Selfish reason over social benefit. People do
 not queue for things that are good for society; they queue for things that tell them about their own money.
 
----
-
-## The Two Gates
+## The two gates
 
 **1. The bus-stop test.** Three-word name, self-explanatory, and the stranger wants it for themselves.
 
 **2. The permutation test.** Swap the three models. If the protocol still means the same thing, it is variance, not
 structure — see [`multi-model-capability.md`](multi-model-capability.md).
 
----
-
-## Round 4 Scores
+## Round 4 scores
 
 Weights: Novelty 25 · Real User 20 · Track Fit 20 · Demo 15 · Buildability 20. **Rescored 2026-08-31** after an
 adversarial prior-art hunt and a live experiment, both of which went against the previous rank 1.
@@ -76,7 +72,7 @@ use.
 answers _"requires a public governance vote"_, and the pinned commit hash keeps glowing. Press **BAN IT** — _"no account
 exists to ban."_ No chain writes, no tokens, no waiting: chain reads plus a chat UI.
 
-#### Prior Art — Checked Before Ranking This Time
+#### Prior art — checked before ranking this time
 
 **The crypto AI-companion space is occupied.**
 [AI Companions (AIC)](https://coinmarketcap.com/cmc-ai/ai-companions/what-is/) is a live token project pairing AI
@@ -88,7 +84,7 @@ guidelines_. None pins the **model weights** to a commit hash such that the brai
 genuine difference — and "our differentiation is technical and subtle" is precisely the argument that failed for Dua
 Keping, so Novelty is marked down from 19 to 14 rather than defended.
 
-#### The Risk That Must Be Decided By A Human
+#### The risk that must be decided by a human
 
 **Companion AI carries real ethical weight.** Character.AI faces teen-safety litigation, and the Replika evidence above
 is _itself_ a record of users in acute distress. A product whose pitch is "you can never lose your AI friend" can be
@@ -99,7 +95,7 @@ build; it is a judgement call about what to put on a stage**, and it belongs to 
 companion. Lower-hook, lower-risk carriers include a group's game master, or any tool whose users have been burned by
 silent change.
 
-### Why You Decide Was Killed
+### Why You Decide was killed
 
 Scored the highest native rating of anything found — _"binding on-chain governance over model identity is the one thing
 a closed vendor can never offer, by definition"_ — and died on buildability. Live governance params:
@@ -113,13 +109,13 @@ quorum         25%     threshold 50%     veto 30%
 **No public testnet exists** (`rpc.testnet.gonka.gg` does not resolve; `/docs/testnet/` is 404). A binding vote cannot
 be demonstrated on stage in five days without standing up a private chain, and the vote _is_ the concept.
 
-## Round 10 — Social Benefit Reweighted
+## Round 10 — social benefit reweighted
 
 **The correction that drove this round.** Rounds 4–9 optimised novelty and mechanism — **which the official rubric
 leaves unweighted** — while Practicality and Impact is worth **30%**. Impact had quietly dropped out of the scoring.
 Reinstated here.
 
-### The Shape Worth Keeping
+### The shape worth keeping
 
 A vulnerable person receives an official document they cannot read. A family member photographs it. **Kimi** sees it,
 **MiniMax** fetches the authoritative published source to check what it claims, **DeepSeek** explains it from structured
@@ -136,7 +132,7 @@ refuses** and says check with a human. Abstention is a first-class output, force
 | 4     | **Saman Sah Ke?** — summons against the official fine schedule                                  | Moderate                        | Moderate both ways             | Scam-checker adjacent, a banned cluster            |
 | 5     | **Cek Dividen KWSP** — EPF statement against the declared rate                                  | Low stakes                      | Very low                       | Safest and dullest                                 |
 
-### Why Ubat Mak Fell To Third
+### Why Ubat Mak fell to third
 
 `[NEEDS SOURCE]` The problem is the best-evidenced in the whole ledger: **14.3% of patients with medication
 discrepancies were rehospitalised within 30 days versus 6.1% without**, seniors with low health literacy err
@@ -180,9 +176,7 @@ record and refuses when they disagree.
 `[ASSUMPTION]` **No prior-art check was run on Tawaran Uni Sah.** Do this before committing — it is the check that
 caught Dua Keping and Frozen Friend too late.
 
----
-
-## Round 9 — The Final Five
+## Round 9 — the final five
 
 **Method.** Six GLM workers fanned out in parallel (six was the tool's ceiling), plus one Fable agent running an
 independent research pass with live competitor search. Fable killed two of its own candidates on contact with the market
@@ -241,9 +235,7 @@ better than the defence, and text scrubbed hard enough to beat the hound may no 
 **Recurring finding across all seven workers, unprompted:** every flow must degrade gracefully when Kimi times out (~4
 in 5), and the best designs make that failure _part of the demo_ rather than a risk to be hidden.
 
----
-
-## Round 8 — After The Receipts Endpoint Shipped
+## Round 8 — after the receipts endpoint shipped
 
 **New facts changed the board.** On 2026-08-31 the GonkaRouter team announced a **public, no-auth receipts endpoint** in
 the hackathon Discord, and confirmed several things that invalidate earlier assumptions. Full detail in
@@ -253,7 +245,7 @@ the hackathon Discord, and confirmed several things that invalidate earlier assu
    authentication.
 2. **The router silently substitutes models under saturation** — and the track _requires_ two models to cross-verify.
 
-### The Top 5
+### The top 5
 
 Scored on the usual weights. Hook · Real User · Track Fit · Demo · Buildability.
 
@@ -296,7 +288,7 @@ is one day old, so no prior art can exist yet.
 is real but must be argued: _any_ production system doing multi-model verification on this network can silently degrade
 to single-model, and this is the only way to detect it.
 
-### Ranks 2–5, Briefly
+### Ranks 2–5, briefly
 
 | #     | Concept                 | The Idea                                                                                                                                                                                                                                                   |
 | ----- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -309,9 +301,7 @@ to single-model, and this is the only way to detect it.
 object**. It is only interesting when it changes hands — citizen to agency, freelancer to client, writer to reader. Not
 a dashboard.
 
----
-
-## Round 7 — Divergent Brainstorm
+## Round 7 — divergent brainstorm
 
 **Method correction.** Rounds 5 and 6 front-loaded the gates and strangled generation. Round 7 ran five workers with
 **no gates during generation** — wild ideas, product transplants, deep Malaysian life, machinery-as-toy, and
@@ -348,7 +338,7 @@ mechanism is unoccupied; the domain is not.
 serve themselves, not things that are good for society, and this is squarely the latter. For a track scoring
 Practicality and Impact at 30% that may be the right trade — but it is a trade, and it should be made knowingly.
 
-### The Rest Of The Pool Worth Keeping
+### The rest of the pool worth keeping
 
 | Concept               | One Line                                                                                                                | Why It Is Here                                                        |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
@@ -358,14 +348,12 @@ Practicality and Impact at 30% that may be the right trade — but it is a trade
 | **Mutation Mail**     | A message passed through all three models ten times, with a coroner's report of what died on the way                    | The clearest demonstration of information loss between machines       |
 | **The Missing Stair** | Names the one message that killed the group chat, every time it dies                                                    | Best pure hook in the pool; single-model, so it fails track fit       |
 
----
-
-## Rounds 5 And 6 — Nothing Survived
+## Rounds 5 and 6 — nothing survived
 
 Recorded so the search space is not walked again. Both rounds ran under tightening gates and produced no winner. **That
 is the finding**, and it is worth more than a forced recommendation.
 
-### Round 5 — Killed By The Chain
+### Round 5 — killed by the chain
 
 Two concepts survived a six-gate filter, then both died on measurement. See
 [`gateway-capabilities.md`](gateway-capabilities.md#network-reality--measured-not-marketed).
@@ -379,7 +367,7 @@ Two concepts survived a six-gate filter, then both died on measurement. See
 network**. A companion "pinned forever" to it would have vanished. Any concept depending on a specific model lineup is
 falsified.
 
-### Round 6 — Killed By Prior Art
+### Round 6 — killed by prior art
 
 Constrained to the three verified, durable properties: public governance with a contested history, model identity pinned
 to a commit, and no account to revoke.
@@ -392,7 +380,7 @@ to a commit, and no account to revoke.
 | **AI On Paper** (QR)  | **Both halves are commodities.** QR→chatbot is a category (Jotform, Khoros, NoForm, Chat Data); no-account chat is heavily served (Duck.ai, Brave Leo, Venice, ChatAll, Copilot guest)                  |
 | **Receipt** (N3)      | A verifiability report for a request id. Its own critique is fatal: _"a monument to absence — you built a beautiful display of your subject's emptiness"_                                               |
 
-### The Two Findings Worth Keeping
+### The two findings worth keeping
 
 **1. The contested record, not the voting.** _"Nobody uses governance as governance; people use history that has fights
 in it."_ Verified: **65 passed, 31 rejected, 1 failed** — a 32% rejection rate, plus proposal #97 rejected then
@@ -409,8 +397,6 @@ pitch material for whatever gets built**:
 
 With its own honest limit attached: _"if the network's inference quality is not competitive, no-account is a door to an
 empty room."_
-
----
 
 ### Rank 1 — Model Changelog
 
@@ -461,7 +447,7 @@ governed models, each pinned to its own verifiable commit by its own proposal, b
 identical prompts — divergence is attributable to a specific, named, on-chain artifact rather than to vendor mystery.
 Permuting them is meaningless because they are the population being measured.
 
-#### Honest Weaknesses
+#### Honest weaknesses
 
 | Risk                                                                                                            | Status                                                                                                     |
 | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -470,9 +456,7 @@ Permuting them is meaningless because they are the population being measured.
 | **Correlating a governance event with a measured behaviour change needs a benchmark** running across the window | The historical proposals exist now, so the change events are free; the behavioural half is the work        |
 | `[ASSUMPTION]` No prior-art search was run for "on-chain model governance auditor" specifically                 | Do this before committing                                                                                  |
 
----
-
-### Why Dua Keping Fell From 93 To 69
+### Why Dua Keping fell from 93 to 69
 
 Two independent checks, both run after it had already been written up as rank 1.
 
@@ -501,7 +485,7 @@ reproducible on the first honest attempt, and no pitch should rest on it.
 **The win condition, as the prior-art hunt put it:** _beat the free two-photo ChatGPT prompt on abbreviation-matching
 accuracy and dispute-grade evidence, or do not build it._
 
-### Why Bil Tinggi Now Leads
+### Why Bil Tinggi now leads
 
 It did not improve; everything above it fell. But it has the one property the others lack under the "just use ChatGPT"
 attack: **its ground truth is not in any model's weights.** Malaysia's domestic tariff was restructured on 1 July 2025 —
@@ -510,8 +494,6 @@ Incentive. A model answering from memory confidently applies the _old_ structure
 therefore doing work no single model can do offline, and the failure of the free alternative is demonstrable on stage.
 
 **Still refuse the Time-of-Use recommendation feature.** It is unanswerable in Q&A and would become the pitch's spine.
-
----
 
 ## Superseded — Dua Keping
 
@@ -558,16 +540,14 @@ external dependency can fail live — no registry, no CAPTCHA, no rate table, no
 in a flow they were doing anyway, and **it is needed only once per establishment** — verdicts compound into a
 per-restaurant price-fidelity record that grows only from real usage.
 
-### Honest Weaknesses
+### Honest weaknesses
 
 - **Thin blockchain content.** Like every candidate, it uses a chain-backed gateway without needing the chain. See
   [`gateway-capabilities.md`](gateway-capabilities.md) for what is and is not verifiable
 - **Fuzzy item matching is genuinely hard** — which is the Technical-30% showcase, but it is also where it can fail
 - **Scope may read as small.** "A diff tool" is a fair characterisation; the pitch has to carry the rights story
 
----
-
-## The Survivors, Briefly
+## The survivors, briefly
 
 Numbering below predates the 2026-08-31 rescoring and later rounds. Treat this section as historical notes; use the
 [Round 10 ranking](#ranking) for the current decision.
@@ -578,8 +558,6 @@ Numbering below predates the 2026-08-31 rescoring and later rounds. Treat this s
 | **3** | **Missing 2%**  | Checks employer EPF against the statutory 13%/12%. Excellent hook and a clean confirm-gate for liability, but **technically a calculator** — buildable in two days, which bleeds out the 30% technical score                                                                                                                                                                                                                                                                                          |
 | **4** | **Bil Tinggi**  | Best pipeline after rank 1 and the freshest news peg, but **its premise was out of date**: the tiered kWh blocks were abolished on 1 July 2025 and replaced by component billing (Energy, AFA, Capacity, Network, Retail) with a 1,500 kWh threshold. **Refuse the Time-of-Use recommendation feature** — it is unanswerable in Q&A and would be the pitch's spine                                                                                                                                    |
 
----
-
 ## Killed
 
 | Concept                              | Killed By                                                                                                                                                                                                                                                                                                                                                            |
@@ -588,9 +566,7 @@ Numbering below predates the 2026-08-31 rescoring and later rounds. Treat this s
 | **Relief Saya** (LHDN reliefs)       | **Disqualifying liability.** Entitlement depends on what the person actually _spent_, and none of that is on an EA form. The promise exceeds what the input document can ever contain, so the product would coach users into inflated returns and penalties **against the user**. Also seasonal, and the relief list can be hardcoded, so the pipeline is decoration |
 | All of rounds 1 and 2                | See the prior-art table in [`competitor-scan.md`](competitor-scan.md)                                                                                                                                                                                                                                                                                                |
 
----
-
-## Open Questions
+## Open questions
 
 | #   | Question                                                                              | Blocks                             |
 | --- | ------------------------------------------------------------------------------------- | ---------------------------------- |
@@ -600,9 +576,7 @@ Numbering below predates the 2026-08-31 rescoring and later rounds. Treat this s
 | 4   | What is the correct service tax rate for dine-in F&B? Sources conflict                | Rank 2's entire premise            |
 | 5   | Does a handwritten or chalkboard menu break the menu-reading leg?                     | Rank 1's coverage                  |
 
----
-
-## What Was Not Done
+## What was not done
 
 - **No user contact.** Every Real User score is reasoned, not researched — `[ASSUMPTION]` throughout
 - **No live gateway testing.** No GonkaRouter key was available
