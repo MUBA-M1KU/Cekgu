@@ -1,4 +1,4 @@
-# Competitor Scan
+# Competitor scan
 
 Two separate questions, both answered here: **what will the other teams in this track build**, and **what already exists
 commercially** for each concept we considered. The second is the Incumbent Test from
@@ -8,29 +8,30 @@ commercially** for each concept we considered. The second is the Incumbent Test 
 every product named below was returned by a search, not recalled. Where a search found nothing, that is stated as a
 negative result, not as proof of absence.
 
----
-
-## Prior Art For Our Own Candidates
+## Prior art for our own candidates
 
 **This section killed more candidates than the rubric did.** Read it before reviving anything.
 
-| Concept                                   | Prior Art Found                                                                                                                                                                                                        | Verdict                         |
-| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| **Exam question ambiguity**               | [ExamEval](https://www.exameval.com/articles/flaws/unfocused-unclear-open-stem) — AI exam analysis that flags unfocused, unclear and open stems                                                                        | **Direct incumbent**            |
-| **Contract / clause ambiguity**           | [Malbek](https://www.malbek.io/blog/contract-intelligence-2026), [Sirion](https://www.sirion.ai/library/contract-insights/contract-intelligence-conflicting-terms-solutions/), Spellbook, Luminance, Ironclad, Evisort | **Saturated**                   |
-| **Tender / RFP contradiction**            | [ContraVault AI](https://www.contravault.com/) ships a literal "Contradiction Finder" plus pre-bid clarification generation; QuickBid detects conflicting clauses                                                      | **Direct incumbent**            |
-| **Disagreement as an uncertainty signal** | [DiscoUQ, arXiv:2603.20975](https://arxiv.org/abs/2603.20975) — structured inter-agent disagreement analysis; [Trust or Escalate](https://arxiv.org/pdf/2407.18370), ICLR 2025                                         | **Published research**          |
-| **Independence / entanglement audit**     | [arXiv:2604.07650](https://arxiv.org/abs/2604.07650) auditing behavioural entanglement between LLMs; [correlated agreement blindness](https://arxiv.org/html/2607.19899v1), PAAMS 2026                                 | **Published, no product found** |
-| **Auditable determination record**        | Nothing found. C2PA writes provenance at creation; verifiers only read manifests                                                                                                                                       | **Gap**                         |
+| Concept                                   | Prior Art Found                                                                                                                                                                        | Verdict                         |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| **Exam question ambiguity**               | [ExamEval][exameval] — AI exam analysis that flags unfocused, unclear and open stems                                                                                                   | **Direct incumbent**            |
+| **Contract / clause ambiguity**           | [Malbek](https://www.malbek.io/blog/contract-intelligence-2026), [Sirion][sirion], Spellbook, Luminance, Ironclad, Evisort                                                             | **Saturated**                   |
+| **Tender / RFP contradiction**            | [ContraVault AI](https://www.contravault.com/) ships a literal "Contradiction Finder" plus pre-bid clarification generation; QuickBid detects conflicting clauses                      | **Direct incumbent**            |
+| **Disagreement as an uncertainty signal** | [DiscoUQ, arXiv:2603.20975](https://arxiv.org/abs/2603.20975) — structured inter-agent disagreement analysis; [Trust or Escalate](https://arxiv.org/pdf/2407.18370), ICLR 2025         | **Published research**          |
+| **Independence / entanglement audit**     | [arXiv:2604.07650](https://arxiv.org/abs/2604.07650) auditing behavioural entanglement between LLMs; [correlated agreement blindness](https://arxiv.org/html/2607.19899v1), PAAMS 2026 | **Published, no product found** |
+| **Auditable determination record**        | Nothing found. C2PA writes provenance at creation; verifiers only read manifests                                                                                                       | **Gap**                         |
 
-### The Load-Bearing Correction
+[exameval]: https://www.exameval.com/articles/flaws/unfocused-unclear-open-stem
+[sirion]: https://www.sirion.ai/library/contract-insights/contract-intelligence-conflicting-terms-solutions/
+
+### The load-bearing correction
 
 An earlier draft claimed psychometric item analysis "requires students to have already sat the exam", making
 pre-administration ambiguity detection structurally novel. **That claim is false.** Ofqual-regulated boards, ETS and
 Cambridge Assessment embed non-counting **pre-test items** in live papers specifically to obtain item statistics before
 a question counts. This has been standard practice for decades. Any concept resting on that differentiator loses it.
 
-### Two Findings That Constrain Everything
+### Two findings that constrain everything
 
 **Multi-model cross-checking is a shipping product trend, not an insight.** Contract intelligence vendors describe the
 2026 shift as "ensemble LLM architectures, where multiple LLMs work together, cross-referencing and reconciling
@@ -40,9 +41,7 @@ outputs". Our mechanism is their roadmap item.
 detecting correlated agreement and behavioural entanglement, and no commercial tool. `[ASSUMPTION]` A negative search
 result is weaker than a positive one; treat this gap as probable, not certain.
 
----
-
-## Predicted Competition In This Track
+## Predicted competition in this track
 
 Modelled as ~30 teams brainstorming from near-identical prompts. Counts are estimates, not measurements, and sum to more
 than 30 because most teams stack two or three tropes into one project.
@@ -57,7 +56,7 @@ than 30 because most teams stack two or three tropes into one project.
 | 6    | Investment / crypto scheme checker                                                                                    |          3 |
 | 7–25 | Legal explainer, halal label scanner, OKU reader, live captioning, Hansard checker, flood-rumour checker, and similar |   1–2 each |
 
-### The Shared Signature
+### The shared signature
 
 Judges will see the same artefact repeatedly: a Next.js and Tailwind app, a central verdict card with a 0–100 score and
 a green/amber/red pill, a monospace Request ID chip with a copy icon, a "Model A vs Model B" split panel, and a demo
@@ -67,7 +66,7 @@ that opens on a scam-loss statistic and closes on a hash slide.
 generic news fact-checker. The track's own flagship example is the most duplicated and most shallowly implemented
 concept in it.
 
-### The Structural Observation
+### The structural observation
 
 > Every predicted project **resolves** disagreement into a verdict. Every unlikely project **harvests** disagreement as
 > the product. Every predicted project has a consumer with a phone; every unlikely project has a professional with a
@@ -76,9 +75,7 @@ concept in it.
 Useful as a direction, but see [`candidate-concepts.md`](candidate-concepts.md) — harvesting disagreement turned out to
 have its own trap.
 
----
-
-## Commercial Landscape: AI Output Verification
+## Commercial landscape: AI output verification
 
 Seven products examined. **All seven sell to the team that built the AI system.** None sells to the party receiving an
 AI output from someone else.
@@ -101,9 +98,7 @@ detects just 45% of hallucinations at a 12% false-positive rate.
 The market framing is explicit in the category's own marketing: these tools exist to "catch bad outputs **before users
 do**". The user is the threat the tool protects the builder from, never the customer.
 
----
-
-## Regulatory Pressure
+## Regulatory pressure
 
 Relevant because it creates a buyer who is newly obliged and has no tooling.
 
@@ -128,8 +123,6 @@ evidence of "not AI".
 **The unmet need:** no tool produces a signed, timestamped, defensible record of "we examined this artifact on date X,
 ran checks Y, concluded Z" that a regulator or court would accept.
 
----
-
 ## Sources
 
 All accessed 2026-08-30.
@@ -150,20 +143,21 @@ All accessed 2026-08-30.
   [C2PA Viewer](https://c2paviewer.com/articles/eu-ai-act-content-credentials) ·
   [TrueScreen on C2PA limits](https://truescreen.io/articles/c2pa-standard-history-limitations/)
 
----
-
-## Round 2 Prior Art
+## Round 2 prior art
 
 Searched 2026-08-30 against the round 2 candidates in [`candidate-concepts.md`](candidate-concepts.md).
 
-| Candidate                         | Prior Art                                                                                                                                                                                                                                                                                                                                                                                                                                  | Verdict                                                                                                                 |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| **Description sufficiency audit** | [Alt Audit](https://altaudit.com/wcag-compliance), [AltText.ai](https://alttext.ai/blog/wcag-alt-text-guide), [WebAbility](https://www.webability.io/blog/image-accessibility) all check whether alt text **exists**, plus heuristics (length, `alt="image"`)                                                                                                                                                                              | **Gap is real.** None measures information sufficiency                                                                  |
-| **Gig-worker appeal memo**        | [FareShare](https://arxiv.org/pdf/2505.08904) — academic tool helping _labour organisers estimate lost wages_; [Worker Info Exchange](https://www.cambridge.org/core/journals/the-economic-and-labour-relations-review/article/confronting-algorithmic-management-using-subject-access-requests-insights-using-the-case-of-food-deliveries/C9E469DA7A3348AFC15CBF48FFB0926B) runs UK subject-access-request casework against "robo-firing" | Closer than comfortable. Neither is Malaysian, multi-model, or statute-specific — but "nobody does this" would be false |
-| **AI-cheating defence**           | [GPTZero sells a "Writing Report"](https://gptzero.me/news/falsely-accused-of-ai-cheating/) to prove authorship — the accuser also selling the defence; plus student-discipline law firms                                                                                                                                                                                                                                                  | Crowded genre                                                                                                           |
-| **Shrinkflation**                 | Subreddits, press databases, consumer apps                                                                                                                                                                                                                                                                                                                                                                                                 | Concept crowded; the two-chain instrument is the fresh part                                                             |
+| Candidate                         | Prior Art                                                                                                                                                                                                                                                     | Verdict                                                                                                                 |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Description sufficiency audit** | [Alt Audit](https://altaudit.com/wcag-compliance), [AltText.ai](https://alttext.ai/blog/wcag-alt-text-guide), [WebAbility](https://www.webability.io/blog/image-accessibility) all check whether alt text **exists**, plus heuristics (length, `alt="image"`) | **Gap is real.** None measures information sufficiency                                                                  |
+| **Gig-worker appeal memo**        | [FareShare](https://arxiv.org/pdf/2505.08904) — academic tool helping _labour organisers estimate lost wages_; [Worker Info Exchange][worker-info-exchange] runs UK subject-access-request casework against "robo-firing"                                     | Closer than comfortable. Neither is Malaysian, multi-model, or statute-specific — but "nobody does this" would be false |
+| **AI-cheating defence**           | [GPTZero sells a "Writing Report"](https://gptzero.me/news/falsely-accused-of-ai-cheating/) to prove authorship — the accuser also selling the defence; plus student-discipline law firms                                                                     | Crowded genre                                                                                                           |
+| **Shrinkflation**                 | Subreddits, press databases, consumer apps                                                                                                                                                                                                                    | Concept crowded; the two-chain instrument is the fresh part                                                             |
 
-### The Quantified Gaps
+[worker-info-exchange]:
+  https://www.cambridge.org/core/journals/the-economic-and-labour-relations-review/article/confronting-algorithmic-management-using-subject-access-requests-insights-using-the-case-of-food-deliveries/C9E469DA7A3348AFC15CBF48FFB0926B
+
+### The quantified gaps
 
 **Accessibility.** Automated tooling reliably detects only **30–40% of WCAG issues**; the remaining **60–70% require
 human review** for context — explicitly including _whether alt text is meaningful_. **16.2%** of home-page images have
@@ -183,7 +177,7 @@ essays misclassified. In early 2026 an Adelphi University student flagged "100% 
 _"without valid basis"_. Vanderbilt, Yale, MIT and Stanford have disabled or restricted detection. OpenAI discontinued
 its own detector.
 
-### Malaysian Accessibility Law — A Soft Hook
+### Malaysian accessibility law — a soft hook
 
 `[NEEDS SOURCE]` beyond secondary summaries. The **PWD Act 2008 Art. 28** requires essential services including digital
 platforms to be accessible, and Digital Accessibility Guidelines exist, but **Malaysia has no nationwide web
