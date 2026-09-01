@@ -22,10 +22,11 @@ Plus **two or more models cross-verifying**, and **Gonka Request IDs surfaced in
 
 ## Start Here
 
-| File                           | What's In It                                                     |
-| ------------------------------ | ---------------------------------------------------------------- |
-| [`brief.md`](brief.md)         | The whole hackathon: dates, rules, deliverables, judging, people |
-| [`../AGENTS.md`](../AGENTS.md) | Project instructions for agentic tools, and humans               |
+| File                                                               | What's In It                                                     |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| [`brief.md`](brief.md)                                             | The whole hackathon: dates, rules, deliverables, judging, people |
+| [`superpowers/research/README.md`](superpowers/research/README.md) | Ten-round concept research and ranked candidates                 |
+| [`../AGENTS.md`](../AGENTS.md)                                     | Project instructions for agentic tools, and humans               |
 
 Work in progress lives in the [Issues board](https://github.com/MUBA-M1KU/dev/issues), not in a checklist here.
 
@@ -103,8 +104,8 @@ docs/
 .claude/hooks/           session brief, env drift, git guard, formatter
 ```
 
-`PRODUCT.md`, `PRD.md`, `TRD.md` and `DESIGN.md` are listed but **not written yet**. Source layout is not decided; add
-it here when it is.
+`PRODUCT.md`, `PRD.md` and `DESIGN.md` are listed but **not written yet**. Source layout is not decided; add it here
+when it is.
 
 Skill provenance and what each hook does: [`../.agents/skills/VENDORED.md`](../.agents/skills/VENDORED.md).
 
