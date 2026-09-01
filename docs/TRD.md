@@ -9,8 +9,9 @@ Canonical technical truth for this project. Where this file and any other disagr
 marked as open at the foot. This document exists early because the gateway is the one part of the stack the track fixes
 for us, so it can be pinned before the concept is.
 
-Everything in the Verified sections was measured against the live API on **2026-08-29** with our own key. Where a
-measurement contradicts organizer material, the measurement is recorded and the contradiction is named.
+The initial Verified sections were measured against the live API on **2026-08-29** with our own key. Receipt and
+fallback behaviour was verified on **2026-08-31** and is dated where introduced. Where a measurement contradicts
+organizer material, the measurement is recorded and the contradiction is named.
 
 ---
 
@@ -80,11 +81,12 @@ One key covers every model. No per-model access requests.
 
 ## 2. Endpoints
 
-| Method | Path                   | Protocol  | Notes                                                  |
-| ------ | ---------------------- | --------- | ------------------------------------------------------ |
-| `POST` | `/v1/chat/completions` | OpenAI    | Streaming supported via `"stream": true`               |
-| `POST` | `/v1/messages`         | Anthropic | Full Messages API: streaming and tool use              |
-| `GET`  | `/v1/models`           | OpenAI    | **The authoritative model list.** See [§3](#s3-models) |
+| Method | Path                          | Protocol  | Notes                                                  |
+| ------ | ----------------------------- | --------- | ------------------------------------------------------ |
+| `POST` | `/v1/chat/completions`        | OpenAI    | Streaming supported via `"stream": true`               |
+| `POST` | `/v1/messages`                | Anthropic | Full Messages API: streaming and tool use              |
+| `GET`  | `/v1/models`                  | OpenAI    | **The authoritative model list.** See [§3](#s3-models) |
+| `GET`  | `/v1/receipts/{x-request-id}` | Gateway   | Public, no-auth metadata for a completed request       |
 
 ### Minimal Working Calls
 
@@ -208,9 +210,27 @@ away**. This matters for how we call the gateway:
 The body ids are **not** substitutes: the Anthropic surface returns `msg_…` and the OpenAI surface returns
 `devshard-65275-1926`. Neither is the gateway's request id.
 
-> **Design consequence.** Whatever wraps the gateway must return `(content, request_id, devshard_id, model, usage)` as
-> one record, from the first commit. Retrofitting provenance after the call layer exists means rewriting every call
-> site, and the track fails without it.
+> **Design consequence.** Whatever wraps the gateway must return
+> `(content, request_id, devshard_id, requested_model, served_model, receipt_status, usage)` as one record, from the
+> first commit. Retrofitting provenance after the call layer exists means rewriting every call site, and the track fails
+> without it.
+
+### Cross-Verification Validity Contract
+
+**Verified 2026-08-31:** when a requested model is saturated, the gateway may silently serve a different model and
+report the substitution only in `X-Gonka-Fallback`. A pair requested from two models can therefore become the same model
+twice unless the call layer fails closed.
+
+Every reasoning request must:
+
+1. Send `X-Gonka-No-Fallback: true`.
+2. Capture `x-request-id`, `x-devshard-id` and `X-Gonka-Fallback` from the raw response.
+3. Reject the response if `X-Gonka-Fallback` is present, even if the body is otherwise successful.
+4. Query `GET /v1/receipts/{x-request-id}` and require the receipt's `model` to equal `requested_model`.
+5. Admit a result to consensus only when at least two successful records have different `served_model` values.
+
+Failure at any step returns **verification unavailable**, never a consensus answer. The receipt is unsigned gateway
+metadata: it makes the serving model publicly inspectable, but it is not cryptographic or on-chain proof.
 
 <div align="right"><a href="#top">&#8593;&nbsp;Back to top</a></div>
 
@@ -228,6 +248,7 @@ The body ids are **not** substitutes: the Anthropic surface returns `msg_…` an
 | 4   | **Website model ids are wrong**            | See [§3](#s3-models). Trust `GET /v1/models`                                                                                                                  |
 | 5   | **`/v1` asymmetry between protocols**      | See [§1](#s1-gateway)                                                                                                                                         |
 | 6   | **Prompt caching unsupported**             | The gateway does not implement Anthropic's prompt-caching headers. Disable client-side (`DISABLE_PROMPT_CACHING=1` for Claude Code)                           |
+| 7   | **Silent model fallback**                  | Send `X-Gonka-No-Fallback: true`; reject `X-Gonka-Fallback`; verify the served model via the public receipt before consensus                                  |
 
 **Stripping reasoning tags is not optional.** A consensus step that compares raw outputs will compare one model's answer
 against another model's internal monologue. Strip `<think>…</think>` and any orphaned tag before anything reads the
@@ -264,12 +285,12 @@ near these ceilings.
 
 ## 7. Error Codes
 
-| Code  | Meaning                                                                |
-| ----- | ---------------------------------------------------------------------- |
-| `400` | Unknown model id — `"model not available for your channel"`            |
-| `401` | Missing or invalid key — `"missing Authorization or x-api-key header"` |
-| `404` | Wrong path. The request reached the gateway; the route does not exist  |
-| `429` | Rate limited. Balance untouched                                        |
+| Code  | Meaning                                                                           |
+| ----- | --------------------------------------------------------------------------------- |
+| `400` | Unknown model id — `"model not available for your channel"`                       |
+| `401` | Missing or invalid key — `"missing Authorization or x-api-key header"`            |
+| `404` | Wrong path. The request reached the gateway; the route does not exist             |
+| `429` | Rate limited or exact model unavailable with fallback disabled. Balance untouched |
 
 A `404` is a URL problem, never a key or model problem — those are `401` and `400`.
 
@@ -317,7 +338,9 @@ Not yet decided. Each gets a subsection here, with the reasoning, once it is.
 | Consensus algorithm         | Concept                 |
 | How provenance is displayed | Concept and `DESIGN.md` |
 
-**What is already fixed regardless of concept:** the gateway, the three model ids, the two base URLs, and the
-requirement that every call returns its `x-request-id` alongside its content.
+**What is already fixed regardless of concept:** the gateway, the model ids returned by `GET /v1/models`, the two base
+URLs, the no-fallback contract, receipt verification, and the requirement that every call returns its `x-request-id`
+alongside its content. The domain-specific disagreement algorithm remains open; the distinct-model eligibility gate does
+not.
 
 <div align="right"><a href="#top">&#8593;&nbsp;Back to top</a></div>
