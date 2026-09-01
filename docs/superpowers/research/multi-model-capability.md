@@ -1,4 +1,4 @@
-# Multi-Model Capability
+# Multi-model capability
 
 The track requires two or more models to cross-verify. This file answers the question that requirement raises and that
 most entries will dodge: **what do three distinct models actually buy that one model called three times does not?**
@@ -9,9 +9,7 @@ ensemble with better marketing.
 **Method.** Literature-grounded analysis by a delegated model, then applied against the Gonka model roster. Claims about
 what resampling cannot do are mechanical, not empirical. Interpretation is marked.
 
----
-
-## The Baseline That Kills Most Claims
+## The baseline that kills most claims
 
 **One strong model sampled _N_ times at temperature is free, and it is strong.** Resampling varies the decoding. It
 cannot vary the machine. So everything reachable by varying decoding alone — averaging, majority voting,
@@ -27,9 +25,7 @@ What resampling can never vary:
 | The training data      | And therefore its blind spots                                 |
 | The trust root         | One weight hash, one vendor key, one compromise domain        |
 
----
-
-## The Permutation Test
+## The permutation test
 
 > **Swap the three models around in your design. If the protocol still means the same thing, you have variance, not
 > structure.**
@@ -42,9 +38,7 @@ correlated-witness attack — three models reached through one gateway, trained 
 corpus-shared belief is one opinion printed three times. A design resting on inter-model **difference** is immune,
 because it never needed agreement to mean anything.
 
----
-
-## What Genuinely Requires Distinct Machines
+## What genuinely requires distinct machines
 
 | Capability                           | Verdict                       | Mechanism                                                                                                       |
 | ------------------------------------ | ----------------------------- | --------------------------------------------------------------------------------------------------------------- |
@@ -61,9 +55,7 @@ because it never needed agreement to mean anything.
 **The caveat any hostile judge will raise:** model independence is not data independence. All three crawled the same
 web. Unanimous agreement on a popular misconception is unanimous and wrong.
 
----
-
-## The Asymmetry In The Gonka Roster
+## The asymmetry in the Gonka roster
 
 This matters because it is specific to the models this track provides, and it is the strongest available answer to "why
 this stack".
@@ -78,24 +70,23 @@ this stack".
 usable experimental control, and it is permutation-breaking. Swap the two and the protocol does not merely change
 meaning, it becomes impossible.
 
-### Directed Asymmetries Available Here
+### Directed asymmetries available here
 
 **Symmetric disagreement is a smoke alarm** — someone is wrong, unknown who. **Directed disagreement is an instrument**
 — the capability ordering predicts who is wrong and why, so disagreement becomes _localisation_.
 
-| Pair                | What The Divergence Measures                                                                                                                                                                |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Kimi → DeepSeek     | **The blind control.** Kimi answers from pixels; DeepSeek answers from text about the pixels. Agreement means the text carried the information. Divergence enumerates exactly what was lost |
-| MiniMax → DeepSeek  | **Directed audit.** MiniMax can _execute_ DeepSeek's claims — fetch the citation, run the code. DeepSeek has no reciprocal capability, so the audit relation is one-directional             |
-| DeepSeek vs MiniMax | **Scaffold as the measured variable.** Error rate grows with derivation length for the unscaffolded model and is roughly length-invariant for the tool-chained one                          |
+- **Kimi → DeepSeek, the blind control.** Kimi answers from pixels; DeepSeek answers from text about the pixels.
+  Agreement means the text carried the information. Divergence enumerates exactly what was lost.
+- **MiniMax → DeepSeek, a directed audit.** MiniMax can _execute_ DeepSeek's claims — fetch the citation, run the code.
+  DeepSeek has no reciprocal capability, so the audit relation is one-directional.
+- **DeepSeek versus MiniMax, scaffold as the measured variable.** Error rate grows with derivation length for the
+  unscaffolded model and is roughly length-invariant for the tool-chained one.
 
 **Why the blind control cannot be faked within one model.** The one-model version — show the image, then ablate it and
 resample — shares the same model's captioning and reasoning biases across both arms. An independent blind observer is
 the honest experimental design, and it exists only when the blind observer is a genuinely different machine.
 
----
-
-## The Five Defensible Cores
+## The five defensible cores
 
 Everything worth building here stands on one of these. The rest is ensemble folklore.
 
@@ -105,7 +96,7 @@ Everything worth building here stands on one of these. The rest is ensemble folk
 4. **Audit relations that cannot be self-referential**
 5. **Inspectable request attribution** — exposing the gateway's account of which model served each inference
 
-### Where Attribution Buys Something Real
+### Where attribution buys something real
 
 The Request ID is the mechanism for core 5. A single system asserting "these were three distinct inferences" is
 self-attestation — one key, one log, one story. Per-inference receipts let a party inspect the gateway's account of
@@ -116,16 +107,12 @@ Request ID to unsigned gateway metadata, including the model that actually serve
 inspectable, not cryptographic or on-chain proof. It buys something where a record will be challenged later —
 arbitration, compliance, procurement. It buys nothing in a private workflow where the operator trusts itself.
 
----
-
-## What We Do Not Claim
+## What we do not claim
 
 - Not that three models beat one model's self-consistency on raw accuracy. Mostly false, and the baseline is free
 - Not that cross-model agreement verifies corpus-shared beliefs. The web is one crawl
 - Not that attribution is independently verified — today's receipts are unsigned gateway self-attestation, and even a
   future signature would attest distinct _machines_, not independent _epistemics_
-
----
 
 ## Sources
 
