@@ -12,17 +12,18 @@ negative result, not as proof of absence.
 
 **This section killed more candidates than the rubric did.** Read it before reviving anything.
 
-| Concept                                   | Prior art found                                                                                                                                                                        | Verdict                         |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| **Exam question ambiguity**               | [ExamEval][exameval] — AI exam analysis that flags unfocused, unclear and open stems                                                                                                   | **Direct incumbent**            |
-| **Contract / clause ambiguity**           | [Malbek](https://www.malbek.io/blog/contract-intelligence-2026), [Sirion][sirion], Spellbook, Luminance, Ironclad, Evisort                                                             | **Saturated**                   |
-| **Tender / RFP contradiction**            | [ContraVault AI](https://www.contravault.com/) ships a literal "Contradiction Finder" plus pre-bid clarification generation; QuickBid detects conflicting clauses                      | **Direct incumbent**            |
-| **Disagreement as an uncertainty signal** | [DiscoUQ, arXiv:2603.20975](https://arxiv.org/abs/2603.20975) — structured inter-agent disagreement analysis; [Trust or Escalate](https://arxiv.org/pdf/2407.18370), ICLR 2025         | **Published research**          |
-| **Independence / entanglement audit**     | [arXiv:2604.07650](https://arxiv.org/abs/2604.07650) auditing behavioural entanglement between LLMs; [correlated agreement blindness](https://arxiv.org/html/2607.19899v1), PAAMS 2026 | **Published, no product found** |
-| **Auditable determination record**        | Nothing found. C2PA writes provenance at creation; verifiers only read manifests                                                                                                       | **Gap**                         |
+| Concept                                   | Prior art found                                                                                                                                                        | Verdict                         |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| **Exam question ambiguity**               | [ExamEval][exameval-flaws] — AI exam analysis that flags unfocused, unclear and open stems                                                                             | **Direct incumbent**            |
+| **Contract / clause ambiguity**           | [Malbek][malbek], [Sirion][sirion-conflicting-terms], Spellbook, Luminance, Ironclad, Evisort                                                                          | **Saturated**                   |
+| **Tender / RFP contradiction**            | [ContraVault AI][contravault] ships a literal "Contradiction Finder" plus pre-bid clarification generation; QuickBid detects conflicting clauses                       | **Direct incumbent**            |
+| **Disagreement as an uncertainty signal** | [DiscoUQ, arXiv:2603.20975][arxiv-2603-20975] — structured inter-agent disagreement analysis; [Trust or Escalate](https://arxiv.org/pdf/2407.18370), ICLR 2025         | **Published research**          |
+| **Independence / entanglement audit**     | [arXiv:2604.07650][arxiv-2604-07650] auditing behavioural entanglement between LLMs; [correlated agreement blindness](https://arxiv.org/html/2607.19899v1), PAAMS 2026 | **Published, no product found** |
+| **Auditable determination record**        | Nothing found. C2PA writes provenance at creation; verifiers only read manifests                                                                                       | **Gap**                         |
 
-[exameval]: https://www.exameval.com/articles/flaws/unfocused-unclear-open-stem
-[sirion]: https://www.sirion.ai/library/contract-insights/contract-intelligence-conflicting-terms-solutions/
+[exameval-flaws]: https://www.exameval.com/articles/flaws/unfocused-unclear-open-stem
+[sirion-conflicting-terms]:
+  https://www.sirion.ai/library/contract-insights/contract-intelligence-conflicting-terms-solutions/
 
 ### The load-bearing correction
 
@@ -127,16 +128,15 @@ ran checks Y, concluded Z" that a regulator or court would accept.
 
 All accessed 2026-08-30.
 
-- Search-returned vendors: [ExamEval](https://www.exameval.com/), [ContraVault](https://www.contravault.com/),
-  [Malbek](https://www.malbek.io/blog/contract-intelligence-2026),
+- Search-returned vendors: [ExamEval](https://www.exameval.com/), [ContraVault][contravault], [Malbek][malbek],
   [Sirion](https://www.sirion.ai/library/contract-management/contract-ambiguity/),
   [Spellbook](https://spellbook.com/learn/ai-legal-contract-review-faster-analysis)
 - [Braintrust hallucination-tool survey 2026](https://www.braintrust.dev/articles/best-hallucination-detection-tools-2026)
   · [Galileo](https://www.galileo.ai/) · [Patronus](https://www.patronus.ai/) ·
   [Arize Phoenix](https://phoenix.arize.com/) ·
   [Lakera](https://www.lakera.ai/blog/guide-to-hallucinations-in-large-language-models)
-- [arXiv:2603.10060](https://arxiv.org/html/2603.10060v1) · [arXiv:2603.20975](https://arxiv.org/abs/2603.20975) ·
-  [arXiv:2604.07650](https://arxiv.org/abs/2604.07650)
+- [arXiv:2603.10060](https://arxiv.org/html/2603.10060v1) · [arXiv:2603.20975][arxiv-2603-20975] ·
+  [arXiv:2604.07650][arxiv-2604-07650]
 - Article 50:
   [SSL.com](https://www.ssl.com/article/eu-ai-act-article-50-a-complete-guide-to-ai-transparency-compliance/) ·
   [Shibolet](https://www.shibolet.com/en/eu-ai-act-article-50/) ·
@@ -183,3 +183,8 @@ its own detector.
 platforms to be accessible, and Digital Accessibility Guidelines exist, but **Malaysia has no nationwide web
 accessibility mandate** equivalent to the European Accessibility Act. Any buyer argument must rest on EU
 extraterritorial reach and institutional reputation, not Malaysian statute.
+
+[malbek]: https://www.malbek.io/blog/contract-intelligence-2026
+[contravault]: https://www.contravault.com/
+[arxiv-2603-20975]: https://arxiv.org/abs/2603.20975
+[arxiv-2604-07650]: https://arxiv.org/abs/2604.07650

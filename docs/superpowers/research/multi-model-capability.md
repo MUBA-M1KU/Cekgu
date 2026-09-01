@@ -75,11 +75,13 @@ meaning, it becomes impossible.
 **Symmetric disagreement is a smoke alarm** — someone is wrong, unknown who. **Directed disagreement is an instrument**
 — the capability ordering predicts who is wrong and why, so disagreement becomes _localisation_.
 
-- **Kimi → DeepSeek, the blind control.** Kimi answers from pixels; DeepSeek answers from text about the pixels.
+What the divergence measures, per pair:
+
+- **Kimi → DeepSeek. The blind control.** Kimi answers from pixels; DeepSeek answers from text about the pixels.
   Agreement means the text carried the information. Divergence enumerates exactly what was lost.
-- **MiniMax → DeepSeek, a directed audit.** MiniMax can _execute_ DeepSeek's claims — fetch the citation, run the code.
+- **MiniMax → DeepSeek. Directed audit.** MiniMax can _execute_ DeepSeek's claims — fetch the citation, run the code.
   DeepSeek has no reciprocal capability, so the audit relation is one-directional.
-- **DeepSeek versus MiniMax, scaffold as the measured variable.** Error rate grows with derivation length for the
+- **DeepSeek vs MiniMax. Scaffold as the measured variable.** Error rate grows with derivation length for the
   unscaffolded model and is roughly length-invariant for the tool-chained one.
 
 **Why the blind control cannot be faked within one model.** The one-model version — show the image, then ablate it and

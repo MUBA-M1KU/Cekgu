@@ -30,7 +30,7 @@ The load-bearing number for any multi-model claim:
 | Same model, resampled        |                       ≈ 0.40 |
 | **Different model families** |                   **≈ 0.08** |
 
-Source: [arXiv:2601.22290](https://arxiv.org/html/2601.22290v1) §4.4.4. The same paper bounds correlated system error as
+Source: [arXiv:2601.22290][arxiv-2601-22290] §4.4.4. The same paper bounds correlated system error as
 `P_corr(n, p, ρ) ≤ (1−ρ)·P_ind(n,p) + ρ·p` (Theorem 4) — as ρ → 1 consensus yields **zero** benefit and majority vote
 inherits the shared error at full rate.
 
@@ -50,13 +50,13 @@ trained on substantially overlapping corpora, so this is favourable but not prov
 
 - **Naive self-consistency is weak.** Asking twice and flagging differences detected only **45% of injected
   hallucinations at a 12% false-positive rate**, +3–5 s and +$0.03/request. Structural evidence — signed execution
-  receipts — hit **91% detection at 4% FPR** ([arXiv:2603.10060](https://arxiv.org/html/2603.10060v1), Table 3). Where
-  real evidence is available it beats statistical agreement decisively.
+  receipts — hit **91% detection at 4% FPR** ([arXiv:2603.10060][arxiv-2603-10060], Table 3). Where real evidence is
+  available it beats statistical agreement decisively.
 - **Consensus measures stability, not grounding.** Claims resting purely on parametric knowledge were still correct only
   71.2% of the time (same paper, Table 6) — and that is exactly the regime where models _agree_ while having no
   independent evidence.
-- **Agreement degrades as models converge.** ["Correlated agreement blindness"](https://arxiv.org/html/2607.19899v1)
-  (PAAMS 2026) documents disagreement-gated oversight weakening as foundation models share pretraining and alignment.
+- **Agreement degrades as models converge.** ["Correlated agreement blindness"][arxiv-2607-19899] (PAAMS 2026) documents
+  disagreement-gated oversight weakening as foundation models share pretraining and alignment.
 
 **The limitation to state openly:** when several models agree, that agreement is evidence of correctness only to the
 degree their errors are decorrelated. Multi-model consensus is a **calibrated confidence signal, not verification.**
@@ -124,10 +124,14 @@ governed by a written rule about what divergence does. Most AI ensemble pipeline
 
 All accessed 2026-08-30.
 
-- [arXiv:2601.22290](https://arxiv.org/html/2601.22290v1) — consensus theory, correlation coefficients, Theorem 4
-- [arXiv:2603.10060](https://arxiv.org/html/2603.10060v1) — self-consistency vs receipt-based detection, Tables 3, 4, 6
-- [arXiv:2607.19899](https://arxiv.org/html/2607.19899v1) — correlated agreement blindness, PAAMS 2026
+- [arXiv:2601.22290][arxiv-2601-22290] — consensus theory, correlation coefficients, Theorem 4
+- [arXiv:2603.10060][arxiv-2603-10060] — self-consistency vs receipt-based detection, Tables 3, 4, 6
+- [arXiv:2607.19899][arxiv-2607-19899] — correlated agreement blindness, PAAMS 2026
 - [arXiv:2604.07650](https://arxiv.org/abs/2604.07650) — auditing behavioural entanglement between LLMs
 - [arXiv:2603.20975](https://arxiv.org/abs/2603.20975) — DiscoUQ, structured disagreement analysis
 - [Trust or Escalate, arXiv:2407.18370](https://arxiv.org/pdf/2407.18370) — ICLR 2025, selective evaluation with
   guarantees
+
+[arxiv-2601-22290]: https://arxiv.org/html/2601.22290v1
+[arxiv-2603-10060]: https://arxiv.org/html/2603.10060v1
+[arxiv-2607-19899]: https://arxiv.org/html/2607.19899v1

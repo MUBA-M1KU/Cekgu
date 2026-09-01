@@ -3,18 +3,37 @@
 Ten rounds of concept exploration, scored against [`RUBRIC.md`](RUBRIC.md). **No concept is locked** — Round 10 is the
 current ranking, while earlier rounds remain in this document as research history.
 
-**Round 3 Method.** Five decorrelated generation briefs (mass appeal, money, revelation, Malaysian daily life,
+**Round 3 method.** Five decorrelated generation briefs (mass appeal, money, revelation, Malaysian daily life,
 spectacle), each carrying a ban list and a hard gate, then a hostile selection pass. Delegated models produced raw
 material and attacked it; selection and scoring were done by hand, per
-[Do Not Let A Model Pick The Concept](RUBRIC.md#do-not-let-a-model-pick-the-concept).
+[Do not let a model pick the concept](RUBRIC.md#do-not-let-a-model-pick-the-concept).
+
+Contents:
+
+1. [What rounds 1 and 2 got wrong](#what-rounds-1-and-2-got-wrong)
+1. [The two gates](#the-two-gates)
+1. [Round 4 scores](#round-4-scores)
+1. [Round 10 — social benefit reweighted](#round-10--social-benefit-reweighted)
+1. [Round 9 — the final five](#round-9--the-final-five)
+1. [Round 8 — after the receipts endpoint shipped](#round-8--after-the-receipts-endpoint-shipped)
+1. [Round 7 — divergent brainstorm](#round-7--divergent-brainstorm)
+1. [Rounds 5 and 6 — nothing survived](#rounds-5-and-6--nothing-survived)
+1. [Rank 1 — Model Changelog](#rank-1--model-changelog)
+1. [Why Dua Keping fell from 93 to 69](#why-dua-keping-fell-from-93-to-69)
+1. [Why Bil Tinggi now leads](#why-bil-tinggi-now-leads)
+1. [Superseded — Dua Keping](#superseded--dua-keping)
+1. [The survivors, briefly](#the-survivors-briefly)
+1. [Killed](#killed)
+1. [Open questions](#open-questions)
+1. [What was not done](#what-was-not-done)
 
 ## What rounds 1 and 2 got wrong
 
-- **Round 1** ranked by _what survives a hostile review_ instead of _what wins_, and produced small, safe utilities. Its
+- **Round 1.** Ranked by _what survives a hostile review_ instead of _what wins_. Produced small, safe utilities. Its
   top pick also failed the rubric's own kill criterion — a public database did the adjudicating, so the models were
   decoration.
-- **Round 2** fixed the multi-model problem but produced **no hook**. The winner's name, "Blind-Control Description
-  Audit", was misread as a tool for blind people. If the name misleads in three seconds, the pitch dies in three
+- **Round 2.** Fixed the multi-model problem but produced **no hook**. The winner's name — "Blind-Control Description
+  Audit" — was misread as a tool for blind people. If the name misleads in three seconds, the pitch dies in three
   seconds.
 
 **The correction for round 3:** every concept must pass the **bus-stop test** — say the name and one sentence to a
@@ -398,7 +417,7 @@ pitch material for whatever gets built**:
 With its own honest limit attached: _"if the network's inference quality is not competitive, no-account is a door to an
 empty room."_
 
-### Rank 1 — Model Changelog
+## Rank 1 — Model Changelog
 
 > **"Your AI changed last Tuesday and nobody told you. Here is the proposal, the block, and the commit hash."**
 
@@ -447,7 +466,7 @@ governed models, each pinned to its own verifiable commit by its own proposal, b
 identical prompts — divergence is attributable to a specific, named, on-chain artifact rather than to vendor mystery.
 Permuting them is meaningless because they are the population being measured.
 
-#### Honest weaknesses
+### Model Changelog: honest weaknesses
 
 | Risk                                                                                                            | Status                                                                                                     |
 | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -456,7 +475,7 @@ Permuting them is meaningless because they are the population being measured.
 | **Correlating a governance event with a measured behaviour change needs a benchmark** running across the window | The historical proposals exist now, so the change events are free; the behavioural half is the work        |
 | `[ASSUMPTION]` No prior-art search was run for "on-chain model governance auditor" specifically                 | Do this before committing                                                                                  |
 
-### Why Dua Keping fell from 93 to 69
+## Why Dua Keping fell from 93 to 69
 
 Two independent checks, both run after it had already been written up as rank 1.
 
@@ -485,7 +504,7 @@ reproducible on the first honest attempt, and no pitch should rest on it.
 **The win condition, as the prior-art hunt put it:** _beat the free two-photo ChatGPT prompt on abbreviation-matching
 accuracy and dispute-grade evidence, or do not build it._
 
-### Why Bil Tinggi now leads
+## Why Bil Tinggi now leads
 
 It did not improve; everything above it fell. But it has the one property the others lack under the "just use ChatGPT"
 attack: **its ground truth is not in any model's weights.** Malaysia's domestic tariff was restructured on 1 July 2025 —
@@ -502,7 +521,7 @@ therefore doing work no single model can do offline, and the failure of the free
 
 **Scored 93, then rescored 69 and cut.** Kept in full because the hook analysis, the liability reasoning and the
 price-marking law below all transfer to whatever gets built. See
-[Why Dua Keping Fell From 93 To 69](#why-dua-keping-fell-from-93-to-69) for the prior art and the failed experiment.
+[Why Dua Keping fell from 93 to 69](#why-dua-keping-fell-from-93-to-69) for the prior art and the failed experiment.
 
 **The architecture argument, which did not survive testing.** The design claimed that if **one** model reads both
 documents its reading errors **correlate**, giving it every incentive to reconcile the two into agreement, so only a
@@ -540,7 +559,7 @@ external dependency can fail live — no registry, no CAPTCHA, no rate table, no
 in a flow they were doing anyway, and **it is needed only once per establishment** — verdicts compound into a
 per-restaurant price-fidelity record that grows only from real usage.
 
-### Honest weaknesses
+### Dua Keping: honest weaknesses
 
 - **Thin blockchain content.** Like every candidate, it uses a chain-backed gateway without needing the chain. See
   [`gateway-capabilities.md`](gateway-capabilities.md) for what is and is not verifiable
@@ -560,11 +579,14 @@ Numbering below predates the 2026-08-31 rescoring and later rounds. Treat this s
 
 ## Killed
 
-| Concept                              | Killed by                                                                                                                                                                                                                                                                                                                                                            |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Servis Apa Ni** (workshop invoice) | _"A knowledge-base company cosplaying as a hackathon project."_ No public Malaysian per-variant service-schedule dataset exists, and no arrangement of three models conjures one. ~70% chance a judge's real invoice contains items outside the catalogue and the app visibly shrugs                                                                                 |
-| **Relief Saya** (LHDN reliefs)       | **Disqualifying liability.** Entitlement depends on what the person actually _spent_, and none of that is on an EA form. The promise exceeds what the input document can ever contain, so the product would coach users into inflated returns and penalties **against the user**. Also seasonal, and the relief list can be hardcoded, so the pipeline is decoration |
-| All of rounds 1 and 2                | See the prior-art table in [`competitor-scan.md`](competitor-scan.md)                                                                                                                                                                                                                                                                                                |
+- **Servis Apa Ni** (workshop invoice). _"A knowledge-base company cosplaying as a hackathon project."_ No public
+  Malaysian per-variant service-schedule dataset exists, and no arrangement of three models conjures one. ~70% chance a
+  judge's real invoice contains items outside the catalogue and the app visibly shrugs.
+- **Relief Saya** (LHDN reliefs). **Disqualifying liability.** Entitlement depends on what the person actually _spent_,
+  and none of that is on an EA form. The promise exceeds what the input document can ever contain, so the product would
+  coach users into inflated returns and penalties **against the user**. Also seasonal, and the relief list can be
+  hardcoded, so the pipeline is decoration.
+- **All of rounds 1 and 2.** See the prior-art table in [`competitor-scan.md`](competitor-scan.md).
 
 ## Open questions
 

@@ -5,8 +5,22 @@ alongside [`../../TRD.md`](../../TRD.md), which is canonical for implementation 
 **provenance and confidence** of each fact and the questions still open.
 
 **Method.** Extracted from `../../TRD.md` and `../../source/` by a delegated model, then spot-checked against the same
-files. Web claims in [What The Request ID Actually Proves](#what-the-request-id-actually-proves) were fetched from
+files. Web claims in [What the Request ID actually proves](#what-the-request-id-actually-proves) were fetched from
 primary sources on 2026-08-30. Interpretation is marked as such throughout.
+
+Contents:
+
+1. [The two findings that change design](#the-two-findings-that-change-design)
+1. [Receipts — shipped 2026-08-31](#receipts--shipped-2026-08-31)
+1. [The fallback trap](#the-fallback-trap)
+1. [Latency and hedging](#latency-and-hedging)
+1. [Track requirement clarified](#track-requirement-clarified)
+1. [Endpoints](#endpoints)
+1. [Models](#models)
+1. [The Request ID](#the-request-id)
+1. [Limits](#limits)
+1. [What the Request ID actually proves](#what-the-request-id-actually-proves)
+1. [Sources](#sources)
 
 ## The two findings that change design
 
@@ -109,7 +123,7 @@ requires `anthropic-version: 2023-06-01`.
 
 `GET /v1/models` returned exactly three ids. Case- and slash-sensitive, verbatim:
 
-| Model id                             | Reasoning trace | Notes                                                        |
+| Model ID                             | Reasoning trace | Notes                                                        |
 | ------------------------------------ | --------------- | ------------------------------------------------------------ |
 | `deepseek-ai/DeepSeek-V4-Flash-0731` | No              | Speed-tuned. Answers directly                                |
 | `moonshotai/Kimi-K2.6`               | Yes             | Only model with vision and search                            |
