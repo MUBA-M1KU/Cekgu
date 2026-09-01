@@ -1,25 +1,35 @@
-# MUBA Blockchain Hackathon 2026 - Brief
+# MUBA Blockchain Hackathon 2026 brief
 
 The single source of truth for event facts. Sourced from the official site, the opening ceremony (26 Aug) and the
-GonkaRouter challenge doc; full detail lives in [`source/`](./source/). Records what the organizers stated, not our
+GonkaRouter challenge doc; full detail lives in [`source/`](source/). This records what the organizers stated, not our
 status.
 
----
+Contents:
 
-## The Event
+1. [The event](#the-event)
+1. [Dates](#dates)
+1. [Live sessions](#live-sessions)
+1. [Eligibility and team rules](#eligibility-and-team-rules)
+1. [What we submit](#what-we-submit)
+1. [How we are judged](#how-we-are-judged)
+1. [Our track: GonkaRouter, AI for Society](#our-track-gonkarouter-ai-for-society)
+1. [People](#people)
+1. [All tracks and the prize pool](#all-tracks-and-the-prize-pool)
+1. [Channels](#channels)
+1. [Admin](#admin)
 
-|               |                                                                                  |
-| ------------- | -------------------------------------------------------------------------------- |
-| **Name**      | MUBA Blockchain Hackathon 2026, _"Hack the Future"_                              |
-| **Host**      | MUBA, the Malaysia University Blockchain Association                             |
-| **Co-hosts**  | APU · Monash Blockchain Club · UTAR Kampar · Taylor's University Blockchain Club |
-| **Format**    | 11 days online build, then a physical pitch day                                  |
-| **Our track** | **GonkaRouter - AI for Society**                                                 |
-| **Site**      | [mubahack.xyz](https://www.mubahack.xyz/official_landing_page/code.html)         |
-| **Devfolio**  | [muba-hackathon.devfolio.co](https://muba-hackathon.devfolio.co/overview)        |
-| **Entry fee** | None                                                                             |
+## The event
 
----
+- **Name** — MUBA Blockchain Hackathon 2026, _"Hack the Future"_
+- **Host** — MUBA, the Malaysia University Blockchain Association
+- **Co-hosts** — APU · Monash Blockchain Club · UTAR Kampar · Taylor's University Blockchain Club
+- **Format** — 11 days online build, then a physical pitch day
+- **Our track** — **GonkaRouter, AI for Society**
+- **Site** — [mubahack.xyz](https://www.mubahack.xyz/official_landing_page/code.html)
+- **Devfolio** — [muba-hackathon.devfolio.co][devfolio]
+- **Entry fee** — none
+
+[devfolio]: https://muba-hackathon.devfolio.co/overview
 
 ## Dates
 
@@ -39,50 +49,47 @@ website.
 **Demo Day run sheet:** 08:00 registration · 09:00 opening · 10:00 pitching 1 · 13:00 lunch · 14:00 pitching 2 · 17:00
 results · 17:30 closing and winners · 18:00 end.
 
----
-
-<a id="live-sessions"></a>
-
-## Live Sessions
+## Live sessions
 
 Every online session runs on **Microsoft Teams**, not the platform originally announced. Each also has its own Luma
 registration page.
 
-| Session                    | When                | Speaker                          | Join                                                                               |
-| -------------------------- | ------------------- | -------------------------------- | ---------------------------------------------------------------------------------- |
-| Opening ceremony           | 26 Aug, 8:00 PM     | Richard (MC) and sponsor reps    | [Teams](https://teams.microsoft.com/meet/482246276338881?p=plXqBqoKk4MS7PO9Qn)     |
-| Thetanuts Finance workshop | 27 Aug, 8:00 PM     | Sean and Benjamin                | [Teams](https://teams.microsoft.com/meet/456497881747566?p=GwDwiV2omVke0iuTFa)     |
-| **GonkaRouter workshop**   | **27 Aug, 9:00 PM** | **Jack**, Tech Lead, GonkaRouter | [**Teams**](https://teams.microsoft.com/meet/433187713146886?p=sv72xzbv19gF5r8p3V) |
-| Sui workshop               | 31 Aug, 9:00 PM     | Rafael, Mysten Labs              | [Teams](https://teams.microsoft.com/meet/443261481200322?p=MA1J7VtyBw1UAmFbeX)     |
+| Session                    | When                | Speaker                          | Join                     |
+| -------------------------- | ------------------- | -------------------------------- | ------------------------ |
+| Opening ceremony           | 26 Aug, 8:00 PM     | Richard (MC) and sponsor reps    | [Teams][teams-ceremony]  |
+| Thetanuts Finance workshop | 27 Aug, 8:00 PM     | Sean and Benjamin                | [Teams][teams-thetanuts] |
+| **GonkaRouter workshop**   | **27 Aug, 9:00 PM** | **Jack**, Tech Lead, GonkaRouter | [**Teams**][teams-gonka] |
+| Sui workshop               | 31 Aug, 9:00 PM     | Rafael, Mysten Labs              | [Teams][teams-sui]       |
+
+[teams-ceremony]: https://teams.microsoft.com/meet/482246276338881?p=plXqBqoKk4MS7PO9Qn
+[teams-thetanuts]: https://teams.microsoft.com/meet/456497881747566?p=GwDwiV2omVke0iuTFa
+[teams-gonka]: https://teams.microsoft.com/meet/433187713146886?p=sv72xzbv19gF5r8p3V
+[teams-sui]: https://teams.microsoft.com/meet/443261481200322?p=MA1J7VtyBw1UAmFbeX
 
 Only the GonkaRouter workshop is ours. The other two are other tracks, and optional.
 
----
+## Eligibility and team rules
 
-## Eligibility And Team
-
-| Rule                    | Detail                                                                                                                                            |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Who**                 | Malaysian citizens and visa holders currently residing in Malaysia. No other background restriction                                               |
-| **Team size**           | **2-4 members.** Solo entries are not allowed                                                                                                     |
-| **Multiple teams**      | Not allowed. One team per person                                                                                                                  |
-| **Verification**        | Each participant submits their LinkedIn                                                                                                           |
-| **Physical attendance** | The site says mandatory for all members; the ceremony clarified **at least one member must attend**, all strongly encouraged. Attend the full day |
-| **Team changes**        | Notify organizers via Discord if anyone withdraws                                                                                                 |
-| **Projects per team**   | **One.** A single project may enter multiple tracks; multiple projects may not. Richard said he would confirm and revert                          |
-| **IP**                  | Participants own their project IP                                                                                                                 |
+- **Who can enter.** Malaysian citizens and visa holders currently residing in Malaysia. No other background
+  restriction.
+- **Team size.** **2-4 members.** Solo entries are not allowed.
+- **Multiple teams.** Not allowed. One team per person.
+- **Verification.** Each participant submits their LinkedIn.
+- **Physical attendance.** The site says mandatory for all members; the ceremony clarified **at least one member must
+  attend**, all strongly encouraged. Attend the full day.
+- **Team changes.** Notify organizers via Discord if anyone withdraws.
+- **Projects per team.** **One.** A single project may enter multiple tracks; multiple projects may not. Richard said he
+  would confirm and revert.
+- **IP.** Participants own their project IP.
 
 **Originality.** Must be built from scratch during the hackathon period. No prior projects and no copy-paste of past
 work, **including privately pre-built frameworks owned by the team**. Improving on a prior idea is fine; reusing prior
 code is not.
 
----
+## What we submit
 
-## What We Submit
-
-By **5 Sept, 11:59 PM**, on [Devfolio](https://muba-hackathon.devfolio.co/overview). **No Devfolio submission means
-disqualification from pitching.** If Devfolio itself has problems, the organizers will open a **Google Form** as a
-fallback route and announce it on Discord.
+By **5 Sept, 11:59 PM**, on [Devfolio][devfolio]. **No Devfolio submission means disqualification from pitching.** If
+Devfolio itself has problems, the organizers will open a **Google Form** as a fallback route and announce it on Discord.
 
 | #   | Deliverable          | Notes                                   |
 | --- | -------------------- | --------------------------------------- |
@@ -102,9 +109,7 @@ business model, technology stack and track chosen, and the overall concept.
 > fact-check"). Since the track reveal and the workshop Q&A both confirmed the direction is open, read them as: a
 > working demo anyone can try, and a video of it doing its thing.
 
----
-
-## How We Are Judged
+## How we are judged
 
 | Weight  | Criterion                  |
 | ------- | -------------------------- |
@@ -138,32 +143,34 @@ What sponsors said out loud, worth optimising for:
 Richard's summary of both GonkaRouter judges: **marks weight most on how well the problem is identified, and whether the
 solution is genuinely applicable in real life.**
 
----
+## Our track: GonkaRouter, AI for Society
 
-## Our Track: GonkaRouter, AI For Society
+Full brief: [`source/gonkarouter-challenge.md`](source/gonkarouter-challenge.md). Workshop material:
+[`source/gonkarouter-workshop-slides.md`](source/gonkarouter-workshop-slides.md), the authority on wiring and model ids,
+and [`source/gonkarouter-workshop-transcript.md`](source/gonkarouter-workshop-transcript.md).
 
-Full brief: [`source/gonkarouter-challenge.md`](./source/gonkarouter-challenge.md). Workshop material:
-[`source/gonkarouter-workshop-slides.md`](./source/gonkarouter-workshop-slides.md) (the authority on wiring and model
-ids) and [`source/gonkarouter-workshop-transcript.md`](./source/gonkarouter-workshop-transcript.md).
+### What the track does and does not require
 
-### What The Track Does And Does Not Require
+Both questions were asked directly at the 27 Aug workshop Q&A and answered on the record.
 
-Both asked directly at the 27 Aug workshop Q&A and answered on the record:
+**Web3 or blockchain components are not required.** Jack: "Not limited to Web3 at all." This is a blockchain hackathon,
+but this track is not a blockchain track.
 
-| Question                                                    | Answer                                                                                                               |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| **Must the solution include Web3 / blockchain components?** | **No.** Jack: "Not limited to Web3 at all." This is a blockchain hackathon, but this track is not a blockchain track |
-| **Must the social problem be specific to Malaysia?**        | **No.** Carol: any scope, not limited to Malaysia                                                                    |
+**The social problem does not have to be specific to Malaysia.** Carol: any scope, not limited to Malaysia.
 
 The four GonkaRouter requirements below still bind. Everything else about the problem domain is open.
 
-**Non-negotiable requirements.** Any of these missed disqualifies the entry:
+### Non-negotiable requirements
+
+Any of these missed disqualifies the entry:
 
 1. **All** AI reasoning runs through GonkaRouter (`api.gonkarouter.io`). A direct OpenAI or Anthropic call disqualifies
-   us
-2. **Two or more models** cross-verifying, for multi-model consensus
-3. **Gonka Request IDs displayed** per inference step, the on-chain proof
-4. **Consensus logic** for model disagreement, called out as "a major plus"
+   us.
+1. **Two or more models** cross-verifying, for multi-model consensus.
+1. **Gonka Request IDs displayed** per inference step, the on-chain proof.
+1. **Consensus logic** for model disagreement, called out as "a major plus".
+
+### Track prizes
 
 | Award  | Value                                                  |
 | ------ | ------------------------------------------------------ |
@@ -172,29 +179,33 @@ The four GonkaRouter requirements below still bind. Everything else about the pr
 | Top 10 | 20M free tokens per month for 3-6 months               |
 | Bonus  | Possible integration into the official Gonka ecosystem |
 
-**Suggested directions:** AI Fact Checker · Multilingual AI Public Assistant · AI Accessibility Tools · Open Knowledge
-Engine. The challenge doc calls the Fact Checker a "preferred application" and specifies it at length, but the track
-reveal named no direction and closed on "solve real-world problems". These are **inspiration, not constraints.**
+### Suggested directions
 
-| Model                 | Exact Id (case and slash sensitive)  | Best For                                                                              | Max Output |
+AI Fact Checker · Multilingual AI Public Assistant · AI Accessibility Tools · Open Knowledge Engine. The challenge doc
+calls the Fact Checker a "preferred application" and specifies it at length, but the track reveal named no direction and
+closed on "solve real-world problems". These are **inspiration, not constraints.**
+
+### Models on the gateway
+
+| Model                 | Exact id (case and slash sensitive)  | Best for                                                                              | Max output |
 | --------------------- | ------------------------------------ | ------------------------------------------------------------------------------------- | ---------- |
 | **Kimi-K2.6**         | `moonshotai/Kimi-K2.6`               | Long-context reasoning, code-heavy work, strong agent behaviour. Vision               | 262K       |
 | **MiniMax-M2.7**      | `MiniMaxAI/MiniMax-M2.7`             | Agent-native, elite coding, stable long-chain tool calling                            | 192K       |
 | **DeepSeek-V4-Flash** | `deepseek-ai/DeepSeek-V4-Flash-0731` | Speed. Fast chat, summarisation, extraction. **Answers directly, no reasoning trace** | 1M         |
 
 All three share one flat rate, input and output priced alike. **Verify ids against `/models` with your own key before
-hardcoding** — catalogs differ per plan.
+hardcoding** — catalogs differ per plan. Measured behaviour and the wiring contract live in [`TRD.md`](TRD.md).
 
-**Credits.** Every account gets a one-time
-**$20** on signup, which is effectively unlimited for this event: a real
-account they showed had spent under $2 across
+### Credits
+
+Every account gets a one-time
+**$20** on signup, which is effectively unlimited for this event: a real account they
+showed had spent under $2 across
 1.77M requests and 4.35B tokens. During the hackathon tokens are explicitly unlimited, and **if you exhaust the credit
 you email Jack for a top-up** — there is no form. Sign-in is email or Google; **no wallet is required.**
 
-Setup and client wiring: [`source/gonkarouter-workshop-slides.md`](./source/gonkarouter-workshop-slides.md) and
-[`source/gonkarouter-tutorial.md`](./source/gonkarouter-tutorial.md).
-
----
+Setup and client wiring: [`source/gonkarouter-workshop-slides.md`](source/gonkarouter-workshop-slides.md) and
+[`source/gonkarouter-tutorial.md`](source/gonkarouter-tutorial.md).
 
 ## People
 
@@ -211,9 +222,7 @@ Setup and client wiring: [`source/gonkarouter-workshop-slides.md`](./source/gonk
 **Mentorship** runs in per-track Discord channels. Mentors give guidance and suggestions; they will not write code or
 build features. Asking whether an idea is too ambitious is fair game.
 
----
-
-## All Tracks And Prize Pool
+## All tracks and the prize pool
 
 | Sponsor         | Tier   | Track                         | Prizes                                        |
 | --------------- | ------ | ----------------------------- | --------------------------------------------- |
@@ -225,25 +234,21 @@ build features. Asking whether an idea is too ambitious is fair game.
 
 Supporting sponsors: **StarGlobal** (Web3 recruitment) and **GCC** (EVM-compatible L1).
 
----
-
 ## Channels
 
-| Channel                                                     | Use                                                                                |
-| ----------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| **Discord**                                                 | Rules (`hackathon-rules`), per-track mentor channels, Q&A follow-ups, team-finding |
-| **[Devfolio](https://muba-hackathon.devfolio.co/overview)** | Registration and submission, the disqualification gate. Free to enter              |
-| **Luma**                                                    | Per-workshop registration page                                                     |
-| **Microsoft Teams**                                         | Where every online session runs. Join links in [Live Sessions](#live-sessions)     |
-| **Instagram**                                               | `MUBA 2026`, announcements and updates                                             |
-| **Slido**                                                   | Live Q&A during sessions                                                           |
-
----
+| Channel                  | Use                                                                                |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| **Discord**              | Rules (`hackathon-rules`), per-track mentor channels, Q&A follow-ups, team-finding |
+| **[Devfolio][devfolio]** | Registration and submission, the disqualification gate. Free to enter              |
+| **Luma**                 | Per-workshop registration page                                                     |
+| **Microsoft Teams**      | Where every online session runs. Join links in [Live sessions](#live-sessions)     |
+| **Instagram**            | `MUBA 2026`, announcements and updates                                             |
+| **Slido**                | Live Q&A during sessions                                                           |
 
 ## Admin
 
-- **Prize payout** within 14 working days
+- **Prize payout** within 14 working days.
 - **Certificates** are digital. Issued to any team that **submits on Devfolio and completes its pitching session**,
-  winning or not
-- **UTAR Kampar bus:** gather 5 AM, depart 6 AM, arrive APU 10 AM, return around 12 AM. Book by 1 Sept 5 PM; runs if
-  more than 20 sign up. Seat holders get the limited lanyard and T-shirt
+  winning or not.
+- **UTAR Kampar bus.** Gather 5 AM, depart 6 AM, arrive APU 10 AM, return around 12 AM. Book by 1 Sept 5 PM; runs if
+  more than 20 sign up. Seat holders get the limited lanyard and T-shirt.
