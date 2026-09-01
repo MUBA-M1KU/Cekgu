@@ -1,21 +1,20 @@
-# Agent Tooling: RTK And Graphify
+# Agent tooling
 
-Standing reference, moved out of `AGENTS.md` so it is not reloaded into every session. Both tools are **optional and
-per-machine**: neither is a dependency of this repo, and every command below works without them.
+Standing reference for RTK and Graphify, kept out of [`AGENTS.md`](../AGENTS.md) so it is not reloaded into every
+session. Both tools are **optional and per-machine**: neither is a dependency of this repo, and every command documented
+anywhere in it works without them.
 
-| Tool         | Check            | If Missing                                    |
-| ------------ | ---------------- | --------------------------------------------- |
-| **RTK**      | `which rtk`      | Run commands unprefixed. Nothing else changes |
-| **Graphify** | `which graphify` | Navigate the codebase with grep and Read      |
+- **RTK.** Check with `which rtk`. If it is missing, run commands unprefixed. Nothing else changes.
+- **Graphify.** Check with `which graphify`. If it is missing, navigate the codebase with grep and Read.
 
----
+## RTK, the Rust Token Killer
 
-## RTK (Rust Token Killer)
+RTK is a CLI proxy that filters verbose command output, cutting the tokens an agent spends reading it.
 
-### Golden Rule
+### Only use RTK if it is installed
 
-**Only if `rtk` is installed** (`which rtk`). Not every teammate has it. If it is missing, run commands directly and
-ignore this whole section.
+Check with `which rtk`. Not every teammate has it. If it is missing, run commands directly and ignore this whole
+section.
 
 **Prefix commands with `rtk`.** If RTK has a filter for that command it uses it, otherwise it passes through unchanged.
 It is always safe to use.
@@ -30,7 +29,7 @@ git add . && git commit -m "msg" && git push
 rtk git add . && rtk git commit -m "msg" && rtk git push
 ```
 
-### Commands That Matter Here
+### RTK commands that matter here
 
 ```bash
 rtk git status / log / diff / add / commit / push    # 59 to 80 percent smaller
@@ -45,29 +44,28 @@ rtk gain                                             # savings so far
 
 Git and `gh` passthrough works for every subcommand, including ones not listed.
 
-`rtk` does not defeat the git guard. `.claude/hooks/guard-git.sh` matches on the command substring, so
-`rtk git push origin main` and `rtk git add .env` are both blocked exactly like their bare forms. Verified 2026-08-26.
+### RTK does not defeat the git guard, but it does defeat the deny list
 
-It **does** defeat the `permissions.deny` list in `.claude/settings.json`, which is prefix-matched:
-`Bash(git push --force*)` does not match `rtk git push --force`. The hook is what actually stops that one, which is why
-both exist.
+`.claude/hooks/guard-git.sh` matches on the command substring, so `rtk git push origin main` and `rtk git add .env` are
+both blocked exactly like their bare forms. Verified 2026-08-26.
 
----
+The `permissions.deny` list in `.claude/settings.json` is prefix-matched, so `Bash(git push --force*)` does **not**
+match `rtk git push --force`. The hook is what actually stops that one, which is why both exist.
 
-## Graphify: Codebase Knowledge Graph
-
-### Golden Rule
-
-**Only if `graphify` is installed** (`which graphify`). Not every teammate has it. If it is missing, ignore this section
-and navigate the codebase normally.
+## Graphify, a codebase knowledge graph
 
 Graphify builds a persistent, queryable map of the project so you answer architecture questions from a compact graph
 instead of grepping and reading many files.
 
-### When to Use It
+### Only use Graphify if it is installed
 
-If `graphify-out/graph.json` exists, treat architecture and relationship questions ("how does X work", "what calls Y",
-"trace the data flow") as a **`graphify query` first**, before grep or read:
+Check with `which graphify`. Not every teammate has it. If it is missing, ignore this section and navigate the codebase
+normally.
+
+### When to query the graph
+
+If `graphify-out/graph.json` exists, treat architecture and relationship questions — "how does X work", "what calls Y",
+"trace the data flow" — as a **`graphify query` first**, before grep or read:
 
 ```bash
 graphify query "how does the router client reach config"   # BFS over the graph
@@ -80,7 +78,7 @@ Then drop to grep or Read for exact `file:line` evidence. **The graph gives you 
 
 **Applies to every agent**, subagents included.
 
-### Building and Refreshing
+### Building and refreshing the graph
 
 ```bash
 graphify .              # first build, about a minute, roughly 6 cents

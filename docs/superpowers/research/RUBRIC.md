@@ -1,4 +1,4 @@
-# Ideation Rubric
+# Ideation rubric
 
 The instrument we score candidate concepts against, before anything is built. It is **not** the organizers' rubric — it
 is ours, built to predict theirs, with one dimension they leave unweighted made explicit because it is where this track
@@ -6,9 +6,18 @@ will actually be won or lost.
 
 Official criteria live in [`../../brief.md`](../../brief.md). Read them first.
 
----
+Contents:
 
-## Why This Exists
+1. [Why this exists](#why-this-exists)
+1. [The weights](#the-weights)
+1. [The novelty test](#the-novelty-test)
+1. [Banned clusters](#banned-clusters)
+1. [Two hard rules for generation](#two-hard-rules-for-generation)
+1. [What this track structurally rewards](#what-this-track-structurally-rewards)
+1. [Kill criteria](#kill-criteria)
+1. [Using this rubric](#using-this-rubric)
+
+## Why this exists
 
 The organizers publish **Technical Implementation 30 / Practicality and Impact 30 / Presentation and Clarity 20 / UX and
 Design 10**, and then list **Originality** with no weight at all.
@@ -18,21 +27,19 @@ weighted four — and on a track where the challenge doc hands every team the sa
 
 So Novelty carries real weight here even though it carries none on paper.
 
----
+## The weights
 
-## The Weights
-
-| Dimension                  | Weight | The Question                                                                     |
+| Dimension                  | Weight | The question                                                                     |
 | -------------------------- | -----: | -------------------------------------------------------------------------------- |
 | **Novelty**                |     25 | Of the teams in this track, how many ship something recognisably similar?        |
-| **Real User, Real Monday** |     20 | Is there a specific person with a specific pain, who would open it again Monday? |
-| **Track Fit**              |     20 | Do the four GonkaRouter requirements fit naturally, or are they bolted on?       |
-| **Demo Moment**            |     15 | Five minutes plus five of Q&A, on a projector, to humans                         |
+| **Real user, real Monday** |     20 | Is there a specific person with a specific pain, who would open it again Monday? |
+| **Track fit**              |     20 | Do the four GonkaRouter requirements fit naturally, or are they bolted on?       |
+| **Demo moment**            |     15 | Five minutes plus five of Q&A, on a projector, to humans                         |
 | **Buildability**           |     20 | Nine days, our team, alongside everything else we owe                            |
 
 **Under 70 is a no.** Not "needs work" — a different concept.
 
-### Why These, And Not The Official Four
+### Why these, and not the official four
 
 - **Technical Implementation (30) is not a dimension here.** It is a consequence of Buildability and Track Fit. A
   concept cannot be scored on implementation quality before it exists; what can be scored is whether it _admits_ a
@@ -45,14 +52,12 @@ So Novelty carries real weight here even though it carries none on paper.
   projector. A concept with no legible moment cannot be presented well no matter who writes the script.
 - **Novelty is promoted from unweighted to the largest single weight**, for the reason above.
 
----
-
-## The Novelty Test
+## The novelty test
 
 **Score above 15 only if you can answer all three.** Vague answers score zero; this test is the whole point of the
 document.
 
-### 1. The Convergence Count
+### 1. The convergence count
 
 Of the teams entering this track, how many ship something recognisably similar? **Answer with a number and defend it.**
 
@@ -62,9 +67,9 @@ More than about five is a fail. The reasoning has to name what specifically make
 > **The mechanism to reason about:** almost every team will brainstorm with Claude or ChatGPT, from roughly the same
 > prompt — "AI for social good hackathon ideas, Malaysia, decentralised inference". Those models are trained on the same
 > corpus and steered by the same instruction tuning, so they converge hard. **The output set is predictable, which means
-> it is avoidable.** See the banned clusters below.
+> it is avoidable.** See the [banned clusters](#banned-clusters) below.
 
-### 2. The Incumbent Test
+### 2. The incumbent test
 
 **Name who already does this.** Not "nobody" — that answer is almost always wrong, and a judge who knows the space will
 find them during the 5-minute Q&A. Name them, then name what we do that they **structurally cannot**.
@@ -73,21 +78,19 @@ find them during the 5-minute Q&A. Name them, then name what we do that they **s
 Anything a well-resourced incumbent could add in a sprint is not a moat, and saying so out loud is worse than not
 raising it.
 
-### 3. The Second-Use Test
+### 3. The second-use test
 
 **Describe the second time someone opens it, and why.** Concretely: who, what day, what changed since the first time.
 
 A tool used once is a demo. If the honest answer is "they probably wouldn't", the Real User score is capped at 8
 regardless of anything else — and that is Jack's stated bar: _"solve specific needs in real life."_
 
----
-
-## Banned Clusters
+## Banned clusters
 
 **Treat these as disqualified unless the concept is genuinely unrecognisable from them.** This is the predicted output
 of an LLM brainstorm against this brief, which is what most teams will be working from.
 
-### From The Challenge Doc Itself
+### Clusters from the challenge doc itself
 
 The doc names four directions and specifies one at length. **Every team has read it.**
 
@@ -103,7 +106,7 @@ a reason it cannot win — it is a reason that winning with it requires beating 
 execution and demo alone, with novelty scoring near zero. Build it only with a deliberate, written answer to "why does
 ours win the head-to-head", and expect the judges to have seen four before ours.
 
-### The Predictable LLM Brainstorm
+### Clusters from the predictable LLM brainstorm
 
 Ask any frontier model for "AI for social good in Malaysia" and this set comes back. Assume several teams per line.
 
@@ -120,14 +123,12 @@ Ask any frontier model for "AI for social good in Malaysia" and this set comes b
 - Elderly-care check-in assistants
 - Bahasa Malaysia language and translation assistants
 
-**If a concept lands in this list, it needs an unusually strong answer to the Incumbent Test to survive.** Several of
+**If a concept lands in this list, it needs an unusually strong answer to the incumbent test to survive.** Several of
 these have well-funded incumbents already operating in Malaysia.
 
----
+## Two hard rules for generation
 
-## Two Hard Rules For Generation
-
-### Do Not Start From A Problem List
+### Do not start from a problem list
 
 Starting from "what social problems exist" produces exactly the list above, because that is what the training data
 contains. **Start instead from one of:**
@@ -140,7 +141,7 @@ contains. **Start instead from one of:**
 - **An incumbent's structural blind spot.** Something they cannot do without breaking their own business model.
 - **A specific person's actual Tuesday.** Someone we can name, whose week we understand.
 
-### Do Not Let A Model Pick The Concept
+### Do not let a model pick the concept
 
 Use models to pressure-test, cost, and red-team candidates. **Generating the shortlist with the same tool everyone else
 is using is the mechanism that produces the convergence in the first place.** Sean said it plainly at the ceremony:
@@ -150,9 +151,7 @@ is using is the mechanism that produces the convergence in the first place.** Se
 
 That is a judge describing, in advance, how he will discount submissions.
 
----
-
-## What This Track Structurally Rewards
+## What this track structurally rewards
 
 Composed from the four binding requirements, not from the example:
 
@@ -169,28 +168,22 @@ is the product** fits the requirements natively rather than wearing them.
 Fact-checking is the obvious application of that shape. **It is not the only one.** Any domain where a confident single
 answer is dangerous and provenance matters has the same structure.
 
----
-
-## Kill Criteria
+## Kill criteria
 
 Stop work on a concept the moment any of these is true. Write down which one, and why, in the archive note.
 
-| Kill                                                                                          |
-| --------------------------------------------------------------------------------------------- |
-| The Convergence Count is above five and the differentiator is execution quality               |
-| The Incumbent Test answer is "nobody does this"                                               |
-| The GonkaRouter requirements only fit by adding a feature the product does not otherwise need |
-| The demo moment needs more than 90 seconds of setup before it lands                           |
-| Buildability depends on data, access, or a partnership we do not already have                 |
+- The convergence count is above five and the differentiator is execution quality.
+- The incumbent test answer is "nobody does this".
+- The GonkaRouter requirements only fit by adding a feature the product does not otherwise need.
+- The demo moment needs more than 90 seconds of setup before it lands.
+- Buildability depends on data, access, or a partnership we do not already have.
 
----
-
-## Using This
+## Using this rubric
 
 1. Generate candidates **without** an LLM writing the shortlist. `hackathon-idea-generator` structures the session; it
    does not choose.
-2. Score each against the five dimensions. Record the numbers and the reasoning, not just the verdict.
-3. Run the Novelty Test in full on anything above 70. Most candidates die here, which is the point.
-4. Take survivors to `competitor-analysis` and `strategy-red-team` before committing.
-5. Write the winner up as `docs/PRODUCT.md`. Archive the rest under `archive/round-N/` with a note on **why each was
+1. Score each against the five dimensions. Record the numbers and the reasoning, not just the verdict.
+1. Run the [novelty test](#the-novelty-test) in full on anything above 70. Most candidates die here, which is the point.
+1. Take survivors to `competitor-analysis` and `strategy-red-team` before committing.
+1. Write the winner up as `docs/PRODUCT.md`. Archive the rest under `archive/round-N/` with a note on **why each was
    cut** — a documented dead end stops being repeated.

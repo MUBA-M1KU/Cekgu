@@ -1,31 +1,36 @@
-# Source Material
+# Source material
 
-Raw organizer inputs, kept verbatim so we cite them instead of relying on memory. This is the record we check when a
-summary and reality disagree.
+Organizer inputs, kept so we cite them instead of relying on memory. This is the record we check when a summary and
+reality disagree.
 
----
+## What is here
 
-## What's Here
+| File                             | Source                                 | Captured   |
+| -------------------------------- | -------------------------------------- | ---------- |
+| [Opening ceremony][ceremony]     | Opening ceremony livestream, 66 min    | 2026-08-26 |
+| [Challenge brief][challenge]     | Official track challenge Google Doc    | 2026-08-26 |
+| [Tutorial notes][tutorial]       | GonkaRouter tutorial video + live docs | 2026-08-26 |
+| [Workshop deck][deck]            | Workshop deck, 27 Aug, 26 slides       | 2026-08-29 |
+| [Workshop transcript][recording] | Workshop recording, 78 min             | 2026-08-29 |
 
-| File                                                                       | Source                                 | Captured   |
-| -------------------------------------------------------------------------- | -------------------------------------- | ---------- |
-| [`opening-ceremony-transcript.md`](opening-ceremony-transcript.md)         | Opening ceremony livestream, 66 min    | 2026-08-26 |
-| [`gonkarouter-challenge.md`](gonkarouter-challenge.md)                     | Official track challenge Google Doc    | 2026-08-26 |
-| [`gonkarouter-tutorial.md`](gonkarouter-tutorial.md)                       | GonkaRouter tutorial video + live docs | 2026-08-26 |
-| [`gonkarouter-workshop-slides.md`](gonkarouter-workshop-slides.md)         | Workshop deck, 27 Aug, 26 slides       | 2026-08-29 |
-| [`gonkarouter-workshop-transcript.md`](gonkarouter-workshop-transcript.md) | Workshop recording, 78 min             | 2026-08-29 |
-
----
+[ceremony]: opening-ceremony-transcript.md
+[challenge]: gonkarouter-challenge.md
+[tutorial]: gonkarouter-tutorial.md
+[deck]: gonkarouter-workshop-slides.md
+[recording]: gonkarouter-workshop-transcript.md
 
 ## Conventions
 
-| Rule                     | Detail                                                                                                                                                     |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Append-only**          | Never rewrite these to match later beliefs. Corrections go in `../brief.md`                                                                                |
-| **Transcribe**           | Do not summarise. Summaries belong in `../brief.md`                                                                                                        |
-| **One file per source**  | `<topic>.md`, or `<topic>-<YYYY-MM-DD>.md` when the same source recurs                                                                                     |
-| **Head with provenance** | What the source was, how it was captured, when. **Name the tool, not your path to it** - a teammate does not have your `~/CS/...` or `C:\Users\...` layout |
-| **Mark uncertainty**     | `[inaudible]` rather than a guess. Record ASR name corrections in a key                                                                                    |
-| **Note the speaker**     | Where organiser vs sponsor vs participant changes the weight                                                                                               |
+- **Never change a quotation.** Headings, ordering and our own framing follow
+  [`../markdown-style.md`](../markdown-style.md), but the words an organizer said or wrote are reproduced exactly. A
+  reworded quote is a wrong quote.
+- **Do not rewrite these to match later beliefs.** Corrections belong in [`../brief.md`](../brief.md), which is the
+  working reference; this folder is what it was drawn from.
+- **Transcribe, do not summarise.** Summaries belong in [`../brief.md`](../brief.md).
+- **One file per source**, named `<topic>.md`, or `<topic>-<YYYY-MM-DD>.md` when the same source recurs.
+- **Head each file with provenance**: what the source was, how it was captured, when. **Name the tool, not your path to
+  it** — a teammate does not have your `~/CS/...` or `C:\Users\...` layout.
+- **Mark uncertainty** with `[inaudible]` rather than a guess, and record ASR name corrections in a key.
+- **Note the speaker** wherever organiser, sponsor or participant changes the weight of what was said.
 
 Audio and video are gitignored. **Commit the transcript, not the recording.**

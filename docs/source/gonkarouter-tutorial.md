@@ -1,13 +1,16 @@
-# GonkaRouter — Setup & Integration Notes
+# GonkaRouter setup and integration notes
 
-> **Source** — YouTube: _"GonkaRouter Tutorial: Powerful AI Models, Nearly Free to Use"_
-> ([1uWmLGPoBCM](https://www.youtube.com/watch?v=1uWmLGPoBCM), 56s, uploaded 2026-06-10 by _Gonka Router_),
-> cross-checked against the live docs at <https://gonkarouter.io/docs> and <https://gonkarouter.io/models>. Captured
-> 2026-08-26. Frames were read directly for on-screen commands; captions used for narration.
+How to get a key, smoke-test the gateway, and wire it into each client, drawn from the official tutorial video and the
+live docs.
 
----
+> **Source** — YouTube: _"GonkaRouter Tutorial: Powerful AI Models, Nearly Free to Use"_ ([1uWmLGPoBCM][video], 56s,
+> uploaded 2026-06-10 by _Gonka Router_), cross-checked against the live docs at <https://gonkarouter.io/docs> and
+> <https://gonkarouter.io/models>. Captured 2026-08-26. Frames were read directly for on-screen commands; captions used
+> for narration.
 
-## ⚠️ Domain changed since the video
+[video]: https://www.youtube.com/watch?v=1uWmLGPoBCM
+
+## The domain changed since the video
 
 | Where                           | Base URL                         |
 | ------------------------------- | -------------------------------- |
@@ -17,18 +20,14 @@
 Both hosts respond, but **use `api.gonkarouter.io`** — every snippet in the current docs is tested against it. The
 video's screenshots are otherwise still accurate.
 
----
-
 ## 1. What GonkaRouter is
 
-- An **AI inference gateway** ("AI Inference Gateway") fronting the **Gonka Network** — a decentralised compute network.
-- Exposes frontier **open-weight** models through **two protocol surfaces**:
+- An **AI inference gateway** fronting the **Gonka Network**, a decentralised compute network.
+- It exposes frontier **open-weight** models through **two protocol surfaces**:
   - **OpenAI-compatible** → `POST /v1/chat/completions`
-  - **Anthropic Messages API** → `POST /v1/messages` (streaming + tool use included)
+  - **Anthropic Messages API** → `POST /v1/messages`, streaming and tool use included
 - Because of that dual surface, existing clients work unmodified: Claude SDK, Claude Code CLI, Cursor, OpenClaw,
   WorkBuddy, Continue.dev, Cline, Aider.
-
----
 
 ## 2. Getting an API key
 
@@ -39,16 +38,14 @@ video's screenshots are otherwise still accurate.
 | 3    | **Create API Key** → give it a label → copy the `sk-…` value                                                     |
 | 4    | New accounts get a **one-time $20 free credit** (the docs also mention a `$20/day for 7 days` variant)           |
 
-**Dashboard layout** (from the video): sidebar = `Dashboard · Chat · Models · Transactions`, plus a **Deposit** button
+**Dashboard layout**, from the video: sidebar = `Dashboard · Chat · Models · Transactions`, plus a **Deposit** button
 and connected-wallet chip. Dashboard cards = **Balance** (USDT) · **Monthly Cost** · **Requests** · **Tokens**,
 alongside **API Key** and **Base URL** panels and a live **API Reference**.
 
-> 🏆 **Hackathon note** — the challenge doc states participants get **unlimited free token credits** during the event,
-> so the $20 credit is not the binding constraint for us.
+The challenge doc states participants get **unlimited free token credits** during the event, so the $20 credit is not
+the binding constraint for us.
 
----
-
-## 3. 30-second smoke test
+## 3. The 30-second smoke test
 
 Run this before wiring up any SDK. A `200` with a `content[].text` field means everything else on this page will work.
 
@@ -66,7 +63,7 @@ curl -s https://api.gonkarouter.io/v1/messages \
   }'
 ```
 
-Expected (abridged):
+Expected, abridged:
 
 ```json
 {
@@ -82,8 +79,6 @@ Expected (abridged):
 
 Auth accepts **either** header: `x-api-key: sk-…` **or** `Authorization: Bearer sk-…`.
 
----
-
 ## 4. Models
 
 | Model                 | Short id                 | Max output | Capabilities                                     | Released   |
@@ -93,24 +88,22 @@ Auth accepts **either** header: `x-api-key: sk-…` **or** `Authorization: Beare
 | **DeepSeek-V4-Flash** | `deepseek-v4-flash-0731` | 1M         | chat, function                                   | 2026-07-31 |
 | Qwen3-235B-FP8        | —                        | —          | seen in the in-app Chat model picker             | —          |
 
-**Pricing** — `$0.0012 / 1M tokens`, **same rate for input and output**, dynamically adjusted by network utilisation
-(>60% util → price up; <40% → price down; 40–60% → unchanged).
+**Pricing** — `$0.0012 / 1M tokens`, **same rate for input and output**, dynamically adjusted by network utilisation:
+above 60% utilisation the price goes up, below 40% it goes down, and between 40 and 60% it is unchanged.
 
 ### Model id gotchas
 
-- **Vendor-prefixed ids are case- and slash-sensitive**: `moonshotai/Kimi-K2.6` ✓, `Kimi-K2.6` ✗
-  (`model not available for your channel`).
-- Two catalogs exist: vendor-prefixed (`MiniMaxAI/MiniMax-M2.7`, `moonshotai/Kimi-K2.6`) vs short (`kimi-k2.6`). **Copy
+- **Vendor-prefixed ids are case- and slash-sensitive.** `moonshotai/Kimi-K2.6` works; `Kimi-K2.6` returns
+  `model not available for your channel`.
+- Two catalogs exist: vendor-prefixed (`MiniMaxAI/MiniMax-M2.7`, `moonshotai/Kimi-K2.6`) and short (`kimi-k2.6`). **Copy
   exactly what the /models page shows for your key.**
-- Recommended in docs for the Anthropic surface: `MiniMaxAI/MiniMax-M2.7`.
-
----
+- Recommended in the docs for the Anthropic surface: `MiniMaxAI/MiniMax-M2.7`.
 
 ## 5. Wiring it into clients
 
-### 5a. Anthropic / Claude SDK
+### 5a. Anthropic and the Claude SDK
 
-Override `base_url` + `api_key`; everything else is stock Anthropic.
+Override `base_url` and `api_key`; everything else is stock Anthropic.
 
 ```python
 from anthropic import Anthropic
@@ -137,9 +130,9 @@ const client = new Anthropic({
 })
 ```
 
-Streaming works via the idiomatic helpers (`client.messages.stream(...)` / `stream.text_stream`).
+Streaming works via the idiomatic helpers (`client.messages.stream(...)` and `stream.text_stream`).
 
-### 5b. Claude Code CLI — the exact incantation
+### 5b. Claude Code CLI, the exact incantation
 
 This is the part the video walks through on screen.
 
@@ -166,10 +159,10 @@ claude
 | `ANTHROPIC_AUTH_TOKEN`        | Your `sk-…` key, sent as `x-api-key`. Note it is `_AUTH_TOKEN`, **not** `_API_KEY`                                                                                             |
 | `ANTHROPIC_MODEL`             | Primary reasoning model — pin to a Gonka id, slashes preserved                                                                                                                 |
 | `ANTHROPIC_SMALL_FAST_MODEL`  | Sidecar tasks (file summaries, planner checks) — set the same so nothing leaks off-gateway                                                                                     |
-| `DISABLE_PROMPT_CACHING=1`    | Gateway does not implement Anthropic's prompt-caching headers                                                                                                                  |
+| `DISABLE_PROMPT_CACHING=1`    | The gateway does not implement Anthropic's prompt-caching headers                                                                                                              |
 
-**Verify routing:** run `/status` inside the REPL — it should print `https://api.gonkarouter.io` as the base URL. **Keep
-history:** swap `/tmp/gonka-claude-home` for a persistent path like `~/.gonka-claude-home`.
+**Verify routing** by running `/status` inside the REPL — it should print `https://api.gonkarouter.io` as the base URL.
+**To keep history**, swap `/tmp/gonka-claude-home` for a persistent path like `~/.gonka-claude-home`.
 
 Optional shell wrapper:
 
@@ -185,8 +178,8 @@ gonka-claude() {
 }
 ```
 
-_PowerShell only:_ if `claude.ps1` is blocked, run once →
-`Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`. Not needed in `cmd`.
+_PowerShell only:_ if `claude.ps1` is blocked, run
+`Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned` once. Not needed in `cmd`.
 
 ### 5c. Cursor IDE
 
@@ -197,11 +190,11 @@ _PowerShell only:_ if `claude.ps1` is blocked, run once →
 | Model name                   | exact id from `/models`, e.g. `moonshotai/Kimi-K2.6`                    |
 | Max output tokens (Advanced) | `4096`                                                                  |
 
-> 🚫 **Cursor Free plan will not work.** Free tier blocks Named Models — it shows _"Named models unavailable. Free plans
-> can only use Auto"_ and silently routes to its own provider. Your gateway is never called. **Cursor Pro only.** Free
-> alternatives that accept the same base URL + key: **Continue.dev, Cline, Aider**.
+> **Cursor Free plan will not work.** The free tier blocks Named Models — it shows _"Named models unavailable. Free
+> plans can only use Auto"_ and silently routes to its own provider. Your gateway is never called. **Cursor Pro only.**
+> Free alternatives that accept the same base URL and key: **Continue.dev, Cline, Aider**.
 
-Also turn off Cursor's built-in Anthropic/OpenAI models, or Cursor will try to verify `gpt-4o` against your key and
+Also turn off Cursor's built-in Anthropic and OpenAI models, or Cursor will try to verify `gpt-4o` against your key and
 fail.
 
 ### 5d. OpenClaw
@@ -239,27 +232,25 @@ openclaw gateway status                  # -> running, probe ok, 127.0.0.1:18789
 openclaw infer model run --model "gonka/moonshotai/Kimi-K2.6" --prompt "Reply with just: pong" --json
 ```
 
-- Model id is `gonka/<real-id>` — provider prefix **plus** the full slashed id.
-- `--local` bypasses the daemon (good for CI); omit it to route through port 18789.
+- The model id is `gonka/<real-id>` — provider prefix **plus** the full slashed id.
+- `--local` bypasses the daemon, which is good for CI; omit it to route through port 18789.
 
 ### 5e. WorkBuddy (v5.3.11)
 
 **The Interface URL field takes the full endpoint, not a base URL:**
 
-|     | URL                                              | Result |
-| --- | ------------------------------------------------ | ------ |
-| ✗   | `https://api.gonkarouter.io`                     | 404    |
-| ✗   | `https://api.gonkarouter.io/v1`                  | 404    |
-| ✓   | `https://api.gonkarouter.io/v1/chat/completions` | works  |
+| URL                                              | Result |
+| ------------------------------------------------ | ------ |
+| `https://api.gonkarouter.io`                     | 404    |
+| `https://api.gonkarouter.io/v1`                  | 404    |
+| `https://api.gonkarouter.io/v1/chat/completions` | works  |
 
-Provider must be **Custom** (the named Kimi/MiniMax/Zhipu entries point at those vendors, not your gateway). Output is
-hard-capped at **4096 tokens** (3072 if `max_tokens` omitted); asking for more is silently clamped.
+Provider must be **Custom** — the named Kimi, MiniMax and Zhipu entries point at those vendors, not your gateway. Output
+is hard-capped at **4096 tokens**, or 3072 if `max_tokens` is omitted; asking for more is silently clamped.
 
----
+## 6. Limits and specifications
 
-## 6. Limits & specifications
-
-_(Production-verified by GonkaRouter, last checked 2026-06-19.)_
+Production-verified by GonkaRouter, last checked 2026-06-19.
 
 | Limit                  | Value                                                     |
 | ---------------------- | --------------------------------------------------------- |
@@ -271,8 +262,6 @@ _(Production-verified by GonkaRouter, last checked 2026-06-19.)_
 | Streaming idle cap     | 90 seconds with no new chunk → upstream connection closed |
 | Context window         | MiniMax-M2.7 → 200K tokens                                |
 
----
-
 ## 7. Error-code cheat sheet
 
 | Code  | Meaning                                                                |
@@ -282,16 +271,14 @@ _(Production-verified by GonkaRouter, last checked 2026-06-19.)_
 | `404` | Wrong path — request reached the router but the route isn't registered |
 | `429` | Rate limited (balance untouched)                                       |
 
----
-
 ## 8. Implications for our build
 
-- ✅ **Multi-model consensus is cheap and easy** — Kimi-K2.6 + MiniMax-M2.7 + DeepSeek-V4-Flash all sit behind one key
-  and one base URL. The challenge explicitly rewards cross-model verification.
-- ✅ **We can drive our own agents through it** — Claude Code / Continue / Cline via the env-var pattern above, which
+- **Multi-model consensus is cheap and easy.** Kimi-K2.6, MiniMax-M2.7 and DeepSeek-V4-Flash all sit behind one key and
+  one base URL. The challenge explicitly rewards cross-model verification.
+- **We can drive our own agents through it** — Claude Code, Continue or Cline via the env-var pattern above, which
   doubles as a demoable "built on Gonka" story.
-- ⚠️ **Capture the request id.** The challenge requires displaying **Gonka Request IDs** per inference step as proof of
-  decentralised execution — plumb that through from day one, not at the end.
-- ⚠️ **Budget for the 4096-token output cap** on the OpenAI surface, and the 90s streaming idle cap for long reasoning
+- **Capture the request id.** The challenge requires displaying **Gonka Request IDs** per inference step as proof of
+  decentralised execution. Plumb that through from day one, not at the end.
+- **Budget for the 4096-token output cap** on the OpenAI surface, and the 90s streaming idle cap for long reasoning
   chains.
-- ⚠️ **Pin exact model ids** in config, and read them from `/models` with our own key before hardcoding.
+- **Pin exact model ids** in config, and read them from `/models` with our own key before hardcoding.
