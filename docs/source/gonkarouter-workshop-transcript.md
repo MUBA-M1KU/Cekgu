@@ -1,14 +1,14 @@
-# GonkaRouter Workshop — Transcript
+# GonkaRouter workshop transcript
 
-> **Source** — recording of the GonkaRouter developer workshop, 27 Aug 2026, 9:00 PM MYT on Microsoft Teams. 1h 18m.
-> Speaker: **Jack**, GonkaRouter Tech Lead, with **Carol** (marketing) on Q&A and **Richard** (MUBA) hosting. **Method**
-> — audio extracted with `ffmpeg` (mono 16 kHz, the source rate), transcribed with OpenAI Whisper `small` on GPU.
-> **Captured** — 2026-08-29. Companion: [`gonkarouter-workshop-slides.md`](gonkarouter-workshop-slides.md) — **the deck
-> is the authority on every technical detail.**
+What was said at the GonkaRouter developer workshop, and in particular the Q&A rulings that never made it onto a slide.
 
----
+> **Source** — recording of the workshop, 27 Aug 2026, 9:00 PM MYT on Microsoft Teams. 1h 18m. Speaker: **Jack**,
+> GonkaRouter Tech Lead, with **Carol** (marketing) on Q&A and **Richard** (MUBA) hosting. **Method** — audio extracted
+> with `ffmpeg` (mono 16 kHz, the source rate), transcribed with OpenAI Whisper `small` on GPU. **Captured** —
+> 2026-08-29. Companion: [`gonkarouter-workshop-slides.md`](gonkarouter-workshop-slides.md) — **the deck is the
+> authority on every technical detail.**
 
-## ⚠️ Read This Before Quoting Anything Here
+## Read this before quoting anything here
 
 **Jack presented in Mandarin.** The recording is mixed-language: Richard hosts in English, Jack presents in Mandarin
 from 11:15, and the Q&A alternates between the two with Richard summarising each answer in English.
@@ -28,7 +28,7 @@ through wrong — the transcript says "170 million balloons" for what the slides
 document and the deck disagree, the deck is right.** Quote the deck for anything technical; quote this only for what was
 said and not slid.
 
-### Proper-Noun Correction Key
+### Proper-noun correction key
 
 | Heard as                                                                   | Actually                                 |
 | -------------------------------------------------------------------------- | ---------------------------------------- |
@@ -40,9 +40,7 @@ said and not slid.
 | "web-free"                                                                 | **Web3**                                 |
 | "works bodies"                                                             | **WorkBuddy**                            |
 
----
-
-## Run Of Show
+## Run of show
 
 | Time        | Segment                                                                                        |
 | ----------- | ---------------------------------------------------------------------------------------------- |
@@ -53,9 +51,7 @@ said and not slid.
 | 61:00–73:00 | **Q&A** — the valuable part. Jack and Carol answer; Richard fields the event questions         |
 | 73:00–78:00 | Reminders, photo session, close                                                                |
 
----
-
-## Jack's Framing (11:15 onward)
+## Jack's framing, from 11:15
 
 > _"Today we mainly solve a very specific problem. You have an AI application in your mind. From this idea, to the first
 > token, back to your screen — how many things are in the middle? If you do it yourself, you will know the answer. For
@@ -71,12 +67,12 @@ On what Gonka is:
 > _"Gonka is the base network. GonkaRouter is the developer's front door. You don't need to understand it. You don't
 > need a wallet. You don't need to know which node served you. These are all our problems."_
 
-On pricing — the point the deck makes visually, said plainly:
+On pricing, the point the deck makes visually, said plainly:
 
 > _"Pay special attention to this: on many platforms, output is priced 3 to 5 times input. Once your use case answers
 > often, the bill pulls up. We don't have that difference here."_
 
-On the competitive comparison (~1:00:00):
+On the competitive comparison, around 1:00:00:
 
 > _"[OpenRouter's] price… is many times higher. Whether during the competition or after, we will help you get the
 > biggest benefit."_
@@ -84,13 +80,11 @@ On the competitive comparison (~1:00:00):
 **The live demo hit real problems** — a screen-share failure at the start, and a 404 during the WorkBuddy walkthrough
 that Jack debugged on air. The WorkBuddy URL gotcha in the deck is not theoretical; it bit the presenter.
 
----
-
-## The Q&A — What Was Actually Ruled
+## The Q&A, and what was actually ruled
 
 This is the part not in the deck. Answers are Jack's and Carol's, with Richard's English summaries.
 
-### On What Scores Well
+### What scores well
 
 **Jack:**
 
@@ -107,7 +101,7 @@ This is the part not in the deck. Answers are Jack's and Carol's, with Richard's
 > can really solve the pain point of the society… They will be giving marks more on how the problem aligns, and what
 > solution you have provided that's really applicable in real life scenarios."_
 
-### 🔑 Web3 Is Not Required
+### Web3 is not required
 
 **Q: Must the solution have Web3 components?**
 
@@ -120,16 +114,16 @@ This is the part not in the deck. Answers are Jack's and Carol's, with Richard's
 This is a **blockchain** hackathon, but this track does not require a blockchain component. Worth knowing before
 scoping.
 
-### 🌍 Not Limited To Malaysia
+### The problem is not limited to Malaysia
 
 **Q: Is the social problem specifically for Malaysia, or across the world?**
 
 > **Carol: any scope, not limited to Malaysia.**
 
 She gave a worked example of an existing GonkaRouter customer: a Reddit-based tool that finds target customers
-automatically — scanning Reddit for people expressing a relevant need, so the operator does not read threads one by one.
+automatically, scanning Reddit for people expressing a relevant need, so the operator does not read threads one by one.
 
-### 🪙 Unlimited Tokens — How It Actually Works
+### How the unlimited tokens actually work
 
 **Q: Are the unlimited tokens automatic, or do we need to do something?**
 
@@ -140,9 +134,9 @@ automatically — scanning Reddit for people expressing a relevant need, so the 
 >
 > After the contest they will email the winners the 20M/month grant. _"You don't need to pass any procedures."_
 
-So: no application form for the unlimited tokens. Just register, and email if you exhaust the credit.
+So there is no application form for the unlimited tokens. Just register, and email if you exhaust the credit.
 
-### 📜 Event Rulings From Richard
+### Event rulings from Richard
 
 | Question                                     | Ruling                                                                                                                                                                                              |
 | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -151,7 +145,7 @@ So: no application form for the unlimited tokens. Just register, and email if yo
 | **What if Devfolio has problems?**           | They will open a **Google Form** as a fallback submission route                                                                                                                                     |
 | **Is pitching mandatory for all members?**   | **At least one.** But _"if you are just one person, you are not really having any advantages, because you need to face the judges more and more"_ — bring at least two, because of the 5-minute Q&A |
 
-### Closing Reminders
+### Closing reminders
 
 - **Register on Devfolio now**, even though registration runs to the day before pitching — they need time to verify
   entries
@@ -159,14 +153,12 @@ So: no application form for the unlimited tokens. Just register, and email if yo
 - Join the Discord; mentors can be booked for one-on-one sessions
 - Further questions go to the Discord channel
 
----
-
-## Deltas Against `docs/brief.md`
+## Deltas against the brief
 
 **All six are now promoted into [`../brief.md`](../brief.md)** — this table is kept as the record of where they came
 from. The brief is the working reference; this is the source.
 
-| Item                  | Brief says                        | Workshop said                                                                     |
+| Item                  | Brief said                        | Workshop said                                                                     |
 | --------------------- | --------------------------------- | --------------------------------------------------------------------------------- |
 | **Web3 component**    | not addressed                     | **Not required** for the GonkaRouter track                                        |
 | **Problem scope**     | not addressed                     | **Not limited to Malaysia**                                                       |

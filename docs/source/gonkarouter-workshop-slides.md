@@ -1,16 +1,15 @@
-# GonkaRouter Workshop — Slide Deck
+# GonkaRouter workshop deck
 
-> **Source** — `workshop-gonka-router.html`, the deck presented at the GonkaRouter developer workshop, 27 Aug 2026, 9:00
-> PM MYT on Microsoft Teams. Presented by **Jack**, GonkaRouter Tech Lead. **Method** — text extracted from the HTML
-> deck (26 slides). Bilingual 中文/English throughout; the English is reproduced here, with Chinese kept only where it
-> carries something the English does not. **Captured** — 2026-08-29. Companion:
-> [`gonkarouter-workshop-transcript.md`](gonkarouter-workshop-transcript.md) for what was actually said.
+The 26 slides Jack presented at the GonkaRouter developer workshop, and the authority on every technical detail in this
+folder. Deck title: _Ship Smarter AI Apps at Zero Cost / 0 成本部署更智能的 AI 应用_.
 
-**Deck title:** _Ship Smarter AI Apps at Zero Cost / 0 成本部署更智能的 AI 应用_
+> **Source** — `workshop-gonka-router.html`, the deck presented 27 Aug 2026, 9:00 PM MYT on Microsoft Teams, by
+> **Jack**, GonkaRouter Tech Lead. **Method** — text extracted from the HTML deck (26 slides). Bilingual 中文/English
+> throughout; the English is reproduced here, with Chinese kept only where it carries something the English does not.
+> **Captured** — 2026-08-29. Companion: [`gonkarouter-workshop-transcript.md`](gonkarouter-workshop-transcript.md) for
+> what was actually said.
 
----
-
-## What This Adds Over What We Already Had
+## What this adds over what we already had
 
 | New fact                                                                            | Supersedes                                                                                 |
 | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
@@ -20,32 +19,26 @@
 | Rate quoted as **from $0.0013 / 1M tokens**                                         | `/models` showed $0.0012. The rate floats with network utilisation; both are point-in-time |
 | **Unlimited tokens for the whole event**                                            | Confirms Carol's ceremony statement from a second, written source                          |
 
----
-
 ## Agenda
 
-| #   | Section                                                                           |
-| --- | --------------------------------------------------------------------------------- |
-| 01  | **Why Gonka Router** — what Gonka is, and why one unified endpoint matters        |
-| 02  | **Build an AI app, live** — key → connect → switch models → demo → best practices |
-| 03  | **Live Q&A** — integration blockers, debugged together                            |
+1. **Why Gonka Router** — what Gonka is, and why one unified endpoint matters
+1. **Build an AI app, live** — key → connect → switch models → demo → best practices
+1. **Live Q&A** — integration blockers, debugged together
 
----
+## Part 1, why developers need GonkaRouter
 
-## Part 1 — Why Developers Need GonkaRouter
-
-### The Problem, As They Frame It
+### The problem, as they frame it
 
 > _"The friction between your idea and your first API call."_
 
-| Pain                                                          |                                 |
+| Pain                                                          | Cost                            |
 | ------------------------------------------------------------- | ------------------------------- |
 | A foreign credit card stands between you and your first token | Blocking for Malaysian students |
 | Every vendor: its own SDK, auth and billing                   | Switching cost                  |
 | Plumbing is the worst place to spend a prototype's budget     | Time cost                       |
 | Comparing models means juggling several accounts              | Evaluation cost                 |
 
-### Their Answer
+### Their answer
 
 - **$20 one-time free credit** — start before you pay
 - **One API, both protocols** — OpenAI _and_ Anthropic wire formats
@@ -54,21 +47,19 @@
 
 > _"Turn days of integration into minutes."_
 
-### What Gonka Is
+### What Gonka is
 
 A **decentralised AI compute network** — _"AI compute is the new currency"_. Mainnet is live.
 
-|                           |                                                                     |
-| ------------------------- | ------------------------------------------------------------------- |
-| **Decentralised compute** | Proof-of-work built on transformer inference. **Audited by CertiK** |
-| **Frontier open models**  | Kimi-K2.6, MiniMax-M2.7, DeepSeek-V4-Flash all live today           |
-| **Settled in GNK**        | Web3-native settlement. Backed by **Coatue** and **Slow Ventures**  |
+- **Decentralised compute** — proof-of-work built on transformer inference. **Audited by CertiK**
+- **Frontier open models** — Kimi-K2.6, MiniMax-M2.7, DeepSeek-V4-Flash all live today
+- **Settled in GNK** — Web3-native settlement. Backed by **Coatue** and **Slow Ventures**
 
 > **Gonka is the compute network. Gonka Router is the developer-facing front door.**
 
-### The Architecture, As They Draw It
+### The architecture, as they draw it
 
-```
+```text
 Your app                 →  Gonka Router          →  Gonka network        →  Kimi · MiniMax · DeepSeek
 OpenAI / Anthropic SDK      Auth · billing · routing   Decentralised compute   Frontier open models
 ```
@@ -76,7 +67,7 @@ OpenAI / Anthropic SDK      Auth · billing · routing   Decentralised compute  
 **1 API key · 2 wire protocols · N models.** _"Integrate once — model changes, routing and settlement stay on our
 side."_
 
-### Direct vs. Router
+### Direct to each vendor, versus the router
 
 | Dimension       | Direct to each vendor        | GonkaRouter               |
 | --------------- | ---------------------------- | ------------------------- |
@@ -85,47 +76,41 @@ side."_
 | **Pricing**     | Per-model, often marked up   | One flat rate, all models |
 | **Switching**   | New SDK, new auth            | Change one string         |
 
-### The Cost Claim, With Their Own Numbers
+### The cost claim, with their own numbers
 
-|                  |                               |
-| ---------------- | ----------------------------- |
-| **$20**          | one-time signup credit        |
-| **from $0.0013** | per 1M tokens, input = output |
-| **$0**           | subscriptions, seats, cards   |
+- **$20** — one-time signup credit
+- **from $0.0013** — per 1M tokens, input priced the same as output
+- **$0** — subscriptions, seats, cards
 
 **A real account they showed:** after **1.77M requests** and **4.35B tokens**, the $20 credit still had **$18.26 left**.
 
-> The rate floats with the Gonka network; `/pricing` shows the live number. _"Either way, $20 goes a very long way in
-> prototyping."_
+The rate floats with the Gonka network; `/pricing` shows the live number. _"Either way, $20 goes a very long way in
+prototyping."_
 
-### What People Are Building
+### What people are building
 
-Agents & automation · coding assistants (Cursor, Claude Code, Cline, Aider) · chat & long-context Q&A · document and
+Agents and automation · coding assistants (Cursor, Claude Code, Cline, Aider) · chat and long-context Q&A · document and
 data processing · RAG · prototyping.
 
----
-
-## Part 2 — Hands-On, Five Steps
+## Part 2, hands-on in five steps
 
 > **1** Get a key → **2** 30-second smoke test → **3** connect an SDK → **4** swap models → **5** best practices
 
-### Step 1 — Sign Up And Get A Key
+### Step 1, sign up and get a key
 
-|             |                                                                                 |
-| ----------- | ------------------------------------------------------------------------------- |
-| Sign-in     | **Email or Google. No wallet required** — a wallet only matters when you top up |
-| Base URL    | `https://api.gonkarouter.io`                                                    |
-| Auth header | `x-api-key: sk-…` **or** `Authorization: Bearer sk-…` (either works)            |
-| Credit      | Every new account gets **$20**, one time                                        |
+- **Sign-in** — email or Google. **No wallet required**; a wallet only matters when you top up
+- **Base URL** — `https://api.gonkarouter.io`
+- **Auth header** — `x-api-key: sk-…` **or** `Authorization: Bearer sk-…`, either works
+- **Credit** — every new account gets **$20**, one time
 
-**Four things worth knowing up front:**
+Four things worth knowing up front:
 
 - OpenAI-style requests go to **`/v1/chat/completions`**
 - Anthropic-style requests go to **`/v1/messages`**
 - **One key covers every model** — no per-model access requests
 - **A `429` never costs you balance** — back off and retry
 
-### Step 2 — The 30-Second Smoke Test
+### Step 2, the 30-second smoke test
 
 ```bash
 KEY="sk-xxxxxx"
@@ -143,7 +128,7 @@ curl -s https://api.gonkarouter.io/v1/messages \
 
 Expect `"role":"assistant"`, a `content[].text` of `pong`, and usage token counts.
 
-### Step 3 — Connect An SDK
+### Step 3, connect an SDK
 
 **OpenAI-compatible** — exactly two lines change:
 
@@ -173,14 +158,14 @@ msg = client.messages.create(
 )
 ```
 
-> ⚠️ **The `/v1` asymmetry is a real trap.** OpenAI-style needs it in the base URL; Anthropic-style must not have it.
-> Same gateway, different rule per protocol.
+> **The `/v1` asymmetry is a real trap.** OpenAI-style needs it in the base URL; Anthropic-style must not have it. Same
+> gateway, different rule per protocol.
 
-**No code required** — Cursor IDE (Pro only; Continue.dev / Cline / Aider are the free alternatives), Claude Code CLI
-(env vars + isolated `HOME`), OpenClaw (custom `gonka` provider), and _"any client that lets you set a base URL"_ —
-LangChain, LlamaIndex, Vercel AI SDK.
+**No code required** — Cursor IDE (Pro only; Continue.dev, Cline and Aider are the free alternatives), Claude Code CLI
+(env vars plus an isolated `HOME`), OpenClaw (custom `gonka` provider), and _"any client that lets you set a base URL"_
+— LangChain, LlamaIndex, Vercel AI SDK.
 
-### Step 4 — Switching Models
+### Step 4, switching models
 
 Same code, one string changed. **Ids are case- and slash-sensitive.**
 
@@ -192,7 +177,7 @@ Same code, one string changed. **Ids are case- and slash-sensitive.**
 
 **All three share one rate**, input and output alike. _"Change models without changing wallets."_
 
-### The Live Demo — A Streaming Skeleton
+### The live demo, a streaming skeleton
 
 ```python
 from openai import OpenAI
@@ -213,37 +198,38 @@ ask("Summarise this week's support tickets and list the top 3 recurring issues."
 
 > _"Streaming feels better in a demo — swap the model argument to run the same prompt through all three."_
 
-### The WorkBuddy Demo And Its Gotchas
+### The WorkBuddy demo and its gotchas
 
 Five fields: Settings → Models → Add Model, Provider = **Custom**, Interface URL, API Key, Model Name.
 
-|     | URL                                      | Result |
-| --- | ---------------------------------------- | ------ |
-| ✗   | `api.gonkarouter.io`                     | 404    |
-| ✗   | `api.gonkarouter.io/v1`                  | 404    |
-| ✓   | `api.gonkarouter.io/v1/chat/completions` | works  |
+| URL                                      | Result |
+| ---------------------------------------- | ------ |
+| `api.gonkarouter.io`                     | 404    |
+| `api.gonkarouter.io/v1`                  | 404    |
+| `api.gonkarouter.io/v1/chat/completions` | works  |
 
-**Four things that will bite you:**
+Four things that will bite you:
 
 - **A 404 is almost always the URL.** A bad key returns `401`, an unknown model `400` — neither looks like a 404
 - **Output caps at 4096 tokens.** Omitting `max_tokens` gives an even lower **3072**; asking for more is silently
   clamped
 - **Model ids differ per plan.** Vendor-prefixed `MiniMaxAI/MiniMax-M2.7` and short `kimi-k2.6` are different catalogs —
   copy what `/models` shows for _your_ key
-- **Relayed by WorkBuddy's own backend**, which is why its errors carry two ids. Quote the **Trace ID** to support
+- **Requests are relayed by WorkBuddy's own backend**, which is why its errors carry two ids. Quote the **Trace ID** to
+  support
 
 Verified against WorkBuddy **v5.3.11**.
 
-### Step 5 — Best Practices
+### Step 5, best practices
 
-**Do this:**
+Do this:
 
 - `max_tokens >= 1024`, leaving room for reasoning tokens
 - Copy model ids verbatim from `/models`
 - On `429`, back off 30–60s — **it costs you nothing**
 - Stream long answers
 
-**Verified production limits:**
+Verified production limits:
 
 | Limit                | Value                                   |
 | -------------------- | --------------------------------------- |
@@ -256,9 +242,7 @@ Verified against WorkBuddy **v5.3.11**.
 
 > **Their mnemonic:** _curl first → change the base URL → exact model id → back off on 429._
 
----
-
-## Their Own FAQ
+## Their own FAQ
 
 | Question                                   | Answer                                                                                              |
 | ------------------------------------------ | --------------------------------------------------------------------------------------------------- |
@@ -267,29 +251,21 @@ Verified against WorkBuddy **v5.3.11**.
 | **Does the OpenAI SDK work?**              | Yes — change the base URL. Anthropic Messages is supported too                                      |
 | **What when the credit runs out?**         | Top up, pay per token actually consumed. Nothing else                                               |
 
----
-
-## Token Support For This Event
+## Token support for this event
 
 > **During the event: unlimited tokens.** _"Don't ration them."_ **After: teams that build something great keep 20M
 > tokens/month for 3–6 months.**
 
-This is the second independent confirmation — Carol said the same at the opening ceremony
-([`opening-ceremony-transcript.md`](opening-ceremony-transcript.md) §00:39).
+This is the second independent confirmation — Carol said the same at the opening ceremony, in the Q&A at 00:39 of
+[`opening-ceremony-transcript.md`](opening-ceremony-transcript.md).
 
----
+## Resources they pointed at
 
-## Resources They Pointed At
+- `/docs` — WorkBuddy, Claude Code and Cursor, with full examples
+- `/models` — exact ids and snippets
+- `/pricing` — the live per-token rate
 
-|            |                                                |
-| ---------- | ---------------------------------------------- |
-| `/docs`    | WorkBuddy, Claude Code, Cursor — full examples |
-| `/models`  | Exact ids and snippets                         |
-| `/pricing` | The live per-token rate                        |
-
----
-
-## What This Means For Our Build
+## What this means for our build
 
 - **Pin `deepseek-ai/DeepSeek-V4-Flash-0731`**, not the short id. Three vendor-prefixed ids now confirmed from a
   first-party deck.
