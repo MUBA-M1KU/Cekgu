@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "prepare": "husky",
+    "test:guard": "bash .claude/hooks/guard-git.test.sh",
     "lint": "biome check . && prettier --check \"**/*.{md,markdown,yaml,yml}\"",
     "format": "biome format --write . && prettier --write \"**/*.{md,markdown,yaml,yml}\"",
     "typecheck": "if [ -d src ]; then tsc --noEmit; else echo 'no src/ yet, nothing to typecheck'; fi"

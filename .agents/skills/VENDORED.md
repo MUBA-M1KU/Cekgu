@@ -144,7 +144,12 @@ wrong, but a long list makes an agent pick worse. Re-add any the same way.
 here instead. It previously lived in a top-level `description` key, which is not in the schema.
 
 The posture is deliberately broad so the harness does not stop to ask during the build sprint. What stays denied is the
-short list a human should own: merging a PR, deleting the repo, force-pushing, `git reset --hard`, and `rm -rf /`.
+short list that remains destructive outside the PR gate: deleting the repo, force-pushing, `git reset --hard`, and
+`rm -rf /`. PR merging is intentionally allowed; `AGENTS.md` defines the green, non-breaking merge gate.
+
+GitHub currently returns HTTP 403 for both rulesets and classic branch protection on this private repository's plan.
+Until the plan changes, `guard-git.sh` is the local enforcement layer and the pinned-head merge command prevents a PR
+from changing between verification and merge.
 
 Three rules that are easy to get wrong:
 
@@ -165,12 +170,12 @@ and it trades a little safety for the convenience.
 Four guards in `.claude/settings.json`, each exiting 0 on any internal failure so a broken guard can never wedge a
 session.
 
-| Hook               | Event             | Does                                                                                             |
-| ------------------ | ----------------- | ------------------------------------------------------------------------------------------------ |
-| `session-brief.sh` | SessionStart      | Branch, uncommitted count, days to deadline                                                      |
-| `env-drift.mjs`    | SessionStart      | Reports a local `.env` disagreeing with `.env.example`. Names keys, never values                 |
-| `guard-git.sh`     | PreToolUse(Bash)  | Blocks direct and force pushes to `main`, and `git add .env`. **The only one that can stop you** |
-| `format-edited.sh` | PostToolUse(Edit) | Biome-formats edited files. Silent, never blocks                                                 |
+| Hook               | Event             | Does                                                                                                           |
+| ------------------ | ----------------- | -------------------------------------------------------------------------------------------------------------- |
+| `session-brief.sh` | SessionStart      | Branch, uncommitted count, days to deadline                                                                    |
+| `env-drift.mjs`    | SessionStart      | Reports a local `.env` disagreeing with `.env.example`. Names keys, never values                               |
+| `guard-git.sh`     | PreToolUse(Bash)  | Enforces pinned squash merges; blocks direct or force pushes, merge API bypasses and `.env`. **The only stop** |
+| `format-edited.sh` | PostToolUse(Edit) | Biome-formats edited files. Silent, never blocks                                                               |
 
 `guard-git.sh` matches on the command substring, so an `rtk`-prefixed command is caught too. It also false-positives on
 any command whose _text_ contains those patterns, including writing the hook itself: use a file, not an inline heredoc.
