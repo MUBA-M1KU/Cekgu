@@ -1,4 +1,4 @@
-# Disagreement As Product
+# Disagreement as product
 
 The track's four requirements describe a shape: multi-model disagreement, made visible and auditable. This file records
 **when that shape actually works**, because the naive version — run two models, flag when they differ — is measurably
@@ -7,17 +7,13 @@ weak and the literature says why.
 **Method.** Literature synthesis by a delegated model from primary papers, fetched 2026-08-30. Numbers below are quoted
 from the cited papers; interpretation is marked.
 
----
-
-## The Finding That Constrains Everything
+## The finding that constrains everything
 
 Disagreement can be made into a **product** only where three conditions hold **jointly**:
 
-| #       | Condition                                                                     |
-| ------- | ----------------------------------------------------------------------------- |
-| **i**   | Genuinely **decorrelated** second opinions are possible                       |
-| **ii**  | A **written rule for divergence** exists, fixed _before_ the answers are seen |
-| **iii** | **Truth eventually adjudicates** — someone later finds out who was right      |
+- **i.** Genuinely **decorrelated** second opinions are possible
+- **ii.** A **written rule for divergence** exists, fixed _before_ the answers are seen
+- **iii.** **Truth eventually adjudicates** — someone later finds out who was right
 
 Condition **iii** is the one that kills most candidates. Domains without it — taste, strategy, aesthetics — can host
 disagreement but cannot host a product made of it, because nothing ever disciplines the flag into being right.
@@ -25,18 +21,16 @@ disagreement but cannot host a product made of it, because nothing ever discipli
 Condition **ii** is what separates an established institutional practice from a mere culture of checking. In blinded
 independent central review and in audit engagement-quality review, what happens on divergence is specified in advance.
 
----
-
-## Agreement Is Only Evidence If Errors Are Decorrelated
+## Agreement is only evidence if errors are decorrelated
 
 The load-bearing number for any multi-model claim:
 
-| Configuration                | Measured Error Correlation ρ |
+| Configuration                | Measured error correlation ρ |
 | ---------------------------- | ---------------------------: |
 | Same model, resampled        |                       ≈ 0.40 |
 | **Different model families** |                   **≈ 0.08** |
 
-Source: [arXiv:2601.22290](https://arxiv.org/html/2601.22290v1) §4.4.4. The same paper bounds correlated system error as
+Source: [arXiv:2601.22290][arxiv-2601-22290] §4.4.4. The same paper bounds correlated system error as
 `P_corr(n, p, ρ) ≤ (1−ρ)·P_ind(n,p) + ρ·p` (Theorem 4) — as ρ → 1 consensus yields **zero** benefit and majority vote
 inherits the shared error at full rate.
 
@@ -44,7 +38,7 @@ inherits the shared error at full rate.
 ρ ≈ 0.40. `[ASSUMPTION]` No source measures ρ for DeepSeek-V4 / Kimi-K2.6 / MiniMax-M2.7 specifically, and all three are
 trained on substantially overlapping corpora, so this is favourable but not proven.
 
-### What Consensus Buys, Measured
+### What consensus buys, measured
 
 | Result                                                              | Source                                                       |
 | ------------------------------------------------------------------- | ------------------------------------------------------------ |
@@ -52,28 +46,26 @@ trained on substantially overlapping corpora, so this is favourable but not prov
 | Self-consistency decoding: +17.9% GSM8K, +11.0% SVAMP, +12.2% AQuA  | Wang et al. 2023, via the same §2.2                          |
 | Three LLMs critiquing each other: GPQA-diamond 46.9% → 68.2%        | ICE framework, via the same §2.2                             |
 
-### What It Does Not Buy
+### What it does not buy
 
 - **Naive self-consistency is weak.** Asking twice and flagging differences detected only **45% of injected
   hallucinations at a 12% false-positive rate**, +3–5 s and +$0.03/request. Structural evidence — signed execution
-  receipts — hit **91% detection at 4% FPR** ([arXiv:2603.10060](https://arxiv.org/html/2603.10060v1), Table 3). Where
-  real evidence is available it beats statistical agreement decisively.
+  receipts — hit **91% detection at 4% FPR** ([arXiv:2603.10060][arxiv-2603-10060], Table 3). Where real evidence is
+  available it beats statistical agreement decisively.
 - **Consensus measures stability, not grounding.** Claims resting purely on parametric knowledge were still correct only
   71.2% of the time (same paper, Table 6) — and that is exactly the regime where models _agree_ while having no
   independent evidence.
-- **Agreement degrades as models converge.** ["Correlated agreement blindness"](https://arxiv.org/html/2607.19899v1)
-  (PAAMS 2026) documents disagreement-gated oversight weakening as foundation models share pretraining and alignment.
+- **Agreement degrades as models converge.** ["Correlated agreement blindness"][arxiv-2607-19899] (PAAMS 2026) documents
+  disagreement-gated oversight weakening as foundation models share pretraining and alignment.
 
 **The limitation to state openly:** when several models agree, that agreement is evidence of correctness only to the
 degree their errors are decorrelated. Multi-model consensus is a **calibrated confidence signal, not verification.**
 
----
-
-## When Disagreement Is A Lie
+## When disagreement is a lie
 
 Divergence must be certified before it means anything. Concrete tests, all from the synthesis:
 
-| Failure Mode                          | Test                                                                                                                                                                           |
+| Failure mode                          | Test                                                                                                                                                                           |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **One model is simply weaker**        | Condition on solo accuracy; certify a pair only if both clear a domain accuracy floor                                                                                          |
 | **Prompt sensitivity as certainty**   | **Paraphrase invariance** — meaning-preserving rewrites, re-ask the _same_ model, measure flips                                                                                |
@@ -86,14 +78,12 @@ Divergence must be certified before it means anything. Concrete tests, all from 
 **The synthesis test, the only one that matters:** on a labelled set, is the best single model materially _less_
 accurate on flagged items than unflagged ones? If not, the disagreement is decorative.
 
----
-
-## What The Demo Must Prove
+## What the demo must prove
 
 Not "models sometimes disagree" — every audience already believes that, which is why it does not land. It must prove
 **the disagreement score is a working risk light**.
 
-| Beat       | On Screen                                                                                                                         |
+| Beat       | On screen                                                                                                                         |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | **0–20s**  | One hard item. Models differ. Neither is obviously wrong. "A system shipping one of these would have been confident and wrong"    |
 | **20–40s** | **The control.** Trivial items from the same domain, all models identical, zero flags. Proves the flag is not always-on           |
@@ -104,7 +94,7 @@ Not "models sometimes disagree" — every audience already believes that, which 
 disagreement separates them sharply — disagreement finds errors the model does not know it has, which is the definition
 of a second opinion.
 
-### What Makes It Unconvincing
+### What makes it unconvincing
 
 - **No ground truth on stage.** Without it the flag is a vibe. This is why condition **iii** is non-negotiable
 - **No control set** — the audience assumes the flag fires constantly
@@ -112,14 +102,12 @@ of a second opinion.
 - **Averaging as the straw man.** The honest baseline is the best single model plus its own confidence
 - **Undisclosed model provenance.** Independence is the load-bearing premise; disclose it before being asked
 
----
-
-## Established Practice Anchors
+## Established practice anchors
 
 Where humans already pay for an independent second answer, the need is real and priced. The strongest anchors, with what
 they cost:
 
-| Practice                           | Institution                                           | Cost / Latency                                                     |
+| Practice                           | Institution                                           | Cost / latency                                                     |
 | ---------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------ |
 | Mammography double reading         | NHS Breast Screening Programme, all screens           | Roughly doubles reader-hours — the main cost driver                |
 | Pathology second review            | Required at NCI-designated centres for outside slides | Days to weeks; a few hundred dollars per case                      |
@@ -132,16 +120,18 @@ they cost:
 **The pattern:** the second answer is produced independently, compared before the single answer is consumed, and
 governed by a written rule about what divergence does. Most AI ensemble pipelines get the first and third wrong.
 
----
-
 ## Sources
 
 All accessed 2026-08-30.
 
-- [arXiv:2601.22290](https://arxiv.org/html/2601.22290v1) — consensus theory, correlation coefficients, Theorem 4
-- [arXiv:2603.10060](https://arxiv.org/html/2603.10060v1) — self-consistency vs receipt-based detection, Tables 3, 4, 6
-- [arXiv:2607.19899](https://arxiv.org/html/2607.19899v1) — correlated agreement blindness, PAAMS 2026
+- [arXiv:2601.22290][arxiv-2601-22290] — consensus theory, correlation coefficients, Theorem 4
+- [arXiv:2603.10060][arxiv-2603-10060] — self-consistency vs receipt-based detection, Tables 3, 4, 6
+- [arXiv:2607.19899][arxiv-2607-19899] — correlated agreement blindness, PAAMS 2026
 - [arXiv:2604.07650](https://arxiv.org/abs/2604.07650) — auditing behavioural entanglement between LLMs
 - [arXiv:2603.20975](https://arxiv.org/abs/2603.20975) — DiscoUQ, structured disagreement analysis
 - [Trust or Escalate, arXiv:2407.18370](https://arxiv.org/pdf/2407.18370) — ICLR 2025, selective evaluation with
   guarantees
+
+[arxiv-2601-22290]: https://arxiv.org/html/2601.22290v1
+[arxiv-2603-10060]: https://arxiv.org/html/2603.10060v1
+[arxiv-2607-19899]: https://arxiv.org/html/2607.19899v1

@@ -796,3 +796,30 @@ usefulness of integrations with other tools, which may either present the source
 [Philosophy](https://google.github.io/styleguide/docguide/philosophy.html).
 
 Gitiles does not render HTML.
+
+## Local amendments
+
+This guide is reproduced as received. Four points where this repository's tooling or house rules override it, recorded
+here so the exceptions are not rediscovered from PR descriptions each time.
+
+1.  **Line width is 120, not 80.** The guide's rationale is matching the width you use for code, and `biome.json` sets
+    `lineWidth: 120`. `.prettierrc.json` mirrors it, so the two formatters cannot fight. The exemptions still apply:
+    links, tables, headings and code blocks may run long.
+
+1.  **Prettier owns list indentation.** [Nested list spacing](#nested-list-spacing) prescribes a 3-space bullet with a
+    4-space wrap indent and shows the 2-space form as its counterexample, but Prettier rewrites to 2 spaces and the
+    section's own conformant example fails `prettier --check` under this repo's config. The formatter wins, per the
+    guide's own advice that the tools always win.
+
+1.  **`[TOC]` does not work here.** It is a Gitiles directive and GitHub renders it as literal text. Long documents use
+    a manual `Contents:` ordered list placed after the introduction instead, which is what this guide itself does.
+
+1.  **Sentence case for headings, bold lead-in labels and table headers**, per
+    [Capitalization of titles and headers](#capitalization-of-titles-and-headers). Product, tool and proper names keep
+    their form. The ones that read like ordinary words, and so get lowercased by accident, are the research ledger's
+    concept names: `You Decide`, `Ubat Mak`, `Dua Keping`, `Bil Tinggi`, `Tawaran Uni Sah`, `Frozen Friend`,
+    `Model Changelog`, `Bahasa Nenek` and `Hound`.
+
+**Two headings must keep their em dash.** `Receipts — shipped 2026-08-31` and `Network reality — measured, not marketed`
+in `superpowers/research/gateway-capabilities.md`: removing the em dash leaves a doubled space, and GitHub turns that
+into the doubled hyphen their anchors carry. Three inbound links depend on it.

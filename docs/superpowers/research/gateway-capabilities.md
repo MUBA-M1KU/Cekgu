@@ -1,16 +1,28 @@
-# Gateway Capabilities
+# Gateway capabilities
 
 What the GonkaRouter gateway can be relied on to do, and the two gaps that threaten a hard track requirement. Read
 alongside [`../../TRD.md`](../../TRD.md), which is canonical for implementation detail; this file records the
 **provenance and confidence** of each fact and the questions still open.
 
 **Method.** Extracted from `../../TRD.md` and `../../source/` by a delegated model, then spot-checked against the same
-files. Web claims in [What The Request ID Actually Proves](#what-the-request-id-actually-proves) were fetched from
+files. Web claims in [What the Request ID actually proves](#what-the-request-id-actually-proves) were fetched from
 primary sources on 2026-08-30. Interpretation is marked as such throughout.
 
----
+Contents:
 
-## The Two Findings That Change Design
+1. [The two findings that change design](#the-two-findings-that-change-design)
+1. [Receipts — shipped 2026-08-31](#receipts--shipped-2026-08-31)
+1. [The fallback trap](#the-fallback-trap)
+1. [Latency and hedging](#latency-and-hedging)
+1. [Track requirement clarified](#track-requirement-clarified)
+1. [Endpoints](#endpoints)
+1. [Models](#models)
+1. [The Request ID](#the-request-id)
+1. [Limits](#limits)
+1. [What the Request ID actually proves](#what-the-request-id-actually-proves)
+1. [Sources](#sources)
+
+## The two findings that change design
 
 | Finding                                                                 | Consequence                                                                                          |
 | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -21,9 +33,7 @@ primary sources on 2026-08-30. Interpretation is marked as such throughout.
 | **The router silently substitutes models under load**                   | **Threatens the track's multi-model requirement.** Send `X-Gonka-No-Fallback: true`                  |
 | **Kimi-K2.6 is effectively unreliable right now**                       | ~4 of 5 requests time out. The vendor recommends DeepSeek and MiniMax. Kimi is the only vision model |
 
----
-
-## Receipts — Shipped 2026-08-31
+## Receipts — shipped 2026-08-31
 
 **Announced in the hackathon Discord by the GonkaRouter tech lead and verified live by us the same day.** This
 supersedes the earlier finding that a Request ID resolves to nothing.
@@ -52,9 +62,7 @@ Verified working against two ids, including one captured two days earlier:
 `(request_hash, response_hash, model, timestamp, request_id)` under a published key. Streaming complicates it — the
 signature has to arrive as a stream trailer. **Do not claim signatures exist.**
 
----
-
-## The Fallback Trap
+## The fallback trap
 
 **The single most dangerous finding for this track.** When a requested model's upstream is saturated (429 after
 retries), the gateway **serves a different model rather than failing**. It is flagged, but only in a response header
@@ -73,9 +81,7 @@ untrue. Kimi's ~80% timeout rate makes substitution _likely_, not theoretical.
 **Mitigation, mandatory for us:** send `X-Gonka-No-Fallback: true` on every verification call, read `X-Gonka-Fallback`
 on every response, and confirm the serving model per call via the receipts endpoint.
 
----
-
-## Latency And Hedging
+## Latency and hedging
 
 Vendor-confirmed and matching our own measurement: **the same model answers in under 1 s or takes 30–40 s** depending
 which node picks up the request. Measured TTFT ranges **~1.5 s to ~17 s**. Node selection happens upstream and there is
@@ -90,21 +96,17 @@ The tech lead's own guidance, worth following verbatim:
    reduction, roughly half the token cost.
 3. **Pin the model per check** with `X-Gonka-No-Fallback: true`, and read `X-Devshard-ID` to see which node served it.
 
----
-
-## Track Requirement Clarified
+## Track requirement clarified
 
 Asked directly in Discord and answered by the GonkaRouter team: **no separate testnet smart contract is required.** _"On
 Gonka's side, there are no additional requirements... Just Gonka Request ID."_
-
----
 
 ## Endpoints
 
 One host, `https://api.gonkarouter.io`, speaking two wire protocols. The `/v1` asymmetry is the most common wiring
 mistake.
 
-| Path                   | Protocol                      | Base URL The SDK Expects                |
+| Path                   | Protocol                      | Base URL the SDK expects                |
 | ---------------------- | ----------------------------- | --------------------------------------- |
 | `/v1/chat/completions` | OpenAI-compatible             | `https://api.gonkarouter.io/v1`         |
 | `/v1/messages`         | Anthropic Messages-compatible | `https://api.gonkarouter.io` (no `/v1`) |
@@ -117,13 +119,11 @@ surface**.
 Auth: either `x-api-key: sk-…` or `Authorization: Bearer sk-…` works on both surfaces. The Anthropic surface also
 requires `anthropic-version: 2023-06-01`.
 
----
-
 ## Models
 
 `GET /v1/models` returned exactly three ids. Case- and slash-sensitive, verbatim:
 
-| Model Id                             | Reasoning Trace | Notes                                                        |
+| Model ID                             | Reasoning trace | Notes                                                        |
 | ------------------------------------ | --------------- | ------------------------------------------------------------ |
 | `deepseek-ai/DeepSeek-V4-Flash-0731` | No              | Speed-tuned. Answers directly                                |
 | `moonshotai/Kimi-K2.6`               | Yes             | Only model with vision and search                            |
@@ -136,8 +136,6 @@ it.
 their errors are decorrelated — see [`disagreement-as-product.md`](disagreement-as-product.md). They are nonetheless all
 trained on substantially overlapping corpora, so independence is a matter of degree, not a given. `[ASSUMPTION]` No
 source measures cross-family error correlation for these three specifically.
-
----
 
 ## The Request ID
 
@@ -154,7 +152,7 @@ x-devshard-id: 65725
 - Body ids are not substitutes: the Anthropic body returns `msg_…`, the OpenAI body returns `devshard-65275-1926`.
   Neither is the gateway request id.
 
-### Open Questions
+### Open questions
 
 | Question                                             | Status                                                             |
 | ---------------------------------------------------- | ------------------------------------------------------------------ |
@@ -165,8 +163,6 @@ x-devshard-id: 65725
 
 **Untested as of 2026-08-30** — no GonkaRouter API key was available on the development machine, so the streaming
 behaviour has not been checked. This is the highest-priority verification before any call layer is designed.
-
----
 
 ## Limits
 
@@ -189,9 +185,7 @@ $20 one-time signup credit; tokens explicitly unlimited during the event; email 
 demonstrated account spent under $2
 across 1.77M requests and 4.35B tokens, so cost is not a design constraint here.
 
----
-
-## What The Request ID Actually Proves
+## What the Request ID actually proves
 
 The honest answer matters, because a judge who knows this space will ask and an overclaim is fatal.
 
@@ -221,7 +215,7 @@ No API key is required — the gateway is open access. Open-source tooling exist
 economic layer is queryable too: `collateral`, `slashing` (with participant, amount, reason and burned coins) and
 `epoch_performance_summary`.
 
-### A Request ID Does Not Resolve On Chain
+### A Request ID does not resolve on chain
 
 **This is the load-bearing finding, and it corrects a second wrong claim.** A first pass said no public lookup existed.
 A second pass found the chain wide open and inferred from `inference_pruning_epoch_threshold: 2` that inference records
@@ -240,12 +234,12 @@ Gonka's own docs warn that "the ultimate source of truth is the code itself".
 receipt**, not an on-chain receipt. Displaying it is honest; describing it as on-chain proof of a specific inference is
 not, and a judge from Gonka would know.
 
-### Network Reality — Measured, Not Marketed
+### Network reality — measured, not marketed
 
 Queried live 2026-08-31. **Read this before writing any pitch line about decentralisation, staking or trust.** Several
 of the network's marketed differentiators are not currently demonstrable, and a judge from Gonka would know.
 
-| Claim                                     | Measured Reality                                                                                                                                                        |
+| Claim                                     | Measured reality                                                                                                                                                        |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A market of many independent hosts        | **7,000 registered participants, but only 10 with `voting_power > 0`.** 5,532 carry a URL                                                                               |
 | Host reputation guides routing            | **`reputation` is 0 for all 7,000.** The field exists and is unpopulated                                                                                                |
@@ -265,7 +259,7 @@ we can defend.
 2. **Model identity pinned to a verifiable commit hash**
 3. **No account, so nothing to revoke or ban**
 
-### Models Churn — Do Not Build On A Specific Lineup
+### Models churn — do not build on a specific lineup
 
 Governance adds, removes and alters models regularly. This is verified, not hypothetical:
 
@@ -280,7 +274,7 @@ Governance adds, removes and alters models regularly. This is verified, not hypo
 their continued availability — is already falsified.** A companion "pinned forever" to Kimi K2.6 would have vanished at
 proposal #87. Model-agnosticism is a hard design constraint, not a nice-to-have.
 
-### What Is Genuinely Verifiable On Chain
+### What is genuinely verifiable on chain
 
 Verified live 2026-08-31 against `rpc.gonka.gg` and `node1.gonka.ai:8000`. This is the honest raw material for any chain
 integration.
@@ -299,14 +293,12 @@ integration.
 the only full-history index is the explorer's own. There is no advertised community-run archive, so "independently
 verifiable" is weaker than it sounds.
 
-### Language That Is True
+### Language that is true
 
 > Every request goes through a gateway backed by a public Layer-1. The public receipt exposes serving metadata; the
 > chain exposes model governance and aggregate settlement, not the prompt, output or validation of that specific
 > response. Network spot-checks and incentives provide deterrence plus auditability, not cryptographic proof that any
 > single answer is correct.
-
----
 
 ## Sources
 

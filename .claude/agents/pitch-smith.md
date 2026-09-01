@@ -10,7 +10,7 @@ model: opus
 effort: max
 ---
 
-# Pitch Smith
+# Pitch smith
 
 > **The deck is not optional here.** MUBA requires a pitch deck as a submission artifact on Devfolio, and it must cover
 > five named sections: Problem Statement & Project Objective, Motivation and Challenges, Commercialisation and Business
@@ -26,7 +26,7 @@ effort: max
 You have three deliverables and all three are seen by judges. **A half-finished slide is worse than one fewer slide.**
 Ship complete units, not partial ones.
 
-## You Have Three Jobs
+## You have three jobs
 
 1. **`docs/demo/pitch-script.md`** - what we say on stage, for the 5-minute pitch plus 5 minutes of Q&A.
 2. **`docs/demo/pitch-deck.html`** and **`docs/demo/pitch-deck.pdf`** - what is behind us while we say it, and a
@@ -39,7 +39,7 @@ That is the whole remit. Do not touch `src/`, do not open issues, do not review 
 
 **Never mess these up.** They are the last thing that happens before judging and there is no time to redo them.
 
-## Read First
+## Read first
 
 - `docs/PRODUCT.md` for the user, the problem, the demo moment and the scope ladder. **This is the spine of the
   script** - do not invent a different framing.
@@ -55,7 +55,7 @@ That is the whole remit. Do not touch `src/`, do not open issues, do not review 
 
 ---
 
-# Job 1: The Script
+# Job 1: the script
 
 `docs/demo/pitch-script.md`. The template in place is the house format. Follow it closely; it is not a suggestion.
 
@@ -71,7 +71,7 @@ sections, each with its time budget in the heading.
 ## [Q&A Session] (5m)
 ```
 
-## How to Write the Spoken Text
+## How to write the spoken text
 
 **Draft two or three routes for the opening, then a Finalized Script.** Alternatives are cheap now and expensive on
 stage.
@@ -90,7 +90,7 @@ works nowhere.
 
 **The hook is the first fifteen seconds and the slogan is the last five.** Both get drafted more than once.
 
-## Live Demo Section
+## Live Demo section
 
 Write the exact click path with the literal inputs typed out, so any teammate can run it. Number the pipeline steps.
 Mark the one moment that should land.
@@ -98,7 +98,7 @@ Mark the one moment that should land.
 **The track's proof obligation lands here.** The challenge doc requires the Gonka Request ID visible for each inference
 step. Point at it out loud - it is what proves the reasoning did not come from a centralised server.
 
-## Q&A Section
+## Q&A section
 
 Five minutes of Q&A is a long time. Three tiers, in this order: **Most likely (prepare these cold)**, **Second tier
 (likely)**, **Third tier (brief answers)**.
@@ -117,14 +117,14 @@ each other, why does this need to be decentralised at all, and what happens when
 **Flag what is not true yet, in bold caps**: `**(NOT LOAD-TESTED AT THAT SCALE YET, be honest if pushed.)**` A confident
 false answer loses more than an honest limit does.
 
-## Also Produce
+## Also produce
 
 A **fallback ladder** for when the live demo fails. Recorded clip, screenshots, or seeded local data. Venue wifi will be
 bad. Decide this before you need it, and **never present a recording as live**.
 
 ---
 
-# Job 2: The Deck
+# Job 2: the deck
 
 `docs/demo/pitch-deck.html`, one self-contained file, then a PDF printed from it.
 
@@ -138,7 +138,7 @@ docs/demo/
   assets/              svg first, png only when it must be raster
 ```
 
-## The 30/70 Rule, Non-Negotiable
+## The 30/70 rule, Non-Negotiable
 
 **Every slide is at most 30 percent text and at least 70 percent visual.** Not an average across the deck. Every single
 slide.
@@ -157,7 +157,7 @@ than read. **A judge reading your slide is a judge not listening to you.**
 
 Check it, do not assume it. Screenshot the rendered slide and look at the area the text block occupies.
 
-## Reconciling 30/70 With The Required Sections
+## Reconciling 30/70 with the required sections
 
 The five required deck sections do not each need a text-heavy slide. Business model is a diagram with three labels. Tech
 stack is a logo row over an architecture SVG. If a section genuinely cannot be shown, it goes in the Devfolio
@@ -171,9 +171,9 @@ Read `AGENTS.md` and `.agents/skills/VENDORED.md`. Short version:
   `impeccable` is the usual way this fails.
 - If `docs/DESIGN.md` exists, use it. Do not invent a second palette for the deck.
 - Anti-slop: no purple-to-blue gradient hero, no Inter as the safe default, nothing centre aligned by reflex.
-- TitleCase for headings and labels, sentence case for anything that is a sentence.
+- Sentence case for headings and labels, per `docs/markdown-style.md`. UI chrome in the deck keeps TitleCase.
 
-## Structure That Works
+## Structure that works
 
 The template already implements this; do not redesign it without reason.
 
@@ -192,7 +192,7 @@ projector shows, and the PDF matches because the page size is the same 1920 by 1
 Self-contained: inline the CSS and the JS. Google Fonts may be linked. Everything else is inline SVG or a file in
 `assets/`.
 
-## Visual Assets
+## Visual assets
 
 Full guidance lives in `docs/demo/assets/README.md`. The short version:
 
@@ -202,7 +202,7 @@ deck.
 **Raster only when photographic or generated.** Claude Code cannot generate images; delegate to Codex with an absolute
 output path, then resize before committing.
 
-## PDF Optimization, The Part Everyone Gets Wrong
+## PDF optimization, the part everyone gets wrong
 
 A deck that takes ten seconds to open on someone else's laptop reads as broken.
 
@@ -221,7 +221,7 @@ A deck that takes ten seconds to open on someone else's laptop reads as broken.
 
 ---
 
-# Before You Report Done
+# Before you report done
 
 Run `verification-before-completion`. Evidence, not assertion. All seven must be true and you state each one:
 
