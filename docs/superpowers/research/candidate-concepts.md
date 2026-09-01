@@ -124,7 +124,7 @@ refuses** and says check with a human. Abstention is a first-class output, force
 
 ### Ranking
 
-| #     | Concept                                                                                         | Social Benefit                  | Harm If Wrong                  | Verdict                                            |
+| #     | Concept                                                                                         | Social benefit                  | Harm if wrong                  | Verdict                                            |
 | ----- | ----------------------------------------------------------------------------------------------- | ------------------------------- | ------------------------------ | -------------------------------------------------- |
 | **1** | **Tawaran Uni Sah** — verify a university offer letter against UPU and published fees           | High — first-in-family students | **Low**, a recoverable deposit | **Best balance**                                   |
 | 2     | **Bil Elektrik Faham** — explain a TNB bill or disconnection notice against the official tariff | High, huge base                 | Moderate                       | Overlaps round 3's Bil Tinggi                      |
@@ -204,7 +204,7 @@ converge**. If either still names you, the loop continues; when the two attacker
 that divergence is the safety signal. **Agreement is the failure state** — a genuinely fresh reading of the track's
 cross-verification requirement, and the opposite of what ~20 rival teams will build.
 
-| Model                 | Role                                                                        | Why Permuting Breaks It                                                                       |
+| Model                 | Role                                                                        | Why permuting breaks it                                                                       |
 | --------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | **MiniMax-M2.7**      | The bloodhound — agentic re-identification, multi-step fetch-and-verify     | The attack _is_ an investigation; a tool-less model cannot run one                            |
 | **Kimi-K2.6**         | Second independent attacker, open-web — is this detail unique in the world? | Async attack round; a timeout costs one weaker round, never blocks the user                   |
@@ -290,7 +290,7 @@ to single-model, and this is the only way to detect it.
 
 ### Ranks 2–5, briefly
 
-| #     | Concept                 | The Idea                                                                                                                                                                                                                                                   |
+| #     | Concept                 | The idea                                                                                                                                                                                                                                                   |
 | ----- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **2** | **Show Me The Machine** | A citizen asks an institution: was AI involved, which model, when? The receipt answers all three without revealing content. **Closes a loop from round 1**, which found that no tool produces an auditable determination record — the mechanism now exists |
 | **3** | **Unreceipted**         | Proving AI was _not_ used. You cannot prove a negative, but you can publish a challengeable badge whose force comes from the receipt system being public. _"No synthesizers on this album"_ as a new social category                                       |
@@ -340,7 +340,7 @@ Practicality and Impact at 30% that may be the right trade — but it is a trade
 
 ### The rest of the pool worth keeping
 
-| Concept               | One Line                                                                                                                | Why It Is Here                                                        |
+| Concept               | One line                                                                                                                | Why it is here                                                        |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | **Ubat Mak**          | Photograph the discharge instructions; your 78-year-old mother gets a voice note in her own dialect                     | The artifact _is_ the family WhatsApp group. Real, daily, unglamorous |
 | **MLM Kenal**         | Paste the schoolmate's "financial freedom" DM; get the scheme structure named, the maths, and a face-saving exit script | Screenshot bait with a real intervention underneath                   |
@@ -358,7 +358,7 @@ is the finding**, and it is worth more than a forced recommendation.
 Two concepts survived a six-gate filter, then both died on measurement. See
 [`gateway-capabilities.md`](gateway-capabilities.md#network-reality--measured-not-marketed).
 
-| Concept                  | Killed By                                                                                                                                             |
+| Concept                  | Killed by                                                                                                                                             |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Liar's Court**         | Replays hosts caught cheating, losing collateral. **There are no cheating slashes** — all 50 recent events are `downtime` and `missing_signature`     |
 | **Who Holds Your Words** | Maps the strangers' machines that could serve your prompt, with their stakes. Would render **10 validators and one entity holding 71% of collateral** |
@@ -424,7 +424,7 @@ there cannot be** — silent updatability is the product.
 
 **The chain already holds the demo.** 97 governance proposals, queried live:
 
-| Proposal      | What Happened                                                       |
+| Proposal      | What happened                                                       |
 | ------------- | ------------------------------------------------------------------- |
 | **#94**       | `MsgRegisterModel` — DeepSeek V4 Flash 0731 **added**               |
 | **#87**       | `MsgDeleteGovernanceModel` — Kimi K2.6 **removed from the network** |
@@ -462,7 +462,7 @@ Two independent checks, both run after it had already been written up as rank 1.
 
 **1. The prior-art hunt returned CROWDED, not novel.**
 
-| Competitor                                              | What It Does                                                                                                                                                            |
+| Competitor                                              | What it does                                                                                                                                                            |
 | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **RipCheck** (`getripcheck.com`)                        | Photo → per-line verdict, "Rip-Off Score", "you overpaid by ~$X", negotiation talking points, $2.99/check. **Restaurant overcharge is an explicitly marketed category** |
 | **CartLens** (`cartlens.co`)                            | Receipt + price-tag photo, crowdsourced local prices, "did I overpay". Launched July 2026                                                                               |
@@ -508,7 +508,7 @@ price-marking law below all transfer to whatever gets built. See
 documents its reading errors **correlate**, giving it every incentive to reconcile the two into agreement, so only a
 blind differ can be trusted. A single model tested on exactly that case caught the discrepancy anyway.
 
-| Stage        | Model             | Why It Must Be This One                                                                     |
+| Stage        | Model             | Why it must be this one                                                                     |
 | ------------ | ----------------- | ------------------------------------------------------------------------------------------- |
 | Read menu    | Kimi-K2.6         | The only model that can see. Separate call, separate machine, own id                        |
 | Read receipt | Kimi-K2.6         | A **second** independent call — never the same inference as the menu                        |
@@ -560,7 +560,7 @@ Numbering below predates the 2026-08-31 rescoring and later rounds. Treat this s
 
 ## Killed
 
-| Concept                              | Killed By                                                                                                                                                                                                                                                                                                                                                            |
+| Concept                              | Killed by                                                                                                                                                                                                                                                                                                                                                            |
 | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Servis Apa Ni** (workshop invoice) | _"A knowledge-base company cosplaying as a hackathon project."_ No public Malaysian per-variant service-schedule dataset exists, and no arrangement of three models conjures one. ~70% chance a judge's real invoice contains items outside the catalogue and the app visibly shrugs                                                                                 |
 | **Relief Saya** (LHDN reliefs)       | **Disqualifying liability.** Entitlement depends on what the person actually _spent_, and none of that is on an EA form. The promise exceeds what the input document can ever contain, so the product would coach users into inflated returns and penalties **against the user**. Also seasonal, and the relief list can be hardcoded, so the pipeline is decoration |

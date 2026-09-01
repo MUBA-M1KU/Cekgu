@@ -18,7 +18,7 @@ as a multi-model capability.**
 
 What resampling can never vary:
 
-| Fixed Under Resampling | Consequence                                                   |
+| Fixed under resampling | Consequence                                                   |
 | ---------------------- | ------------------------------------------------------------- |
 | The weights            | Refusal geometry, tokeniser and capability set are all frozen |
 | The training snapshot  | Cutoff is a scalar you cannot perturb                         |
@@ -60,7 +60,7 @@ web. Unanimous agreement on a popular misconception is unanimous and wrong.
 This matters because it is specific to the models this track provides, and it is the strongest available answer to "why
 this stack".
 
-| Model                                | Vision  | Search  | Tool Chains | Reasoning Trace |
+| Model                                | Vision  | Search  | Tool chains | Reasoning trace |
 | ------------------------------------ | ------- | ------- | ----------- | --------------- |
 | `moonshotai/Kimi-K2.6`               | **Yes** | **Yes** | Yes         | Yes             |
 | `MiniMaxAI/MiniMax-M2.7`             | No      | No      | **Long**    | Yes             |

@@ -92,7 +92,7 @@ Gonka's side, there are no additional requirements... Just Gonka Request ID."_
 One host, `https://api.gonkarouter.io`, speaking two wire protocols. The `/v1` asymmetry is the most common wiring
 mistake.
 
-| Path                   | Protocol                      | Base URL The SDK Expects                |
+| Path                   | Protocol                      | Base URL the SDK expects                |
 | ---------------------- | ----------------------------- | --------------------------------------- |
 | `/v1/chat/completions` | OpenAI-compatible             | `https://api.gonkarouter.io/v1`         |
 | `/v1/messages`         | Anthropic Messages-compatible | `https://api.gonkarouter.io` (no `/v1`) |
@@ -109,7 +109,7 @@ requires `anthropic-version: 2023-06-01`.
 
 `GET /v1/models` returned exactly three ids. Case- and slash-sensitive, verbatim:
 
-| Model Id                             | Reasoning Trace | Notes                                                        |
+| Model id                             | Reasoning trace | Notes                                                        |
 | ------------------------------------ | --------------- | ------------------------------------------------------------ |
 | `deepseek-ai/DeepSeek-V4-Flash-0731` | No              | Speed-tuned. Answers directly                                |
 | `moonshotai/Kimi-K2.6`               | Yes             | Only model with vision and search                            |
@@ -225,7 +225,7 @@ not, and a judge from Gonka would know.
 Queried live 2026-08-31. **Read this before writing any pitch line about decentralisation, staking or trust.** Several
 of the network's marketed differentiators are not currently demonstrable, and a judge from Gonka would know.
 
-| Claim                                     | Measured Reality                                                                                                                                                        |
+| Claim                                     | Measured reality                                                                                                                                                        |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A market of many independent hosts        | **7,000 registered participants, but only 10 with `voting_power > 0`.** 5,532 carry a URL                                                                               |
 | Host reputation guides routing            | **`reputation` is 0 for all 7,000.** The field exists and is unpopulated                                                                                                |

@@ -25,7 +25,7 @@ independent central review and in audit engagement-quality review, what happens 
 
 The load-bearing number for any multi-model claim:
 
-| Configuration                | Measured Error Correlation ρ |
+| Configuration                | Measured error correlation ρ |
 | ---------------------------- | ---------------------------: |
 | Same model, resampled        |                       ≈ 0.40 |
 | **Different model families** |                   **≈ 0.08** |
@@ -65,7 +65,7 @@ degree their errors are decorrelated. Multi-model consensus is a **calibrated co
 
 Divergence must be certified before it means anything. Concrete tests, all from the synthesis:
 
-| Failure Mode                          | Test                                                                                                                                                                           |
+| Failure mode                          | Test                                                                                                                                                                           |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **One model is simply weaker**        | Condition on solo accuracy; certify a pair only if both clear a domain accuracy floor                                                                                          |
 | **Prompt sensitivity as certainty**   | **Paraphrase invariance** — meaning-preserving rewrites, re-ask the _same_ model, measure flips                                                                                |
@@ -83,7 +83,7 @@ accurate on flagged items than unflagged ones? If not, the disagreement is decor
 Not "models sometimes disagree" — every audience already believes that, which is why it does not land. It must prove
 **the disagreement score is a working risk light**.
 
-| Beat       | On Screen                                                                                                                         |
+| Beat       | On screen                                                                                                                         |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | **0–20s**  | One hard item. Models differ. Neither is obviously wrong. "A system shipping one of these would have been confident and wrong"    |
 | **20–40s** | **The control.** Trivial items from the same domain, all models identical, zero flags. Proves the flag is not always-on           |
@@ -107,7 +107,7 @@ of a second opinion.
 Where humans already pay for an independent second answer, the need is real and priced. The strongest anchors, with what
 they cost:
 
-| Practice                           | Institution                                           | Cost / Latency                                                     |
+| Practice                           | Institution                                           | Cost / latency                                                     |
 | ---------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------ |
 | Mammography double reading         | NHS Breast Screening Programme, all screens           | Roughly doubles reader-hours — the main cost driver                |
 | Pathology second review            | Required at NCI-designated centres for outside slides | Days to weeks; a few hundred dollars per case                      |

@@ -12,7 +12,7 @@ negative result, not as proof of absence.
 
 **This section killed more candidates than the rubric did.** Read it before reviving anything.
 
-| Concept                                   | Prior Art Found                                                                                                                                                                        | Verdict                         |
+| Concept                                   | Prior art found                                                                                                                                                                        | Verdict                         |
 | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
 | **Exam question ambiguity**               | [ExamEval][exameval] — AI exam analysis that flags unfocused, unclear and open stems                                                                                                   | **Direct incumbent**            |
 | **Contract / clause ambiguity**           | [Malbek](https://www.malbek.io/blog/contract-intelligence-2026), [Sirion][sirion], Spellbook, Luminance, Ironclad, Evisort                                                             | **Saturated**                   |
@@ -46,7 +46,7 @@ result is weaker than a positive one; treat this gap as probable, not certain.
 Modelled as ~30 teams brainstorming from near-identical prompts. Counts are estimates, not measurements, and sum to more
 than 30 because most teams stack two or three tropes into one project.
 
-| Rank | Concept                                                                                                               | Est. Teams |
+| Rank | Concept                                                                                                               | Est. teams |
 | ---- | --------------------------------------------------------------------------------------------------------------------- | ---------: |
 | 1    | WhatsApp scam-message checker with trust score                                                                        |          8 |
 | 2    | Multilingual fake-news claim checker                                                                                  |          5 |
@@ -147,7 +147,7 @@ All accessed 2026-08-30.
 
 Searched 2026-08-30 against the round 2 candidates in [`candidate-concepts.md`](candidate-concepts.md).
 
-| Candidate                         | Prior Art                                                                                                                                                                                                                                                     | Verdict                                                                                                                 |
+| Candidate                         | Prior art                                                                                                                                                                                                                                                     | Verdict                                                                                                                 |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | **Description sufficiency audit** | [Alt Audit](https://altaudit.com/wcag-compliance), [AltText.ai](https://alttext.ai/blog/wcag-alt-text-guide), [WebAbility](https://www.webability.io/blog/image-accessibility) all check whether alt text **exists**, plus heuristics (length, `alt="image"`) | **Gap is real.** None measures information sufficiency                                                                  |
 | **Gig-worker appeal memo**        | [FareShare](https://arxiv.org/pdf/2505.08904) — academic tool helping _labour organisers estimate lost wages_; [Worker Info Exchange][worker-info-exchange] runs UK subject-access-request casework against "robo-firing"                                     | Closer than comfortable. Neither is Malaysian, multi-model, or statute-specific — but "nobody does this" would be false |
