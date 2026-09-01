@@ -1,24 +1,25 @@
-# Coding Guidelines (Andrej Karpathy)
+# Coding guidelines
 
-Standing reference, moved out of `AGENTS.md` so it is not reloaded into every session. **`AGENTS.md` outranks this file
-wherever they disagree**, and the callout below is where they actually do.
+Behavioural rules that reduce common LLM coding mistakes, from
+[Karpathy's observations](https://x.com/karpathy/status/2015883857489522876). Kept out of [`AGENTS.md`](../AGENTS.md) so
+it is not reloaded into every session.
 
-Behavioural guidelines that reduce common LLM coding mistakes, from
-[Karpathy's observations](https://x.com/karpathy/status/2015883857489522876).
+**[`AGENTS.md`](../AGENTS.md) outranks this file wherever they disagree**, and the callout below is where they actually
+do.
 
-> **Where this conflicts with [How To Work](../AGENTS.md#how-to-work), that section wins.** Guideline 1 says to stop and
+> **Where this conflicts with [How to work](../AGENTS.md#how-to-work), that section wins.** Guideline 1 says to stop and
 > ask when something is unclear. In this repo, across a ten day build, you do not. Pick the reading that ships, state
 > the assumption, and keep going. Stop only for the six cases in **Stop and ask only for these**. The rest of guideline
 > 1, surfacing tradeoffs and not hiding confusion, still applies: say the assumption out loud, just do not wait on an
 > answer.
 
-## 1. Think Before Coding
+## 1. Think before coding
 
 - State assumptions explicitly.
 - If multiple interpretations exist, say so, then pick one and proceed.
 - If a simpler approach exists, say so. Push back when warranted.
 
-## 2. Simplicity First
+## 2. Simplicity first
 
 Minimum code that solves the problem. Nothing speculative.
 
@@ -30,7 +31,7 @@ Minimum code that solves the problem. Nothing speculative.
 
 Ask: would a senior engineer call this overcomplicated? If yes, simplify.
 
-## 3. Surgical Changes
+## 3. Surgical changes
 
 Touch only what you must. Clean up only your own mess.
 
@@ -42,7 +43,7 @@ Touch only what you must. Clean up only your own mess.
 
 The test: every changed line traces directly to what was asked.
 
-## 4. Goal-Driven Execution
+## 4. Goal-driven execution
 
 Turn tasks into verifiable goals, then loop until verified.
 
@@ -50,5 +51,5 @@ Turn tasks into verifiable goals, then loop until verified.
 - "Fix the bug" becomes "write a test that reproduces it, then make it pass"
 - "Refactor X" becomes "ensure tests pass before and after"
 
-Strong success criteria let you loop on your own. Weak criteria force check-ins, which is exactly the cost **Proceed
-Without Asking** exists to avoid.
+Strong success criteria let you loop on your own. Weak criteria force check-ins, which is exactly the cost
+[Proceed without asking](../AGENTS.md#how-to-work) exists to avoid.
