@@ -332,5 +332,5 @@ Two rules from them that change behaviour even if you never open them:
 - **Changes are surgical.** Every changed line traces to what was asked. Do not refactor, reformat or improve adjacent
   code you were not sent to touch
 - **`rtk` does not defeat the git guard, but it does defeat the deny list.** The hook matches the command substring, so
-  an `rtk`-prefixed push to `main` is blocked. The `permissions.deny` entries are prefix-matched and are not. That is
-  why both exist
+  `rtk git push origin main` is blocked. The `permissions.deny` entries are prefix-matched and are not. That is why both
+  exist

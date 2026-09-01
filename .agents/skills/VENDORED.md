@@ -167,8 +167,8 @@ Three rules that are easy to get wrong:
   already covers Write.
 - **Use `Read(./.env)` plus `Read(./.env.*)`.** That is the documented pattern, and a `Read` deny also blocks Edit and
   Write on the same path.
-- **The deny entry for a forced push is prefix-matched**, so prefixing the same command with `rtk` slips past it.
-  `guard-git.sh` is what actually stops that, which is why both exist.
+- **`Bash(git push --force*)` is prefix-matched**, so `rtk git push --force` slips past it. `guard-git.sh` is what
+  actually stops that, which is why both exist.
 
 **A deny rule cannot carry exceptions.** `Read(./.env.*)` therefore also blocks the committed `.env.example`, which no
 agent can edit. That is the cost of the documented pattern; narrowing it to the real env filenames is the only way out,
