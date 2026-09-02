@@ -24,5 +24,10 @@
       "trailingCommas": "none",
       "semicolons": "asNeeded"
     }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
   }
 }
