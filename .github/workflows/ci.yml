@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Lint, typecheck and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Guard regression tests
+        run: bun run test:guard
+
+      - name: Test
+        run: |
+          if git ls-files -- '*.test.ts' '*.test.tsx' '*.test.js' '*.test.jsx' \
+                            '*.spec.ts' '*.spec.tsx' '*.spec.js' '*.spec.jsx' | grep -q .; then
+            bun test
+          else
+            echo 'No test files in the tree yet. bun test exits 1 on an empty suite, so it is skipped until the first test lands.'
+          fi
