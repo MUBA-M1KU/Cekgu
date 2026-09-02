@@ -27,6 +27,7 @@ export function Records() {
   const isGuest = session.status === 'in' && session.isGuest
 
   const [records, setRecords] = useState<RecordSummary[] | null>(null)
+  const [failed, setFailed] = useState(false)
   const [q, setQ] = useState('')
   const [status, setStatus] = useState<'' | RecordStatus>('')
   const [attention, setAttention] = useState(false)
@@ -34,9 +35,12 @@ export function Records() {
   const [confirming, setConfirming] = useState(false)
 
   const load = useCallback(() => {
+    setFailed(false)
     listRecords({ q: q || undefined, status: status || undefined, attention: attention || undefined })
       .then(setRecords)
-      .catch(() => setRecords([]))
+      // An empty library and an unreachable server are different facts. Reporting the second as
+      // the first would have a judge read "No records yet." during an outage.
+      .catch(() => setFailed(true))
   }, [q, status, attention])
 
   useEffect(load, [load])
@@ -123,7 +127,18 @@ export function Records() {
         </div>
       ) : null}
 
-      {records === null ? (
+      {failed ? (
+        <div className="py-12">
+          <p className="type-body text-ink-muted">We could not load your records, try again in a moment.</p>
+          <button
+            type="button"
+            onClick={load}
+            className="mt-4 inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium"
+          >
+            Try Again
+          </button>
+        </div>
+      ) : records === null ? (
         <p className="mt-6 type-body text-ink-muted">Loading your records.</p>
       ) : records.length === 0 ? (
         <div className="py-12">
