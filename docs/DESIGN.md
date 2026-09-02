@@ -433,8 +433,17 @@ default and static only under reduced motion or on load failure (FR-MASCOT-3).
 
 The model files expose five motion groups per cat: `Idle`, `Tap`, `FlickUp`, `FlickDown` and `Flick`, plus eye-blink and
 lip-sync parameters and no hit areas. The mapping below names groups because the individual motion files carry no
-descriptive names; the specific file within a group is chosen at build after viewing them, and recorded here when it is.
-Lip-sync is never driven and the cats never react to the pointer.
+descriptive names. Lip-sync is never driven and the cats never react to the pointer.
+
+The file chosen inside each group, the same for both cats, is held as data in `src/client/mascot/motions.ts`:
+
+| Group       | File and index        | Why                                                                                                   |
+| ----------- | --------------------- | ----------------------------------------------------------------------------------------------------- |
+| `Idle`      | `motion/00_idle`, `0` | The only file the rig names idle, the longest at 9.73 s, and the one driving the full breath and tail |
+| `Tap`       | `motion/07`, `2`      | The shortest of the three at 4.07 s and the only one without arm-swing curves, so it reads as a turn  |
+| `FlickUp`   | `motion/01`, `0`      | The only file in the group                                                                            |
+| `FlickDown` | `motion/02`, `0`      | The only file in the group                                                                            |
+| `Flick`     | `motion/05`, `0`      | The only file in the group                                                                            |
 
 | Product state        | Tororo (white)                  | Hijiki (black)                          | Static fallback                            |
 | -------------------- | ------------------------------- | --------------------------------------- | ------------------------------------------ |
@@ -442,7 +451,7 @@ Lip-sync is never driven and the cats never react to the pointer.
 | Checking             | `Tap`, then `Idle` on a loop    | `Tap` starting 1.2 s later, then `Idle` | Two reading poses and the status text      |
 | Agreement with key   | One `FlickUp`, then still       | One `FlickUp`, 300 ms later             | Neutral pose                               |
 | Attention item found | One `Tap`, then still           | One `Tap`, 300 ms later                 | Concerned pose beside the verdict label    |
-| Split opinion        | One `Flick` to the left         | One `Flick` to the right                | Paired poses facing apart                  |
+| Split opinion        | One `Flick` to the left         | One `Flick` to the right, 300 ms later  | Paired poses facing apart                  |
 | Unverified           | One `FlickDown`, then still     | Stays still                             | Waiting pose beside **Retry Verification** |
 | Resolved             | One short `FlickUp`, then still | Same, 300 ms later                      | No badge, no confetti                      |
 
