@@ -111,6 +111,9 @@ if they disagree, **Split Opinion**. Fewer than two verified readings means **Un
 records what they decided, and the record keeps every model reading, every request id and every human decision. The work
 runs in a queue, so a check can take minutes and the educator can leave and come back.
 
+The interface is English only for the submission; Bahasa Malaysia would be a second locale, selected from Profile &
+Preferences.
+
 ### GonkaRouter integration
 
 Every inference call goes to `https://api.gonkarouter.io` from one server-side client, `src/server/gateway/client.ts`.
