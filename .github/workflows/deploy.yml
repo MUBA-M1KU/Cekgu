@@ -73,6 +73,7 @@ jobs:
       # The deploy above reports success even when traffic never moved, which is how a
       # stale revision served production unnoticed. Fail the run instead of reporting it.
       - name: Verify production serves the new revision
+        id: verify
         run: |
           service=$(gcloud run services describe "${{ vars.CLOUD_RUN_SERVICE }}" \
             --project "${{ vars.GCP_PROJECT_ID }}" \
@@ -96,4 +97,21 @@ jobs:
             exit 1
           fi
 
+          echo "url=$url" >> "$GITHUB_OUTPUT"
           printf 'Production is live at %s serving %s\n' "$url" "$serving" >> "$GITHUB_STEP_SUMMARY"
+
+      # TRD section 18: the smoke pass runs against the deployed URL after every production
+      # deploy. Run it against a preview on demand with E2E_BASE_URL=<preview url> bun run e2e.
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Smoke test the deployment
+        env:
+          E2E_BASE_URL: ${{ steps.verify.outputs.url }}
+        run: |
+          bunx playwright install --with-deps chromium
+          bun run e2e
