@@ -1,0 +1,26 @@
+function required(name: string): string {
+  const value = process.env[name]
+  if (!value) throw new Error(`Missing required environment variable ${name}. See docs/TRD.md section 8.`)
+  return value
+}
+
+function optional(name: string): string | null {
+  const value = process.env[name]
+  return value && value.length > 0 ? value : null
+}
+
+const googleClientId = optional('GOOGLE_CLIENT_ID')
+const googleClientSecret = optional('GOOGLE_CLIENT_SECRET')
+
+export const env = {
+  port: Number(process.env.PORT ?? 8080),
+  databaseUrl: required('DATABASE_URL'),
+  betterAuthSecret: required('BETTER_AUTH_SECRET'),
+  betterAuthUrl: optional('BETTER_AUTH_URL') ?? `http://localhost:${process.env.PORT ?? 8080}`,
+  guestEmail: required('GUEST_EMAIL'),
+  guestPassword: required('GUEST_PASSWORD'),
+  mascotEnabled: process.env.MASCOT_ENABLED === 'true',
+  // Google stays optional so a deployment without an OAuth client still boots with
+  // email and Guest sign-in working. FR-AUTH-2 is the demo path, not Google.
+  google: googleClientId && googleClientSecret ? { clientId: googleClientId, clientSecret: googleClientSecret } : null
+}
