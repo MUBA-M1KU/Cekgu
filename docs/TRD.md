@@ -8,8 +8,9 @@ marked as open at the foot. This document exists early because the gateway is th
 for us, so it can be pinned before the concept is.
 
 The initial verified sections were measured against the live API on **2026-08-29** with our own key. Receipt and
-fallback behaviour was verified on **2026-08-31** and is dated where introduced. Where a measurement contradicts
-organizer material, the measurement is recorded and the contradiction is named.
+fallback behaviour was verified on **2026-08-31**; availability and account concurrency were measured again on
+**2026-09-03** and are dated where introduced. Where a measurement contradicts organizer material, the measurement is
+recorded and the contradiction is named.
 
 Contents:
 
@@ -133,6 +134,26 @@ Single request, `max_tokens=1024`, one-sentence factual prompt, OpenAI surface, 
 Capabilities are as flagged on the Models page. Latency is one sample on one network — treat it as an order of
 magnitude, not a benchmark.
 
+**Availability, measured 2026-09-02.** That evening Kimi-K2.6 timed out on every call at 60–90 s, while DeepSeek
+answered in 0.7–5 s and MiniMax in 2–50 s. Design for Kimi being absent. Provenance and the MiniMax failure pattern are
+in [`superpowers/research/gateway-capabilities.md`](superpowers/research/gateway-capabilities.md#latency-and-hedging).
+
+**Availability, measured 2026-09-02, about 22:40 MYT.** Later the same evening the roles swapped:
+`deepseek-ai/DeepSeek-V4-Flash-0731` returned `429` on every call, sequential single requests included, with
+`X-Gonka-No-Fallback: true` set, body
+`{"error":{"message":"rate limit exceeded: too many concurrent requests","type":"upstream_error"}}`, while Kimi answered
+in about 50 s and MiniMax in 8–23 s. Single run. Interpretation, not yet shown to generalise: upstream availability
+rotates across the three models within a single evening, so treat the labs as interchangeable readers, run on whichever
+two are up, and prove distinctness by receipt rather than by which model was asked for. Detail in
+[`superpowers/research/gateway-capabilities.md`](superpowers/research/gateway-capabilities.md#measured-2-september-2026).
+
+**Availability, measured 2026-09-03, 00:49–01:08 MYT.** In a controlled two-pass benchmark of 12 short CS questions,
+MiniMax completed **24 of 24** item calls, while Kimi completed **13 of 24** before a 90-second cutoff. Kimi had no
+completion inside 30 seconds. Separate short health probes returned an upstream `429` and then a 90-second timeout from
+DeepSeek. Of 24 item-runs, 13 obtained two receipt-verified model families and none obtained two within 30 seconds. Full
+method and request-id examples are in
+[`three-day-rescore.md`](superpowers/research/three-day-rescore.md#the-mechanism-benchmark--failed-3-september).
+
 **Parallel fan-out works.** Three concurrent requests, one per model, completed in **16.2 s wall clock** — bounded by
 the slowest model, not the sum. Each returned its own distinct `x-request-id`. Multi-model consensus is therefore a
 fan-out, not a queue.
@@ -183,6 +204,10 @@ away**. This matters for how we call the gateway:
 The body ids are **not** substitutes: the Anthropic surface returns `msg_…` and the OpenAI surface returns
 `devshard-65275-1926`. Neither is the gateway's request id.
 
+**Streaming, verified 2026-09-02.** `x-request-id` survives a streamed response: the header was present on a
+`stream: true` call, the first SSE chunk arrived, and the public receipt for that id returned `"stream": true`.
+Streaming costs nothing in provenance.
+
 > **Design consequence.** Whatever wraps the gateway must return
 > `(content, request_id, devshard_id, requested_model, served_model, receipt_status, usage)` as one record, from the
 > first commit. Retrofitting provenance after the call layer exists means rewriting every call site, and the track fails
@@ -207,19 +232,37 @@ metadata: it makes the serving model publicly inspectable, but it is not cryptog
 
 ## 5. Verified gotchas
 
-| #   | Gotcha                                     | Detail                                                                                                                                                        |
-| --- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **`<think>` leaks into MiniMax content**   | `MiniMaxAI/MiniMax-M2.7` emits raw `<think>…` inside the message content, on **both** surfaces. Verified twice. Must be stripped before display or comparison |
-| 2   | **Kimi leaks a stray `</think>`**          | Observed `" p </think> pong"` on a short reply. Same stripping applies                                                                                        |
-| 3   | **Low `max_tokens` yields reasoning only** | At `max_tokens=64`, MiniMax spent all 64 on `<think>` and returned no answer. **Keep `max_tokens >= 1024`**                                                   |
-| 4   | **Website model ids are wrong**            | See [models](#3-models-measured). Trust `GET /v1/models`                                                                                                      |
-| 5   | **`/v1` asymmetry between protocols**      | See [the base URL rule](#1-gateway-base-urls-and-auth)                                                                                                        |
-| 6   | **Prompt caching unsupported**             | The gateway does not implement Anthropic's prompt-caching headers. Disable client-side (`DISABLE_PROMPT_CACHING=1` for Claude Code)                           |
-| 7   | **Silent model fallback**                  | Send `X-Gonka-No-Fallback: true`; reject `X-Gonka-Fallback`; verify the served model via the public receipt before consensus                                  |
+| #   | Gotcha                                               | Detail                                                                                                                                                        |
+| --- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **`<think>` leaks into MiniMax content**             | `MiniMaxAI/MiniMax-M2.7` emits raw `<think>…` inside the message content, on **both** surfaces. Verified twice. Must be stripped before display or comparison |
+| 2   | **Kimi leaks a stray `</think>`**                    | Observed `" p </think> pong"` on a short reply. Same stripping applies                                                                                        |
+| 3   | **Low `max_tokens` yields reasoning only**           | At `max_tokens=64`, MiniMax spent all 64 on `<think>` and returned no answer. **Keep `max_tokens >= 1024`**                                                   |
+| 4   | **Website model ids are wrong**                      | See [models](#3-models-measured). Trust `GET /v1/models`                                                                                                      |
+| 5   | **`/v1` asymmetry between protocols**                | See [the base URL rule](#1-gateway-base-urls-and-auth)                                                                                                        |
+| 6   | **Prompt caching unsupported**                       | The gateway does not implement Anthropic's prompt-caching headers. Disable client-side (`DISABLE_PROMPT_CACHING=1` for Claude Code)                           |
+| 7   | **Silent model fallback**                            | Send `X-Gonka-No-Fallback: true`; reject `X-Gonka-Fallback`; verify the served model via the public receipt before consensus                                  |
+| 8   | **Identical request bodies are cached**              | Byte-identical bodies in 70–190 ms for a repeated identical request at `temperature: 0.8`, each with a fresh id and receipt. Detail below                     |
+| 9   | **Long prompts yield reasoning only**                | On prompts around 1,500 tokens MiniMax failed roughly one call in three, once as raw reasoning with no JSON. Detail below                                     |
+| 10  | **Account concurrency is below the published burst** | A 36-call item fan-out returned account-level `429` responses instructing us to lower parallelism; four concurrent calls were accepted. Detail below          |
 
 **Stripping reasoning tags is not optional.** A consensus step that compares raw outputs will compare one model's answer
 against another model's internal monologue. Strip `<think>…</think>` and any orphaned tag before anything reads the
 content.
+
+**Gotcha 8, measured 2026-09-02.** Repeated identical request bodies at `temperature: 0.8` returned byte-identical
+content in 70–190 ms, and each repeat still received a fresh `x-request-id` and its own receipt. Add a nonce to every
+body in a multi-sample design, and read a receipt as proof that the gateway logged a request, not that a fresh inference
+ran.
+
+**Gotcha 9, measured 2026-09-02.** On prompts around 1,500 tokens MiniMax failed roughly one call in three: a 524 after
+114 s, two aborts at 114 s, and one reply that was raw reasoning with no JSON — gotcha 3 at prompt scale. A deferred
+hedge is mandatory.
+
+**Gotcha 10, measured 2026-09-03.** A 36-call item-level fan-out produced account-level `429` responses with
+`{"error":{"code":"rate_limited","message":"too many concurrent requests for this account; lower your parallelism and retry"}}`.
+A controlled wave of four concurrent calls was accepted. This is one account and one window, so four is a measured safe
+point, not a documented limit. Bound concurrency and retry `429`; do not launch one request per item across a paper at
+once.
 
 ## 6. Rate limits and timeouts
 
@@ -235,8 +278,9 @@ Vendor-published, last checked by GonkaRouter 2026-06-19. Not independently veri
 | Streaming idle cap   | 90 s with no chunk closes the connection            |
 | Output cap           | 4096 tokens; omitting `max_tokens` defaults to 3072 |
 
-Because `429` is free, aggressive parallel fan-out is safe provided we back off. Our own three-way fan-out is nowhere
-near these ceilings.
+The published burst did not hold for our account on 3 September. `429` does not consume balance, but aggressive fan-out
+is not safe for latency or UX. Use a bounded queue, back off and retry, and treat four concurrent calls as a measured
+safe point rather than a guaranteed ceiling.
 
 ## 7. Error codes
 
@@ -273,13 +317,13 @@ are unlimited for the event; email Jack if the credit is ever exhausted.
 
 Not yet decided. Each gets a subsection here, with the reasoning, once it is.
 
-| Decision                    | Blocked on              |
-| --------------------------- | ----------------------- |
-| Application framework       | Concept (`PRODUCT.md`)  |
-| Hosting for the live demo   | Framework               |
-| Persistence, if any         | Concept                 |
-| Consensus algorithm         | Concept                 |
-| How provenance is displayed | Concept and `DESIGN.md` |
+| Decision                    | Blocked on                                         |
+| --------------------------- | -------------------------------------------------- |
+| Application framework       | `PRD.md` and the remaining build window            |
+| Hosting for the live demo   | Framework                                          |
+| Record persistence          | Record requirements in `PRODUCT.md` and `PRD.md`   |
+| Exact consensus algorithm   | Product verdicts, labelled validation and `PRD.md` |
+| How provenance is displayed | `PRODUCT.md` and `DESIGN.md`                       |
 
 **What is already fixed regardless of concept:** the gateway, the model ids returned by `GET /v1/models`, the two base
 URLs, the no-fallback contract, receipt verification, and the requirement that every call returns its `x-request-id`

@@ -24,14 +24,16 @@ Contents:
 
 ## The two findings that change design
 
-| Finding                                                                 | Consequence                                                                                          |
-| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| **`x-request-id` is an HTTP response header, not a body field**         | Any client returning only parsed JSON discards it. The call layer must read raw responses            |
-| **Nothing documents whether the request id survives streaming**         | Track requirement 3 depends on it. **Must be tested live before the call layer is frozen**           |
-| **The chain is public and queryable** at `rpc.gonka.gg`, no API key     | Model registry, governance, reputation and slashing are all readable. See below                      |
-| **A Request ID resolves to nothing public** — **SUPERSEDED 2026-08-31** | A public receipts endpoint shipped. See [Receipts](#receipts--shipped-2026-08-31)                    |
-| **The router silently substitutes models under load**                   | **Threatens the track's multi-model requirement.** Send `X-Gonka-No-Fallback: true`                  |
-| **Kimi-K2.6 is effectively unreliable right now**                       | ~4 of 5 requests time out. The vendor recommends DeepSeek and MiniMax. Kimi is the only vision model |
+| Finding                                                                                   | Consequence                                                                                                                                                            |
+| ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`x-request-id` is an HTTP response header, not a body field**                           | Any client returning only parsed JSON discards it. The call layer must read raw responses                                                                              |
+| **Nothing documents whether the request id survives streaming** — **RESOLVED 2026-09-02** | It does. Verified live; see [Measured 2 September 2026](#measured-2-september-2026)                                                                                    |
+| **The gateway caches identical request bodies** — measured 2026-09-02                     | Repeats return byte-identical output in 70–190 ms, each with a fresh id and receipt. Multi-sample designs need a nonce; a receipt does not prove a fresh inference ran |
+| **The chain is public and queryable** at `rpc.gonka.gg`, no API key                       | Model registry, governance, reputation and slashing are all readable. See below                                                                                        |
+| **A Request ID resolves to nothing public** — **SUPERSEDED 2026-08-31**                   | A public receipts endpoint shipped. See [Receipts](#receipts--shipped-2026-08-31)                                                                                      |
+| **The router silently substitutes models under load**                                     | **Threatens the track's multi-model requirement.** Send `X-Gonka-No-Fallback: true`                                                                                    |
+| **Kimi-K2.6 is effectively unreliable right now**                                         | ~4 of 5 requests timed out on 2026-08-30; **100% on the evening of 2026-09-02**. The vendor recommends DeepSeek and MiniMax. Kimi is the only vision model             |
+| **The published burst does not hold for our account** — measured 2026-09-03               | 36 concurrent item calls produced account-level `429`; four concurrent calls were accepted. Bound the queue and retry                                                  |
 
 ## Receipts — shipped 2026-08-31
 
@@ -96,6 +98,33 @@ The tech lead's own guidance, worth following verbatim:
    reduction, roughly half the token cost.
 3. **Pin the model per check** with `X-Gonka-No-Fallback: true`, and read `X-Devshard-ID` to see which node served it.
 
+**Measured 2026-09-02, evening.** Taken during the Round 11 mechanism tests in
+[`candidate-concepts.md`](candidate-concepts.md#round-11--phenomenon-first):
+
+| Model             | That evening                                                                                                                                                                       |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Kimi-K2.6         | Timed out on **100% of calls** at 60–90 s                                                                                                                                          |
+| DeepSeek-V4-Flash | Answered in 0.7–5 s                                                                                                                                                                |
+| MiniMax-M2.7      | Answered in 2–50 s, and **failed roughly one call in three** on prompts around 1,500 tokens: a 524 after 114 s, two aborts at 114 s, one reply that was raw reasoning with no JSON |
+
+**A deferred hedge is therefore mandatory, not advice.** Without one, a third of MiniMax calls on a realistic prompt
+either stall for two minutes or return nothing parseable. Interpretation: the reasoning-only reply is the
+low-`max_tokens` failure from the TRD's gotcha 3 recurring at prompt scale — a longer prompt drives the visible
+reasoning past the output budget before the answer starts. `[ASSUMPTION]` Not confirmed by inspecting token counts.
+
+**Measured 2026-09-03, 00:49–01:08 MYT.** The Vetting Room benchmark sent short item-level prompts in waves of four,
+with no fallback and a public receipt check. MiniMax completed 24 of 24 calls, 13 within 30 seconds, at 14.3–73.8
+seconds. Kimi completed 13 of 24, none within 30 seconds, at 35.1–82.7 seconds. DeepSeek returned an upstream `429` and
+then exceeded 90 seconds in separate one-item health probes. Only 13 of 24 item-runs obtained two model families inside
+90 seconds, and none obtained two inside 30 seconds.
+
+The preceding 36-call attempt was rejected by the gateway across models with
+`{"error":{"code":"rate_limited","message":"too many concurrent requests for this account; lower your parallelism and retry"}}`.
+Four concurrent calls were accepted consistently in the valid run. Interpretation: a paper must enter a bounded,
+asynchronous queue; the UI must expose **Unverified** as an ordinary state, and the demo cannot wait for a fresh full
+paper. Full classification results and request-id examples are in
+[`three-day-rescore.md`](three-day-rescore.md#the-mechanism-benchmark--failed-3-september).
+
 ## Track requirement clarified
 
 Asked directly in Discord and answered by the GonkaRouter team: **no separate testnet smart contract is required.** _"On
@@ -154,15 +183,55 @@ x-devshard-id: 65725
 
 ### Open questions
 
-| Question                                             | Status                                                             |
-| ---------------------------------------------------- | ------------------------------------------------------------------ |
-| Does `x-request-id` survive a streamed response?     | **NOT SPECIFIED IN ANY SOURCE.** Direct risk to a hard requirement |
-| Does it appear on any SSE event?                     | Not mentioned anywhere                                             |
-| Can a past request id be queried?                    | Yes — the public, no-auth `/v1/receipts/{x-request-id}` endpoint   |
-| What is `x-devshard-id`'s format or queryable range? | Unstated                                                           |
+| Question                                             | Status                                                                                     |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Does `x-request-id` survive a streamed response?     | **Yes — verified 2026-09-02.** See [Measured 2 September 2026](#measured-2-september-2026) |
+| Does it appear on any SSE event?                     | Not mentioned anywhere                                                                     |
+| Can a past request id be queried?                    | Yes — the public, no-auth `/v1/receipts/{x-request-id}` endpoint                           |
+| What is `x-devshard-id`'s format or queryable range? | Unstated                                                                                   |
 
 **Untested as of 2026-08-30** — no GonkaRouter API key was available on the development machine, so the streaming
-behaviour has not been checked. This is the highest-priority verification before any call layer is designed.
+behaviour had not been checked. **Checked 2026-09-02**, below.
+
+### Measured 2 September 2026
+
+Live against `api.gonkarouter.io` with our own key, on the OpenAI surface.
+
+| Test                                                        | Result                                                                                                                                  |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `stream: true` on `/v1/chat/completions`                    | `x-request-id` present in the response headers; first SSE chunk received; `GET /v1/receipts/{id}` for that id returned `"stream": true` |
+| The same request body sent repeatedly at `temperature: 0.8` | Byte-identical response bodies in 70–190 ms; each repeat still received a fresh `x-request-id` and its own receipt                      |
+
+**Streaming is settled.** The id arrives as a header, so it is in hand before the first chunk, and the public receipt
+confirms the call was streamed. The open question above is closed and track requirement 3 no longer rests on an untested
+path.
+
+**The gateway caches identical request bodies.** That sentence is interpretation; the measurement is byte-identical
+output at a non-zero temperature in under 200 ms, far below the fastest inference measured on this gateway (0.7 s). Two
+consequences follow, both interpretation:
+
+- **Multi-sample designs must add a nonce.** Hedges, repeated samples and "ask the same model n times" all send the same
+  body, so without a nonce they measure the cache, not the model.
+- **A receipt alone does not prove a fresh inference ran.** The gateway issues a fresh id and receipt for a cache hit,
+  so a receipt proves the gateway logged a request, not that a model computed the answer.
+
+`[ASSUMPTION]` Whether the cache key is the full body or prompt plus parameters, and how long entries live, are
+unmeasured.
+
+**DeepSeek was the model down at about 22:40 MYT.** `deepseek-ai/DeepSeek-V4-Flash-0731` returned HTTP `429` on every
+call, sequential single requests included, with `X-Gonka-No-Fallback: true` set. The body each time:
+
+```json
+{"error":{"message":"rate limit exceeded: too many concurrent requests","type":"upstream_error"}}
+```
+
+Earlier the same evening, under [Latency and hedging](#latency-and-hedging), Kimi was the model timing out and DeepSeek
+answered in under a second. At 22:40 Kimi answered in about 50 s and MiniMax in 8–23 s. Single run, one evening.
+
+**Upstream availability rotates across the three models within a single evening.** That sentence is interpretation; the
+measurement is the two snapshots above, and `[ASSUMPTION]` that it generalises beyond 2 September. The consequence, also
+interpretation: any product must treat the labs as interchangeable readers, run on whichever two are up, and prove
+distinctness by receipt rather than by which model it asked for.
 
 ## Limits
 

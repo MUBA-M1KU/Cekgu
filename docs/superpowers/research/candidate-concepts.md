@@ -1,7 +1,10 @@
 # Candidate concepts
 
-Ten rounds of concept exploration, scored against [`RUBRIC.md`](RUBRIC.md). **No concept is locked** — Round 10 is the
-current ranking, while earlier rounds remain in this document as research history.
+Eleven rounds of concept exploration, scored against [`RUBRIC.md`](RUBRIC.md). **Cekgu, evaluated here as Vetting Room,
+is the selection as of 3 September 2026** after a second-opinion review of Round 11 and the remaining build window. Its
+live mechanism benchmark failed the availability threshold, so the product now uses an asynchronous review queue. Round
+11 and every earlier round remain in this document as research history; the rationale and measured result are in
+[`three-day-rescore.md`](three-day-rescore.md#the-second-opinion).
 
 **Round 3 method.** Five decorrelated generation briefs (mass appeal, money, revelation, Malaysian daily life,
 spectacle), each carrying a ban list and a hard gate, then a hostile selection pass. Delegated models produced raw
@@ -13,6 +16,7 @@ Contents:
 1. [What rounds 1 and 2 got wrong](#what-rounds-1-and-2-got-wrong)
 1. [The two gates](#the-two-gates)
 1. [Round 4 scores](#round-4-scores)
+1. [Round 11 — phenomenon first](#round-11--phenomenon-first)
 1. [Round 10 — social benefit reweighted](#round-10--social-benefit-reweighted)
 1. [Round 9 — the final five](#round-9--the-final-five)
 1. [Round 8 — after the receipts endpoint shipped](#round-8--after-the-receipts-endpoint-shipped)
@@ -127,6 +131,217 @@ quorum         25%     threshold 50%     veto 30%
 
 **No public testnet exists** (`rpc.testnet.gonka.gg` does not resolve; `/docs/testnet/` is 404). A binding vote cannot
 be demonstrated on stage in five days without standing up a private chain, and the vote _is_ the concept.
+
+## Round 11 — phenomenon first
+
+**The correction that drove this round.** Every earlier round started from a brief, a rubric weight or a stack
+capability. This round starts from a Malaysian phenomenon of 2025–26 and admits a candidate only if three things hold:
+
+- **A real adjudicator exists**, so truth eventually disciplines the flag — condition **iii** in
+  [`disagreement-as-product.md`](disagreement-as-product.md#the-finding-that-constrains-everything).
+- **A law or institution turns model disagreement into leverage** the user can take somewhere.
+- **Text only.** The gateway confirmed on 2 Sept 2026 that image features are unsupported; local OCR was explicitly
+  permitted by the GonkaRouter team the same day.
+
+**Team judgement, not research.** The team's own read on 2 Sept 2026, after the first five verifications below, was that
+these candidates sit outside the team's domain expertise and outside that of the track judges, GonkaRouter's tech lead
+and product manager ([`brief.md`](../../brief.md#people)). A further round constrained to that expertise was requested.
+Nothing in the reports was rescored on it.
+
+**The second sub-round.** Minit and Sumber below answer that request. Both were constrained to the team's own domains,
+productivity, GovTech and media management, and to legibility for GonkaRouter's tech lead and product manager, the two
+people judging this track. The planned browser study of the team's LinkedIn profiles could not run because the Chrome
+extension was not connected, so domain fit was taken from the team's own description of itself, not from a profile read.
+
+### Round 11 ranking
+
+| #     | Concept                                 | Novelty | Real user         | Track fit | Demo | Build | **Total** | Verdict |
+| ----- | --------------------------------------- | ------: | ----------------- | --------: | ---: | ----: | --------: | ------- |
+| **1** | **Tuntut** — insurance claim rejections |      20 | 15 `[ASSUMPTION]` |        19 |   13 |    17 |    **84** | Viable  |
+| 2     | Akta Kata — bill versus explainer       |      19 | 14 `[ASSUMPTION]` |        19 |   12 |    15 |    **79** | Viable  |
+| 3     | Angka — figures from public reports     |      19 | 14 `[ASSUMPTION]` |        18 |   11 |    16 |    **78** | Viable  |
+| 3     | Sarikata QC — subtitle and notice QC    |      19 | 13 `[ASSUMPTION]` |        18 |   12 |    16 |    **78** | Viable  |
+| 3     | Minit — concordant meeting minutes      |      18 | 14 `[ASSUMPTION]` |        18 |   12 |    16 |    **78** | Viable  |
+| 3     | Sumber — draft against cited source     |      16 | 14 `[ASSUMPTION]` |        19 |   12 |    17 |    **78** | Viable  |
+| 7     | Gig deactivation notices                |      18 | 13 `[ASSUMPTION]` |        18 |   12 |    15 |    **76** | Viable  |
+
+Full verification with every citation: [`verify-insurance-claims.md`](verify-insurance-claims.md),
+[`verify-akta-kata.md`](verify-akta-kata.md), [`verify-angka.md`](verify-angka.md),
+[`verify-sarikata-qc.md`](verify-sarikata-qc.md), [`verify-minit.md`](verify-minit.md),
+[`verify-sumber.md`](verify-sumber.md) and [`verify-gig-deactivation.md`](verify-gig-deactivation.md). Angka, Sarikata
+QC, Minit and Sumber tie at 78. Real user carries `[ASSUMPTION]` in all seven, as elsewhere in this ledger: the person
+is inferred from published survey, filing and workflow figures, not from talking to one.
+
+**Selection after Round 11.** The table deliberately did not score team familiarity, judge legibility or the shorter
+build window. Its 84 therefore remains the result of the Round 11 method, not the final product decision. On 3 September
+the team selected Vetting Room, since named **Cekgu**, after a separate review found that four Computer Science students
+can explain the exam problem from lived experience, demonstrate it with their own subject matter and make every
+GonkaRouter requirement part of the product. The 3 September mechanism benchmark produced no wrong consensus but failed
+on availability and latency, so Cekgu uses an asynchronous, retrying product design; see
+[`The second opinion`](three-day-rescore.md#the-second-opinion).
+
+### Rank 1 — Tuntut
+
+A policyholder receives a rejection citing an exclusion clause. FOMCA reports nearly 30% of policyholders hit a partial
+or full rejection in two years and 24% of those were never given a clear reason, and FMOS itself says the recurring
+dispute is over what "medically necessary" means. The adjudicator is FMOS: free, RM250,000 cap, six months from the
+insurer's final decision. The product reads the clause with independent models and hands the user the conditions the
+readers could not settle, each reading carrying its request id, for the insurer's final-decision stage and then FMOS.
+
+**Mechanism test, measured live 2 Sept 2026** on DeepSeek-V4-Flash and MiniMax-M2.7; Kimi timed out on every call. Two
+contested clauses — a pre-existing-condition clause against a two-year-old borderline glucose reading, and a "medically
+necessary" clause on a two-night dengue admission — plus a clear cosmetic-surgery exclusion as control.
+
+| Prompt design                                | Contested clauses                                                                                                                                                                                                    | Cosmetic control           |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| Ask for a verdict on the clause              | Both models sided with the insurer on all 6 samples each. Zero disagreement                                                                                                                                          | "Met" / "yes" in both      |
+| Split the clause into conditions, judge each | Both models marked exactly the contested conditions "unclear" — "ought reasonably to have been aware"; "not for convenience" and "could not be safely provided outpatient" — and the overall answer became "unclear" | Stayed fully "met" / "yes" |
+
+**Conclusion.** The product output is the list of contested conditions, not a verdict. Asked for a verdict the models
+agree with the insurer and there is nothing to show; asked to decompose, they land on exactly the wording the
+adjudicator says disputes turn on, and the clear exclusion stays clear in both designs.
+
+**Corrections from the verifier:**
+
+- The Ombudsman for Financial Services became the Financial Markets Ombudsman Service (FMOS) on 1 Jan 2025. Say FMOS
+  everywhere.
+- Contra proferentem is a last-resort doctrine and FMOS decides on fairness, so the product must say "independent
+  readers split on this condition", never "legally ambiguous".
+
+### Rank 2 — Akta Kata
+
+A journalist or NGO researcher has a bill and what the government says it does: a minister's assurance, an agency
+briefing, the Explanatory Statement. Independent models read one claim against one clause, blind to each other, and the
+split is the output. The reference is a fixed statute, not retrieved evidence, and the adjudicator arrives within weeks
+of tabling: committee amendments, withdrawals, the minister's winding-up speech in Hansard.
+
+**Strongest verified fact.** In February 2025 the Prime Minister said there would be "no provision under the proposed
+act that could lead to owners...losing ownership of their property"; in August 2025 the Malaysian Bar read s.21(4) of
+the tabled Urban Renewal Bill as compulsory acquisition for dissenting owners. No tool, Malaysian or global, was found
+that checks an official explainer against clause text with any model.
+
+**Biggest risk.** The phenomenon is proven for ministers' assurances and briefings, not for the Explanatory Statement
+the candidate names as its input, and the concept sits one sentence from the track's own Fact Checker example. Both are
+`PRODUCT.md` framing fixes, not code.
+
+### Rank 3 — Angka
+
+A reporter drops an official PDF (an LKAN audit report, a Hansard written reply, a budget document) and three models
+from three labs extract each figure blind. A figure is published only when two readings agree after unit normalisation;
+splits are queued for a human with the source paragraph and a request id per reading. Nobody asks a question and no
+prose is generated. The next drop is dated: LKAN 3/2026 lands in the October 2026 sitting.
+
+**Strongest verified fact.** Within 24 hours of LKAN 2/2025 being tabled, the Auditor-General corrected "several media
+portals" that had reported RM48.873bn of audited programme cost as leakages or losses, and secondary coverage of the
+same report carries RM48.78bn. Agreement-gated extraction is published research (MADP, bioRxiv 2026); the corpus, the
+user and the per-reading receipt are not.
+
+**Biggest risk.** The user-pain evidence is indirect: the documented 2025 case is a semantic misreading, not a dropped
+digit, and no Malaysian journalist was found stating the retyping pain in their own words. The report's first-ranked
+build risk is that clean, text-native LKAN pages give three readers nothing to split on, so the demo page must be picked
+in advance.
+
+### Rank 3 — Sarikata QC
+
+A QC editor at a subtitling vendor uploads a delivered subtitle file. A forward reader translates each source cue blind,
+a back reader from another lab back-translates the delivered cue without seeing the source, and a diff reader lists
+every fact that changed: negation, names, numbers, agent. A cue passes only when nothing changed and the forward reading
+agrees; otherwise it is queued with both readings and their request ids.
+
+BM subtitles have been mandatory on every publicly shown film and advertisement since 1977, Netflix rejects files that
+fail QC outright, and Iyuno's Kuala Lumpur facility is the second-largest in Asia. The bilingual government-notice use
+fails the second-use test and drifts toward the banned translation cluster, so it stays a footnote, not a demo path.
+
+**Strongest verified fact.** The June 2026 GeekLink roundup of seven subtitle QA tools finds all of them rule-based or
+ASR-confidence, and XL8's own AQC documentation (Aug 2025) describes a rewrite pass with no disclosed mechanism, so
+per-cue semantic verification with provenance is an empty product slot.
+
+**Biggest risk.** The phenomenon is under-evidenced for Malaysia 2023-26: no viral subtitle blunder and no viral
+government mistranslation newer than 2018-2020 was found, so the pitch must rest on QC rejection and turnaround
+pressure, not virality. No named Malaysian buyer or stated pain was found either; one conversation with a KL vendor QC
+desk would move Real user from 13 to 17.
+
+### Rank 3 — Minit
+
+A volunteer strata committee, a JMB or MC, has a transcript of its meeting and a statutory clock: the Strata Management
+Act 2013 makes the committee keep minutes, display committee minutes within 21 days, file AGM minutes with the
+Commissioner of Buildings within 28, and makes the signed minutes prima facie evidence in court. Two models from two
+labs, blind to each other, each extract decisions, actions and open items, and every item lands in one of three states:
+both agree, one reader only (the chair confirms or drops it), or readers conflict (the passage is shown), with a request
+id per reading. The adjudicator is the chair's signature, then the Tribunal.
+
+**Mechanism probe, measured live 2 Sept 2026**, single run, on a synthetic three-item strata committee transcript.
+MiniMax-M2.7 extracted the pool-repair decision (RM12,500), Mrs Tan's action and two open items, but omitted Mr Raj's
+action, a third lift quote from Schindler by 20 September. Kimi-K2.6 (51 s) extracted all of them, Raj's action
+included. The two labs therefore disagreed on exactly one item, unplanted, and it was a real omission: the product's
+"one reader heard this, confirm" case. DeepSeek returned upstream 429 on every call during the probe, see
+[`gateway-capabilities.md`](gateway-capabilities.md#measured-2-september-2026). `[ASSUMPTION]` One transcript, one run;
+that the omission rate generalises is untested.
+
+**Strongest verified fact.** Second Schedule paragraph 7 of the Strata Management Act 2013, read from the Act text: the
+committee "shall keep minutes of all its proceedings", and the signed minutes are "admissible in any legal proceedings
+as prima facie evidence of the facts stated in them without further proof". The vendors themselves put the review burden
+on the user: Zoom's AI Companion notice says summaries "should be reviewed for accuracy and suitability before
+distributing them", and the TestDevLab benchmark Zoom commissioned puts every incumbent in a 78–81 quality band.
+
+**Biggest risk.** Transcript availability. The product assumes Zoom, Teams or Meet produced a transcript, and many JMB
+AGMs are held in a hall, in Malay, English and Chinese, with no recording; nothing found settles it either way. Second,
+the three-column screen reads as a fact checker at projector distance, so the artefact must be a minutes document with a
+signature line and a filing date, not a claims table.
+
+### Rank 3 — Sumber
+
+A writer pastes a draft and the documents it cites. Two models from two labs, each shown one sentence and the passage it
+cites and blind to each other, say whether the passage supports the sentence. Agreement passes quietly; a split or a
+double rejection comes back inline with the passage beside it, each check carrying its request id, and the finished
+piece gets a public "how this was checked" page. Closed world: no web search, no truth verdict. The report recommends
+newsrooms for v1, with a Malaysian ministry press statement as the demo's source document rather than as the user.
+
+**Mechanism probe, measured live 2 Sept 2026**, single run: four draft sentences against one Bahasa Malaysia audit
+passage, a paraphrase of the LKAN 2/2025 paragraph on RM48.873 billion of flood-mitigation spending. MiniMax-M2.7
+returned the expected verdict on 4 of 4, including marking "identified RM48.873 billion in leakages" unsupported because
+the passage says spent, not leaked, and states that no excess payments were found. DeepSeek returned upstream 429 on
+every call during the probe, see [`gateway-capabilities.md`](gateway-capabilities.md#measured-2-september-2026), so no
+second-lab comparison was possible in that run. `[ASSUMPTION]` Four sentences from one lab; that the verdict rate
+generalises, or that two labs split where they should, is untested.
+
+**Strongest verified fact.** In December 2024 Apple Intelligence summarised a BBC notification to say Luigi Mangione had
+shot himself when the BBC story said no such thing, and Apple paused news summaries on 17 January 2025: a
+machine-written sentence the source never supported, which is the exact Sumber pattern. EU AI Act Article 50(4) has
+applied since 2 August 2026, and its exception turns on human review plus a person holding editorial responsibility; no
+tool found produces that record.
+
+**Biggest risk.** No Malaysian desk editor is named and no Malaysian text-based AI news error was found, so the user is
+inferred from the workflow, and the concept sits inside the 8-to-12-team fact-check cluster. The judges must see the
+closed world, the blind per-sentence split and the reader-facing page in the first ten seconds, and the word
+"fact-check" must never appear.
+
+### Rank 7 — Gig deactivation notices
+
+A rider or driver receives a suspension or deactivation notice too vague to answer. The Gig Workers Act 2025 (Act 872),
+in force since 31 March 2026 and covering 1.64 million workers, makes written notice, a right to be heard and a written
+explanation platform duties under s.14, and the Gig Workers Tribunal first sat on 1 Sept 2026 in Kuching. Independent
+models read the notice against the platform's published code and vote on which rule it names; when no reader can name
+one, the drafted reply argues the notice cannot support a meaningful s.14(7) right to be heard.
+
+**The verifier's corrections to the team's earlier notes:**
+
+| Earlier note                             | Verified                                                                                                                                  |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| 14 days without an inquiry               | 14 days is the suspension cap for the inquiry, plus 7 days after it under s.14(6)(b)                                                      |
+| Tribunal awards 50% of expected earnings | Half of average daily earnings over the suspension, a platform duty, not a tribunal award                                                 |
+| "Too vague fails the Act"                | An over-claim: the Act never requires citing a specific rule. Defensible framing: "cannot support a meaningful s.14(7) right to be heard" |
+| Over 1.6 million workers                 | 1.64 million                                                                                                                              |
+| A tribunal exists                        | It first sat 1 Sept 2026 in Kuching; no decisions published yet                                                                           |
+| 80% of appeals succeed                   | 80% is Seattle union-represented arbitrations; platform-internal appeals in NYC run near 10%                                              |
+
+### Withdrawn — Sama Makna
+
+A document translator with blind back-translation by a second lab and a third model listing every changed fact. Live
+test 2 Sept: 2 of 2 planted deadline shifts caught in Bengali and Tamil, a clean Tamil control gave zero flags, one
+MiniMax 524 after 114 s. Withdrawn because the job is already done free by Google Translate plus ChatGPT, and a fidelity
+check is a quality feature, not a phenomenon. It trips kill criterion 3: the multi-model requirement fits only by adding
+a feature the product does not otherwise need.
 
 ## Round 10 — social benefit reweighted
 
