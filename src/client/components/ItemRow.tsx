@@ -3,6 +3,7 @@ import type { DispositionInput } from '../../shared/schemas'
 import type { Item } from '../../shared/types'
 import { BubbleRow } from './BubbleRow'
 import { DispositionGroup, dispositionLabel } from './DispositionGroup'
+import { EvidencePanel } from './EvidencePanel'
 import { StatusChip } from './StatusChip'
 import { VerdictChip } from './VerdictChip'
 
@@ -19,6 +20,7 @@ const FAIL_CLOSED = 'Two independent, receipt-verified readings are required bef
 // The numbering is the paper's, so it is allowed. DESIGN.md Layout.
 export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
   const [busy, setBusy] = useState(false)
+  const [showEvidence, setShowEvidence] = useState(false)
   const latest = item.dispositions.at(-1)
   const needsDecision = item.verdict !== 'clear' && item.verdict !== 'pending'
 
@@ -70,6 +72,19 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
             Retry Verification
           </button>
         ) : null}
+
+        {item.attempts.length > 0 ? (
+          <button
+            type="button"
+            aria-expanded={showEvidence}
+            onClick={() => setShowEvidence((open) => !open)}
+            className="type-label mt-3 inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4"
+          >
+            {showEvidence ? 'Hide Evidence' : 'Show Evidence'}
+          </button>
+        ) : null}
+
+        {showEvidence ? <EvidencePanel item={item} /> : null}
 
         {!readOnly && needsDecision && !latest ? (
           <DispositionGroup options={item.options} onRecord={record} busy={busy} />
