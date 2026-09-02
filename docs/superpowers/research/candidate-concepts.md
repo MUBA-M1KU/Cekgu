@@ -140,10 +140,15 @@ capability. This round starts from a Malaysian phenomenon of 2025–26 and admit
 - **Text only.** The gateway confirmed on 2 Sept 2026 that image features are unsupported; local OCR was explicitly
   permitted by the GonkaRouter team the same day.
 
-**Team judgement, not research.** The team's own read on 2 Sept 2026, after the five verifications below, was that these
-candidates sit outside the team's domain expertise and outside that of the track judges, GonkaRouter's tech lead and
-product manager ([`brief.md`](../../brief.md#people)). A further round constrained to that expertise was requested.
+**Team judgement, not research.** The team's own read on 2 Sept 2026, after the first five verifications below, was that
+these candidates sit outside the team's domain expertise and outside that of the track judges, GonkaRouter's tech lead
+and product manager ([`brief.md`](../../brief.md#people)). A further round constrained to that expertise was requested.
 Nothing in the reports was rescored on it.
+
+**The second sub-round.** Minit and Sumber below answer that request. Both were constrained to the team's own domains,
+productivity, GovTech and media management, and to legibility for GonkaRouter's tech lead and product manager, the two
+people judging this track. The planned browser study of the team's LinkedIn profiles could not run because the Chrome
+extension was not connected, so domain fit was taken from the team's own description of itself, not from a profile read.
 
 ### Round 11 ranking
 
@@ -153,13 +158,16 @@ Nothing in the reports was rescored on it.
 | 2     | Akta Kata — bill versus explainer       |      19 | 14 `[ASSUMPTION]` |        19 |   12 |    15 |    **79** | Viable  |
 | 3     | Angka — figures from public reports     |      19 | 14 `[ASSUMPTION]` |        18 |   11 |    16 |    **78** | Viable  |
 | 3     | Sarikata QC — subtitle and notice QC    |      19 | 13 `[ASSUMPTION]` |        18 |   12 |    16 |    **78** | Viable  |
-| 5     | Gig deactivation notices                |      18 | 13 `[ASSUMPTION]` |        18 |   12 |    15 |    **76** | Viable  |
+| 3     | Minit — concordant meeting minutes      |      18 | 14 `[ASSUMPTION]` |        18 |   12 |    16 |    **78** | Viable  |
+| 3     | Sumber — draft against cited source     |      16 | 14 `[ASSUMPTION]` |        19 |   12 |    17 |    **78** | Viable  |
+| 7     | Gig deactivation notices                |      18 | 13 `[ASSUMPTION]` |        18 |   12 |    15 |    **76** | Viable  |
 
 Full verification with every citation: [`verify-insurance-claims.md`](verify-insurance-claims.md),
 [`verify-akta-kata.md`](verify-akta-kata.md), [`verify-angka.md`](verify-angka.md),
-[`verify-sarikata-qc.md`](verify-sarikata-qc.md) and [`verify-gig-deactivation.md`](verify-gig-deactivation.md). Angka
-and Sarikata QC tie at 78. Real user carries `[ASSUMPTION]` in all five, as elsewhere in this ledger: the person is
-inferred from published survey, filing and workflow figures, not from talking to one.
+[`verify-sarikata-qc.md`](verify-sarikata-qc.md), [`verify-minit.md`](verify-minit.md),
+[`verify-sumber.md`](verify-sumber.md) and [`verify-gig-deactivation.md`](verify-gig-deactivation.md). Angka, Sarikata
+QC, Minit and Sumber tie at 78. Real user carries `[ASSUMPTION]` in all seven, as elsewhere in this ledger: the person
+is inferred from published survey, filing and workflow figures, not from talking to one.
 
 ### Rank 1 — Tuntut
 
@@ -242,7 +250,62 @@ government mistranslation newer than 2018-2020 was found, so the pitch must rest
 pressure, not virality. No named Malaysian buyer or stated pain was found either; one conversation with a KL vendor QC
 desk would move Real user from 13 to 17.
 
-### Rank 5 — Gig deactivation notices
+### Rank 3 — Minit
+
+A volunteer strata committee, a JMB or MC, has a transcript of its meeting and a statutory clock: the Strata Management
+Act 2013 makes the committee keep minutes, display committee minutes within 21 days, file AGM minutes with the
+Commissioner of Buildings within 28, and makes the signed minutes prima facie evidence in court. Two models from two
+labs, blind to each other, each extract decisions, actions and open items, and every item lands in one of three states:
+both agree, one reader only (the chair confirms or drops it), or readers conflict (the passage is shown), with a request
+id per reading. The adjudicator is the chair's signature, then the Tribunal.
+
+**Mechanism probe, measured live 2 Sept 2026**, single run, on a synthetic three-item strata committee transcript.
+MiniMax-M2.7 extracted the pool-repair decision (RM12,500), Mrs Tan's action and two open items, but omitted Mr Raj's
+action, a third lift quote from Schindler by 20 September. Kimi-K2.6 (51 s) extracted all of them, Raj's action
+included. The two labs therefore disagreed on exactly one item, unplanted, and it was a real omission: the product's
+"one reader heard this, confirm" case. DeepSeek returned upstream 429 on every call during the probe, see
+[`gateway-capabilities.md`](gateway-capabilities.md#measured-2-september-2026). `[ASSUMPTION]` One transcript, one run;
+that the omission rate generalises is untested.
+
+**Strongest verified fact.** Second Schedule paragraph 7 of the Strata Management Act 2013, read from the Act text: the
+committee "shall keep minutes of all its proceedings", and the signed minutes are "admissible in any legal proceedings
+as prima facie evidence of the facts stated in them without further proof". The vendors themselves put the review burden
+on the user: Zoom's AI Companion notice says summaries "should be reviewed for accuracy and suitability before
+distributing them", and the TestDevLab benchmark Zoom commissioned puts every incumbent in a 78–81 quality band.
+
+**Biggest risk.** Transcript availability. The product assumes Zoom, Teams or Meet produced a transcript, and many JMB
+AGMs are held in a hall, in Malay, English and Chinese, with no recording; nothing found settles it either way. Second,
+the three-column screen reads as a fact checker at projector distance, so the artefact must be a minutes document with a
+signature line and a filing date, not a claims table.
+
+### Rank 3 — Sumber
+
+A writer pastes a draft and the documents it cites. Two models from two labs, each shown one sentence and the passage it
+cites and blind to each other, say whether the passage supports the sentence. Agreement passes quietly; a split or a
+double rejection comes back inline with the passage beside it, each check carrying its request id, and the finished
+piece gets a public "how this was checked" page. Closed world: no web search, no truth verdict. The report recommends
+newsrooms for v1, with a Malaysian ministry press statement as the demo's source document rather than as the user.
+
+**Mechanism probe, measured live 2 Sept 2026**, single run: four draft sentences against one Bahasa Malaysia audit
+passage, a paraphrase of the LKAN 2/2025 paragraph on RM48.873 billion of flood-mitigation spending. MiniMax-M2.7
+returned the expected verdict on 4 of 4, including marking "identified RM48.873 billion in leakages" unsupported because
+the passage says spent, not leaked, and states that no excess payments were found. DeepSeek returned upstream 429 on
+every call during the probe, see [`gateway-capabilities.md`](gateway-capabilities.md#measured-2-september-2026), so no
+second-lab comparison was possible in that run. `[ASSUMPTION]` Four sentences from one lab; that the verdict rate
+generalises, or that two labs split where they should, is untested.
+
+**Strongest verified fact.** In December 2024 Apple Intelligence summarised a BBC notification to say Luigi Mangione had
+shot himself when the BBC story said no such thing, and Apple paused news summaries on 17 January 2025: a
+machine-written sentence the source never supported, which is the exact Sumber pattern. EU AI Act Article 50(4) has
+applied since 2 August 2026, and its exception turns on human review plus a person holding editorial responsibility; no
+tool found produces that record.
+
+**Biggest risk.** No Malaysian desk editor is named and no Malaysian text-based AI news error was found, so the user is
+inferred from the workflow, and the concept sits inside the 8-to-12-team fact-check cluster. The judges must see the
+closed world, the blind per-sentence split and the reader-facing page in the first ten seconds, and the word
+"fact-check" must never appear.
+
+### Rank 7 — Gig deactivation notices
 
 A rider or driver receives a suspension or deactivation notice too vague to answer. The Gig Workers Act 2025 (Act 872),
 in force since 31 March 2026 and covering 1.64 million workers, makes written notice, a right to be heard and a written

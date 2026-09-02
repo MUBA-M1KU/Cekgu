@@ -204,6 +204,21 @@ consequences follow, both interpretation:
 `[ASSUMPTION]` Whether the cache key is the full body or prompt plus parameters, and how long entries live, are
 unmeasured.
 
+**DeepSeek was the model down at about 22:40 MYT.** `deepseek-ai/DeepSeek-V4-Flash-0731` returned HTTP `429` on every
+call, sequential single requests included, with `X-Gonka-No-Fallback: true` set. The body each time:
+
+```json
+{"error":{"message":"rate limit exceeded: too many concurrent requests","type":"upstream_error"}}
+```
+
+Earlier the same evening, under [Latency and hedging](#latency-and-hedging), Kimi was the model timing out and DeepSeek
+answered in under a second. At 22:40 Kimi answered in about 50 s and MiniMax in 8–23 s. Single run, one evening.
+
+**Upstream availability rotates across the three models within a single evening.** That sentence is interpretation; the
+measurement is the two snapshots above, and `[ASSUMPTION]` that it generalises beyond 2 September. The consequence, also
+interpretation: any product must treat the labs as interchangeable readers, run on whichever two are up, and prove
+distinctness by receipt rather than by which model it asked for.
+
 ## Limits
 
 Vendor-published, last checked by GonkaRouter 2026-06-19, **not independently verified**.

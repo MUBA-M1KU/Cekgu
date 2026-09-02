@@ -137,6 +137,15 @@ magnitude, not a benchmark.
 answered in 0.7–5 s and MiniMax in 2–50 s. Design for Kimi being absent. Provenance and the MiniMax failure pattern are
 in [`superpowers/research/gateway-capabilities.md`](superpowers/research/gateway-capabilities.md#latency-and-hedging).
 
+**Availability, measured 2026-09-02, about 22:40 MYT.** Later the same evening the roles swapped:
+`deepseek-ai/DeepSeek-V4-Flash-0731` returned `429` on every call, sequential single requests included, with
+`X-Gonka-No-Fallback: true` set, body
+`{"error":{"message":"rate limit exceeded: too many concurrent requests","type":"upstream_error"}}`, while Kimi answered
+in about 50 s and MiniMax in 8–23 s. Single run. Interpretation, not yet shown to generalise: upstream availability
+rotates across the three models within a single evening, so treat the labs as interchangeable readers, run on whichever
+two are up, and prove distinctness by receipt rather than by which model was asked for. Detail in
+[`superpowers/research/gateway-capabilities.md`](superpowers/research/gateway-capabilities.md#measured-2-september-2026).
+
 **Parallel fan-out works.** Three concurrent requests, one per model, completed in **16.2 s wall clock** — bounded by
 the slowest model, not the sum. Each returned its own distinct `x-request-id`. Multi-model consensus is therefore a
 fan-out, not a queue.

@@ -27,6 +27,8 @@ every other team gets from the same prompt.
 | [`verify-akta-kata.md`](verify-akta-kata.md)               | Round 11 verification of Akta Kata: official claims against clause text, the URA s.21(4) case, 79/100    |
 | [`verify-angka.md`](verify-angka.md)                       | Round 11 verification of Angka: LKAN cadence, the RM48.873bn correction, extraction incumbents, 78/100   |
 | [`verify-sarikata-qc.md`](verify-sarikata-qc.md)           | Round 11 verification of Sarikata QC: 1977 subtitle mandate, Netflix QC, XL8 and QE incumbents, 78/100   |
+| [`verify-minit.md`](verify-minit.md)                       | Round 11 verification of Minit: SMA 2013 Second Schedule para 7 verbatim, note-taker incumbents, 78/100  |
+| [`verify-sumber.md`](verify-sumber.md)                     | Round 11 verification of Sumber: the Apple/BBC incident, Article 50(4) verbatim, Clearbrief, 78/100      |
 | [`verify-gig-deactivation.md`](verify-gig-deactivation.md) | Round 11 verification of gig deactivation notices: Act 872 s.14 verbatim, tribunal status, 76/100        |
 
 ## What belongs here
