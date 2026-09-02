@@ -3,6 +3,7 @@ name: CI
 on:
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, closed]
 
 concurrency:
   group: ci-${{ github.event.pull_request.number }}
@@ -14,6 +15,7 @@ permissions:
 jobs:
   checks:
     name: Lint, typecheck and tests
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -42,3 +44,120 @@ jobs:
           else
             echo 'No test files in the tree yet. bun test exits 1 on an empty suite, so it is skipped until the first test lands.'
           fi
+
+  preview:
+    name: Preview deploy
+    needs: checks
+    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v3
+
+      # The tagged preview attaches to an existing service. Until the first push to
+      # main creates it, say so on the PR instead of failing a check nobody can fix.
+      - name: Check the service exists
+        id: service
+        run: |
+          if gcloud run services describe "${{ vars.CLOUD_RUN_SERVICE }}" \
+               --project "${{ vars.GCP_PROJECT_ID }}" \
+               --region "${{ vars.GCP_REGION }}" >/dev/null 2>&1; then
+            echo 'exists=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'exists=false' >> "$GITHUB_OUTPUT"
+            echo 'Cloud Run service not created yet; the first push to main creates it.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Configure Docker for Artifact Registry
+        if: steps.service.outputs.exists == 'true'
+        run: gcloud auth configure-docker "${{ vars.GCP_REGION }}-docker.pkg.dev" --quiet
+
+      - name: Build and push image
+        id: image
+        if: steps.service.outputs.exists == 'true'
+        run: |
+          image="${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/cekgu/cekgu:${GITHUB_SHA}"
+          docker build --tag "$image" .
+          docker push "$image"
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+
+      - name: Render environment variables
+        if: steps.service.outputs.exists == 'true'
+        env:
+          ALL_SECRETS: ${{ toJSON(secrets) }}
+        run: ./.github/scripts/render-env-vars.sh "$RUNNER_TEMP/env-vars.json"
+
+      # No traffic, and min-instances 0 so a preview revision is not held warm.
+      # Production keeps min-instances 1 from deploy.yml; that is a revision-level setting.
+      - name: Deploy the pr-${{ github.event.pull_request.number }} revision
+        id: deploy
+        if: steps.service.outputs.exists == 'true'
+        run: |
+          tag="pr-${{ github.event.pull_request.number }}"
+          gcloud run deploy "${{ vars.CLOUD_RUN_SERVICE }}" \
+            --image "${{ steps.image.outputs.image }}" \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --region "${{ vars.GCP_REGION }}" \
+            --platform managed \
+            --port 8080 \
+            --allow-unauthenticated \
+            --ingress all \
+            --min-instances 0 \
+            --max-instances 1 \
+            --no-cpu-throttling \
+            --memory 1Gi \
+            --timeout 300 \
+            --env-vars-file "$RUNNER_TEMP/env-vars.json" \
+            --tag "$tag" \
+            --no-traffic \
+            --quiet
+          url=$(gcloud run services describe "${{ vars.CLOUD_RUN_SERVICE }}" \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --region "${{ vars.GCP_REGION }}" \
+            --format=json | jq -r --arg tag "$tag" '.status.traffic[] | select(.tag == $tag) | .url')
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          printf 'Preview: %s\n' "$url" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment the preview URL
+        if: steps.service.outputs.exists == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          URL: ${{ steps.deploy.outputs.url }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          body=$(printf 'Preview deploy for %s\n\n%s\n\nServes no production traffic. It shares production configuration, including the database.' "$GITHUB_SHA" "$URL")
+          gh pr comment "$PR" --body "$body" --edit-last --create-if-none
+
+  preview-cleanup:
+    name: Remove the preview revision
+    if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v3
+
+      - name: Remove the pr-${{ github.event.pull_request.number }} tag
+        run: |
+          tag="pr-${{ github.event.pull_request.number }}"
+          if ! gcloud run services describe "${{ vars.CLOUD_RUN_SERVICE }}" \
+                 --project "${{ vars.GCP_PROJECT_ID }}" \
+                 --region "${{ vars.GCP_REGION }}" >/dev/null 2>&1; then
+            echo "Service does not exist; nothing to clean up."
+            exit 0
+          fi
+          gcloud run services update-traffic "${{ vars.CLOUD_RUN_SERVICE }}" \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --region "${{ vars.GCP_REGION }}" \
+            --remove-tags "$tag" \
+            --quiet
