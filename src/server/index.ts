@@ -1,8 +1,15 @@
+import { migrate } from 'drizzle-orm/node-postgres/migrator'
 import { Hono } from 'hono'
 import { serveStatic } from 'hono/bun'
+import { db } from './db'
+import { env } from './env'
 import { api } from './routes'
+import { seedGuestUser } from './seed'
 
 const CLIENT_DIR = './dist/client'
+
+await migrate(db, { migrationsFolder: './drizzle' })
+await seedGuestUser()
 
 const app = new Hono()
 
@@ -12,7 +19,6 @@ app.all('/api/*', (c) => c.json({ error: { code: 'not_found', message: 'Unknown 
 app.use('/*', serveStatic({ root: CLIENT_DIR }))
 app.get('*', serveStatic({ path: `${CLIENT_DIR}/index.html` }))
 
-const port = Number(process.env.PORT ?? 8080)
-const server = Bun.serve({ port, fetch: app.fetch })
+const server = Bun.serve({ port: env.port, fetch: app.fetch })
 
 console.log(`cekgu listening on http://localhost:${server.port}`)
