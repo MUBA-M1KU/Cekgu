@@ -6,14 +6,10 @@ import { getRecord, recordDisposition, retryItem, subscribeToRecord } from '../a
 import { ItemRow } from '../components/ItemRow'
 import { Sheet } from '../components/Sheet'
 import { StatusChip } from '../components/StatusChip'
-import { VerdictChip } from '../components/VerdictChip'
+import { ATTENTION_VERDICTS, VerdictFilters } from '../components/VerdictFilters'
 
 // Attention verdicts first and Clear last, so the filter row reads in the order the educator
 // should work through it. FR-RECORD-3, DESIGN.md Layout.
-const FILTERS: ItemVerdict[] = ['possible_key_error', 'possible_ambiguity', 'split_opinion', 'unverified', 'clear']
-
-const ATTENTION: ItemVerdict[] = ['possible_key_error', 'possible_ambiguity', 'split_opinion', 'unverified']
-
 export function RecordWorkspace() {
   const { id = '' } = useParams()
   const [record, setRecord] = useState<RecordDetail | null>(null)
@@ -46,7 +42,7 @@ export function RecordWorkspace() {
     )
   }
 
-  const attentionCount = ATTENTION.reduce((total, verdict) => total + record.counts[verdict], 0)
+  const attentionCount = ATTENTION_VERDICTS.reduce((total, verdict) => total + record.counts[verdict], 0)
   const ordered = [...record.items].sort((a, b) => {
     const rank = (verdict: ItemVerdict) => (verdict === 'clear' ? 1 : 0)
     return rank(a.verdict) - rank(b.verdict) || a.position - b.position
@@ -84,19 +80,10 @@ export function RecordWorkspace() {
       <h2 className="mt-8">Summary</h2>
       {/* The chips are both the summary counts and the filter, so the same numbers are never
           printed twice. DESIGN.md Layout. */}
-      <div className="mt-4 flex flex-wrap items-center gap-2" role="toolbar" aria-label="Filter items by verdict">
-        {FILTERS.map((verdict) => (
-          <button
-            key={verdict}
-            type="button"
-            aria-pressed={filter === verdict}
-            onClick={() => setFilter(filter === verdict ? null : verdict)}
-            className="cursor-pointer rounded-bubble"
-          >
-            <VerdictChip verdict={verdict} count={record.counts[verdict]} active={filter === verdict} />
-          </button>
-        ))}
-        <p className="type-label ml-auto text-pen">
+      <div className="flex flex-wrap items-baseline gap-x-4">
+        <VerdictFilters counts={record.counts} active={filter} onChange={setFilter} />
+        {/* The number asking for a decision, so it is the one count in pen red. DESIGN.md Colour. */}
+        <p className="type-label mt-4 ml-auto text-pen">
           {attentionCount} {attentionCount === 1 ? 'item needs' : 'items need'} attention
         </p>
       </div>

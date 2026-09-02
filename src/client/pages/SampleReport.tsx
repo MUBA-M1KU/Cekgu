@@ -4,9 +4,7 @@ import type { ItemVerdict, RecordDetail } from '../../shared/types'
 import { getSample } from '../api'
 import { ItemRow } from '../components/ItemRow'
 import { Sheet } from '../components/Sheet'
-import { VerdictChip } from '../components/VerdictChip'
-
-const FILTERS: ItemVerdict[] = ['possible_key_error', 'possible_ambiguity', 'split_opinion', 'unverified', 'clear']
+import { VerdictFilters } from '../components/VerdictFilters'
 
 // FR-SAMPLE-4: reachable signed out, read-only, with the evidence and request ids visible.
 // ItemRow in readOnly mode does not render the disposition group at all, rather than disabling it.
@@ -63,19 +61,7 @@ export function SampleReport() {
       </header>
 
       <h2 className="mt-8">Summary</h2>
-      <div className="mt-4 flex flex-wrap items-center gap-2" role="toolbar" aria-label="Filter items by verdict">
-        {FILTERS.map((verdict) => (
-          <button
-            key={verdict}
-            type="button"
-            aria-pressed={filter === verdict}
-            onClick={() => setFilter(filter === verdict ? null : verdict)}
-            className="cursor-pointer rounded-bubble"
-          >
-            <VerdictChip verdict={verdict} count={record.counts[verdict]} active={filter === verdict} />
-          </button>
-        ))}
-      </div>
+      <VerdictFilters counts={record.counts} active={filter} onChange={setFilter} />
 
       <h2 className="mt-8">Items</h2>
       <ul className="mt-4 m-0 list-none p-0">
