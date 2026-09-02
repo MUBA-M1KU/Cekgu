@@ -6,8 +6,9 @@ for anyone arriving at the repo; the deeper documents are linked from [Start her
 - **Submission deadline** — 5 September 2026, 23:59 MYT, on [Devfolio][devfolio]
 - **Demo Day** — 6 September 2026, APU, physical attendance required
 - **Track prize** — 1,200 USDT first place, 800 USDT second
+- **Live demo** — <https://cekgu-op7lf5dspq-as.a.run.app>, deployed from `main` on every merge
 - **Status** — Cekgu selected; `PRODUCT.md`, `PRD.md` and `TRD.md` written, so the build gate is open. Stack decided:
-  Bun, Hono, React, Neon Postgres, Cloud Run. No application code yet
+  Bun, Hono, React, Neon Postgres, Cloud Run. The client and server scaffold is deployed
 
 [devfolio]: https://muba-hackathon.devfolio.co/overview
 
