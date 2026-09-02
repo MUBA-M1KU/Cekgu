@@ -45,6 +45,7 @@ jobs:
       # traffic to it. So route traffic explicitly, every time, and to the revision this
       # run built rather than to "latest", which a concurrent preview deploy could win.
       - name: Deploy with traffic
+        id: deploy
         run: |
           revision=$(gcloud run deploy "${{ vars.CLOUD_RUN_SERVICE }}" \
             --image "${{ steps.image.outputs.image }}" \
@@ -63,6 +64,7 @@ jobs:
             --quiet \
             --format='value(status.latestCreatedRevisionName)')
           echo "Built revision $revision"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
 
           gcloud run services update-traffic "${{ vars.CLOUD_RUN_SERVICE }}" \
             --project "${{ vars.GCP_PROJECT_ID }}" \
@@ -74,6 +76,8 @@ jobs:
       # stale revision served production unnoticed. Fail the run instead of reporting it.
       - name: Verify production serves the new revision
         id: verify
+        env:
+          EXPECTED_REVISION: ${{ steps.deploy.outputs.revision }}
         run: |
           service=$(gcloud run services describe "${{ vars.CLOUD_RUN_SERVICE }}" \
             --project "${{ vars.GCP_PROJECT_ID }}" \
@@ -81,13 +85,14 @@ jobs:
             --format=json)
           url=$(jq -r '.status.url' <<<"$service")
           serving=$(jq -r '[.status.traffic[] | select(.percent == 100 and .tag == null) | .revisionName] | first // "none"' <<<"$service")
-          expected=$(gcloud run services describe "${{ vars.CLOUD_RUN_SERVICE }}" \
-            --project "${{ vars.GCP_PROJECT_ID }}" \
-            --region "${{ vars.GCP_REGION }}" \
-            --format='value(status.latestCreatedRevisionName)')
+
+          # Compare against the revision this run built, not the newest revision on the
+          # service: a preview deploy for any open PR creates newer revisions constantly,
+          # and comparing to those failed a deploy whose traffic was in fact correct.
+          expected="$EXPECTED_REVISION"
 
           if [ "$serving" != "$expected" ]; then
-            printf 'Traffic is on %s but the newest revision is %s.\n' "$serving" "$expected" >&2
+            printf 'Traffic is on %s but this run deployed %s.\n' "$serving" "$expected" >&2
             exit 1
           fi
 
