@@ -50,3 +50,5 @@ docs/source/*.mp4
 docs/source/*.wav
 docs/source/*.m4a
 docs/source/*.webm
+test-results/
+playwright-report/

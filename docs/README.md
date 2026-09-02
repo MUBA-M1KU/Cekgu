@@ -72,7 +72,29 @@ curl -s https://api.gonkarouter.io/v1/messages \
 | `bun run lint`       | Biome check, then Prettier check   |
 | `bun run format`     | Both formatters, writing in place  |
 | `bun run typecheck`  | `tsc --noEmit`, once `src/` exists |
+| `bun test`           | Unit tests                         |
+| `bun run e2e`        | Playwright smoke against a deploy  |
 | `gh issue list`      | The TODO board                     |
+
+### The smoke pass
+
+`bun run e2e` tests a **deployed URL**, never a local build. It defaults to production and takes any other deployment
+through `E2E_BASE_URL`, so the same command checks a preview before a rehearsal:
+
+```bash
+bun run e2e                                                        # production
+E2E_BASE_URL=https://pr-42---cekgu-op7lf5dspq-as.a.run.app bun run e2e   # a preview
+```
+
+Browsers are not installed by `bun install`; run `bunx playwright install chromium` once. The same pass runs
+automatically after every production deploy, so a deploy that serves a broken build fails the run rather than waiting
+for someone to open the URL.
+
+It currently asserts that the shell serves, that a client route falls back to it rather than 404ing, that an API path is
+refused without a session, that Sign In as Guest returns a usable session, and that an unknown API path answers JSON
+once signed in. The four demo-path steps from [TRD section 18](TRD.md#18-testing) — the Guest banner, the sample record
+and its counts, the Possible Key Error filter and the two request ids in an evidence panel — are present as skipped
+tests naming the issue that unblocks each, so a green run never implies the demo path is covered.
 
 Biome covers JS, TS, JSON, CSS and HTML; Prettier covers the Markdown and YAML it cannot, wrapping prose at 120 to match
 `biome.json`'s `lineWidth`. There is no `.prettierignore`, so every Markdown file is formatted, `docs/source/` and the
