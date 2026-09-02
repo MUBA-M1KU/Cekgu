@@ -40,9 +40,13 @@ jobs:
           ALL_SECRETS: ${{ toJSON(secrets) }}
         run: ./.github/scripts/render-env-vars.sh "$RUNNER_TEMP/env-vars.json"
 
+      # A preview deploy rewrites spec.traffic from the implicit latest pointer to an
+      # explicit revision pin, and a plain deploy then uploads a revision without moving
+      # traffic to it. So route traffic explicitly, every time, and to the revision this
+      # run built rather than to "latest", which a concurrent preview deploy could win.
       - name: Deploy with traffic
         run: |
-          gcloud run deploy "${{ vars.CLOUD_RUN_SERVICE }}" \
+          revision=$(gcloud run deploy "${{ vars.CLOUD_RUN_SERVICE }}" \
             --image "${{ steps.image.outputs.image }}" \
             --project "${{ vars.GCP_PROJECT_ID }}" \
             --region "${{ vars.GCP_REGION }}" \
@@ -56,9 +60,40 @@ jobs:
             --memory 1Gi \
             --timeout 300 \
             --env-vars-file "$RUNNER_TEMP/env-vars.json" \
-            --quiet
-          url=$(gcloud run services describe "${{ vars.CLOUD_RUN_SERVICE }}" \
+            --quiet \
+            --format='value(status.latestCreatedRevisionName)')
+          echo "Built revision $revision"
+
+          gcloud run services update-traffic "${{ vars.CLOUD_RUN_SERVICE }}" \
             --project "${{ vars.GCP_PROJECT_ID }}" \
             --region "${{ vars.GCP_REGION }}" \
-            --format='value(status.url)')
-          printf 'Production is live at %s\n' "$url" >> "$GITHUB_STEP_SUMMARY"
+            --to-revisions "$revision=100" \
+            --quiet
+
+      # The deploy above reports success even when traffic never moved, which is how a
+      # stale revision served production unnoticed. Fail the run instead of reporting it.
+      - name: Verify production serves the new revision
+        run: |
+          service=$(gcloud run services describe "${{ vars.CLOUD_RUN_SERVICE }}" \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --region "${{ vars.GCP_REGION }}" \
+            --format=json)
+          url=$(jq -r '.status.url' <<<"$service")
+          serving=$(jq -r '[.status.traffic[] | select(.percent == 100 and .tag == null) | .revisionName] | first // "none"' <<<"$service")
+          expected=$(gcloud run services describe "${{ vars.CLOUD_RUN_SERVICE }}" \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --region "${{ vars.GCP_REGION }}" \
+            --format='value(status.latestCreatedRevisionName)')
+
+          if [ "$serving" != "$expected" ]; then
+            printf 'Traffic is on %s but the newest revision is %s.\n' "$serving" "$expected" >&2
+            exit 1
+          fi
+
+          code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 60 "$url/")
+          if [ "$code" != '200' ]; then
+            printf 'Production returned %s for GET /.\n' "$code" >&2
+            exit 1
+          fi
+
+          printf 'Production is live at %s serving %s\n' "$url" "$serving" >> "$GITHUB_STEP_SUMMARY"

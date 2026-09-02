@@ -442,13 +442,29 @@ runs `gcloud run services update-traffic cekgu --remove-tags pr-<number>` so rev
 **On merge to `main`** (`deploy.yml`): the same steps, then `gcloud run deploy cekgu --image <sha image>` with traffic,
 so the production URL always runs the head of `main`.
 
+**Traffic is routed explicitly, and the routing is asserted.** A preview deploy rewrites the service's traffic block
+from the implicit "latest revision" pointer to an explicit revision pin. Once pinned, a plain `gcloud run deploy`
+uploads a new revision and **does not move traffic to it**, while still reporting success. Production served the #19
+scaffold through four later deploys before anyone noticed, because `GET /` answers 200 on every revision; only
+`POST /api/auth/guest`, which exists in one revision and not the other, exposed it. So `deploy.yml` follows the deploy
+with `gcloud run services update-traffic cekgu --to-revisions <revision>=100`, naming the revision that run built rather
+than `--to-latest`, which a concurrent preview deploy could win. A final step re-reads the service and fails the run
+unless the revision serving 100% is the newest one and `GET /` returns 200. Removing a tag with
+`update-traffic --remove-tags` and routing with `--to-revisions` both leave other tags intact, so preview URLs on open
+pull requests survive a production deploy.
+
 ### Configuration at deploy time
 
-Every variable in [section 8](#8-configuration-contract) is a GitHub Actions secret of the same name and is passed with
-`--set-env-vars` on every deploy, preview and production alike. **Secret Manager is explicitly not used.** It would add
-IAM bindings, a second console and a `--set-secrets` mapping to keep in step, for a key that already lives in GitHub's
-secret store and is rotated by pasting a new value. Cloud Run environment variables are visible to anyone with viewer
-access to the project; that is the whole team, which is the intended audience.
+Every variable in [section 8](#8-configuration-contract) is a GitHub Actions secret of the same name and is passed on
+every deploy, preview and production alike, with `--env-vars-file` rather than `--set-env-vars`. **Do not "fix" that
+back.** `--set-env-vars` is comma-delimited and a Neon connection string can contain a comma; gcloud's custom-delimiter
+escape hatch does not save it either, because `@`, `|` and `:` all occur in connection strings and passwords. The file
+form is JSON, which gcloud's YAML parser accepts, so every value survives verbatim. The variable list lives once, in
+`.github/scripts/render-env-vars.sh`; a name with no repository secret is omitted rather than written empty, so the
+server sees it unset. **Secret Manager is explicitly not used.** It would add IAM bindings, a second console and a
+`--set-secrets` mapping to keep in step, for a key that already lives in GitHub's secret store and is rotated by pasting
+a new value. Cloud Run environment variables are visible to anyone with viewer access to the project; that is the whole
+team, which is the intended audience.
 
 Previews share production's values, including `DATABASE_URL`, so a preview writes to the production database. That is
 acceptable for a two-day window with one shared Guest workspace and is stated here so nobody is surprised. Two
