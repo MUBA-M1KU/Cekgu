@@ -25,7 +25,7 @@ const FAQ = [
   },
   {
     q: 'Who can see what I add in the Guest workspace?',
-    a: 'Everyone. The Guest account is one shared account, not an anonymous private session. Every guest can open and delete every other guest record. Guest records are removed 24 hours after they are created.'
+    a: 'Everyone. The Guest account is one shared account, not a private session of your own. Every guest can open and delete every other guest record. Guest records are removed 24 hours after they are created.'
   },
   {
     q: 'Can Cekgu change my paper?',
