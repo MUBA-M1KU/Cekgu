@@ -1,4 +1,5 @@
-import type { CreateRecordInput } from '../shared/schemas'
+import type { CreateRecordInput, DispositionInput } from '../shared/schemas'
+import type { RecordDetail } from '../shared/types'
 
 export type CreateRecordResponse = { id: string; status: string; itemCount: number; expiresAt: string | null }
 
@@ -47,4 +48,72 @@ export async function createRecord(input: CreateRecordInput): Promise<CreateReco
   }
 
   return request<CreateRecordResponse>('/api/records', { method: 'POST', body: JSON.stringify(input) })
+}
+
+export async function getRecord(id: string): Promise<RecordDetail> {
+  if (MOCK) {
+    const { mockRecord } = await import('./mock-record')
+    return mockRecord(id)
+  }
+
+  return request<RecordDetail>(`/api/records/${id}`)
+}
+
+export async function recordDisposition(
+  recordId: string,
+  itemId: string,
+  input: DispositionInput
+): Promise<RecordDetail> {
+  if (MOCK) {
+    const { mockDisposition, mockRecord } = await import('./mock-record')
+    mockDisposition(itemId, input)
+    return mockRecord(recordId)
+  }
+
+  await request(`/api/records/${recordId}/items/${itemId}/disposition`, {
+    method: 'POST',
+    body: JSON.stringify(input)
+  })
+  return getRecord(recordId)
+}
+
+export async function retryItem(recordId: string, itemId: string): Promise<RecordDetail> {
+  if (MOCK) return getRecord(recordId)
+
+  await request(`/api/records/${recordId}/items/${itemId}/retry`, { method: 'POST' })
+  return getRecord(recordId)
+}
+
+// FR-QUEUE-4: the workspace follows a checking record over SSE and falls back to polling
+// GET /api/records/:id every 3 seconds if the stream will not open or drops twice.
+export function subscribeToRecord(id: string, onChange: () => void): () => void {
+  if (MOCK) return () => {}
+
+  let drops = 0
+  let source: EventSource | null = null
+  let poll: ReturnType<typeof setInterval> | null = null
+
+  function startPolling() {
+    if (poll) return
+    poll = setInterval(onChange, 3000)
+  }
+
+  function open() {
+    source = new EventSource(`/api/records/${id}/events`)
+    source.addEventListener('item', onChange)
+    source.addEventListener('record', onChange)
+    source.onerror = () => {
+      source?.close()
+      drops += 1
+      if (drops >= 2) startPolling()
+      else open()
+    }
+  }
+
+  open()
+
+  return () => {
+    source?.close()
+    if (poll) clearInterval(poll)
+  }
 }
