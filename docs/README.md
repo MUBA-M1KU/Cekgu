@@ -90,11 +90,17 @@ Browsers are not installed by `bun install`; run `bunx playwright install chromi
 automatically after every production deploy, so a deploy that serves a broken build fails the run rather than waiting
 for someone to open the URL.
 
-It currently asserts that the shell serves, that a client route falls back to it rather than 404ing, that an API path is
-refused without a session, that Sign In as Guest returns a usable session, and that an unknown API path answers JSON
-once signed in. The four demo-path steps from [TRD section 18](TRD.md#18-testing) — the Guest banner, the sample record
-and its counts, the Possible Key Error filter and the two request ids in an evidence panel — are present as skipped
-tests naming the issue that unblocks each, so a green run never implies the demo path is covered.
+It asserts **rendered content, never that the root element is attached**: an attached root passes against a blank page,
+against a failed fetch shown as an empty state, and against a React error boundary, so it proves the bundle parsed
+rather than that the product works. It currently covers the landing page rendering with its Sign In link, a client route
+falling back to the shell rather than 404ing, an API path refused without a session, Sign In as Guest returning a usable
+session, an unknown API path answering JSON once signed in, and **Sign In as Guest landing in the Guest workspace with
+the FR-AUTH-3 warning banner**, asserted word for word because that sentence is fixed by the requirement rather than
+being ordinary product copy.
+
+The three remaining demo-path steps from [TRD section 18](TRD.md#18-testing) — the sample record and its counts, the
+Possible Key Error filter and the two request ids in an evidence panel — genuinely need the seeded sample from #30 and
+are present as skipped tests naming it, so a green run never implies those are covered.
 
 Biome covers JS, TS, JSON, CSS and HTML; Prettier covers the Markdown and YAML it cannot, wrapping prose at 120 to match
 `biome.json`'s `lineWidth`. There is no `.prettierignore`, so every Markdown file is formatted, `docs/source/` and the
