@@ -450,7 +450,8 @@ so. A video that pretends the gateway is instant contradicts slide 08 of our own
 
 ## 15. Pre-flight
 
-- [ ] Team roster filled on slide 01 and the deployed URL filled on slide 10, replacing both red `to fill` chips
+- [ ] Team roster filled on slide 01, replacing the last red `to fill` chip. The live demo URL and its QR are on slide
+      10 already
 - [ ] Section 6 rehearsed against the running app, and every literal label in it corrected to what the screen says
 - [ ] Slides 05 and 06 replaced with real screenshots once the UI exists, so nothing on the wall is a drawing of the
       product
