@@ -14,14 +14,15 @@ every other team gets from the same prompt.
 
 ## What is here
 
-| File                                                       | Holds                                                                        |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [`RUBRIC.md`](RUBRIC.md)                                   | The scoring instrument. Read before generating any candidate                 |
-| [`candidate-concepts.md`](candidate-concepts.md)           | Ten-round ledger; Round 10 is current and earlier rankings remain as history |
-| [`multi-model-capability.md`](multi-model-capability.md)   | The permutation test, and what three distinct models buy that one cannot     |
-| [`competitor-scan.md`](competitor-scan.md)                 | Prior art per candidate, predicted competition, the regulatory opening       |
-| [`gateway-capabilities.md`](gateway-capabilities.md)       | What the gateway does, and what a Gonka Request ID does and does not prove   |
-| [`disagreement-as-product.md`](disagreement-as-product.md) | When multi-model divergence is a real signal, and the tests that certify it  |
+| File                                                       | Holds                                                                                                    |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| [`RUBRIC.md`](RUBRIC.md)                                   | The scoring instrument. Read before generating any candidate                                             |
+| [`candidate-concepts.md`](candidate-concepts.md)           | Ten-round ledger; Round 10 is current and earlier rankings remain as history                             |
+| [`three-day-rescore.md`](three-day-rescore.md)             | Every live concept rescored on 2 Sept 2026 for the 2.5 build days left, with that day's prior-art checks |
+| [`multi-model-capability.md`](multi-model-capability.md)   | The permutation test, and what three distinct models buy that one cannot                                 |
+| [`competitor-scan.md`](competitor-scan.md)                 | Prior art per candidate, predicted competition, the regulatory opening                                   |
+| [`gateway-capabilities.md`](gateway-capabilities.md)       | What the gateway does, and what a Gonka Request ID does and does not prove                               |
+| [`disagreement-as-product.md`](disagreement-as-product.md) | When multi-model divergence is a real signal, and the tests that certify it                              |
 
 ## What belongs here
 
