@@ -802,24 +802,20 @@ the current round, in the order below. It is the [machine verdict table](PRODUCT
 (FR-VERDICT-2, FR-VERDICT-3).
 
 ```ts
-export type Reading = {
-  model: string;
-  answer: string;
-  defensible: string[];
-  reason: string;
-};
-export type Verdict =
-  | "clear"
-  | "possible_key_error"
-  | "possible_ambiguity"
-  | "split_opinion"
-  | "unverified";
+import type { Option, Reading, Verdict } from "./types";
 
 export function verdict(
   readings: Reading[],
   key: string,
+  options: Option[],
 ): { verdict: Verdict; reason: string };
 ```
+
+`Reading`, `Verdict` and `Option` live in [`src/shared/types.ts`](../src/shared/types.ts) and are imported, not
+redeclared here; the client needed them before this function existed. `options` is the item's option list, and it is a
+parameter because `answer` and `key` are option **letters** while FR-VERDICT-4 requires the printed reason to name
+options in words — "Both readers chose Queue. The supplied key is Stack." A letter with no matching option falls back to
+the letter itself rather than rendering an empty string.
 
 | Check, in order                                       | Verdict                | Reason shown                                                                        |
 | ----------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------- |
