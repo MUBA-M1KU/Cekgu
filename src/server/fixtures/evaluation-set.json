@@ -1,0 +1,388 @@
+{
+  "title": "Introductory computer science practice set",
+  "subject": "Computer Science",
+  "language": "en",
+  "context": "Synthetic first-year practice questions written to evaluate the check pipeline. No real or confidential exam content.",
+  "items": [
+    {
+      "id": "array-index-access",
+      "intended": "clean",
+      "stem": "What is the time complexity of reading the element at a known index in an array?",
+      "options": [
+        { "letter": "A", "text": "O(1)" },
+        { "letter": "B", "text": "O(log n)" },
+        { "letter": "C", "text": "O(n)" },
+        { "letter": "D", "text": "O(n log n)" }
+      ],
+      "key": "A"
+    },
+    {
+      "id": "tcp-reliable-delivery",
+      "intended": "clean",
+      "stem": "Which transport protocol retransmits lost segments so that data arrives complete and in order?",
+      "options": [
+        { "letter": "A", "text": "TCP" },
+        { "letter": "B", "text": "UDP" },
+        { "letter": "C", "text": "ICMP" },
+        { "letter": "D", "text": "ARP" }
+      ],
+      "key": "A"
+    },
+    {
+      "id": "fifo-structure",
+      "intended": "mis_keyed",
+      "stem": "Which data structure removes elements in first in, first out order?",
+      "options": [
+        { "letter": "A", "text": "Stack" },
+        { "letter": "B", "text": "Queue" },
+        { "letter": "C", "text": "Binary search tree" },
+        { "letter": "D", "text": "Hash table" }
+      ],
+      "key": "A",
+      "correctKey": "B",
+      "note": "Stack is the last in, first out structure. The two names are taught together and printed one row apart in every syllabus, so a key copied down a column slips by one. A careful reader chooses Queue."
+    },
+    {
+      "id": "big-o-meaning",
+      "intended": "clean",
+      "stem": "In big-O notation, what does O(n) say about an algorithm?",
+      "options": [
+        { "letter": "A", "text": "It always takes exactly n steps to finish" },
+        { "letter": "B", "text": "Its running time grows at most linearly with the input size" },
+        { "letter": "C", "text": "It uses n bytes of memory whatever the input" },
+        { "letter": "D", "text": "It is faster than every O(log n) algorithm" }
+      ],
+      "key": "B"
+    },
+    {
+      "id": "deadlock-fourth-condition",
+      "intended": "clean",
+      "stem": "Mutual exclusion, hold and wait, and no preemption are three of the four conditions required for deadlock. What is the fourth?",
+      "options": [
+        { "letter": "A", "text": "Round-robin scheduling" },
+        { "letter": "B", "text": "Virtual memory" },
+        { "letter": "C", "text": "Circular wait" },
+        { "letter": "D", "text": "Context switching" }
+      ],
+      "key": "C"
+    },
+    {
+      "id": "http-model-layer",
+      "intended": "ambiguous",
+      "stem": "Which layer of the TCP/IP model does HTTP belong to?",
+      "options": [
+        { "letter": "A", "text": "Transport" },
+        { "letter": "B", "text": "Presentation" },
+        { "letter": "C", "text": "Application" },
+        { "letter": "D", "text": "Internet" }
+      ],
+      "key": "C",
+      "defensibleKeys": ["B", "C"],
+      "note": "The four-layer TCP/IP model has no presentation layer, so a reader who answers from the model the stem names defends Application. The option list is an OSI list, and introductory texts that map HTTP onto OSI layers 5 to 7 place its content encoding and character-set negotiation at the presentation layer, which defends Presentation. The stem never says which table to answer from."
+    },
+    {
+      "id": "primary-key-purpose",
+      "intended": "clean",
+      "stem": "What does a primary key guarantee about a relational table?",
+      "options": [
+        { "letter": "A", "text": "Every column in the table holds a number" },
+        { "letter": "B", "text": "Rows are returned in the order they were inserted" },
+        { "letter": "C", "text": "The table is joined to exactly one other table" },
+        { "letter": "D", "text": "Every row can be identified by a value that is unique and not null" }
+      ],
+      "key": "D"
+    },
+    {
+      "id": "compiler-role",
+      "intended": "clean",
+      "stem": "What does a compiler do with a source program?",
+      "options": [
+        { "letter": "A", "text": "Translates it into another language, usually machine code, before it runs" },
+        { "letter": "B", "text": "Runs it one statement at a time without translating it" },
+        { "letter": "C", "text": "Reformats it to match the project style guide" },
+        { "letter": "D", "text": "Removes unused files from the project directory" }
+      ],
+      "key": "A"
+    },
+    {
+      "id": "dns-role",
+      "intended": "mis_keyed",
+      "stem": "What is the main job of the Domain Name System?",
+      "options": [
+        { "letter": "A", "text": "Handing out IP addresses to devices joining a network" },
+        { "letter": "B", "text": "Choosing a route for packets travelling between networks" },
+        { "letter": "C", "text": "Encrypting the traffic between a browser and a web server" },
+        { "letter": "D", "text": "Translating domain names into IP addresses" }
+      ],
+      "key": "C",
+      "correctKey": "D",
+      "note": "Encryption is what TLS does, handing out addresses is DHCP and choosing a path is routing. Students meet DNS through the address bar and the padlock beside it, so the security answer looks plausible enough to be keyed in a hurry. A careful reader chooses the translation of domain names into IP addresses."
+    },
+    {
+      "id": "cpu-cache-purpose",
+      "intended": "clean",
+      "stem": "Why does a processor have a cache?",
+      "options": [
+        { "letter": "A", "text": "To keep files after the machine is switched off" },
+        { "letter": "B", "text": "To keep recently used data closer to the processor than main memory is" },
+        { "letter": "C", "text": "To add more cores to the processor" },
+        { "letter": "D", "text": "To translate assembly language into machine code" }
+      ],
+      "key": "B"
+    },
+    {
+      "id": "kilobyte-byte-count",
+      "intended": "ambiguous",
+      "stem": "How many bytes are there in one kilobyte?",
+      "options": [
+        { "letter": "A", "text": "512" },
+        { "letter": "B", "text": "1000" },
+        { "letter": "C", "text": "1024" },
+        { "letter": "D", "text": "8192" }
+      ],
+      "key": "B",
+      "defensibleKeys": ["B", "C"],
+      "note": "The SI prefix makes a kilobyte 1000 bytes, and the IEC name for 1024 bytes is a kibibyte. Storage vendors and networking use 1000; most operating systems, file managers and introductory textbooks still print 1024. The stem does not say which convention applies."
+    },
+    {
+      "id": "git-branch-purpose",
+      "intended": "clean",
+      "stem": "What does creating a branch in Git let a developer do?",
+      "options": [
+        { "letter": "A", "text": "Erase the history of the repository" },
+        { "letter": "B", "text": "Compress the working directory to save disk space" },
+        { "letter": "C", "text": "Publish the project to a package registry" },
+        { "letter": "D", "text": "Work on changes without disturbing the main line of development" }
+      ],
+      "key": "D"
+    },
+    {
+      "id": "hash-table-chaining",
+      "intended": "clean",
+      "stem": "A hash table resolves collisions by chaining. What does each bucket hold?",
+      "options": [
+        { "letter": "A", "text": "A second hash function used only for that bucket" },
+        { "letter": "B", "text": "A count of how many buckets have been probed" },
+        { "letter": "C", "text": "A pointer back to the table it was resized from" },
+        { "letter": "D", "text": "A list of the entries whose keys hash to that bucket" }
+      ],
+      "key": "D"
+    },
+    {
+      "id": "bubble-sort-worst-case",
+      "intended": "clean",
+      "stem": "What is the worst-case running time of bubble sort on n elements?",
+      "options": [
+        { "letter": "A", "text": "O(n)" },
+        { "letter": "B", "text": "O(n log n)" },
+        { "letter": "C", "text": "O(n^2)" },
+        { "letter": "D", "text": "O(2^n)" }
+      ],
+      "key": "C"
+    },
+    {
+      "id": "merge-sort-worst-case",
+      "intended": "mis_keyed",
+      "stem": "What is the worst-case running time of merge sort on n elements?",
+      "options": [
+        { "letter": "A", "text": "O(log n)" },
+        { "letter": "B", "text": "O(n)" },
+        { "letter": "C", "text": "O(n log n)" },
+        { "letter": "D", "text": "O(n^2)" }
+      ],
+      "key": "D",
+      "correctKey": "C",
+      "note": "Merge sort splits and merges in O(n log n) on every input, worst case included. O(n^2) is quicksort's worst case, and the two algorithms sit on neighbouring rows of the usual comparison table, which is where a key slips. A careful reader chooses O(n log n)."
+    },
+    {
+      "id": "http-status-404",
+      "intended": "clean",
+      "stem": "What does the HTTP status code 404 tell the client?",
+      "options": [
+        { "letter": "A", "text": "The request succeeded" },
+        { "letter": "B", "text": "The server needs the client to authenticate first" },
+        { "letter": "C", "text": "The server is temporarily overloaded" },
+        { "letter": "D", "text": "The requested resource was not found" }
+      ],
+      "key": "D"
+    },
+    {
+      "id": "thread-shared-address-space",
+      "intended": "clean",
+      "stem": "Which of these do two threads of the same process share?",
+      "options": [
+        { "letter": "A", "text": "The address space" },
+        { "letter": "B", "text": "The program counter" },
+        { "letter": "C", "text": "The stack" },
+        { "letter": "D", "text": "The register set" }
+      ],
+      "key": "A"
+    },
+    {
+      "id": "unsorted-array-search",
+      "intended": "ambiguous",
+      "stem": "How long does it take to find a given value in an array of n elements?",
+      "options": [
+        { "letter": "A", "text": "O(1)" },
+        { "letter": "B", "text": "O(log n)" },
+        { "letter": "C", "text": "O(n)" },
+        { "letter": "D", "text": "O(n^2)" }
+      ],
+      "key": "C",
+      "defensibleKeys": ["B", "C"],
+      "note": "The stem does not say whether the array is sorted. Scanning an unsorted array is O(n); binary search over a sorted array is O(log n). Each is the standard first-year answer under the assumption the reader supplies, and the stem supplies neither."
+    },
+    {
+      "id": "database-index-purpose",
+      "intended": "clean",
+      "stem": "Why would a database administrator add an index to a column?",
+      "options": [
+        { "letter": "A", "text": "To reduce the number of rows stored in the table" },
+        { "letter": "B", "text": "To make queries that filter on that column faster" },
+        { "letter": "C", "text": "To allow the column to hold null values" },
+        { "letter": "D", "text": "To change the data type of the column" }
+      ],
+      "key": "B"
+    },
+    {
+      "id": "recursion-base-case",
+      "intended": "clean",
+      "stem": "What is the base case of a recursive function for?",
+      "options": [
+        { "letter": "A", "text": "Reserving space on the call stack before the first call" },
+        { "letter": "B", "text": "Making the function run in constant time" },
+        { "letter": "C", "text": "Stopping the recursion so the function does not call itself forever" },
+        { "letter": "D", "text": "Turning the function into a loop when it is compiled" }
+      ],
+      "key": "C"
+    },
+    {
+      "id": "page-fault-cause",
+      "intended": "mis_keyed",
+      "stem": "What causes a page fault?",
+      "options": [
+        { "letter": "A", "text": "A program refers to a page that is not currently in physical memory" },
+        { "letter": "B", "text": "The disk runs out of free space" },
+        { "letter": "C", "text": "A program divides an integer by zero" },
+        { "letter": "D", "text": "A process uses up its scheduled time slice" }
+      ],
+      "key": "C",
+      "correctKey": "A",
+      "note": "A divide error and a page fault are both processor exceptions listed a few rows apart in the same interrupt table, and both are loosely called faults, so a key written straight from that table can land on the wrong row. A careful reader chooses the reference to a page that is not resident."
+    },
+    {
+      "id": "binary-tree-children",
+      "intended": "clean",
+      "stem": "How many children can one node of a binary tree have at most?",
+      "options": [
+        { "letter": "A", "text": "One" },
+        { "letter": "B", "text": "Two" },
+        { "letter": "C", "text": "Three" },
+        { "letter": "D", "text": "Any number" }
+      ],
+      "key": "B"
+    },
+    {
+      "id": "ipv4-address-bits",
+      "intended": "clean",
+      "stem": "How many bits are there in an IPv4 address?",
+      "options": [
+        { "letter": "A", "text": "8" },
+        { "letter": "B", "text": "16" },
+        { "letter": "C", "text": "32" },
+        { "letter": "D", "text": "64" }
+      ],
+      "key": "C"
+    },
+    {
+      "id": "integer-division-result",
+      "intended": "ambiguous",
+      "stem": "A program evaluates the expression 7 / 2, with both operands written as whole numbers. What is the result?",
+      "options": [
+        { "letter": "A", "text": "0.5" },
+        { "letter": "B", "text": "3" },
+        { "letter": "C", "text": "3.5" },
+        { "letter": "D", "text": "14" }
+      ],
+      "key": "B",
+      "defensibleKeys": ["B", "C"],
+      "note": "The stem names no language. C, Java, Go and C# divide two integers as integers and give 3; Python 3 and JavaScript give 3.5. The assumption the stem omits is whether the language truncates integer division."
+    },
+    {
+      "id": "dijkstra-purpose",
+      "intended": "clean",
+      "stem": "What does Dijkstra's algorithm compute on a graph whose edge weights are all non-negative?",
+      "options": [
+        { "letter": "A", "text": "A minimum spanning tree of the graph" },
+        { "letter": "B", "text": "A topological ordering of the vertices" },
+        { "letter": "C", "text": "The strongly connected components of the graph" },
+        { "letter": "D", "text": "The shortest path from one source vertex to the other vertices" }
+      ],
+      "key": "D"
+    },
+    {
+      "id": "kernel-mode-privilege",
+      "intended": "clean",
+      "stem": "What separates kernel mode from user mode on a processor?",
+      "options": [
+        { "letter": "A", "text": "Kernel mode may run instructions that user mode is not allowed to run" },
+        { "letter": "B", "text": "Kernel mode runs only on the first processor core" },
+        { "letter": "C", "text": "User mode reaches device registers directly" },
+        { "letter": "D", "text": "User mode switches interrupts off" }
+      ],
+      "key": "A"
+    },
+    {
+      "id": "inner-join-rows",
+      "intended": "mis_keyed",
+      "stem": "Which rows does an SQL INNER JOIN return?",
+      "options": [
+        { "letter": "A", "text": "Every row of both tables, matched or not" },
+        { "letter": "B", "text": "Every row of the left table, with nulls where the right table has no match" },
+        { "letter": "C", "text": "Only the rows with a matching value in both tables" },
+        { "letter": "D", "text": "The rows of the left table that have no match in the right table" }
+      ],
+      "key": "B",
+      "correctKey": "C",
+      "note": "The keyed option describes a LEFT OUTER JOIN. The join types are printed as adjacent rows and near-identical Venn diagrams in most textbooks, so an author writing keys quickly picks the neighbour. A careful reader chooses the rows matched in both tables."
+    },
+    {
+      "id": "binary-1011-decimal",
+      "intended": "clean",
+      "stem": "What is the binary number 1011 written in decimal?",
+      "options": [
+        { "letter": "A", "text": "7" },
+        { "letter": "B", "text": "9" },
+        { "letter": "C", "text": "11" },
+        { "letter": "D", "text": "13" }
+      ],
+      "key": "C"
+    },
+    {
+      "id": "single-node-tree-height",
+      "intended": "ambiguous",
+      "stem": "What is the height of a binary tree that contains exactly one node?",
+      "options": [
+        { "letter": "A", "text": "0" },
+        { "letter": "B", "text": "1" },
+        { "letter": "C", "text": "2" },
+        { "letter": "D", "text": "It has no height" }
+      ],
+      "key": "A",
+      "defensibleKeys": ["A", "B"],
+      "note": "Height counted in edges, the convention in CLRS, makes a single node height 0. Height counted in nodes or levels, the convention in many introductory data structures texts, makes it 1. The stem does not say which convention the course uses."
+    },
+    {
+      "id": "unit-test-scope",
+      "intended": "clean",
+      "stem": "What does a unit test check?",
+      "options": [
+        { "letter": "A", "text": "How many users the service can handle at once" },
+        { "letter": "B", "text": "One small piece of code on its own" },
+        { "letter": "C", "text": "The whole system running against production data" },
+        { "letter": "D", "text": "Whether the code matches the formatting rules of the project" }
+      ],
+      "key": "B"
+    }
+  ]
+}
