@@ -1,5 +1,5 @@
 import { Application } from 'pixi.js'
-import { Live2DModel, MotionPreloadStrategy, MotionPriority } from 'pixi-live2d-display/cubism4'
+import type { Cubism4InternalModel, Live2DModel } from 'pixi-live2d-display/cubism4'
 import { CATS, type Cat, type MascotMotion, MOTION_PLAN, STAGE_HEIGHT, STAGE_WIDTH } from './motions'
 import type { MascotState } from './state'
 
@@ -48,18 +48,46 @@ function loadCore(): Promise<void> {
   return corePromise
 }
 
-function loadModel(cat: Cat, ticker: Application['ticker']): Promise<Live2DModel> {
-  return Live2DModel.from(MODEL_URL[cat], {
-    ticker,
-    autoHitTest: false,
-    autoFocus: false,
-    idleMotionGroup: NO_AUTO_IDLE,
-    motionPreload: MotionPreloadStrategy.ALL
-  })
+// The Cubism 4 build throws at module scope when the core is missing, so it can only be imported
+// once the script above has run. That also keeps pixi and the plugin out of the entry chunk.
+async function loadLive2D(): Promise<typeof import('pixi-live2d-display/cubism4')> {
+  await loadCore()
+  return import('pixi-live2d-display/cubism4')
+}
+
+type CoreModel = Cubism4InternalModel['coreModel']
+
+type ClippingManager = {
+  initialize(
+    model: CoreModel,
+    drawableCount: number,
+    masks: Int32Array[],
+    maskCounts: Int32Array,
+    renderTextures: number
+  ): void
+}
+
+// Tororo and Hijiki use no clipping masks, and the Cubism framework only builds a clipping manager
+// for a model that does. 0.5.0-beta then dereferences that manager unconditionally on the first
+// draw and again on release, so both throw. A manager initialised over zero masks allocates no
+// texture and its setup pass is a no-op, which satisfies both call sites without changing a frame.
+function giveClippingManager(model: Live2DModel, live2d: typeof import('pixi-live2d-display/cubism4')): void {
+  const internal = model.internalModel as Cubism4InternalModel
+  const core = internal.coreModel
+  if (core.isUsingMasking()) return
+
+  const renderer = internal.renderer as unknown as { _clippingManager?: ClippingManager }
+  if (renderer._clippingManager) return
+
+  const construct = (live2d as unknown as { CubismClippingManager_WebGL: new () => ClippingManager })
+    .CubismClippingManager_WebGL
+  const manager = new construct()
+  manager.initialize(core, core.getDrawableCount(), core.getDrawableMasks(), core.getDrawableMaskCounts(), 1)
+  renderer._clippingManager = manager
 }
 
 export async function createStage(canvas: HTMLCanvasElement, onFailure: () => void): Promise<MascotStage> {
-  await loadCore()
+  const live2d = await loadLive2D()
 
   const app = new Application({
     view: canvas,
@@ -72,8 +100,18 @@ export async function createStage(canvas: HTMLCanvasElement, onFailure: () => vo
     sharedTicker: false
   })
 
-  const [tororo, hijiki] = await Promise.all([loadModel('tororo', app.ticker), loadModel('hijiki', app.ticker)])
+  const loadModel = (cat: Cat): Promise<Live2DModel> =>
+    live2d.Live2DModel.from(MODEL_URL[cat], {
+      ticker: app.ticker,
+      autoHitTest: false,
+      autoFocus: false,
+      idleMotionGroup: NO_AUTO_IDLE,
+      motionPreload: live2d.MotionPreloadStrategy.ALL
+    })
+
+  const [tororo, hijiki] = await Promise.all([loadModel('tororo'), loadModel('hijiki')])
   const models: Record<Cat, Live2DModel> = { tororo, hijiki }
+  for (const cat of CATS) giveClippingManager(models[cat], live2d)
   const baseScale: Record<Cat, number> = { tororo: 1, hijiki: 1 }
   const looping: Record<Cat, MascotMotion | null> = { tororo: null, hijiki: null }
   const restarting: Record<Cat, boolean> = { tororo: false, hijiki: false }
@@ -102,7 +140,7 @@ export async function createStage(canvas: HTMLCanvasElement, onFailure: () => vo
     const model = models[cat]
     model.scale.x = entry.mirror ? -baseScale[cat] : baseScale[cat]
     restarting[cat] = true
-    void model.motion(entry.group, entry.index, MotionPriority.FORCE).then((started) => {
+    void model.motion(entry.group, entry.index, live2d.MotionPriority.FORCE).then((started) => {
       restarting[cat] = false
       if (!started) looping[cat] = null
     })
