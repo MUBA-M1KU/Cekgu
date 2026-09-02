@@ -161,7 +161,8 @@
 }
 
 /* NFR-UX-5: product-wide, not only the mascot. !important is deliberate here: this reset has to
-   beat component-level transitions, which is the whole point of the block. */
+   beat component-level transitions, which is the whole point of the block. The attribute carries
+   the user's own Reduce Motion setting, which the system query cannot see. */
 /* biome-ignore-start lint/complexity/noImportantStyles: a reduced-motion reset must win the cascade */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -172,6 +173,16 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+:root[data-reduce-motion="true"],
+:root[data-reduce-motion="true"] *,
+:root[data-reduce-motion="true"] *::before,
+:root[data-reduce-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
 /* biome-ignore-end lint/complexity/noImportantStyles: end of the reduced-motion reset */
 

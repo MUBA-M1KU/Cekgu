@@ -7,6 +7,7 @@ import { ItemRow } from '../components/ItemRow'
 import { Sheet } from '../components/Sheet'
 import { StatusChip } from '../components/StatusChip'
 import { VerdictChip } from '../components/VerdictChip'
+import { Mascot } from '../mascot/Mascot'
 
 // Attention verdicts first and Clear last, so the filter row reads in the order the educator
 // should work through it. FR-RECORD-3, DESIGN.md Layout.
@@ -120,6 +121,8 @@ export function RecordWorkspace() {
           ))}
         </ul>
       )}
+
+      <Mascot record={record} />
     </Sheet>
   )
 }

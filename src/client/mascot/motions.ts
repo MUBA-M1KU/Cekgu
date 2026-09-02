@@ -1,5 +1,10 @@
 import type { MascotState } from './state'
 
+// docs/DESIGN.md "The mascot": a 240 x 160 stage from 1024 px up, a 48 px badge from 600 px.
+export const STAGE_WIDTH = 240
+export const STAGE_HEIGHT = 160
+export const BADGE_SIZE = 48
+
 export const CATS = ['tororo', 'hijiki'] as const
 
 export type Cat = (typeof CATS)[number]

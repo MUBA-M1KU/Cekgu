@@ -1,4 +1,5 @@
 import { Link, Outlet } from 'react-router'
+import { Attribution } from '../components/Attribution'
 import { Lockup } from '../components/Lockup'
 import { Nav } from '../components/Nav'
 
@@ -29,10 +30,7 @@ export function PublicLayout() {
       <main className="mx-auto max-w-[880px] px-4 py-6 sm:px-8">
         <Outlet />
       </main>
-      <footer className="mx-auto max-w-[880px] px-4 py-6 sm:px-8 type-caption text-ink-muted">
-        Tororo and Hijiki are Live2D sample characters, used under the Live2D Free Material License Agreement, and are
-        not Cekgu's own. Built with the Live2D Cubism SDK.
-      </footer>
+      <Attribution />
     </div>
   )
 }
