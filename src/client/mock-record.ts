@@ -1,0 +1,287 @@
+import type { DispositionInput } from '../shared/schemas'
+import type { Attempt, Item, RecordDetail, VerdictCounts } from '../shared/types'
+
+// A stand-in for GET /api/records/:id until #29 lands, shaped exactly like TRD section 15.
+// The FIFO item is the demo's reveal: the supplied key says Stack and both readers chose Queue.
+// Request ids follow the real gateway format; they are illustrative, not live receipts.
+
+const DEEPSEEK = 'deepseek-ai/DeepSeek-V4-Flash-0731'
+const MINIMAX = 'MiniMaxAI/MiniMax-M2.7'
+const KIMI = 'moonshotai/Kimi-K2.6'
+
+let attemptSeed = 0
+
+function attempt(partial: Partial<Attempt> & { requestedModel: string }): Attempt {
+  attemptSeed += 1
+  const started = new Date(Date.UTC(2026, 8, 3, 1, 0, attemptSeed * 7)).toISOString()
+  return {
+    id: `attempt-${attemptSeed}`,
+    servedModel: partial.requestedModel,
+    requestId: `req-17880169133161634${60 + attemptSeed}-${503000 + attemptSeed}`,
+    devshardId: `${65700 + attemptSeed}`,
+    fallbackHeader: null,
+    httpStatus: 200,
+    receiptStatus: 'verified',
+    reading: null,
+    latencyMs: 14300,
+    startedAt: started,
+    finishedAt: started,
+    admitted: true,
+    rejectionReason: null,
+    ...partial
+  }
+}
+
+function options(...texts: string[]) {
+  return texts.map((text, index) => ({ letter: 'ABCDEF'[index] ?? 'A', text }))
+}
+
+type Spec = {
+  stem: string
+  choices: string[]
+  key: string
+  readers: [string, string] | [string]
+  answers: [string, string] | [string]
+  defensible?: [string[], string[]]
+  reasons: [string, string] | [string]
+  verdict: Item['verdict']
+  verdictReason: string
+  timedOut?: string
+}
+
+function buildItem(position: number, spec: Spec): Item {
+  const attempts: Attempt[] = spec.readers.map((model, index) =>
+    attempt({
+      requestedModel: model,
+      reading: {
+        model,
+        answer: spec.answers[index] ?? '',
+        defensible: spec.defensible?.[index] ?? [spec.answers[index] ?? ''],
+        reason: spec.reasons[index] ?? ''
+      }
+    })
+  )
+
+  if (spec.timedOut) {
+    attempts.push(
+      attempt({
+        requestedModel: spec.timedOut,
+        servedModel: null,
+        requestId: null,
+        devshardId: null,
+        httpStatus: null,
+        receiptStatus: 'missing',
+        latencyMs: 90000,
+        admitted: false,
+        rejectionReason: 'The call passed the 90 second evidence cutoff and returned no headers.'
+      })
+    )
+  }
+
+  return {
+    id: `item-${position}`,
+    position,
+    stem: spec.stem,
+    options: options(...spec.choices),
+    key: spec.key,
+    status: 'done',
+    verdict: spec.verdict,
+    verdictReason: spec.verdictReason,
+    attemptsUsed: attempts.length,
+    attempts,
+    dispositions: []
+  }
+}
+
+const SPECS: Spec[] = [
+  {
+    stem: 'Which data structure processes elements in first in, first out order?',
+    choices: ['Stack', 'Queue', 'Binary tree', 'Hash table'],
+    key: 'A',
+    readers: [MINIMAX, KIMI],
+    answers: ['B', 'B'],
+    reasons: [
+      'A queue removes the element that has waited longest, which is first in, first out. A stack is last in, first out.',
+      'First in, first out describes a queue. Stack ordering is the reverse.'
+    ],
+    verdict: 'possible_key_error',
+    verdictReason:
+      'Both readers chose Queue. The supplied key is Stack. Rule: two verified readings agree on a non-key option, so Possible Key Error.'
+  },
+  {
+    stem: 'What is the worst-case time complexity of binary search on a sorted array of n elements?',
+    choices: ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)'],
+    key: 'C',
+    readers: [DEEPSEEK, MINIMAX],
+    answers: ['B', 'B'],
+    reasons: [
+      'Each comparison halves the remaining range, giving a logarithmic bound.',
+      'Binary search discards half the array per step, so the worst case is O(log n).'
+    ],
+    verdict: 'possible_key_error',
+    verdictReason:
+      'Both readers chose O(log n). The supplied key is O(n). Rule: two verified readings agree on a non-key option, so Possible Key Error.'
+  },
+  {
+    stem: 'Which of the following best describes a pure function?',
+    choices: [
+      'It returns the same output for the same input and has no side effects',
+      'It does not use any loops',
+      'It is declared with the function keyword',
+      'It never throws'
+    ],
+    key: 'A',
+    readers: [MINIMAX, KIMI],
+    answers: ['A', 'A'],
+    defensible: [['A'], ['A', 'D']],
+    reasons: [
+      'Referential transparency and the absence of side effects are the definition.',
+      'A is the definition, though a function that never throws is a weak consequence of purity in some treatments.'
+    ],
+    verdict: 'clear',
+    verdictReason:
+      'Both readers chose the key. Reader two also considered "It never throws" defensible; a single opinion never decides.'
+  },
+  {
+    stem: 'In an object-oriented language, what does it mean for a method to be virtual?',
+    choices: [
+      'It can be overridden by a subclass and dispatched at run time',
+      'It has no implementation',
+      'It is private to the class',
+      'It is resolved at compile time'
+    ],
+    key: 'A',
+    readers: [DEEPSEEK, KIMI],
+    answers: ['A', 'B'],
+    defensible: [['A'], ['A', 'B']],
+    reasons: [
+      'A virtual method participates in dynamic dispatch and may be overridden.',
+      'In some languages virtual implies abstract, so B is defensible without more context about the language.'
+    ],
+    verdict: 'split_opinion',
+    verdictReason:
+      'Reader one chose "It can be overridden by a subclass and dispatched at run time" and reader two chose "It has no implementation". Rule: two verified readings commit to different answers, so Split Opinion.'
+  },
+  {
+    stem: 'Which statement about a hash table is correct?',
+    choices: [
+      'Lookup is constant time on average',
+      'Lookup is always constant time',
+      'It keeps its keys in sorted order',
+      'It cannot store duplicate values'
+    ],
+    key: 'A',
+    readers: [MINIMAX, DEEPSEEK],
+    answers: ['A', 'A'],
+    defensible: [
+      ['A', 'B'],
+      ['A', 'B']
+    ],
+    reasons: [
+      'Average-case lookup is constant, but "always" in B is defensible if collisions are assumed away.',
+      'A is correct as stated; B reads as correct under an idealised hash assumption, so the wording admits two answers.'
+    ],
+    verdict: 'possible_ambiguity',
+    verdictReason:
+      'Both readers found more than one defensible option. Rule: two verified readings each identify more than one defensible option, so Possible Ambiguity.'
+  },
+  {
+    stem: 'What does the acronym API stand for?',
+    choices: [
+      'Application Programming Interface',
+      'Applied Program Integration',
+      'Automated Process Invocation',
+      'Abstract Protocol Identifier'
+    ],
+    key: 'A',
+    readers: [KIMI],
+    answers: ['A'],
+    reasons: ['Application Programming Interface is the standard expansion.'],
+    verdict: 'unverified',
+    verdictReason: 'Fewer than two distinct, receipt-verified readings survived, so no verdict is given.',
+    timedOut: DEEPSEEK
+  }
+]
+
+const CLEAN: [string, string[], string][] = [
+  ['Which keyword declares a constant binding in JavaScript?', ['const', 'let', 'var', 'static'], 'A'],
+  [
+    'What does SQL stand for?',
+    ['Structured Query Language', 'Sequential Query Logic', 'Simple Quoted Literal', 'Stored Query Link'],
+    'A'
+  ],
+  ['Which HTTP status code means Not Found?', ['200', '301', '404', '500'], 'C'],
+  ['In Big-O notation, which grows fastest as n increases?', ['O(log n)', 'O(n)', 'O(n log n)', 'O(2^n)'], 'D'],
+  ['Which of these is a compiled language?', ['Python', 'Rust', 'Ruby', 'Bash'], 'B'],
+  ['What is the base of the binary number system?', ['2', '8', '10', '16'], 'A']
+]
+
+const items: Item[] = [
+  ...SPECS.map((spec, index) => buildItem(index + 1, spec)),
+  ...CLEAN.map(([stem, choices, key], index) =>
+    buildItem(SPECS.length + index + 1, {
+      stem,
+      choices,
+      key,
+      readers: [DEEPSEEK, MINIMAX],
+      answers: [key, key],
+      reasons: [
+        'The keyed option is the only correct one.',
+        'The keyed option is correct and the others are clearly wrong.'
+      ],
+      verdict: 'clear',
+      verdictReason: 'Both readers chose the key.'
+    })
+  )
+]
+
+function countBy(list: Item[]): VerdictCounts {
+  const counts: VerdictCounts = {
+    clear: 0,
+    possible_key_error: 0,
+    possible_ambiguity: 0,
+    split_opinion: 0,
+    unverified: 0,
+    pending: 0
+  }
+  for (const item of list) counts[item.verdict] += 1
+  return counts
+}
+
+// Dispositions mutate in place so the demo beat works: record Key Corrected, watch the summary
+// move, and see the machine verdict stay exactly where it was.
+export function mockRecord(id: string): RecordDetail {
+  const nonClear = items.filter((item) => item.verdict !== 'clear')
+  const decided = nonClear.filter((item) => item.dispositions.length > 0).length
+  const status = decided === 0 ? 'ready' : decided === nonClear.length ? 'resolved' : 'in_review'
+
+  return {
+    id,
+    title: 'Introductory Computer Science practice set',
+    subject: 'Computer Science',
+    language: 'en',
+    context: 'First-year practice questions, 12 items',
+    status,
+    isSample: true,
+    expiresAt: null,
+    counts: countBy(items),
+    items: items.map((item) => ({ ...item }))
+  }
+}
+
+export function mockDisposition(itemId: string, input: DispositionInput): void {
+  const item = items.find((candidate) => candidate.id === itemId)
+  if (!item) return
+
+  item.dispositions = [
+    ...item.dispositions,
+    {
+      id: `disposition-${item.dispositions.length + 1}`,
+      kind: input.kind,
+      revisedKey: input.revisedKey ?? null,
+      revisedText: input.revisedText ?? null,
+      note: input.note ?? null,
+      createdAt: new Date().toISOString()
+    }
+  ]
+}
