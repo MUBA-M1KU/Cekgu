@@ -449,7 +449,9 @@ scaffold through four later deploys before anyone noticed, because `GET /` answe
 `POST /api/auth/guest`, which exists in one revision and not the other, exposed it. So `deploy.yml` follows the deploy
 with `gcloud run services update-traffic cekgu --to-revisions <revision>=100`, naming the revision that run built rather
 than `--to-latest`, which a concurrent preview deploy could win. A final step re-reads the service and fails the run
-unless the revision serving 100% is the newest one and `GET /` returns 200. Removing a tag with
+unless the revision serving 100% is **the one that run deployed** and `GET /` returns 200. It compares against that
+revision rather than against the service's newest, because a preview deploy for any open pull request creates newer
+revisions continuously; comparing against those failed a deploy whose traffic was in fact correct. Removing a tag with
 `update-traffic --remove-tags` and routing with `--to-revisions` both leave other tags intact, so preview URLs on open
 pull requests survive a production deploy.
 
