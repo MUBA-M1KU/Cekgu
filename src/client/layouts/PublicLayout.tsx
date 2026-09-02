@@ -5,7 +5,8 @@ import { Nav } from '../components/Nav'
 const PUBLIC_NAV = [
   { to: '/how-it-works', label: 'How It Works' },
   { to: '/sample', label: 'Sample Report' },
-  { to: '/pricing', label: 'Pricing' }
+  { to: '/pricing', label: 'Pricing' },
+  { to: '/trust', label: 'Trust and Privacy' }
 ]
 
 export function PublicLayout() {

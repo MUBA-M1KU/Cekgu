@@ -11,6 +11,7 @@ import { RecordWorkspace } from './pages/RecordWorkspace'
 import { SampleReport } from './pages/SampleReport'
 import { Settings } from './pages/Settings'
 import { SignIn } from './pages/SignIn'
+import { Trust } from './pages/Trust'
 
 // A record is the route back to progress, results and evidence: these are states of one
 // object, not disconnected tools. PRODUCT.md Navigation model.
@@ -23,6 +24,7 @@ export function App() {
           <Route path="how-it-works" element={<HowItWorks />} />
           <Route path="sample" element={<SampleReport />} />
           <Route path="pricing" element={<Pricing />} />
+          <Route path="trust" element={<Trust />} />
           <Route path="sign-in" element={<SignIn />} />
         </Route>
         <Route element={<AppLayout />}>
