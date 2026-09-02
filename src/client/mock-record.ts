@@ -1,5 +1,6 @@
 import type { DispositionInput } from '../shared/schemas'
-import type { Attempt, Item, RecordDetail, RecordSummary, VerdictCounts } from '../shared/types'
+import type { Attempt, Item, Reading, RecordDetail, RecordSummary, VerdictCounts } from '../shared/types'
+import { verdict } from '../shared/verdict'
 
 // A stand-in for GET /api/records/:id until #29 lands, shaped exactly like TRD section 15.
 // The FIFO item is the demo's reveal: the supplied key says Stack and both readers chose Queue.
@@ -44,8 +45,6 @@ type Spec = {
   answers: [string, string] | [string]
   defensible?: [string[], string[]]
   reasons: [string, string] | [string]
-  verdict: Item['verdict']
-  verdictReason: string
   timedOut?: string
 }
 
@@ -78,15 +77,24 @@ function buildItem(position: number, spec: Spec): Item {
     )
   }
 
+  // The fixture runs the real rule over its own admitted readings rather than restating the
+  // verdict by hand, so the screens can never render a verdict the rule would not produce.
+  // Distinctness is by served model, matching how the worker admits readings.
+  const itemOptions = options(...spec.choices)
+  const admitted = attempts
+    .filter((candidate) => candidate.admitted && candidate.reading)
+    .map((candidate) => candidate.reading as Reading)
+  const decided = verdict(admitted, spec.key, itemOptions)
+
   return {
     id: `item-${position}`,
     position,
     stem: spec.stem,
-    options: options(...spec.choices),
+    options: itemOptions,
     key: spec.key,
     status: 'done',
-    verdict: spec.verdict,
-    verdictReason: spec.verdictReason,
+    verdict: decided.verdict,
+    verdictReason: decided.reason,
     attemptsUsed: attempts.length,
     attempts,
     dispositions: []
@@ -103,10 +111,7 @@ const SPECS: Spec[] = [
     reasons: [
       'A queue removes the element that has waited longest, which is first in, first out. A stack is last in, first out.',
       'First in, first out describes a queue. Stack ordering is the reverse.'
-    ],
-    verdict: 'possible_key_error',
-    verdictReason:
-      'Both readers chose Queue. The supplied key is Stack. Rule: two verified readings agree on a non-key option, so Possible Key Error.'
+    ]
   },
   {
     stem: 'What is the worst-case time complexity of binary search on a sorted array of n elements?',
@@ -117,10 +122,7 @@ const SPECS: Spec[] = [
     reasons: [
       'Each comparison halves the remaining range, giving a logarithmic bound.',
       'Binary search discards half the array per step, so the worst case is O(log n).'
-    ],
-    verdict: 'possible_key_error',
-    verdictReason:
-      'Both readers chose O(log n). The supplied key is O(n). Rule: two verified readings agree on a non-key option, so Possible Key Error.'
+    ]
   },
   {
     stem: 'Which of the following best describes a pure function?',
@@ -137,10 +139,7 @@ const SPECS: Spec[] = [
     reasons: [
       'Referential transparency and the absence of side effects are the definition.',
       'A is the definition, though a function that never throws is a weak consequence of purity in some treatments.'
-    ],
-    verdict: 'clear',
-    verdictReason:
-      'Both readers chose the key. Reader two also considered "It never throws" defensible; a single opinion never decides.'
+    ]
   },
   {
     stem: 'In an object-oriented language, what does it mean for a method to be virtual?',
@@ -157,10 +156,7 @@ const SPECS: Spec[] = [
     reasons: [
       'A virtual method participates in dynamic dispatch and may be overridden.',
       'In some languages virtual implies abstract, so B is defensible without more context about the language.'
-    ],
-    verdict: 'split_opinion',
-    verdictReason:
-      'Reader one chose "It can be overridden by a subclass and dispatched at run time" and reader two chose "It has no implementation". Rule: two verified readings commit to different answers, so Split Opinion.'
+    ]
   },
   {
     stem: 'Which statement about a hash table is correct?',
@@ -180,10 +176,7 @@ const SPECS: Spec[] = [
     reasons: [
       'Average-case lookup is constant, but "always" in B is defensible if collisions are assumed away.',
       'A is correct as stated; B reads as correct under an idealised hash assumption, so the wording admits two answers.'
-    ],
-    verdict: 'possible_ambiguity',
-    verdictReason:
-      'Both readers found more than one defensible option. Rule: two verified readings each identify more than one defensible option, so Possible Ambiguity.'
+    ]
   },
   {
     stem: 'What does the acronym API stand for?',
@@ -197,8 +190,6 @@ const SPECS: Spec[] = [
     readers: [KIMI],
     answers: ['A'],
     reasons: ['Application Programming Interface is the standard expansion.'],
-    verdict: 'unverified',
-    verdictReason: 'Fewer than two distinct, receipt-verified readings survived, so no verdict is given.',
     timedOut: DEEPSEEK
   }
 ]
@@ -228,9 +219,7 @@ const items: Item[] = [
       reasons: [
         'The keyed option is the only correct one.',
         'The keyed option is correct and the others are clearly wrong.'
-      ],
-      verdict: 'clear',
-      verdictReason: 'Both readers chose the key.'
+      ]
     })
   )
 ]
