@@ -24,6 +24,9 @@ every other team gets from the same prompt.
 | [`gateway-capabilities.md`](gateway-capabilities.md)       | What the gateway does, and what a Gonka Request ID does and does not prove                               |
 | [`disagreement-as-product.md`](disagreement-as-product.md) | When multi-model divergence is a real signal, and the tests that certify it                              |
 | [`verify-insurance-claims.md`](verify-insurance-claims.md) | Round 11 verification of Tuntut: phenomenon, FMOS process, incumbents, 84/100 against the rubric         |
+| [`verify-akta-kata.md`](verify-akta-kata.md)               | Round 11 verification of Akta Kata: official claims against clause text, the URA s.21(4) case, 79/100    |
+| [`verify-angka.md`](verify-angka.md)                       | Round 11 verification of Angka: LKAN cadence, the RM48.873bn correction, extraction incumbents, 78/100   |
+| [`verify-sarikata-qc.md`](verify-sarikata-qc.md)           | Round 11 verification of Sarikata QC: 1977 subtitle mandate, Netflix QC, XL8 and QE incumbents, 78/100   |
 | [`verify-gig-deactivation.md`](verify-gig-deactivation.md) | Round 11 verification of gig deactivation notices: Act 872 s.14 verbatim, tribunal status, 76/100        |
 
 ## What belongs here

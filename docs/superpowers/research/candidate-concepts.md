@@ -140,16 +140,26 @@ capability. This round starts from a Malaysian phenomenon of 2025–26 and admit
 - **Text only.** The gateway confirmed on 2 Sept 2026 that image features are unsupported; local OCR was explicitly
   permitted by the GonkaRouter team the same day.
 
+**Team judgement, not research.** The team's own read on 2 Sept 2026, after the five verifications below, was that these
+candidates sit outside the team's domain expertise and outside that of the track judges, GonkaRouter's tech lead and
+product manager ([`brief.md`](../../brief.md#people)). A further round constrained to that expertise was requested.
+Nothing in the reports was rescored on it.
+
 ### Round 11 ranking
 
 | #     | Concept                                 | Novelty | Real user         | Track fit | Demo | Build | **Total** | Verdict |
 | ----- | --------------------------------------- | ------: | ----------------- | --------: | ---: | ----: | --------: | ------- |
 | **1** | **Tuntut** — insurance claim rejections |      20 | 15 `[ASSUMPTION]` |        19 |   13 |    17 |    **84** | Viable  |
-| 2     | Gig deactivation notices                |      18 | 13 `[ASSUMPTION]` |        18 |   12 |    15 |    **76** | Viable  |
+| 2     | Akta Kata — bill versus explainer       |      19 | 14 `[ASSUMPTION]` |        19 |   12 |    15 |    **79** | Viable  |
+| 3     | Angka — figures from public reports     |      19 | 14 `[ASSUMPTION]` |        18 |   11 |    16 |    **78** | Viable  |
+| 3     | Sarikata QC — subtitle and notice QC    |      19 | 13 `[ASSUMPTION]` |        18 |   12 |    16 |    **78** | Viable  |
+| 5     | Gig deactivation notices                |      18 | 13 `[ASSUMPTION]` |        18 |   12 |    15 |    **76** | Viable  |
 
-Full verification with every citation: [`verify-insurance-claims.md`](verify-insurance-claims.md) and
-[`verify-gig-deactivation.md`](verify-gig-deactivation.md). Real user carries `[ASSUMPTION]` in both, as elsewhere in
-this ledger: the person is inferred from published survey and filing figures, not from talking to one.
+Full verification with every citation: [`verify-insurance-claims.md`](verify-insurance-claims.md),
+[`verify-akta-kata.md`](verify-akta-kata.md), [`verify-angka.md`](verify-angka.md),
+[`verify-sarikata-qc.md`](verify-sarikata-qc.md) and [`verify-gig-deactivation.md`](verify-gig-deactivation.md). Angka
+and Sarikata QC tie at 78. Real user carries `[ASSUMPTION]` in all five, as elsewhere in this ledger: the person is
+inferred from published survey, filing and workflow figures, not from talking to one.
 
 ### Rank 1 — Tuntut
 
@@ -179,7 +189,60 @@ adjudicator says disputes turn on, and the clear exclusion stays clear in both d
 - Contra proferentem is a last-resort doctrine and FMOS decides on fairness, so the product must say "independent
   readers split on this condition", never "legally ambiguous".
 
-### Rank 2 — Gig deactivation notices
+### Rank 2 — Akta Kata
+
+A journalist or NGO researcher has a bill and what the government says it does: a minister's assurance, an agency
+briefing, the Explanatory Statement. Independent models read one claim against one clause, blind to each other, and the
+split is the output. The reference is a fixed statute, not retrieved evidence, and the adjudicator arrives within weeks
+of tabling: committee amendments, withdrawals, the minister's winding-up speech in Hansard.
+
+**Strongest verified fact.** In February 2025 the Prime Minister said there would be "no provision under the proposed
+act that could lead to owners...losing ownership of their property"; in August 2025 the Malaysian Bar read s.21(4) of
+the tabled Urban Renewal Bill as compulsory acquisition for dissenting owners. No tool, Malaysian or global, was found
+that checks an official explainer against clause text with any model.
+
+**Biggest risk.** The phenomenon is proven for ministers' assurances and briefings, not for the Explanatory Statement
+the candidate names as its input, and the concept sits one sentence from the track's own Fact Checker example. Both are
+`PRODUCT.md` framing fixes, not code.
+
+### Rank 3 — Angka
+
+A reporter drops an official PDF (an LKAN audit report, a Hansard written reply, a budget document) and three models
+from three labs extract each figure blind. A figure is published only when two readings agree after unit normalisation;
+splits are queued for a human with the source paragraph and a request id per reading. Nobody asks a question and no
+prose is generated. The next drop is dated: LKAN 3/2026 lands in the October 2026 sitting.
+
+**Strongest verified fact.** Within 24 hours of LKAN 2/2025 being tabled, the Auditor-General corrected "several media
+portals" that had reported RM48.873bn of audited programme cost as leakages or losses, and secondary coverage of the
+same report carries RM48.78bn. Agreement-gated extraction is published research (MADP, bioRxiv 2026); the corpus, the
+user and the per-reading receipt are not.
+
+**Biggest risk.** The user-pain evidence is indirect: the documented 2025 case is a semantic misreading, not a dropped
+digit, and no Malaysian journalist was found stating the retyping pain in their own words. The report's first-ranked
+build risk is that clean, text-native LKAN pages give three readers nothing to split on, so the demo page must be picked
+in advance.
+
+### Rank 3 — Sarikata QC
+
+A QC editor at a subtitling vendor uploads a delivered subtitle file. A forward reader translates each source cue blind,
+a back reader from another lab back-translates the delivered cue without seeing the source, and a diff reader lists
+every fact that changed: negation, names, numbers, agent. A cue passes only when nothing changed and the forward reading
+agrees; otherwise it is queued with both readings and their request ids.
+
+BM subtitles have been mandatory on every publicly shown film and advertisement since 1977, Netflix rejects files that
+fail QC outright, and Iyuno's Kuala Lumpur facility is the second-largest in Asia. The bilingual government-notice use
+fails the second-use test and drifts toward the banned translation cluster, so it stays a footnote, not a demo path.
+
+**Strongest verified fact.** The June 2026 GeekLink roundup of seven subtitle QA tools finds all of them rule-based or
+ASR-confidence, and XL8's own AQC documentation (Aug 2025) describes a rewrite pass with no disclosed mechanism, so
+per-cue semantic verification with provenance is an empty product slot.
+
+**Biggest risk.** The phenomenon is under-evidenced for Malaysia 2023-26: no viral subtitle blunder and no viral
+government mistranslation newer than 2018-2020 was found, so the pitch must rest on QC rejection and turnaround
+pressure, not virality. No named Malaysian buyer or stated pain was found either; one conversation with a KL vendor QC
+desk would move Real user from 13 to 17.
+
+### Rank 5 — Gig deactivation notices
 
 A rider or driver receives a suspension or deactivation notice too vague to answer. The Gig Workers Act 2025 (Act 872),
 in force since 31 March 2026 and covering 1.64 million workers, makes written notice, a right to be heard and a written
