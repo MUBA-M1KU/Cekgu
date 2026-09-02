@@ -33,6 +33,7 @@ Contents:
 | **A Request ID resolves to nothing public** — **SUPERSEDED 2026-08-31**                   | A public receipts endpoint shipped. See [Receipts](#receipts--shipped-2026-08-31)                                                                                      |
 | **The router silently substitutes models under load**                                     | **Threatens the track's multi-model requirement.** Send `X-Gonka-No-Fallback: true`                                                                                    |
 | **Kimi-K2.6 is effectively unreliable right now**                                         | ~4 of 5 requests timed out on 2026-08-30; **100% on the evening of 2026-09-02**. The vendor recommends DeepSeek and MiniMax. Kimi is the only vision model             |
+| **The published burst does not hold for our account** — measured 2026-09-03               | 36 concurrent item calls produced account-level `429`; four concurrent calls were accepted. Bound the queue and retry                                                  |
 
 ## Receipts — shipped 2026-08-31
 
@@ -110,6 +111,19 @@ The tech lead's own guidance, worth following verbatim:
 either stall for two minutes or return nothing parseable. Interpretation: the reasoning-only reply is the
 low-`max_tokens` failure from the TRD's gotcha 3 recurring at prompt scale — a longer prompt drives the visible
 reasoning past the output budget before the answer starts. `[ASSUMPTION]` Not confirmed by inspecting token counts.
+
+**Measured 2026-09-03, 00:49–01:08 MYT.** The Vetting Room benchmark sent short item-level prompts in waves of four,
+with no fallback and a public receipt check. MiniMax completed 24 of 24 calls, 13 within 30 seconds, at 14.3–73.8
+seconds. Kimi completed 13 of 24, none within 30 seconds, at 35.1–82.7 seconds. DeepSeek returned an upstream `429` and
+then exceeded 90 seconds in separate one-item health probes. Only 13 of 24 item-runs obtained two model families inside
+90 seconds, and none obtained two inside 30 seconds.
+
+The preceding 36-call attempt was rejected by the gateway across models with
+`{"error":{"code":"rate_limited","message":"too many concurrent requests for this account; lower your parallelism and retry"}}`.
+Four concurrent calls were accepted consistently in the valid run. Interpretation: a paper must enter a bounded,
+asynchronous queue; the UI must expose **Unverified** as an ordinary state, and the demo cannot wait for a fresh full
+paper. Full classification results and request-id examples are in
+[`three-day-rescore.md`](three-day-rescore.md#the-mechanism-benchmark--failed-3-september).
 
 ## Track requirement clarified
 

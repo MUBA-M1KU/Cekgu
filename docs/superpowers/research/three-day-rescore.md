@@ -1,17 +1,20 @@
 # The three-day rescore
 
 Every live concept in [`candidate-concepts.md`](candidate-concepts.md), rescored on 2 September 2026 against the build
-window actually left, with five prior-art checks run the same day. This is the Markdown mirror of the rendered report
-"The Three-Day Rescore", published as a private Claude artifact; this file is the version of record.
+window actually left, with five prior-art checks run the same day and a second opinion recorded on 3 September. This is
+the Markdown mirror of the rendered report "The Three-Day Rescore", published as a private Claude artifact; this file is
+the version of record.
 
 **Method.** One evaluator scored 22 concepts on [`RUBRIC.md`](RUBRIC.md) with Buildability rebased to roughly 2.5 days.
 Five prior-art searches were run by delegated agents with live web search, each under a fifteen-call budget, so a
-negative result is weaker than a positive one. Real User scores are reasoned, not researched with users, and are
+negative result is weaker than a positive one. A second evaluator then challenged the recommendation against Round 11,
+the team's experience and newly found competitors. Real User scores are reasoned, not researched with users, and are
 `[ASSUMPTION]` throughout, as in the ledger. Interpretation is marked where it appears.
 
 Contents:
 
 1. [The verdict](#the-verdict)
+1. [The second opinion](#the-second-opinion)
 1. [The window](#the-window)
 1. [Verified on 2 September](#verified-on-2-september)
 1. [The rescore](#the-rescore)
@@ -27,15 +30,151 @@ Contents:
 The ledger's ten rounds scored buildability against nine days. About two and a half remain once the doc gate and the
 submission deliverables are paid for. Rescored against that clock, one concept clears the rubric's bar of 70.
 
-| Verdict      | Concept            | Now | Ledger                       | Why                                                                                  |
-| ------------ | ------------------ | --: | ---------------------------- | ------------------------------------------------------------------------------------ |
-| **Lock**     | Vetting Room       |  80 | 85, Round 9 rank 2           | The four track requirements are the mechanism; text-only; control and aggregate live |
-| **Fold in**  | Same-Model-Twice   |  68 | 92, Round 8 rank 1           | The router declares substitution in a header. A feature, not a product               |
-| **Fallback** | Bil Elektrik Faham |  65 | 73 as Bil Tinggi, Round 4 #3 | Only if the pick is rejected and the EEI band table is found on day one              |
+| Verdict      | Concept            | Now | Ledger                       | Why                                                                     |
+| ------------ | ------------------ | --: | ---------------------------- | ----------------------------------------------------------------------- |
+| **Hold**     | Vetting Room       |  74 | 85, Round 9 rank 2           | Correct when verified; the live two-model availability gate failed      |
+| **Fold in**  | Same-Model-Twice   |  68 | 92, Round 8 rank 1           | The router declares substitution in a header. A feature, not a product  |
+| **Fallback** | Bil Elektrik Faham |  65 | 73 as Bil Tinggi, Round 4 #3 | Only if the pick is rejected and the EEI band table is found on day one |
 
 **Vetting Room** in one line: three models from three labs sit the exam blind before the students do. Where they
 disagree with the key, or with each other, the lecturer looks. It is text-only with no external data, and it is the only
 candidate whose control set and aggregate can be shown live.
+
+The 3 September prior-art correction reduces Vetting Room's Novelty score from 18 to 12 and its pre-benchmark total from
+80 to 74. No other score was raised to compensate. It still clears the rubric's numeric bar, but the mechanism test
+below blocks an unconditional lock: the case now rests on whether the team accepts an asynchronous, retrying workflow
+rather than the one-minute full-paper live run originally pitched.
+
+## The second opinion
+
+**Pre-test recommendation, 3 September 2026.** Lock Vetting Room for product documentation and stop comparing concepts
+unless the mechanism benchmark fails its written kill criteria. It failed on availability and latency, although every
+consensus it did reach was correct. Vetting Room therefore remains the selected concept but is on an architecture hold,
+not ready for synchronous full-paper implementation. This is a second opinion on the research, not user research and not
+proof that an institution will pay.
+
+### The product in plain language
+
+Vetting Room is a safety check for multiple-choice questions before students sit the exam. A lecturer supplies a
+question and its answer key. Independent models answer the question without seeing the key or one another; the product
+then compares those answers and asks the lecturer to inspect only the possible key errors and ambiguous questions.
+
+If a Computer Science question asks which data structure follows FIFO, but the key mistakenly says **Stack**, two
+independent answers of **Queue** produce **Possible key error**. The system does not change the paper or grade a
+student. It gives the lecturer an early warning and leaves the decision with a person.
+
+> **"As students, we accept losing marks when we are wrong. What feels unfair is losing marks because the exam itself
+> was wrong. Vetting Room lets independent AI reviewers check each question before the paper reaches us. It flags a
+> possible wrong key or a question with more than one defensible reading, shows the lecturer why, and leaves the final
+> decision with them. Check the exam before the exam checks us."**
+
+### Why this selection fits the team and the track
+
+- **The harm is immediately understood.** Students know why one incorrect mark matters, while lecturers know the cost of
+  corrections, remarking and appeals after an exam
+- **The team can speak from experience.** Four Computer Science students can supply and explain a credible CS question
+  set without pretending to be insurance, legal or medical experts
+- **The technical requirement is the product.** Blind model answers, a fixed disagreement rule and a request ID for
+  every answer are necessary to the warning, not additions made for judging
+- **The input and decision rule are small.** Typed multiple-choice questions need no OCR, live search, private dataset
+  or external institution. The measured gateway tail still makes a synchronous full-paper run unsafe; the team must
+  choose an asynchronous queue, bounded retries and a smaller live demo before this becomes a buildability strength
+
+### Who benefits, who uses and who pays
+
+| Role            | First segment                                            | Value received                                                |
+| --------------- | -------------------------------------------------------- | ------------------------------------------------------------- |
+| **Beneficiary** | University students                                      | Fewer avoidable marks lost to a wrong key or unclear question |
+| **Operator**    | Lecturer, moderator or assessment editor                 | A focused review queue before release                         |
+| **Buyer**       | Department, training provider or certification publisher | Less review effort, fewer corrections and a reusable QA trail |
+
+`[ASSUMPTION]` Willingness to pay has not been tested. Universities may already consider human vetting sufficient, and
+their confidentiality rules may block unreleased papers from a decentralised network. The cleaner first commercial
+segment is therefore a training provider, certification publisher or practice-question bank with recurring,
+lower-sensitivity content. Universities remain the social-impact story and a later segment, not a promised first sale.
+
+### The competitive reality
+
+Two products are direct evidence that the problem and mechanism are not inventions; three enterprise platforms are
+strong alternatives to buying another tool.
+
+| Alternative                     | What it already does                                                                   | Honest distinction for Vetting Room                                                       |
+| ------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [ExamEval][exameval-miskeyed]   | Educator-facing AI analysis can flag a likely mis-key when a key or explanation exists | Blind, separately receipted model readings and a public rule instead of one opaque result |
+| [CramKit][cramkit-verify]       | Blind re-answers its own practice bank with two model families and adjudicates splits  | A lecturer brings an external paper and controls the final review                         |
+| [FastTest][fasttest-item-bank]  | Secure enterprise item bank with human review stages and an audit trail                | A lightweight pre-screen rather than a full test-development platform                     |
+| [Questionmark][questionmark-ai] | AI-assisted authoring, item banking and collaborative review                           | Checks an existing key through independent solvers instead of generating another draft    |
+| [Elsevier][elsevier-assessment] | Nursing assessment authoring plus post-exam item analysis and regrading                | Cross-checks before students sit the paper and is not tied to one discipline              |
+
+These differences are useful positioning, not a structural moat. Any well-resourced incumbent could copy the workflow;
+Vetting Room must win this hackathon through a complete, transparent implementation and a clearer demo.
+
+### The why-not questions
+
+- **Why not paste the paper into ChatGPT?** A single chat is one opinion, can anchor on the supplied key and does not
+  prove that independent model families reached the result. Vetting Room withholds the key during each solve, verifies
+  distinct model receipts and shows disagreement instead of hiding it
+- **Why not rely on the existing human vetting committee?** Keep it. Vetting Room is a first-pass risk light that lets
+  the committee spend its limited attention on flagged items; it never approves the paper or overrules a reviewer
+- **Why not fix the key after the exam?** Post-exam analysis can repair a score, but only after students are affected
+  and staff must investigate, communicate and remark. The product moves one check before release
+- **Why not use one stronger model?** One confident answer cannot reveal its own blind spot. Two or more genuinely
+  distinct models create the disagreement signal, and fewer than two receipt-verified answers yields **Unverified**,
+  never a verdict
+- **Why not use ExamEval or copy CramKit?** ExamEval is the direct incumbent and CramKit already demonstrates the blind
+  multi-family mechanism. The narrow answer is an educator-facing review of an external paper with visible Gonka Request
+  IDs, receipt-verified model identity and an explicit consensus rule. Do not claim the category is new
+- **Why not choose Tuntut, Round 11's 84-point leader?** Its score omitted team and judge domain fit. Its live verdict
+  prompt produced zero model disagreement, while its legal, medical and privacy stakes demand expertise the team does
+  not have. Vetting Room gives the team a more credible story and a cleaner, directly adjudicable demo
+- **Why would anyone pay?** `[ASSUMPTION]` A recurring question-bank operator may pay to reduce reviewer time and catch
+  defects before publication. That claim needs a buyer conversation; student sensitivity proves importance, not a budget
+- **Why would a lecturer upload a confidential final paper?** Many should not. UiTM's own guideline calls final papers
+  confidential, and decentralised node operators can see prompt plaintext. Version one must use past papers, practice
+  questions and lower-sensitivity banks unless an institution explicitly approves otherwise
+
+### The mechanism benchmark — failed 3 September
+
+**Method.** Twelve typed CS questions: eight clean controls, two deliberately mis-keyed items and two deliberately
+ambiguous items. MiniMax and Kimi answered each item blind twice with a cache-busting nonce, `X-Gonka-No-Fallback: true`
+and a 90-second evidence cutoff. Every admitted reading had a public receipt whose served model matched the requested
+model. The answer key stayed local until classification.
+
+Two preliminary runs were rejected as invalid rather than counted against the product. Putting all twelve items in one
+prompt made all three models exceed 30 seconds, reproducing the known long-prompt failure. Sending 36 item-level calls
+at once then returned
+`{"error":{"code":"rate_limited","message":"too many concurrent requests for this account; lower your parallelism and retry"}}`
+across the account. The valid run processed two questions at a time, four concurrent calls, which the gateway accepted.
+
+| Result                                     | Pass 1    | Pass 2    | Acceptance threshold                |
+| ------------------------------------------ | --------- | --------- | ----------------------------------- |
+| Receipt-verified two-model item verdicts   | 10 of 12  | 3 of 12   | 12 of 12 in both passes             |
+| Clean: correct / false flag / unverified   | 8 / 0 / 0 | 1 / 0 / 7 | At most one false flag; none absent |
+| Mis-keyed: correct / unverified            | 2 / 0     | 1 / 1     | 2 / 0 in both passes                |
+| Ambiguous: correct / unverified            | 0 / 2     | 1 / 1     | 2 / 0 in both passes                |
+| Items with two verified models within 30 s | 0 of 12   | 0 of 12   | 12 of 12 in both passes             |
+| MiniMax receipt-verified completions       | 12 of 12  | 12 of 12  | Supporting evidence                 |
+| Kimi receipt-verified completions          | 10 of 12  | 3 of 12   | Supporting evidence                 |
+
+**Accuracy finding.** All 13 item verdicts that obtained two distinct receipts matched the planted state, and no clean
+item was falsely flagged. The two verified mis-key verdicts in pass 1 independently chose **Queue** over the planted
+**Stack** key and **domain-to-IP translation** over the planted **encryption** key for the same reasons. MiniMax also
+identified both ambiguous controls in pass 1, but Kimi timed out, so the fail-closed rule correctly returned
+**Unverified** rather than counting one opinion twice.
+
+Two publicly queryable examples preserve the evidence: pass 1's DNS key error used MiniMax request
+`req-1788368110223424388-206439` and Kimi request `req-1788368110204753015-206436`; pass 2's application-layer ambiguity
+used MiniMax request `req-1788368796315365277-209871` and Kimi request `req-1788368796379822838-209881`.
+
+**Latency and availability finding.** MiniMax completed 24 of 24 calls, but only 13 inside 30 seconds; successful calls
+ranged from 14.3 to 73.8 seconds. Kimi completed 13 of 24, none inside 30 seconds; successful calls ranged from 35.1 to
+82.7 seconds. Separate one-item health probes returned an upstream `429` and then a 90-second timeout from DeepSeek, so
+it could not replace Kimi during this window.
+
+**Verdict: failed.** The classification rule is promising, but the written gate required every planted defect to reach
+its intended state in both passes and two verified models inside 30 seconds. Neither happened. The evidence supports an
+asynchronous review queue with bounded retries and an **Unverified** state; it does not support the original synchronous
+full-paper demo. Choosing that architecture changes the demo and needs team approval before `PRODUCT.md` is written.
 
 ## The window
 
@@ -65,16 +204,26 @@ results are stated as negative. Full citations are in [Sources](#sources).
 
 ### Vetting Room: prior art and institutional practice
 
-**No product applies blind multi-solver disagreement to a lecturer's answer key.** [ExamEval][exameval-miskeyed], the
-nearest, is a single-model flaw taxonomy: it has a "miskeyed answer" article but never sits the paper. Inspera,
-Questionmark, Turnitin, Canvas and Moodle were searched for pre-administration AI solving; nothing was found.
+**Correction, 3 September: AI exam vetting and blind multi-model review both have prior art.**
+[ExamEval][exameval-miskeyed] says its educator-facing analysis can check whether a mis-key is likely when a correct
+answer or explanation is supplied. [CramKit][cramkit-verify] blind re-answers its own certification practice questions
+with two model families, holds back any disagreement, sends flags to a third adjudicator and retains human review for
+unresolved cases. The earlier claim that no product sits the paper was false.
+
+**The narrower product surface remains distinct, but not defensible as a moat.** CramKit describes an internal quality
+pipeline for its own question bank, while Vetting Room accepts a lecturer's external paper and makes each model reading,
+request ID, receipt check and fixed decision rule visible. ExamEval's cited public pages do not describe independent
+model families or per-inference provenance. Both incumbents could add those features; the pitch must say "receipt-backed
+pre-vetting for your paper", never "the first AI to check an exam".
 
 **The mechanism exists in research.** [Amiri-Margavi et al.][arxiv-2411-16797] use inter-model consensus across four
 models to judge answer reliability and question ambiguity, on LLM-generated questions with no key. A medRxiv paper of 4
 May 2026 uses multi-LLM disagreement to find human annotation errors in clinical data `[NEEDS SOURCE]` for the URL. No
 paper was found that runs multiple solvers against a real answer key to flag mis-keyed exam items.
 
-**Vetting is real and named.** Vetting committees are documented at UniSZA (a two-level structured procedure), UMT
+**Vetting is real and named.** UiTM's final-examination guideline says every question paper must be vetted thoroughly by
+the faculty's Examination or Vetting Committee, and also calls final papers confidential documents
+([UiTM][uitm-vetting]). Vetting committees are also documented at UniSZA (a two-level structured procedure), UMT
 (guideline dated 5 March 2019), UPSI, UMPSA and USIM.
 
 MQA's "Guidelines to Good Practices: Assessment of Students" (2019) is summarised as requiring internal and external
@@ -181,7 +330,7 @@ those totals were never comparable with these. Concepts the ledger already kille
 
 |   # | Concept             | From   | Prev | Nov | User | Fit | Demo | Build | Total | Verdict  |
 | --: | ------------------- | ------ | ---: | --: | ---: | --: | ---: | ----: | ----: | -------- |
-|   1 | **Vetting Room**    | R9 #2  |   85 |  18 |   15 |  18 |   12 |    17 |    80 | Lock     |
+|   1 | **Vetting Room**    | R9 #2  |   85 |  12 |   15 |  18 |   12 |    17 |    74 | Hold     |
 |   2 | Hound               | R9 #1  |   94 |  23 |   12 |  17 |   13 |     6 |    71 | No       |
 |   3 | Due Process         | R9 #4  |   77 |  17 |   10 |  18 |    9 |    14 |    68 | No       |
 |   4 | Same-Model-Twice    | R8 #1  |   92 |  14 |    6 |  20 |   10 |    18 |    68 | Fold in  |
@@ -336,11 +485,11 @@ stage that they were planted.
 ### The novelty test, answered
 
 - **Convergence count: zero to one** of about thirty teams. The predicted field in
-  [`competitor-scan.md`](competitor-scan.md) is consumer checkers with a phone; nothing in it targets a lecturer with a
-  paper to set
-- **Incumbent: ExamEval.** It checks how a stem is written against a flaw taxonomy. It never sits the exam, so it cannot
-  find a mis-keyed answer, and as a single-model product it cannot offer a decorrelated second opinion without becoming
-  a multi-vendor router
+  [`competitor-scan.md`](competitor-scan.md) is consumer checkers with a phone; a lecturer-side exam QA tool remains an
+  unlikely hackathon duplicate, but it is an existing product category
+- **Direct incumbent: ExamEval. Mechanism incumbent: CramKit.** ExamEval can flag a likely mis-key, and CramKit already
+  blind re-answers with two model families. Vetting Room's narrower distinction is external-paper intake with visible,
+  receipt-verified model identity and a fixed four-state rule. That is useful and demoable, but incumbents could copy it
 - **Second use:** the same lecturer, three weeks later, with the next quiz and the bank they revised after the first
   flags
 
@@ -352,7 +501,8 @@ stage that they were planted.
   audience is lecturers rather than the vulnerable public the track's examples name; say that plainly
 - **Presentation and Clarity, 20, and UX and Design, 10.** A list with chips is easy to make excellent and hard to make
   loud
-- **Originality.** High within this track
+- **Originality.** Moderate. The category and blind multi-family mechanism have prior art; transparent Gonka receipts
+  and an educator-controlled review surface are the track-specific distinction
 
 ## Ranks 2 to 5
 
@@ -435,13 +585,22 @@ changed:
 
 ## Sources
 
-All accessed 2026-09-02.
+Accessed 2026-09-02 unless an entry says otherwise.
 
 - Amiri-Margavi et al., "Enhancing Answer Reliability Through Inter-Model Consensus of LLMs", arXiv 2411.16797, v2 24
   February 2025: <https://arxiv.org/abs/2411.16797>
 - "Multi-LLM Disagreement as a Scalable Detector of Human Annotation Errors in Structured Data from Clinical Free-Text",
   medRxiv, 4 May 2026 `[NEEDS SOURCE]` for the URL
 - ExamEval, "Miskeyed Answer, Item Writing Flaws": <https://www.exameval.com/articles/flaws/miskeyed-answer>
+- CramKit, "How CramKit verifies every question", accessed 2026-09-03: <https://cramkit.com/how-we-verify>
+- UiTM, "Guidelines on Preparation of Final Examination Questions Papers", accessed 2026-09-03:
+  <https://fskm.uitm.edu.my/v4/images/quality/proseduroperasi/PKO09-Penyediaan-Kertas-Soalan-Peperiksaan-Akhir.pdf>
+- Assessment Systems Corporation, "Enterprise Item Bank Software for Stronger Assessment", accessed 2026-09-03:
+  <https://assess.com/item-banking/>
+- Questionmark, "Online Exam Test Software & Exam Authoring", accessed 2026-09-03:
+  <https://www.questionmark.com/platform/flexible-authoring/>
+- Elsevier, "Elsevier's Assessment Builder", accessed 2026-09-03:
+  <https://www-prod.elsevier.com/products/elseviers-assessment-builder>
 - UMT, "Garis Panduan Penyediaan Kertas Soalan Peperiksaan Akhir", 5 March 2019; UniSZA structured vetting procedure,
   ResearchGate; MQA "Guidelines to Good Practices: Assessment of Students", 2019, PDF body unverified
 - Berita Harian, "Jangan terpedaya surat tawaran palsu, UM", August 2017:
@@ -483,6 +642,12 @@ All accessed 2026-09-02.
   <https://arxiv.org/html/2601.22290v1>
 
 [exameval-miskeyed]: https://www.exameval.com/articles/flaws/miskeyed-answer
+[cramkit-verify]: https://cramkit.com/how-we-verify
+[uitm-vetting]:
+  https://fskm.uitm.edu.my/v4/images/quality/proseduroperasi/PKO09-Penyediaan-Kertas-Soalan-Peperiksaan-Akhir.pdf
+[fasttest-item-bank]: https://assess.com/item-banking/
+[questionmark-ai]: https://www.questionmark.com/platform/flexible-authoring/
+[elsevier-assessment]: https://www-prod.elsevier.com/products/elseviers-assessment-builder
 [arxiv-2411-16797]: https://arxiv.org/abs/2411.16797
 [bharian-um]: https://www.bharian.com.my/berita/nasional/2017/08/310508/jangan-terpedaya-surat-tawaran-palsu-um
 [upu]: https://upu.mohe.gov.my/

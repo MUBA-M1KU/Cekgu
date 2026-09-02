@@ -1,7 +1,10 @@
 # Candidate concepts
 
-Eleven rounds of concept exploration, scored against [`RUBRIC.md`](RUBRIC.md). **No concept is locked** — Round 11 is
-the current ranking, while Round 10 and every earlier round remain in this document as research history.
+Eleven rounds of concept exploration, scored against [`RUBRIC.md`](RUBRIC.md). **Vetting Room is the conditional
+selection as of 3 September 2026** after a second-opinion review of Round 11 and the remaining build window. Its live
+mechanism benchmark then failed the availability threshold, so product architecture still needs a team decision. Round
+11 and every earlier round remain in this document as research history; the rationale and measured result are in
+[`three-day-rescore.md`](three-day-rescore.md#the-second-opinion).
 
 **Round 3 method.** Five decorrelated generation briefs (mass appeal, money, revelation, Malaysian daily life,
 spectacle), each carrying a ban list and a hard gate, then a hostile selection pass. Delegated models produced raw
@@ -168,6 +171,14 @@ Full verification with every citation: [`verify-insurance-claims.md`](verify-ins
 [`verify-sumber.md`](verify-sumber.md) and [`verify-gig-deactivation.md`](verify-gig-deactivation.md). Angka, Sarikata
 QC, Minit and Sumber tie at 78. Real user carries `[ASSUMPTION]` in all seven, as elsewhere in this ledger: the person
 is inferred from published survey, filing and workflow figures, not from talking to one.
+
+**Selection after Round 11.** The table deliberately did not score team familiarity, judge legibility or the shorter
+build window. Its 84 therefore remains the result of the Round 11 method, not the final product decision. On 3 September
+the team selected Vetting Room after a separate review found that four Computer Science students can explain the exam
+problem from lived experience, demonstrate it with their own subject matter and make every GonkaRouter requirement part
+of the product. The 3 September mechanism benchmark produced no wrong consensus but failed on availability and latency,
+so the selection is conditional on an asynchronous or retrying product design; see
+[`The second opinion`](three-day-rescore.md#the-second-opinion).
 
 ### Rank 1 — Tuntut
 
