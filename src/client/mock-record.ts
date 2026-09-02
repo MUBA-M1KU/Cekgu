@@ -1,5 +1,5 @@
 import type { DispositionInput } from '../shared/schemas'
-import type { Attempt, Item, RecordDetail, VerdictCounts } from '../shared/types'
+import type { Attempt, Item, RecordDetail, RecordSummary, VerdictCounts } from '../shared/types'
 
 // A stand-in for GET /api/records/:id until #29 lands, shaped exactly like TRD section 15.
 // The FIFO item is the demo's reveal: the supplied key says Stack and both readers chose Queue.
@@ -284,4 +284,71 @@ export function mockDisposition(itemId: string, input: DispositionInput): void {
       createdAt: new Date().toISOString()
     }
   ]
+}
+
+// A stand-in library for GET /api/records and DELETE /api/records until #29 lands.
+let library: RecordSummary[] = [
+  {
+    id: 'sample',
+    title: 'Introductory Computer Science practice set',
+    subject: 'Computer Science',
+    status: 'ready',
+    itemCount: 12,
+    attentionCount: 5,
+    isSample: true,
+    expiresAt: null,
+    updatedAt: '2026-09-03T01:08:00Z'
+  },
+  {
+    id: 'rec-week-4',
+    title: 'Week 4 data structures quiz',
+    subject: 'Computer Science',
+    status: 'in_review',
+    itemCount: 8,
+    attentionCount: 2,
+    isSample: false,
+    expiresAt: '2026-09-04T09:00:00Z',
+    updatedAt: '2026-09-03T00:41:00Z'
+  },
+  {
+    id: 'rec-networks',
+    title: 'Networking fundamentals revision',
+    subject: 'Computer Networks',
+    status: 'checking',
+    itemCount: 6,
+    attentionCount: 0,
+    isSample: false,
+    expiresAt: '2026-09-04T07:20:00Z',
+    updatedAt: '2026-09-03T00:12:00Z'
+  },
+  {
+    id: 'rec-algebra',
+    title: 'Linear algebra warm-up',
+    subject: 'Mathematics',
+    status: 'resolved',
+    itemCount: 10,
+    attentionCount: 0,
+    isSample: false,
+    expiresAt: null,
+    updatedAt: '2026-09-02T18:55:00Z'
+  }
+]
+
+export function mockRecordList(query: { q?: string; status?: string; attention?: boolean }): RecordSummary[] {
+  return library
+    .filter((record) => (query.status ? record.status === query.status : true))
+    .filter((record) => (query.attention ? record.attentionCount > 0 : true))
+    .filter((record) =>
+      query.q ? `${record.title} ${record.subject}`.toLowerCase().includes(query.q.toLowerCase()) : true
+    )
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+}
+
+export function mockDelete(ids: string[]) {
+  const skipped = ids
+    .filter((id) => library.find((record) => record.id === id)?.isSample)
+    .map((id) => ({ id, reason: 'sample' }))
+  const removable = new Set(ids.filter((id) => !skipped.some((entry) => entry.id === id)))
+  library = library.filter((record) => !removable.has(record.id))
+  return { deleted: [...removable], skipped, mode: 'immediate' as const }
 }

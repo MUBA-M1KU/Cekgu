@@ -2,7 +2,9 @@ import { Hono } from 'hono'
 import { type AppEnv, requireSession } from '../session'
 import { authRoutes } from './auth'
 
-// Routes from TRD section 15 mount here. Unmatched /api paths get a JSON 404 from src/server/index.ts.
+// Routes from TRD section 15 mount here. An unmatched /api path gets a JSON 404 from
+// src/server/index.ts only once the caller has a session; without one the gate below answers 401
+// first, which is the right order — an anonymous caller should not learn which routes exist.
 export const api = new Hono<AppEnv>()
 
 // Better Auth's own routes and POST /api/auth/guest are public and answer first, so the

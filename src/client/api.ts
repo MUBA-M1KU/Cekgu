@@ -1,5 +1,5 @@
 import type { CreateRecordInput, DispositionInput } from '../shared/schemas'
-import type { RecordDetail } from '../shared/types'
+import type { RecordDetail, RecordSummary } from '../shared/types'
 
 export type CreateRecordResponse = { id: string; status: string; itemCount: number; expiresAt: string | null }
 
@@ -116,4 +116,37 @@ export function subscribeToRecord(id: string, onChange: () => void): () => void 
     source?.close()
     if (poll) clearInterval(poll)
   }
+}
+
+export type RecordQuery = { q?: string; status?: string; attention?: boolean }
+
+export async function listRecords(query: RecordQuery = {}): Promise<RecordSummary[]> {
+  if (MOCK) {
+    const { mockRecordList } = await import('./mock-record')
+    return mockRecordList(query)
+  }
+
+  const params = new URLSearchParams()
+  if (query.q) params.set('q', query.q)
+  if (query.status) params.set('status', query.status)
+  if (query.attention) params.set('attention', 'true')
+  const suffix = params.size > 0 ? `?${params}` : ''
+
+  const body = await request<{ records: RecordSummary[] }>(`/api/records${suffix}`)
+  return body.records
+}
+
+export type DeleteResult = {
+  deleted: string[]
+  skipped: { id: string; reason: string }[]
+  mode: 'trash' | 'immediate'
+}
+
+export async function deleteRecords(ids: string[]): Promise<DeleteResult> {
+  if (MOCK) {
+    const { mockDelete } = await import('./mock-record')
+    return mockDelete(ids)
+  }
+
+  return request<DeleteResult>('/api/records', { method: 'DELETE', body: JSON.stringify({ ids }) })
 }
