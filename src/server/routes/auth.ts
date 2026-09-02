@@ -27,4 +27,20 @@ authRoutes.post('/auth/guest', async (c) => {
   return c.json({ user: { id: body.user?.id ?? '', isGuest: true } })
 })
 
+// GET /api/session - who the caller is, and whether this is the shared Guest account.
+// Not in TRD section 15: the client cannot derive Guest status on its own, because GUEST_EMAIL is
+// server configuration. Better Auth's get-session returns the user but knows nothing about the
+// Guest convention, so the single comparison that defines it (TRD section 12) is answered here.
+// Registered ahead of the session gate in routes/index.ts, so a signed-out caller gets null
+// rather than a 401.
+authRoutes.get('/session', async (c) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  if (!session) return c.json({ user: null, isGuest: false })
+
+  return c.json({
+    user: { id: session.user.id, email: session.user.email, name: session.user.name },
+    isGuest: session.user.email === env.guestEmail
+  })
+})
+
 authRoutes.on(['GET', 'POST'], '/auth/*', (c) => auth.handler(c.req.raw))
