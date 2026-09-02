@@ -1,4 +1,5 @@
 import type { ItemVerdict } from '../../shared/types'
+import { Sheet } from '../components/Sheet'
 import { VerdictChip } from '../components/VerdictChip'
 
 // The meanings are PRODUCT.md's machine verdict table, in the words it shows the educator.
@@ -21,7 +22,7 @@ const VERDICTS: { verdict: ItemVerdict; meaning: string }[] = [
 
 export function HowItWorks() {
   return (
-    <section className="rounded-sheet border border-rule bg-sheet p-4 shadow-[var(--shadow-sheet)] sm:p-8">
+    <Sheet>
       <h1>How It Works</h1>
       <p className="mt-3 max-w-[62ch] type-body">
         Two independent AI models answer every question before your learners do, without seeing your answer key or each
@@ -48,6 +49,6 @@ export function HowItWorks() {
         A receipt is gateway metadata that makes the serving model publicly inspectable. It is not cryptographic or
         on-chain proof, and model agreement is not the same as truth.
       </p>
-    </section>
+    </Sheet>
   )
 }

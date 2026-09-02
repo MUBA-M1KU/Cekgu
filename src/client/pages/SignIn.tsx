@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { GUEST_WARNING } from '../components/GuestBanner'
+import { Sheet } from '../components/Sheet'
 
 // The finished page, with email sign-in, is #38. The Guest path is here because it is the
 // demo path (FR-AUTH-2) and the shell's Guest banner cannot be judged without it.
@@ -23,7 +24,7 @@ export function SignIn() {
   }
 
   return (
-    <section className="rounded-sheet border border-rule bg-sheet p-4 shadow-[var(--shadow-sheet)] sm:p-8">
+    <Sheet>
       <h1>Sign In</h1>
       <p className="mt-3 type-body text-ink-muted">
         Private sign-in with email or Google lands in #38. The shared Guest workspace is open now.
@@ -46,6 +47,6 @@ export function SignIn() {
           </p>
         ) : null}
       </div>
-    </section>
+    </Sheet>
   )
 }
