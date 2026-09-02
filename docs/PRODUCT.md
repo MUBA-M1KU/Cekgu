@@ -267,13 +267,13 @@ record changes from processing to ready; the submission demo relies on in-app st
 
 ### Machine verdicts
 
-| Verdict                | Minimum evidence                                                                                       | Meaning shown to the educator             | Never means                       |
-| ---------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------- | --------------------------------- |
-| **Clear**              | Two distinct verified readings select the supplied key and neither reports multiple defensible options | No issue found by this check              | Certified correct                 |
-| **Possible Key Error** | Two distinct verified readings independently select the same non-key option                            | Recheck the answer key first              | Cekgu changed the key             |
-| **Possible Ambiguity** | Two distinct verified readings identify more than one defensible option                                | Recheck the stem, assumptions and options | Every learner will be confused    |
-| **Split Opinion**      | Two distinct verified readings commit incompatible single answers                                      | Expert judgment is required               | Majority vote may silently decide |
-| **Unverified**         | Fewer than two distinct receipt-verified readings survive the attempt                                  | The evidence threshold was not reached    | The question is good or bad       |
+| Verdict                | Minimum evidence                                                                                                                     | Meaning shown to the educator             | Never means                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- | --------------------------------- |
+| **Clear**              | Two distinct verified readings select the supplied key; a single reader's extra defensible option is shown as evidence, never a flag | No issue found by this check              | Certified correct                 |
+| **Possible Key Error** | Two distinct verified readings independently select the same non-key option                                                          | Recheck the answer key first              | Cekgu changed the key             |
+| **Possible Ambiguity** | Two distinct verified readings identify more than one defensible option                                                              | Recheck the stem, assumptions and options | Every learner will be confused    |
+| **Split Opinion**      | Two distinct verified readings commit incompatible single answers                                                                    | Expert judgment is required               | Majority vote may silently decide |
+| **Unverified**         | Fewer than two distinct receipt-verified readings survive the attempt                                                                | The evidence threshold was not reached    | The question is good or bad       |
 
 The initial product does not collapse these states into a percentage confidence score. A precise-looking score would
 hide the different operational actions each state requires.
@@ -576,10 +576,12 @@ The strongest visual beat is the change from a crowded paper summary to one obvi
 
 ### Decision
 
-**Cekgu can support a Live2D mascot, but it is an optional presentation layer and must not sit on the submission's
-critical path.** The supplied Tororo & Hijiki archive is healthy and contains deployable runtime material for two cats.
-The pair is unusually relevant: two visibly distinct readers can make “two independent model families” understandable
-before the technical explanation begins.
+**Cekgu ships the Live2D mascot animated and state-driven, never as a still picture.** It loads after the record content
+and never blocks input, results or evidence, but a static image is only the reduced-motion and load-failure fallback,
+not the shipped default. The supplied Tororo & Hijiki archive is healthy and contains deployable runtime material for
+two cats; the runtime files are committed under `public/live2d/` and the authoring sources are not. The pair is
+unusually relevant: two visibly distinct readers can make “two independent model families” understandable before the
+technical explanation begins.
 
 This is a product-feasibility decision, not the branding design. Logo shape, mascot identity, palette and generated
 concept art belong in the later branding round requested by the team.
@@ -641,9 +643,9 @@ Small-Scale Enterprises below its stated sales threshold may use the sample comm
 the Free Material License Agreement and the sample-data terms ([sample page][tororo-hijiki], [sample
 terms][sample-terms]). The Cubism SDK has a separate publication-licence regime ([SDK licence][sdk-license]).
 
-Before any public deployment with the model, a human team member must review and accept the current asset and SDK terms,
-record required attribution, and confirm that the fixed-mascot product is not treated as an Expandable Application. This
-document is not legal advice and does not accept those terms on the team's behalf.
+**Decision, 3 September 2026.** The team lead accepted responsibility for the sample-asset and SDK terms and for the
+required attribution, so the mascot is no longer gated on a licence review before deployment. This document is not legal
+advice; the facts above stay on record.
 
 If the team accepts and follows the applicable terms, the hackathon can honestly describe the cats as licensed sample
 assets integrated during the event, never as an original team character. For a durable brand, the better post-hackathon
@@ -652,10 +654,10 @@ but it cannot output a production `.moc3` rig; that still requires Live2D author
 
 ### Recommendation
 
-Reserve a non-critical mascot slot and semantic states in the product design now. Ship the static fallback first. Add
-one cat only after the golden review flow, records and receipts pass; add the second cat if performance remains sound
-and the pair materially improves the two-model explanation. The full animated duo is a wow-factor enhancement, not a
-definition of done.
+Build both cats animated behind a feature flag alongside the review loop, with the state-to-motion mapping above. Switch
+the flag on for the demo once the golden review flow, records and receipts pass and the frame budget holds on the demo
+machine. The review loop and the receipt trail remain the definition of done; the animated duo is what makes the
+two-reader idea land in the first ten seconds.
 
 ## Risks and boundaries
 

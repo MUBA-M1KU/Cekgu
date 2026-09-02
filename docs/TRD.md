@@ -3,14 +3,15 @@
 Canonical technical truth for this project. Where this file and any other disagree, **this file wins** — including
 [`../AGENTS.md`](../AGENTS.md).
 
-**Scope today: the GonkaRouter gateway only.** Application architecture, data models and hosting are not decided and are
-marked as open at the foot. This document exists early because the gateway is the one part of the stack the track fixes
-for us, so it can be pinned before the concept is.
+**Two halves.** Sections 1 to 8 are the GonkaRouter gateway, measured against the live API and canonical regardless of
+product. Sections 9 to 18 are the Cekgu application: architecture, hosting, data model, auth, queue, consensus rule,
+API, provenance display, mascot runtime and tests, and section 19 indexes the decisions. They implement
+[`PRODUCT.md`](PRODUCT.md) and satisfy [`PRD.md`](PRD.md), and cite requirement ids where a section discharges one.
 
 The initial verified sections were measured against the live API on **2026-08-29** with our own key. Receipt and
 fallback behaviour was verified on **2026-08-31**; availability and account concurrency were measured again on
 **2026-09-03** and are dated where introduced. Where a measurement contradicts organizer material, the measurement is
-recorded and the contradiction is named.
+recorded and the contradiction is named. The application decisions were taken on **2026-09-03**.
 
 Contents:
 
@@ -22,7 +23,17 @@ Contents:
 1. [Rate limits and timeouts](#6-rate-limits-and-timeouts)
 1. [Error codes](#7-error-codes)
 1. [Configuration contract](#8-configuration-contract)
-1. [Open decisions](#9-open-decisions)
+1. [Application architecture](#9-application-architecture)
+1. [Hosting and CI/CD](#10-hosting-and-cicd)
+1. [Data model](#11-data-model)
+1. [Auth and the Guest account](#12-auth-and-the-guest-account)
+1. [Queue and worker](#13-queue-and-worker)
+1. [Consensus rule](#14-consensus-rule)
+1. [API contracts](#15-api-contracts)
+1. [Provenance display](#16-provenance-display)
+1. [Mascot runtime](#17-mascot-runtime)
+1. [Testing](#18-testing)
+1. [Decided](#19-decided)
 
 ## 1. Gateway, base URLs and auth
 
@@ -295,37 +306,807 @@ A `404` is a URL problem, never a key or model problem — those are `401` and `
 
 ## 8. Configuration contract
 
-`.env` is gitignored and holds the key. `.env.example` carries the names, **never the values.**
+`.env` is gitignored and holds the values locally. `.env.example` carries the names, **never the values.** In production
+every variable below is a Cloud Run environment variable set at deploy time from a GitHub Actions secret of the same
+name; see [Hosting and CI/CD](#10-hosting-and-cicd). Secret Manager is not used.
 
 ```bash
-GONKA_API_KEY=                                          # sk-… from the Dashboard
+GONKA_API_KEY=                                          # sk-… from the Dashboard. Server only, never in the client bundle
+GONKA_BASE_URL_OPENAI=https://api.gonkarouter.io/v1     # The product uses the OpenAI surface only. See section 1
 
-# Two base URLs, because the SDKs append different paths. See section 1.
-GONKA_BASE_URL_OPENAI=https://api.gonkarouter.io/v1     # OpenAI-style clients
-GONKA_BASE_URL_ANTHROPIC=https://api.gonkarouter.io     # Anthropic-style clients
+DATABASE_URL=                                           # Neon Postgres connection string, pooled, sslmode=require
 
-# Exact ids from GET /v1/models. Case- and slash-sensitive. Not the website's.
-GONKA_MODEL_FAST=deepseek-ai/DeepSeek-V4-Flash-0731
-GONKA_MODEL_DEEP=moonshotai/Kimi-K2.6
-GONKA_MODEL_THIRD=MiniMaxAI/MiniMax-M2.7
+BETTER_AUTH_SECRET=                                     # 32+ random bytes; signs sessions
+BETTER_AUTH_URL=                                        # Public origin of the deployment, no trailing slash
+GOOGLE_CLIENT_ID=                                       # Google OAuth web client
+GOOGLE_CLIENT_SECRET=
+
+GUEST_EMAIL=                                            # The one seeded Guest user. See section 12
+GUEST_PASSWORD=                                         # Used server-side only by POST /api/auth/guest
+
+MASCOT_ENABLED=false                                    # FR-MASCOT-1 feature flag. true for the demo
 ```
+
+The three model ids are not configuration. They are a constant list in `src/server/gateway/models.ts`, checked against
+`GET /v1/models` at server start so a renamed id fails loudly rather than as a `400` mid-queue. The Anthropic surface is
+unused by the product; the base-URL rule in [section 1](#1-gateway-base-urls-and-auth) still stands for anyone pointing
+Claude Code at the gateway.
+
+**`.env.example` must change to match**, in a separate commit: drop `GONKA_BASE_URL_ANTHROPIC` and the three
+`GONKA_MODEL_*` lines, add the eight new names above with their comments and empty values, and keep the two GonkaRouter
+lines. The `env-drift` hook compares `.env` against `.env.example`, so the two files change together.
 
 **Account state, 2026-08-29:** balance **20.00 USDT**, monthly cost 0.00 after 9 test requests and 1,011 tokens. Tokens
 are unlimited for the event; email Jack if the credit is ever exhausted.
 
-## 9. Open decisions
+## 9. Application architecture
 
-Not yet decided. Each gets a subsection here, with the reasoning, once it is.
+One Bun process serves everything: a Hono HTTP server that exposes the JSON API under `/api`, serves the built React
+client from the same origin, and runs the queue worker in-process. There is no separate worker service, no message
+broker and no edge runtime.
 
-| Decision                    | Blocked on                                         |
-| --------------------------- | -------------------------------------------------- |
-| Application framework       | `PRD.md` and the remaining build window            |
-| Hosting for the live demo   | Framework                                          |
-| Record persistence          | Record requirements in `PRODUCT.md` and `PRD.md`   |
-| Exact consensus algorithm   | Product verdicts, labelled validation and `PRD.md` |
-| How provenance is displayed | `PRODUCT.md` and `DESIGN.md`                       |
+**Why one process.** The queue is bounded at four gateway calls in flight for the whole account
+([gotcha 10](#5-verified-gotchas), FR-QUEUE-1, NFR-PERF-3). A single process holds that cap in one in-memory semaphore
+with nothing to coordinate. Splitting API and worker would need a shared counter and a second deployable two days before
+submission, for no gain the demo can show. Same-origin serving removes CORS and cookie-domain configuration from the
+critical path, and Bun runs TypeScript directly so the server has no build step.
 
-**What is already fixed regardless of concept:** the gateway, the model ids returned by `GET /v1/models`, the two base
-URLs, the no-fallback contract, receipt verification, and the requirement that every call returns its `x-request-id`
-alongside its content. The domain-specific disagreement algorithm remains open; the distinct-model eligibility gate does
-not.
+### Repository layout
+
+```text
+src/
+  client/            Vite + React 19 single-page app, TypeScript strict, Tailwind v4
+  server/            Hono on Bun: /api routes, static serving, the queue worker
+    gateway/         the hand-rolled fetch client and the model-id constant (section 14 and 8)
+    queue/           claim, dispatch, hedge, health (section 13)
+    routes/          one file per resource in section 15
+    index.ts         entry point: migrate, seed the Guest user and sample, start the worker, listen
+  shared/            TypeScript types, zod schemas, verdict.ts (the rule as a pure function)
+public/              static assets, copied into the client build as-is
+  brand/             logo, favicon, the still mascot PNGs
+  live2d/            tororo/runtime and hijiki/runtime, committed Cubism runtime files
+drizzle/             SQL migrations generated by drizzle-kit, committed
+.github/workflows/   ci.yml (pull request) and deploy.yml (main)
+Dockerfile           multi-stage on oven/bun:1
+vite.config.ts       client build, dev proxy of /api to the server
+drizzle.config.ts    schema path, migrations folder, DATABASE_URL
+```
+
+`src/shared` is imported by both halves and contains no I/O. Anything that touches `fetch`, the database or the DOM
+lives on its own side. The zod schemas in `src/shared` validate API bodies on the server and form input on the client
+from one definition, which is what keeps FR-CHECK-2's server-side checks equal to the client's.
+
+### Stack
+
+| Layer             | Choice                                | Reason                                                                                  |
+| ----------------- | ------------------------------------- | --------------------------------------------------------------------------------------- |
+| Runtime, packages | Bun                                   | Already the project's runner; runs TypeScript without a compile step                    |
+| HTTP              | Hono                                  | Small, typed, runs on Bun natively, streams SSE without an adapter                      |
+| Client            | Vite, React 19, Tailwind v4           | Fast build, no framework server to host; the app is one SPA behind `/api`               |
+| ORM               | Drizzle with drizzle-kit migrations   | Schema in TypeScript, SQL migrations committed, Better Auth adapter exists              |
+| Auth              | Better Auth                           | Google OAuth and email/password with a Drizzle adapter, sessions in Postgres            |
+| Validation        | zod, in `src/shared`                  | One schema for the form and the API boundary                                            |
+| Lint, format      | Biome for code, Prettier for Markdown | Unchanged from the tooling table in [`AGENTS.md`](../AGENTS.md#tech-stack-and-commands) |
+| Tests             | `bun test`, Playwright                | See [Testing](#18-testing)                                                              |
+
+The client talks to the server only through the contracts in [section 15](#15-api-contracts). The GonkaRouter key never
+reaches the client (NFR-SEC-2); every inference call originates in `src/server/gateway`.
+
+## 10. Hosting and CI/CD
+
+### Cloud Run
+
+One Cloud Run service, `cekgu`, in GCP project `muba-m1ku`, region `asia-southeast1`. The container image lives in the
+Artifact Registry Docker repository `cekgu` in the same region, at
+`asia-southeast1-docker.pkg.dev/muba-m1ku/cekgu/cekgu`.
+
+| Setting         | Value                        | Why                                                                            |
+| --------------- | ---------------------------- | ------------------------------------------------------------------------------ |
+| Min instances   | 1                            | The worker must exist to drain the queue when nobody is looking                |
+| CPU allocation  | Always allocated             | Request-only CPU would freeze the worker between HTTP requests                 |
+| Max instances   | 1                            | The four-call cap is an in-memory semaphore; two instances would make it eight |
+| Memory          | 1 GiB                        | Headroom for the in-process worker and the Neon connection pool                |
+| Request timeout | 300 s                        | SSE connections in section 15 stay open; the client reconnects after this      |
+| Ingress, auth   | All traffic, unauthenticated | The app does its own auth; judges open the URL cold                            |
+
+**Why Cloud Run, and one region.** The team lead's GCP project is the account the team can reach by CLI today, and Cloud
+Run is the one managed runtime there that keeps a process alive between requests without a VM to patch. Singapore is the
+closest region to the Kuala Lumpur demo and to the Neon database, so the two hops the product cannot avoid, browser to
+server and server to database, are both short. Multi-region would only add a second place for the worker to be.
+
+The Dockerfile is multi-stage on `oven/bun:1`: stage one runs `bun install --frozen-lockfile` and `bun run build` for
+the client; stage two copies `src/`, `drizzle/`, `public/` and the built client, and starts with
+`bun src/server/index.ts`. The server runs pending migrations at start, so a deploy that adds a migration needs no
+separate step.
+
+### GitHub Actions
+
+Two workflows. Authentication to GCP is `google-github-actions/auth` with `credentials_json` from the repository secret
+`GCP_SA_KEY`, a JSON key for a service account holding **Cloud Run Admin**, **Artifact Registry Writer** and **Service
+Account User**. Workload identity federation would be better and is a post-hackathon change; a JSON key is one
+`gcloud iam service-accounts keys create` away and nothing here outlives the event.
+
+**On pull request** (`ci.yml`), in order, failing fast:
+
+1. `bun install --frozen-lockfile`
+1. `bun run lint`
+1. `bun run typecheck`
+1. `bun test`
+1. Build the image, tag it with the commit SHA, push to Artifact Registry
+1. `gcloud run deploy cekgu --image <sha image> --tag pr-<number> --no-traffic --set-env-vars ...`
+
+The tagged revision gets its own URL, `https://pr-<number>---cekgu-<hash>.asia-southeast1.run.app`, and the job posts it
+as a PR comment. Any teammate's PR gets one; it serves no production traffic. A second job, triggered on the PR closing,
+runs `gcloud run services update-traffic cekgu --remove-tags pr-<number>` so revisions do not accumulate.
+
+**On merge to `main`** (`deploy.yml`): the same steps, then `gcloud run deploy cekgu --image <sha image>` with traffic,
+so the production URL always runs the head of `main`.
+
+### Configuration at deploy time
+
+Every variable in [section 8](#8-configuration-contract) is a GitHub Actions secret of the same name and is passed with
+`--set-env-vars` on every deploy, preview and production alike. **Secret Manager is explicitly not used.** It would add
+IAM bindings, a second console and a `--set-secrets` mapping to keep in step, for a key that already lives in GitHub's
+secret store and is rotated by pasting a new value. Cloud Run environment variables are visible to anyone with viewer
+access to the project; that is the whole team, which is the intended audience.
+
+Previews share production's values, including `DATABASE_URL`, so a preview writes to the production database. That is
+acceptable for a two-day window with one shared Guest workspace and is stated here so nobody is surprised. Two
+consequences: Google OAuth on a preview URL fails the redirect-URI check, because only the production origin is
+registered, so previews are tested through Guest and email sign-in; and `BETTER_AUTH_URL` is set to the production
+origin, so `POST /api/auth/guest` on a preview sets a cookie for the preview origin only because Better Auth derives the
+cookie domain from the request, not from that variable.
+
+## 11. Data model
+
+Neon Postgres, Singapore region (`ap-southeast-1`), one database, one schema. Drizzle ORM defines the tables in
+`src/server/db/schema.ts`; `drizzle-kit generate` writes SQL into `drizzle/`, and the server applies pending migrations
+at start.
+
+**Why Neon and Postgres.** Records are the product memory ([product principle 5](PRODUCT.md#product-principles)), so
+they need a database that survives a redeploy, which rules out SQLite on Cloud Run's ephemeral disk. The queue claim in
+[section 13](#13-queue-and-worker) relies on `SELECT ... FOR UPDATE SKIP LOCKED`, which Postgres has and a document
+store does not. Neon is a managed Postgres with a free tier, a Singapore region, and a connection string, which is all
+the project needs from a database vendor this week.
+
+### Entities
+
+A **user** owns **records**. A record is one submitted check and holds its **items**, one per multiple-choice question.
+Each item accumulates **attempts**, one row per gateway call including hedges, retries and rejected calls, and
+**dispositions**, one row per human decision. Verdicts live on the item; attempts carry the provenance that justifies
+the verdict; dispositions never overwrite either (FR-RECORD-4). Better Auth owns `user`, `session`, `account` and
+`verification` and the schema for those four is generated by its CLI, not written by hand.
+
+The one denormalisation is `items.verdict`, which is derivable from the item's admitted attempts. It is stored because
+the records library needs attention counts per record (FR-RECORD-5) without a join over every attempt.
+
+### Schema
+
+```ts
+import {
+  boolean,
+  integer,
+  jsonb,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
+import { user } from "./auth-schema"; // generated by Better Auth: user, session, account, verification
+
+export const recordStatus = pgEnum("record_status", [
+  "queued",
+  "checking",
+  "ready",
+  "in_review",
+  "resolved",
+]);
+export const itemStatus = pgEnum("item_status", ["queued", "running", "done"]);
+export const verdict = pgEnum("verdict", [
+  "clear",
+  "possible_key_error",
+  "possible_ambiguity",
+  "split_opinion",
+  "unverified",
+  "pending",
+]);
+export const receiptStatus = pgEnum("receipt_status", [
+  "pending",
+  "verified",
+  "mismatch",
+  "missing",
+]);
+export const dispositionKind = pgEnum("disposition_kind", [
+  "key_corrected",
+  "wording_revised",
+  "key_confirmed",
+  "flag_dismissed",
+  "retry_requested",
+]);
+
+export const records = pgTable("records", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
+  title: text("title").notNull(),
+  subject: text("subject").notNull(),
+  language: text("language").notNull(),
+  context: text("context"),
+  status: recordStatus("status").notNull().default("queued"),
+  isSample: boolean("is_sample").notNull().default(false),
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export const items = pgTable("items", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  recordId: uuid("record_id")
+    .notNull()
+    .references(() => records.id, { onDelete: "cascade" }),
+  position: integer("position").notNull(),
+  stem: text("stem").notNull(),
+  options: jsonb("options")
+    .$type<{ letter: string; text: string }[]>()
+    .notNull(),
+  key: text("key").notNull(),
+  verdict: verdict("verdict").notNull().default("pending"),
+  verdictReason: text("verdict_reason"),
+  status: itemStatus("status").notNull().default("queued"),
+  attemptsUsed: integer("attempts_used").notNull().default(0),
+});
+
+export const attempts = pgTable("attempts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  itemId: uuid("item_id")
+    .notNull()
+    .references(() => items.id, { onDelete: "cascade" }),
+  requestedModel: text("requested_model").notNull(),
+  servedModel: text("served_model"),
+  requestId: text("request_id"),
+  devshardId: text("devshard_id"),
+  fallbackHeader: text("fallback_header"),
+  httpStatus: integer("http_status"),
+  receiptStatus: receiptStatus("receipt_status").notNull().default("pending"),
+  receiptJson: jsonb("receipt_json"),
+  readingJson: jsonb("reading_json").$type<Reading>(),
+  latencyMs: integer("latency_ms"),
+  startedAt: timestamp("started_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  finishedAt: timestamp("finished_at", { withTimezone: true }),
+  admitted: boolean("admitted").notNull().default(false),
+  rejectionReason: text("rejection_reason"),
+});
+
+export const dispositions = pgTable("dispositions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  itemId: uuid("item_id")
+    .notNull()
+    .references(() => items.id, { onDelete: "cascade" }),
+  kind: dispositionKind("kind").notNull(),
+  revisedKey: text("revised_key"),
+  revisedText: text("revised_text"),
+  note: text("note"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export const modelHealth = pgTable("model_health", {
+  model: text("model").primaryKey(),
+  windowStart: timestamp("window_start", { withTimezone: true }).notNull(),
+  successes: integer("successes").notNull().default(0),
+  failures: integer("failures").notNull().default(0),
+  medianLatencyMs: integer("median_latency_ms"),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+```
+
+Notes on the shape:
+
+- `records.status` has no `deleted` value. Deletion is `deleted_at`; a soft-deleted private record is filtered from
+  every list and is purged after 30 days (FR-RECORD-7). A Guest deletion is a hard `DELETE` and cascades
+- `records.expires_at` is set to creation plus 24 hours for Guest records and left null for private ones (FR-AUTH-4)
+- `items.options` is an ordered array of `{letter, text}`; `items.key` is a letter. Learner data has no column anywhere
+  (NFR-SEC-3, FR-RECORD-1)
+- `attempts.request_id` is nullable because a timed-out call returns no headers, and the row still exists so the
+  evidence view can say so (FR-EVIDENCE-2, NFR-PROV-3)
+- `attempts.reading_json` is the parsed [reading](#14-consensus-rule) after tag stripping; the raw content is not stored
+- A disposition of kind `retry_requested` marks a round boundary: the rule considers attempts whose `started_at` is
+  after the latest such disposition, so a retry never counts an earlier reading twice (FR-QUEUE-5)
+- `model_health` is the on-disk mirror of the worker's in-memory stats, one row per model, written every 30 seconds and
+  read by `GET /api/health`
+
+## 12. Auth and the Guest account
+
+Better Auth with the Drizzle adapter, sessions stored in Postgres and carried by an HTTP-only cookie. Two sign-in
+methods: Google OAuth (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`) and email plus password. Better Auth mounts at
+`/api/auth/*`; its own endpoints are not repeated in [section 15](#15-api-contracts).
+
+**Why Better Auth.** The PRD's open question was whether private accounts use links, passwords or a provider. Google
+covers the tutor with a Gmail account, password covers everyone else and the seeded Guest, and Better Auth ships both
+with a Drizzle adapter so the session table is a migration, not code. Writing session handling by hand is the kind of
+work that looks like an afternoon and costs the demo.
+
+### The shared Guest account
+
+The Guest account is one ordinary user row, seeded at server start if missing, whose email is `GUEST_EMAIL`. There is no
+guest role, flag or column: a request is a Guest request when `session.user.email === GUEST_EMAIL`, and the Guest
+limits, warning banner and deletion behaviour key off that one comparison.
+
+`POST /api/auth/guest` signs the caller into that user server-side. The handler calls Better Auth's email sign-in with
+`GUEST_EMAIL` and `GUEST_PASSWORD` from the environment and forwards the resulting `Set-Cookie` to the browser. The
+password never leaves the server and is never shown to a visitor. Every guest therefore holds a session on the same user
+and shares one library, which is exactly what [PRODUCT.md](PRODUCT.md#the-shared-guest-account) asks for (FR-AUTH-2).
+Server-side limits on Guest requests: 12 items per record, 2,000 characters per item across stem and options, 20
+non-sample records at once (FR-AUTH-5).
+
+The worker runs a sweep every five minutes that hard-deletes Guest records whose `expires_at` has passed, except any
+with `is_sample = true`, and purges private records whose `deleted_at` is more than 30 days old. The sample record is
+owned by the Guest user, is the one record with `is_sample = true`, and is refused by every mutating route except
+dispositions (FR-SAMPLE-2, FR-SAMPLE-3).
+
+## 13. Queue and worker
+
+The worker is a loop inside the server process. It claims one queued item at a time, runs its reading round, writes the
+verdict, and goes back for the next. It discharges FR-QUEUE-1 to FR-QUEUE-3 and NFR-OPS-1.
+
+**Why this shape.** The 3 September benchmark ([section 3](#3-models-measured)) showed that no item obtained two
+verified readings inside 30 seconds and that a 36-call fan-out was refused. A queue with a small fixed cap is the only
+design that is honest about that: it never tells the gateway to do more than four things, it makes waiting an ordinary
+state, and it lets the record fill in item by item while the educator does something else.
+
+### Claiming
+
+```sql
+UPDATE items SET status = 'running'
+WHERE id = (
+  SELECT id FROM items WHERE status = 'queued'
+  ORDER BY record_id, position
+  FOR UPDATE SKIP LOCKED
+  LIMIT 1
+)
+RETURNING *
+```
+
+`SKIP LOCKED` means a second worker, or the same worker after a crash-restart, never claims an item another loop already
+holds, and a crashed claim is released with its transaction. On start the worker resets any item left in `running` to
+`queued`, because a Cloud Run restart mid-round leaves no one to finish it.
+
+### One round
+
+1. Take the **healthy set**: the three model ids ordered by rolling 15-minute success rate, then median latency, from
+   the in-memory health stats. A model with zero successes and at least three failures in the window is excluded
+1. Request the top two families **in parallel**, each through the [gateway client](#14-consensus-rule) and each holding
+   one slot of the global semaphore of **4**
+1. **Deferred hedge:** if a call has not returned after **25 s**, fire a duplicate of the same call to the same model,
+   holding another slot. Whichever returns first is the candidate; the other is recorded and discarded
+1. **Hard cutoff** at **90 s** per call. A call past the cutoff is aborted and recorded as timed out with no request id
+1. If one family fails, after rejection, timeout or a non-200, try the **third family** for that seat
+1. Each model has a **retry budget of three attempts per item** per round, hedges included. When both seats have an
+   admitted reading, or every family in the healthy set has exhausted its budget, the round ends
+1. Apply the [rule](#14-consensus-rule) to the admitted readings and write `items.verdict` and `items.verdict_reason`
+
+Every call, admitted or not, is one row in `attempts`. A `429` is recorded, counted against the budget, and retried
+after a 30-second backoff (FR-QUEUE-1). The hedge fires at 25 s rather than the tech lead's 1.5–2 s because our measured
+floor is different: nothing completed under 30 s on 3 September, so a 2 s hedge would double every call for no gain, and
+25 s catches the 60–90 s tail that [gotcha 9](#5-verified-gotchas) describes.
+
+The budget is **three** attempts per family, matching the PRD's FR-QUEUE-3. The measured Kimi completion rate of 13 of
+24 makes a third attempt worth its cost, and three parallel attempts of at most 90 s each stay inside the PRD's
+five-minute verdict target.
+
+### Record status
+
+After each item the worker recomputes the record: `checking` while any item is `queued` or `running`, `ready` when every
+item is `done` (FR-RECORD-2). `in_review` and `resolved` are set by the disposition route, not the worker.
+
+### Health
+
+Per model, the worker keeps a ring of the last 15 minutes of outcomes and latencies in memory and mirrors them to
+`model_health` every 30 seconds. `GET /api/health` reads the table so the status display survives a restart with the
+last known picture rather than an empty one.
+
+## 14. Consensus rule
+
+### Gateway client
+
+`src/server/gateway/client.ts` is a hand-rolled `fetch` against the OpenAI surface, because the SDK discards the
+response headers that carry the request id ([section 4](#4-request-ids-and-provenance)). It implements the
+[validity contract](#cross-verification-validity-contract) and nothing else:
+
+1. `POST {GONKA_BASE_URL_OPENAI}/chat/completions` with headers `Authorization: Bearer`, `content-type` and
+   `X-Gonka-No-Fallback: true`
+1. The body carries `max_tokens: 1024` and the prompt with a trailing comment line `// nonce: <uuid>` so byte-identical
+   items are not served from the gateway cache ([gotcha 8](#5-verified-gotchas), FR-QUEUE-2)
+1. Read `x-request-id`, `x-devshard-id` and `X-Gonka-Fallback` from the response headers before touching the body
+1. Strip `<think>…</think>` and any orphaned tag from the content ([gotcha 1](#5-verified-gotchas), NFR-PROV-4)
+1. Parse the reading JSON
+1. `GET /v1/receipts/{x-request-id}` and require its `model` to equal the requested model
+
+It returns one provenance record:
+
+```ts
+type Provenance = {
+  content: string;
+  requestId: string | null;
+  devshardId: string | null;
+  requestedModel: string;
+  servedModel: string | null;
+  fallbackHeader: string | null;
+  receiptStatus: "verified" | "mismatch" | "missing";
+  latencyMs: number;
+};
+```
+
+### The reading
+
+The solver prompt contains the stem, the lettered options, and the record's subject and language as metadata. It
+**never** contains the supplied key or another model's output (FR-QUEUE-2). It asks for exactly this JSON:
+
+```json
+{
+  "answer": "<option letter>",
+  "defensible": ["<letters>"],
+  "reason": "<two sentences>"
+}
+```
+
+`answer` is the one option the model commits to; `defensible` lists every option it considers defensible, which should
+include `answer`; `reason` is shown beside the reading in the evidence view.
+
+### Admission and distinctness
+
+A reading is **admitted** when all of these hold, and rejected with the first failing one as `rejection_reason`:
+
+1. HTTP 200
+1. No `X-Gonka-Fallback` header (NFR-PROV-1)
+1. Receipt fetched and its `model` equals the requested model (NFR-PROV-2, FR-VERDICT-1)
+1. The content parses as the reading JSON
+1. `answer` is one of the item's option letters
+
+Two admitted readings are **distinct** when their receipt `model` values differ. Distinctness is proven by receipt, not
+by which model was asked for, because availability rotated across all three models within one evening
+([section 3](#3-models-measured)).
+
+### The rule
+
+The rule is a pure function in `src/shared/verdict.ts`, applied to exactly the first two admitted distinct readings of
+the current round, in the order below. It is the [machine verdict table](PRODUCT.md#machine-verdicts) made executable
+(FR-VERDICT-2, FR-VERDICT-3).
+
+```ts
+export type Reading = {
+  model: string;
+  answer: string;
+  defensible: string[];
+  reason: string;
+};
+export type Verdict =
+  | "clear"
+  | "possible_key_error"
+  | "possible_ambiguity"
+  | "split_opinion"
+  | "unverified";
+
+export function verdict(
+  readings: Reading[],
+  key: string,
+): { verdict: Verdict; reason: string };
+```
+
+| Check, in order                                       | Verdict                | Reason shown                                                                        |
+| ----------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------- |
+| Fewer than two admitted readings with distinct models | **Unverified**         | Fewer than two distinct, receipt-verified readings survived, so no verdict is given |
+| The two `answer` values differ                        | **Split Opinion**      | Reader A chose X and reader B chose Y; expert judgment is required                  |
+| Both `defensible` lists have more than one letter     | **Possible Ambiguity** | Both readers found more than one defensible option                                  |
+| The shared `answer` equals `key`                      | **Clear**              | Both readers chose the key                                                          |
+| Otherwise                                             | **Possible Key Error** | Both readers chose X; the supplied key is Y                                         |
+
+The order matters and is a decision, not an accident. Disagreement is checked before ambiguity so two readers who both
+hedge but commit to different answers are a split, not an ambiguity. Ambiguity is checked before the key so that an item
+both readers answered "correctly" while each saw two defensible options is still flagged. One case PRODUCT.md's table
+does not cover, where only one reader lists more than one defensible option, falls through to **Clear** or **Possible
+Key Error** on the shared answer; the reason text names the single reader's second option so the educator sees it.
+
+**The rule must be unit-tested before any UI is written.** The table above is the test case list, plus the two edge
+cases: same model twice (Unverified) and a `defensible` list that omits `answer` (treated as if it included it).
+
+## 15. API contracts
+
+All routes are JSON under `/api`, require a session cookie unless marked public, and validate bodies with the zod
+schemas in `src/shared`. Errors are `{ "error": { "code": string, "message": string } }` with 400 for validation, 401
+for no session, 403 for a record the session does not own or a mutation the sample refuses, 404 for a missing or expired
+record, and 429 for a Guest limit. Timestamps are ISO 8601. Better Auth's own routes under `/api/auth/*` are documented
+by Better Auth.
+
+### `POST /api/records`
+
+Creates a record and its items with status `queued`, returns within one second (FR-CHECK-3, NFR-PERF-1).
+
+```json
+{
+  "title": "Week 4 data structures quiz",
+  "subject": "Computer Science",
+  "language": "en",
+  "context": "First-year practice set",
+  "items": [
+    {
+      "stem": "Which structure is first in, first out?",
+      "options": [
+        { "letter": "A", "text": "Stack" },
+        { "letter": "B", "text": "Queue" }
+      ],
+      "key": "A"
+    }
+  ]
+}
+```
+
+Response `201`: `{ "id": "<uuid>", "status": "queued", "itemCount": 1, "expiresAt": null }`. Guest limits are enforced
+here (FR-AUTH-5); validation failures name the item index and field (FR-CHECK-2).
+
+### `GET /api/records`
+
+Lists the session's records, newest first, excluding soft-deleted ones (FR-RECORD-5). Query: `status`, `subject`,
+`attention=true` to keep only records with at least one non-clear, non-pending item, `q` to search title and stem text.
+
+```json
+{
+  "records": [
+    {
+      "id": "<uuid>",
+      "title": "…",
+      "subject": "…",
+      "status": "ready",
+      "itemCount": 12,
+      "attentionCount": 4,
+      "isSample": true,
+      "expiresAt": null,
+      "updatedAt": "2026-09-03T10:00:00Z"
+    }
+  ]
+}
+```
+
+### `GET /api/records/:id`
+
+The whole record: items in position order, each with its attempts newest first and its dispositions oldest first. Also
+the polling fallback for the events route.
+
+```json
+{
+  "id": "<uuid>",
+  "title": "…",
+  "subject": "…",
+  "language": "en",
+  "context": null,
+  "status": "ready",
+  "isSample": false,
+  "expiresAt": null,
+  "counts": {
+    "clear": 8,
+    "possible_key_error": 2,
+    "possible_ambiguity": 1,
+    "split_opinion": 0,
+    "unverified": 1,
+    "pending": 0
+  },
+  "items": [
+    {
+      "id": "<uuid>",
+      "position": 1,
+      "stem": "…",
+      "options": [{ "letter": "A", "text": "Stack" }],
+      "key": "A",
+      "status": "done",
+      "verdict": "possible_key_error",
+      "verdictReason": "Both readers chose B. The supplied key is A.",
+      "attemptsUsed": 2,
+      "attempts": [
+        {
+          "id": "<uuid>",
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788016913316163460-503197",
+          "devshardId": "65725",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "reading": { "answer": "B", "defensible": ["B"], "reason": "…" },
+          "latencyMs": 14300,
+          "startedAt": "…",
+          "finishedAt": "…",
+          "admitted": true,
+          "rejectionReason": null
+        }
+      ],
+      "dispositions": [
+        {
+          "id": "<uuid>",
+          "kind": "key_corrected",
+          "revisedKey": "B",
+          "revisedText": null,
+          "note": null,
+          "createdAt": "…"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### `DELETE /api/records`
+
+Body `{ "ids": ["<uuid>", …] }`. For a private session, sets `deleted_at` on each owned record; for the Guest session,
+hard-deletes. The sample is skipped and named in the response (FR-RECORD-6, FR-RECORD-7, FR-SAMPLE-2). Response:
+`{ "deleted": ["<uuid>"], "skipped": [{ "id": "<uuid>", "reason": "sample" }], "mode": "trash" | "immediate" }`.
+
+### `POST /api/records/:id/duplicate`
+
+Copies title, subject, language, context and the items' stems, options and keys into a new `queued` record owned by the
+session, with no attempts or dispositions. Response `201`, same shape as `POST /api/records`. The sample may be
+duplicated; the copy is an ordinary record.
+
+### `POST /api/records/:id/items/:itemId/disposition`
+
+Body `{ "kind": "key_corrected", "revisedKey": "B", "revisedText": null, "note": null }`. Appends a disposition
+(FR-RECORD-4); `key_corrected` requires `revisedKey`, `wording_revised` requires `revisedText`. `retry_requested` also
+re-queues the item exactly as the retry route does. Recomputes the record's `in_review` or `resolved` status and returns
+`{ "item": <item as above>, "recordStatus": "in_review" }`. Allowed on the sample.
+
+### `POST /api/records/:id/items/:itemId/retry`
+
+Re-queues an `unverified` item with a fresh budget (FR-QUEUE-5). Records a `retry_requested` disposition so the round
+boundary is in history. Response `{ "item": <item>, "recordStatus": "checking" }`.
+
+### `GET /api/records/:id/events`
+
+Server-sent events. Each event is `event: item` or `event: record` with a JSON `data` line carrying the item or the
+record summary (`id`, `status`, `counts`) as above. A comment line every 20 seconds keeps the connection alive. The
+client falls back to polling `GET /api/records/:id` every 3 seconds if the stream fails to open or drops twice
+(FR-QUEUE-4).
+
+### `GET /api/sample`
+
+**Public.** Returns the record with `is_sample = true` in the same shape as `GET /api/records/:id`, dispositions
+included, so the signed-out Sample Report renders the same evidence read-only (FR-SAMPLE-4).
+
+### `POST /api/auth/guest`
+
+**Public.** No body. Signs the caller into the Guest user as described in [section 12](#12-auth-and-the-guest-account)
+and returns `{ "user": { "id": "…", "isGuest": true } }` with the session cookie set (FR-AUTH-2).
+
+### `GET /api/health`
+
+**Public.** Per-model rolling health from `model_health`, plus the mascot flag so the client learns it without a second
+config route.
+
+```json
+{
+  "models": [
+    {
+      "model": "MiniMaxAI/MiniMax-M2.7",
+      "successRate": 1.0,
+      "medianLatencyMs": 21000,
+      "healthy": true
+    }
+  ],
+  "windowMinutes": 15,
+  "mascotEnabled": false
+}
+```
+
+**Not yet placed.** FR-SAMPLE-3's **Reset Sample** clears every disposition on the sample record. It is one route,
+`POST /api/sample/reset`, Guest session only, deleting `dispositions` rows for the sample's items and setting the sample
+back to `ready`. It is listed here because the demo rehearsal depends on it and it was not in the decided list.
+
+## 16. Provenance display
+
+The evidence view is the track's proof moment and is where FR-EVIDENCE-1 to FR-EVIDENCE-4, FR-VERDICT-4 and NFR-PROV-3
+are discharged on screen, not in a document.
+
+**In the item evidence view** every attempt is a row, newest first, showing: requested model, served model from the
+receipt, the request id as selectable text and a link to `https://api.gonkarouter.io/v1/receipts/<id>`, devshard id,
+latency in seconds, a receipt status chip reading **Verified**, **Mismatch**, **Missing** or **Pending**, and whether it
+was admitted with the rejection reason if not. An attempt that returned no headers shows **No request id returned** and
+the reason in place of the link. The two admitted readings sit above the attempt list side by side with model name,
+chosen option, defensible options and reason, and beneath them the verdict with `verdict_reason` printed in full, for
+example "Both readers chose Queue. The supplied key is Stack. Rule: two verified readings agree on a non-key option, so
+Possible Key Error". When only one family answered, the second column shows that seat's attempt history, never a
+duplicate reading.
+
+**In the record summary** the counts by verdict from `GET /api/records/:id` are the filter chips, each with its count,
+attention verdicts first and **Clear** last (FR-RECORD-3). Wherever **Unverified** appears the fail-closed sentence is
+printed beside it.
+
+**The public sample page** renders the same components from `GET /api/sample` with every disposition control removed.
+Model names, request ids and receipt chips are text, so a judge can copy an id into the receipt URL during Q&A. The
+receipt is gateway metadata, not on-chain proof, and the trust copy says so (FR-PUBLIC-2).
+
+## 17. Mascot runtime
+
+The two cats ship animated and state-driven by the team lead's decision of 3 September
+([PRODUCT.md](PRODUCT.md#live2d-mascot-feasibility)), behind `MASCOT_ENABLED`. This section discharges FR-MASCOT-1 to
+FR-MASCOT-5.
+
+**Runtime.** `pixi.js` 7 and `pixi-live2d-display`, imported from its Cubism 4 build, as npm dependencies. The Cubism
+Core script `live2dcubismcore.min.js` is not on npm under a redistributable licence and is loaded in `index.html` from
+Live2D's own CDN with `defer`, so a missing core is a load failure the fallback handles, not a build failure. Models
+load from `/live2d/tororo/runtime/tororo.model3.json` and `/live2d/hijiki/runtime/hijiki.model3.json`, about 2.7 MB in
+total, and are requested only after the record has rendered and only when the flag is on.
+
+**Why this runtime.** The official Cubism Web SDK is a framework with its own build; `pixi-live2d-display` wraps the
+same core in one PixiJS display object with a `motion(group)` call, which is the whole API this mapping needs. The
+models are converted Cubism 2.1 rigs marked for Cubism 3, and the library's Cubism 4 build reads `.model3.json` files of
+that generation.
+
+**Motion groups**, as declared in both `model3.json` files: `Idle` (3 motions), `FlickUp` (1), `FlickDown` (1), `Tap`
+(3), `Flick` (1). The mapping is the [product role table](PRODUCT.md#product-role) expressed in those groups:
+
+| Product state        | Tororo               | Hijiki               | Notes                                           |
+| -------------------- | -------------------- | -------------------- | ----------------------------------------------- |
+| Every state          | `Idle` loops         | `Idle` loops         | The base layer; motions below play over it      |
+| Checking             | `Tap`, alternating   | `Tap`, alternating   | One cat at a time; no progress animation        |
+| Attention item found | `FlickUp` once       | `FlickUp` once       | Fired when a non-clear verdict lands            |
+| Split Opinion        | `FlickDown` once     | `Flick` once         | The two cats react differently, on purpose      |
+| Unverified           | `Idle` at half speed | `Idle` at half speed | The waiting pose; **Retry Verification** nearby |
+| Resolved             | `Tap` once           | `Tap` once           | After the human disposition, never confetti     |
+
+**Fallbacks.** `prefers-reduced-motion: reduce` or the user's Reduce Motion setting stops the loop on the first idle
+frame. A failed WebGL context, core script or asset swaps the canvas for the still PNG in `public/brand/` with no error
+surfaced. The canvas is `aria-hidden`, ignores pointer events, pauses on `visibilitychange` and when scrolled off
+screen, and is hidden below 768 px wide. State text on the record remains the only authoritative signal. Attribution to
+Live2D's Tororo and Hijiki sample characters and the Cubism SDK is in the page footer (FR-MASCOT-5).
+
+## 18. Testing
+
+**`bun test`** covers the three pieces that must be right before any screen exists:
+
+- `src/shared/verdict.test.ts`: every row of the [rule table](#14-consensus-rule) plus the two edge cases, with the
+  reason text asserted
+- `src/server/gateway/client.test.ts`: the gateway client with a mocked `fetch`, covering a clean 200, a
+  `X-Gonka-Fallback` response, a receipt whose model mismatches, a `<think>`-wrapped body, unparseable JSON, a 429 and a
+  timeout. Each asserts the returned provenance record and the rejection reason
+- `src/server/queue/claim.test.ts`: two concurrent claims never take the same item, a crashed claim is released, and the
+  semaphore never exceeds four
+
+**Playwright smoke** runs against the deployed URL after every production deploy and on demand against a preview: Sign
+In as Guest lands in the Guest workspace with the warning banner, the sample opens with its counts, and one evidence
+panel shows two model names and two request ids. It is the first three steps of the
+[demo acceptance test](PRD.md#the-submission-demo-as-an-acceptance-test) automated.
+
+The CI order in [section 10](#10-hosting-and-cicd) runs `bun test` before the image is built, so a broken rule never
+gets a preview URL.
+
+## 19. Decided
+
+Every decision that was open on 2 September is now a section above.
+
+| Decision                                                  | Section                              |
+| --------------------------------------------------------- | ------------------------------------ |
+| Application framework, repository layout                  | [9](#9-application-architecture)     |
+| Hosting, CI/CD, secrets                                   | [10](#10-hosting-and-cicd)           |
+| Record persistence                                        | [11](#11-data-model)                 |
+| Private sign-in mechanism, the Guest account              | [12](#12-auth-and-the-guest-account) |
+| Queue shape, concurrency, hedging, retry budget           | [13](#13-queue-and-worker)           |
+| Exact consensus algorithm, gateway client, reading schema | [14](#14-consensus-rule)             |
+| API surface                                               | [15](#15-api-contracts)              |
+| How provenance is displayed                               | [16](#16-provenance-display)         |
+| Mascot runtime and state mapping                          | [17](#17-mascot-runtime)             |
+| What is tested and where                                  | [18](#18-testing)                    |
+
+**What was fixed before any of this and still is:** the gateway, the model ids returned by `GET /v1/models`, the two
+base URLs, the no-fallback contract, receipt verification, and the requirement that every call returns its
+`x-request-id` alongside its content. The one item still without a contract is **Reset Sample**, named at the end of
+[section 15](#15-api-contracts).

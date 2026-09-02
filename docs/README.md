@@ -6,7 +6,8 @@ for anyone arriving at the repo; the deeper documents are linked from [Start her
 - **Submission deadline** — 5 September 2026, 23:59 MYT, on [Devfolio][devfolio]
 - **Demo Day** — 6 September 2026, APU, physical attendance required
 - **Track prize** — 1,200 USDT first place, 800 USDT second
-- **Status** — Cekgu selected, product definition written, PRD and application stack not yet chosen
+- **Status** — Cekgu selected; `PRODUCT.md`, `PRD.md` and `TRD.md` written, so the build gate is open. Stack decided:
+  Bun, Hono, React, Neon Postgres, Cloud Run. No application code yet
 
 [devfolio]: https://muba-hackathon.devfolio.co/overview
 
@@ -21,7 +22,9 @@ Plus **two or more models cross-verifying**, and **Gonka Request IDs surfaced in
 
 - [`brief.md`](brief.md) — the whole hackathon: dates, rules, deliverables, judging, people
 - [`PRODUCT.md`](PRODUCT.md) — Cekgu's customer, problem, product loop, pages, scope, business model and demo moment
-- [`TRD.md`](TRD.md) — the measured GonkaRouter reference: base URLs, model ids, provenance headers, limits
+- [`PRD.md`](PRD.md) — requirements with stable ids, acceptance criteria, the demo as an acceptance test
+- [`TRD.md`](TRD.md) — the measured GonkaRouter reference, then the application: architecture, hosting, data model,
+  queue, consensus rule, API
 - [`superpowers/research/README.md`](superpowers/research/README.md) — eleven-round concept research and ranked
   candidates
 - [`../AGENTS.md`](../AGENTS.md) — project instructions for agentic tools, and humans
@@ -74,6 +77,40 @@ Biome covers JS, TS, JSON, CSS and HTML; Prettier covers the Markdown and YAML i
 `biome.json`'s `lineWidth`. There is no `.prettierignore`, so every Markdown file is formatted, `docs/source/` and the
 vendored skills included. Only the contents of fenced code blocks are left alone.
 
+## How it works
+
+Cekgu is a pre-publication check for multiple-choice questions. An educator types a small quiz, with the answer key, and
+gets back a record that says which items deserve a human second look. Each question is sent, without its key, to two
+different AI models on the Gonka network, and each model answers it blind. Cekgu then compares the two readings with
+each other before comparing them with the educator's key: if both readers pick the key, the item is **Clear**; if both
+pick the same other option, **Possible Key Error**; if both see more than one defensible option, **Possible Ambiguity**;
+if they disagree, **Split Opinion**. Fewer than two verified readings means **Unverified**, never a guess. The educator
+records what they decided, and the record keeps every model reading, every request id and every human decision. The work
+runs in a queue, so a check can take minutes and the educator can leave and come back.
+
+### GonkaRouter integration
+
+Every inference call goes to `https://api.gonkarouter.io` from one server-side client, `src/server/gateway/client.ts`.
+There is no other AI provider anywhere in the code, which a search for provider hostnames confirms.
+
+- **Where the request ids come from.** Each GonkaRouter response carries an `x-request-id` header. The client reads it
+  off the raw response before parsing the body, stores it with the attempt, and the evidence view shows it beside the
+  reading it belongs to, as selectable text with a link to the public receipt. Detail:
+  [Request IDs and provenance](TRD.md#4-request-ids-and-provenance)
+- **How the receipt check works.** The client asks the gateway not to substitute models, rejects any response that says
+  it did, then fetches `GET /v1/receipts/<id>` and requires the receipt's model to match the one requested. A reading
+  that fails any step is kept, marked rejected with the reason, and never counts. Two readings count as independent only
+  when their receipts name different models. Detail:
+  [Cross-verification validity contract](TRD.md#cross-verification-validity-contract) and
+  [Consensus rule](TRD.md#14-consensus-rule)
+- **What the consensus rule is.** A pure function over the first two admitted readings from distinct models: fewer than
+  two gives Unverified; different answers give Split Opinion; both listing several defensible options gives Possible
+  Ambiguity; a shared answer equal to the key gives Clear; otherwise Possible Key Error. The rule that fired is printed
+  next to every verdict. Detail: [the rule table](TRD.md#the-rule)
+
+The receipt is gateway metadata that makes the serving model publicly inspectable. It is not cryptographic or on-chain
+proof, and the product says so.
+
 ## How work ships
 
 **`main` is PR-gated.** Branch as `<type>/<slug>`, open a PR with `gh pr create`, then merge the verified head with
@@ -101,13 +138,22 @@ docs/
   source/                organizer material
   superpowers/research/  RUBRIC.md and cited findings from concept exploration
   demo/                  pitch script, deck, assets
+src/
+  client/                the React single-page app
+  server/                Hono API under /api, the GonkaRouter client, the queue worker
+  shared/                types, zod schemas and the verdict rule, used by both
+public/                  static assets: brand/ and the Live2D mascot runtime files
+drizzle/                 database migrations, committed
+.github/workflows/       CI on pull request with a preview URL, deploy on merge
+Dockerfile               the Cloud Run image
 .agents/skills/          36 skills, the committed source of truth
 .claude/skills/          symlinks into .agents/skills/, plus impeccable as a real dir
 .claude/agents/          pitch-smith
 .claude/hooks/           session brief, env drift, git guard, formatter
 ```
 
-`PRD.md` and `DESIGN.md` are listed but **not written yet**. Source layout is not decided; add it here when it is.
+`DESIGN.md`, `src/`, `drizzle/`, `.github/workflows/` and the `Dockerfile` are listed but **not written yet**; only
+`public/live2d/` exists. The layout is decided in [`TRD.md`](TRD.md#repository-layout).
 
 The repo root deliberately has **no README**. It lives here.
 
