@@ -5,6 +5,9 @@ window actually left, with five prior-art checks run the same day and a second o
 the Markdown mirror of the rendered report "The Three-Day Rescore", published as a private Claude artifact; this file is
 the version of record.
 
+The selected product is now named **Cekgu**. This report retains **Vetting Room** as the historical label under which
+the concept was evaluated.
+
 **Method.** One evaluator scored 22 concepts on [`RUBRIC.md`](RUBRIC.md) with Buildability rebased to roughly 2.5 days.
 Five prior-art searches were run by delegated agents with live web search, each under a fifteen-call budget, so a
 negative result is weaker than a positive one. A second evaluator then challenged the recommendation against Round 11,

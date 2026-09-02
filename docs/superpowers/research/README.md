@@ -17,7 +17,7 @@ every other team gets from the same prompt.
 | File                                                       | Holds                                                                                                   |
 | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | [`RUBRIC.md`](RUBRIC.md)                                   | The scoring instrument. Read before generating any candidate                                            |
-| [`candidate-concepts.md`](candidate-concepts.md)           | Eleven-round ledger; Vetting Room conditionally selected after Round 11, with earlier rankings retained |
+| [`candidate-concepts.md`](candidate-concepts.md)           | Eleven-round ledger; Cekgu selected as Vetting Room after Round 11, with earlier rankings retained      |
 | [`three-day-rescore.md`](three-day-rescore.md)             | Time-rebased ranking, second opinion, plain pitch, objections and the failed 3 Sept mechanism benchmark |
 | [`multi-model-capability.md`](multi-model-capability.md)   | The permutation test, and what three distinct models buy that one cannot                                |
 | [`competitor-scan.md`](competitor-scan.md)                 | Prior art per candidate, predicted competition, the regulatory opening                                  |

@@ -317,13 +317,13 @@ are unlimited for the event; email Jack if the credit is ever exhausted.
 
 Not yet decided. Each gets a subsection here, with the reasoning, once it is.
 
-| Decision                    | Blocked on              |
-| --------------------------- | ----------------------- |
-| Application framework       | Concept (`PRODUCT.md`)  |
-| Hosting for the live demo   | Framework               |
-| Persistence, if any         | Concept                 |
-| Consensus algorithm         | Concept                 |
-| How provenance is displayed | Concept and `DESIGN.md` |
+| Decision                    | Blocked on                                         |
+| --------------------------- | -------------------------------------------------- |
+| Application framework       | `PRD.md` and the remaining build window            |
+| Hosting for the live demo   | Framework                                          |
+| Record persistence          | Record requirements in `PRODUCT.md` and `PRD.md`   |
+| Exact consensus algorithm   | Product verdicts, labelled validation and `PRD.md` |
+| How provenance is displayed | `PRODUCT.md` and `DESIGN.md`                       |
 
 **What is already fixed regardless of concept:** the gateway, the model ids returned by `GET /v1/models`, the two base
 URLs, the no-fallback contract, receipt verification, and the requirement that every call returns its `x-request-id`

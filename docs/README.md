@@ -6,7 +6,7 @@ for anyone arriving at the repo; the deeper documents are linked from [Start her
 - **Submission deadline** — 5 September 2026, 23:59 MYT, on [Devfolio][devfolio]
 - **Demo Day** — 6 September 2026, APU, physical attendance required
 - **Track prize** — 1,200 USDT first place, 800 USDT second
-- **Status** — concept not locked, application stack not chosen
+- **Status** — Cekgu selected, product definition written, PRD and application stack not yet chosen
 
 [devfolio]: https://muba-hackathon.devfolio.co/overview
 
@@ -20,8 +20,10 @@ Plus **two or more models cross-verifying**, and **Gonka Request IDs surfaced in
 ## Start here
 
 - [`brief.md`](brief.md) — the whole hackathon: dates, rules, deliverables, judging, people
+- [`PRODUCT.md`](PRODUCT.md) — Cekgu's customer, problem, product loop, pages, scope, business model and demo moment
 - [`TRD.md`](TRD.md) — the measured GonkaRouter reference: base URLs, model ids, provenance headers, limits
-- [`superpowers/research/README.md`](superpowers/research/README.md) — ten-round concept research and ranked candidates
+- [`superpowers/research/README.md`](superpowers/research/README.md) — eleven-round concept research and ranked
+  candidates
 - [`../AGENTS.md`](../AGENTS.md) — project instructions for agentic tools, and humans
 
 Work in progress lives in the [Issues board](https://github.com/MUBA-M1KU/dev/issues), not in a checklist here.
@@ -105,8 +107,7 @@ docs/
 .claude/hooks/           session brief, env drift, git guard, formatter
 ```
 
-`PRODUCT.md`, `PRD.md` and `DESIGN.md` are listed but **not written yet**. Source layout is not decided; add it here
-when it is.
+`PRD.md` and `DESIGN.md` are listed but **not written yet**. Source layout is not decided; add it here when it is.
 
 The repo root deliberately has **no README**. It lives here.
 
