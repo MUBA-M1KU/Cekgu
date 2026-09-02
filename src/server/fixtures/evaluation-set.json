@@ -48,7 +48,7 @@
       "stem": "In big-O notation, what does O(n) say about an algorithm?",
       "options": [
         { "letter": "A", "text": "It always takes exactly n steps to finish" },
-        { "letter": "B", "text": "Its running time grows in proportion to the input size" },
+        { "letter": "B", "text": "Its running time grows at most linearly with the input size" },
         { "letter": "C", "text": "It uses n bytes of memory whatever the input" },
         { "letter": "D", "text": "It is faster than every O(log n) algorithm" }
       ],
@@ -209,12 +209,12 @@
     {
       "id": "thread-shared-address-space",
       "intended": "clean",
-      "stem": "What do two threads of the same process share?",
+      "stem": "Which of these do two threads of the same process share?",
       "options": [
-        { "letter": "A", "text": "The address space of the process" },
-        { "letter": "B", "text": "A private copy of the heap each" },
-        { "letter": "C", "text": "Separate page tables" },
-        { "letter": "D", "text": "Separate file descriptor tables" }
+        { "letter": "A", "text": "The address space" },
+        { "letter": "B", "text": "The program counter" },
+        { "letter": "C", "text": "The stack" },
+        { "letter": "D", "text": "The register set" }
       ],
       "key": "A"
     },

@@ -101,4 +101,28 @@ describe('evaluation set', () => {
     expect(fifo?.options.find((option) => option.letter === fifo.key)?.text).toBe('Stack')
     expect(fifo?.options.find((option) => option.letter === fifo.correctKey)?.text).toBe('Queue')
   })
+
+  test('the DNS item is keyed at encryption with the address translation correct', () => {
+    const dns = set.items.find((item) => item.id === 'dns-role')
+    expect(dns?.intended).toBe('mis_keyed')
+    const optionText = (letter: string | undefined) =>
+      dns?.options.find((option) => option.letter === letter)?.text ?? ''
+    expect(optionText(dns?.key)).toMatch(/encrypt/i)
+    expect(optionText(dns?.correctKey)).toMatch(/IP addresses/i)
+  })
+
+  test('the demo head opens its plants with the FIFO item', () => {
+    const head = set.items.slice(0, 12)
+    expect(head.find((item) => item.intended === 'mis_keyed')?.id).toBe('fifo-structure')
+  })
+
+  test('no option offers a catch-all answer', () => {
+    for (const item of set.items) {
+      for (const option of item.options) expect(option.text).not.toMatch(/all of the above|none of the above/i)
+    }
+  })
+
+  test('no stem is negated', () => {
+    for (const item of set.items) expect(item.stem).not.toMatch(/\bnot\b/i)
+  })
 })
