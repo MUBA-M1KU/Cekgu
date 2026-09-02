@@ -133,6 +133,10 @@ Single request, `max_tokens=1024`, one-sentence factual prompt, OpenAI surface, 
 Capabilities are as flagged on the Models page. Latency is one sample on one network — treat it as an order of
 magnitude, not a benchmark.
 
+**Availability, measured 2026-09-02.** That evening Kimi-K2.6 timed out on every call at 60–90 s, while DeepSeek
+answered in 0.7–5 s and MiniMax in 2–50 s. Design for Kimi being absent. Provenance and the MiniMax failure pattern are
+in [`superpowers/research/gateway-capabilities.md`](superpowers/research/gateway-capabilities.md#latency-and-hedging).
+
 **Parallel fan-out works.** Three concurrent requests, one per model, completed in **16.2 s wall clock** — bounded by
 the slowest model, not the sum. Each returned its own distinct `x-request-id`. Multi-model consensus is therefore a
 fan-out, not a queue.
@@ -183,6 +187,10 @@ away**. This matters for how we call the gateway:
 The body ids are **not** substitutes: the Anthropic surface returns `msg_…` and the OpenAI surface returns
 `devshard-65275-1926`. Neither is the gateway's request id.
 
+**Streaming, verified 2026-09-02.** `x-request-id` survives a streamed response: the header was present on a
+`stream: true` call, the first SSE chunk arrived, and the public receipt for that id returned `"stream": true`.
+Streaming costs nothing in provenance.
+
 > **Design consequence.** Whatever wraps the gateway must return
 > `(content, request_id, devshard_id, requested_model, served_model, receipt_status, usage)` as one record, from the
 > first commit. Retrofitting provenance after the call layer exists means rewriting every call site, and the track fails
@@ -216,10 +224,21 @@ metadata: it makes the serving model publicly inspectable, but it is not cryptog
 | 5   | **`/v1` asymmetry between protocols**      | See [the base URL rule](#1-gateway-base-urls-and-auth)                                                                                                        |
 | 6   | **Prompt caching unsupported**             | The gateway does not implement Anthropic's prompt-caching headers. Disable client-side (`DISABLE_PROMPT_CACHING=1` for Claude Code)                           |
 | 7   | **Silent model fallback**                  | Send `X-Gonka-No-Fallback: true`; reject `X-Gonka-Fallback`; verify the served model via the public receipt before consensus                                  |
+| 8   | **Identical request bodies are cached**    | Byte-identical bodies in 70–190 ms for a repeated identical request at `temperature: 0.8`, each with a fresh id and receipt. Detail below                     |
+| 9   | **Long prompts yield reasoning only**      | On prompts around 1,500 tokens MiniMax failed roughly one call in three, once as raw reasoning with no JSON. Detail below                                     |
 
 **Stripping reasoning tags is not optional.** A consensus step that compares raw outputs will compare one model's answer
 against another model's internal monologue. Strip `<think>…</think>` and any orphaned tag before anything reads the
 content.
+
+**Gotcha 8, measured 2026-09-02.** Repeated identical request bodies at `temperature: 0.8` returned byte-identical
+content in 70–190 ms, and each repeat still received a fresh `x-request-id` and its own receipt. Add a nonce to every
+body in a multi-sample design, and read a receipt as proof that the gateway logged a request, not that a fresh inference
+ran.
+
+**Gotcha 9, measured 2026-09-02.** On prompts around 1,500 tokens MiniMax failed roughly one call in three: a 524 after
+114 s, two aborts at 114 s, and one reply that was raw reasoning with no JSON — gotcha 3 at prompt scale. A deferred
+hedge is mandatory.
 
 ## 6. Rate limits and timeouts
 

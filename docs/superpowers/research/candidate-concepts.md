@@ -1,7 +1,7 @@
 # Candidate concepts
 
-Ten rounds of concept exploration, scored against [`RUBRIC.md`](RUBRIC.md). **No concept is locked** — Round 10 is the
-current ranking, while earlier rounds remain in this document as research history.
+Eleven rounds of concept exploration, scored against [`RUBRIC.md`](RUBRIC.md). **No concept is locked** — Round 11 is
+the current ranking, while Round 10 and every earlier round remain in this document as research history.
 
 **Round 3 method.** Five decorrelated generation briefs (mass appeal, money, revelation, Malaysian daily life,
 spectacle), each carrying a ban list and a hard gate, then a hostile selection pass. Delegated models produced raw
@@ -13,6 +13,7 @@ Contents:
 1. [What rounds 1 and 2 got wrong](#what-rounds-1-and-2-got-wrong)
 1. [The two gates](#the-two-gates)
 1. [Round 4 scores](#round-4-scores)
+1. [Round 11 — phenomenon first](#round-11--phenomenon-first)
 1. [Round 10 — social benefit reweighted](#round-10--social-benefit-reweighted)
 1. [Round 9 — the final five](#round-9--the-final-five)
 1. [Round 8 — after the receipts endpoint shipped](#round-8--after-the-receipts-endpoint-shipped)
@@ -127,6 +128,83 @@ quorum         25%     threshold 50%     veto 30%
 
 **No public testnet exists** (`rpc.testnet.gonka.gg` does not resolve; `/docs/testnet/` is 404). A binding vote cannot
 be demonstrated on stage in five days without standing up a private chain, and the vote _is_ the concept.
+
+## Round 11 — phenomenon first
+
+**The correction that drove this round.** Every earlier round started from a brief, a rubric weight or a stack
+capability. This round starts from a Malaysian phenomenon of 2025–26 and admits a candidate only if three things hold:
+
+- **A real adjudicator exists**, so truth eventually disciplines the flag — condition **iii** in
+  [`disagreement-as-product.md`](disagreement-as-product.md#the-finding-that-constrains-everything).
+- **A law or institution turns model disagreement into leverage** the user can take somewhere.
+- **Text only.** The gateway confirmed on 2 Sept 2026 that image features are unsupported; local OCR was explicitly
+  permitted by the GonkaRouter team the same day.
+
+### Round 11 ranking
+
+| #     | Concept                                 | Novelty | Real user         | Track fit | Demo | Build | **Total** | Verdict |
+| ----- | --------------------------------------- | ------: | ----------------- | --------: | ---: | ----: | --------: | ------- |
+| **1** | **Tuntut** — insurance claim rejections |      20 | 15 `[ASSUMPTION]` |        19 |   13 |    17 |    **84** | Viable  |
+| 2     | Gig deactivation notices                |      18 | 13 `[ASSUMPTION]` |        18 |   12 |    15 |    **76** | Viable  |
+
+Full verification with every citation: [`verify-insurance-claims.md`](verify-insurance-claims.md) and
+[`verify-gig-deactivation.md`](verify-gig-deactivation.md). Real user carries `[ASSUMPTION]` in both, as elsewhere in
+this ledger: the person is inferred from published survey and filing figures, not from talking to one.
+
+### Rank 1 — Tuntut
+
+A policyholder receives a rejection citing an exclusion clause. FOMCA reports nearly 30% of policyholders hit a partial
+or full rejection in two years and 24% of those were never given a clear reason, and FMOS itself says the recurring
+dispute is over what "medically necessary" means. The adjudicator is FMOS: free, RM250,000 cap, six months from the
+insurer's final decision. The product reads the clause with independent models and hands the user the conditions the
+readers could not settle, each reading carrying its request id, for the insurer's final-decision stage and then FMOS.
+
+**Mechanism test, measured live 2 Sept 2026** on DeepSeek-V4-Flash and MiniMax-M2.7; Kimi timed out on every call. Two
+contested clauses — a pre-existing-condition clause against a two-year-old borderline glucose reading, and a "medically
+necessary" clause on a two-night dengue admission — plus a clear cosmetic-surgery exclusion as control.
+
+| Prompt design                                | Contested clauses                                                                                                                                                                                                    | Cosmetic control           |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| Ask for a verdict on the clause              | Both models sided with the insurer on all 6 samples each. Zero disagreement                                                                                                                                          | "Met" / "yes" in both      |
+| Split the clause into conditions, judge each | Both models marked exactly the contested conditions "unclear" — "ought reasonably to have been aware"; "not for convenience" and "could not be safely provided outpatient" — and the overall answer became "unclear" | Stayed fully "met" / "yes" |
+
+**Conclusion.** The product output is the list of contested conditions, not a verdict. Asked for a verdict the models
+agree with the insurer and there is nothing to show; asked to decompose, they land on exactly the wording the
+adjudicator says disputes turn on, and the clear exclusion stays clear in both designs.
+
+**Corrections from the verifier:**
+
+- The Ombudsman for Financial Services became the Financial Markets Ombudsman Service (FMOS) on 1 Jan 2025. Say FMOS
+  everywhere.
+- Contra proferentem is a last-resort doctrine and FMOS decides on fairness, so the product must say "independent
+  readers split on this condition", never "legally ambiguous".
+
+### Rank 2 — Gig deactivation notices
+
+A rider or driver receives a suspension or deactivation notice too vague to answer. The Gig Workers Act 2025 (Act 872),
+in force since 31 March 2026 and covering 1.64 million workers, makes written notice, a right to be heard and a written
+explanation platform duties under s.14, and the Gig Workers Tribunal first sat on 1 Sept 2026 in Kuching. Independent
+models read the notice against the platform's published code and vote on which rule it names; when no reader can name
+one, the drafted reply argues the notice cannot support a meaningful s.14(7) right to be heard.
+
+**The verifier's corrections to the team's earlier notes:**
+
+| Earlier note                             | Verified                                                                                                                                  |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| 14 days without an inquiry               | 14 days is the suspension cap for the inquiry, plus 7 days after it under s.14(6)(b)                                                      |
+| Tribunal awards 50% of expected earnings | Half of average daily earnings over the suspension, a platform duty, not a tribunal award                                                 |
+| "Too vague fails the Act"                | An over-claim: the Act never requires citing a specific rule. Defensible framing: "cannot support a meaningful s.14(7) right to be heard" |
+| Over 1.6 million workers                 | 1.64 million                                                                                                                              |
+| A tribunal exists                        | It first sat 1 Sept 2026 in Kuching; no decisions published yet                                                                           |
+| 80% of appeals succeed                   | 80% is Seattle union-represented arbitrations; platform-internal appeals in NYC run near 10%                                              |
+
+### Withdrawn — Sama Makna
+
+A document translator with blind back-translation by a second lab and a third model listing every changed fact. Live
+test 2 Sept: 2 of 2 planted deadline shifts caught in Bengali and Tamil, a clean Tamil control gave zero flags, one
+MiniMax 524 after 114 s. Withdrawn because the job is already done free by Google Translate plus ChatGPT, and a fidelity
+check is a quality feature, not a phenomenon. It trips kill criterion 3: the multi-model requirement fits only by adding
+a feature the product does not otherwise need.
 
 ## Round 10 — social benefit reweighted
 

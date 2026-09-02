@@ -17,12 +17,14 @@ every other team gets from the same prompt.
 | File                                                       | Holds                                                                                                    |
 | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | [`RUBRIC.md`](RUBRIC.md)                                   | The scoring instrument. Read before generating any candidate                                             |
-| [`candidate-concepts.md`](candidate-concepts.md)           | Ten-round ledger; Round 10 is current and earlier rankings remain as history                             |
+| [`candidate-concepts.md`](candidate-concepts.md)           | Eleven-round ledger; Round 11 is current and earlier rankings remain as history                          |
 | [`three-day-rescore.md`](three-day-rescore.md)             | Every live concept rescored on 2 Sept 2026 for the 2.5 build days left, with that day's prior-art checks |
 | [`multi-model-capability.md`](multi-model-capability.md)   | The permutation test, and what three distinct models buy that one cannot                                 |
 | [`competitor-scan.md`](competitor-scan.md)                 | Prior art per candidate, predicted competition, the regulatory opening                                   |
 | [`gateway-capabilities.md`](gateway-capabilities.md)       | What the gateway does, and what a Gonka Request ID does and does not prove                               |
 | [`disagreement-as-product.md`](disagreement-as-product.md) | When multi-model divergence is a real signal, and the tests that certify it                              |
+| [`verify-insurance-claims.md`](verify-insurance-claims.md) | Round 11 verification of Tuntut: phenomenon, FMOS process, incumbents, 84/100 against the rubric         |
+| [`verify-gig-deactivation.md`](verify-gig-deactivation.md) | Round 11 verification of gig deactivation notices: Act 872 s.14 verbatim, tribunal status, 76/100        |
 
 ## What belongs here
 
