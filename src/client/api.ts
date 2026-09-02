@@ -150,3 +150,12 @@ export async function deleteRecords(ids: string[]): Promise<DeleteResult> {
 
   return request<DeleteResult>('/api/records', { method: 'DELETE', body: JSON.stringify({ ids }) })
 }
+
+export async function getSample(): Promise<RecordDetail> {
+  if (MOCK) {
+    const { mockRecord } = await import('./mock-record')
+    return mockRecord('sample')
+  }
+
+  return request<RecordDetail>('/api/sample')
+}

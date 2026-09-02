@@ -20,6 +20,34 @@ const VERDICTS: { verdict: ItemVerdict; meaning: string }[] = [
   }
 ]
 
+const STEPS = [
+  {
+    title: 'You type the questions',
+    detail:
+      'Stem, options and the answer you keyed. Cekgu checks the set for missing stems, duplicate options and absent keys before spending a single request.'
+  },
+  {
+    title: 'Two models answer blind',
+    detail:
+      'Your key is withheld, and neither model sees the other. Each returns the option it commits to, every option it considers defensible, and its reasoning.'
+  },
+  {
+    title: 'Each reading is verified',
+    detail:
+      'A reading only counts if the gateway did not substitute a different model and the public receipt names the model we asked for. Anything else is recorded and discarded.'
+  },
+  {
+    title: 'A fixed rule decides',
+    detail:
+      'The two readings are compared with each other first, and only then with your key. The same rule runs every time, and the sentence it produces is printed on screen.'
+  },
+  {
+    title: 'You review what was flagged',
+    detail:
+      'Risky items first, clean items still there as the control. Open any item to see both readings and their receipts side by side.'
+  }
+]
+
 export function HowItWorks() {
   return (
     <Sheet>
@@ -45,7 +73,35 @@ export function HowItWorks() {
         ))}
       </ul>
 
-      <p className="mt-6 max-w-[62ch] type-body text-ink-muted">
+      <h2 className="mt-10">How a Check Runs</h2>
+      {/* An ordered list because these genuinely happen in order, not because numbers look tidy. */}
+      <ol className="mt-4 m-0 list-none p-0">
+        {STEPS.map((step, index) => (
+          <li key={step.title} className="flex gap-4 border-t border-rule py-4">
+            <span className="type-mono w-6 shrink-0 text-ink-muted">{index + 1}</span>
+            <span className="min-w-0">
+              <span className="type-label block">{step.title}</span>
+              <span className="type-body text-ink-muted">{step.detail}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+
+      <h2 className="mt-10">You Decide, Not the Model</h2>
+      <p className="type-body mt-4 max-w-[64ch]">
+        Cekgu never changes a key, edits a question or approves a paper. A verdict is a place to look. You record what
+        you actually did — corrected the key, revised the wording, confirmed the key was right, dismissed the flag, or
+        asked for another attempt — and your decision is stored beside the machine verdict without replacing it. The
+        history shows both what Cekgu observed and what you decided.
+      </p>
+
+      <h2 className="mt-10">Receipts</h2>
+      <p className="type-body mt-4 max-w-[64ch]">
+        Every reading carries the Gonka request id of the call that produced it, and every id links to the gateway's
+        public receipt. The receipt names the model that actually served the request, which is how Cekgu proves two
+        readings came from two different families rather than the same one twice.
+      </p>
+      <p className="type-body mt-4 max-w-[64ch] text-ink-muted">
         A receipt is gateway metadata that makes the serving model publicly inspectable. It is not cryptographic or
         on-chain proof, and model agreement is not the same as truth.
       </p>
