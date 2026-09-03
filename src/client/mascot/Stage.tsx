@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { STAGE_HEIGHT, STAGE_WIDTH } from './motions'
 import type { MascotStage } from './runtime'
 import type { MascotState } from './state'
@@ -15,7 +15,18 @@ export function Stage({ state }: { state: MascotState }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const stageRef = useRef<MascotStage | null>(null)
   const stateRef = useRef<MascotState>(state)
+  const visibleRef = useRef(true)
+  // Off screen until the observer says otherwise, so a stage that mounts below the fold, which is
+  // the common case on a long record, never runs a frame before it is seen (FR-MASCOT-4).
+  const onScreenRef = useRef(false)
   const [failed, setFailed] = useState(false)
+
+  const applyActivity = useCallback(() => {
+    const stage = stageRef.current
+    if (!stage) return
+    if (visibleRef.current && onScreenRef.current) stage.resume()
+    else stage.pause()
+  }, [])
 
   // Re-running on `failed` is what tears the runtime down: the canvas is gone by then, so the
   // cleanup destroys the stage and the effect returns before building another.
@@ -25,9 +36,10 @@ export function Stage({ state }: { state: MascotState }) {
 
     let live = true
     let stage: MascotStage | null = null
+    const startPaused = !(visibleRef.current && onScreenRef.current)
 
     import('./runtime')
-      .then((runtime) => runtime.createStage(canvas, () => setFailed(true)))
+      .then((runtime) => runtime.createStage(canvas, () => setFailed(true), startPaused))
       .then((created) => {
         if (!live) {
           created.destroy()
@@ -37,6 +49,9 @@ export function Stage({ state }: { state: MascotState }) {
         stageRef.current = created
         created.play(stateRef.current)
         created.hold(blocked())
+        // The observers may have spoken while the runtime was loading, so the live values win
+        // over the ones this effect captured.
+        applyActivity()
       })
       .catch((error: unknown) => {
         console.debug('The mascot stage did not start.', error)
@@ -48,7 +63,7 @@ export function Stage({ state }: { state: MascotState }) {
       stageRef.current = null
       stage?.destroy()
     }
-  }, [failed])
+  }, [failed, applyActivity])
 
   useEffect(() => {
     stateRef.current = state
@@ -61,23 +76,17 @@ export function Stage({ state }: { state: MascotState }) {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    let visible = document.visibilityState !== 'hidden'
-    let onScreen = true
-
-    const apply = () => {
-      if (visible && onScreen) stageRef.current?.resume()
-      else stageRef.current?.pause()
-    }
+    visibleRef.current = document.visibilityState !== 'hidden'
 
     const onVisibility = () => {
-      visible = document.visibilityState !== 'hidden'
-      apply()
+      visibleRef.current = document.visibilityState !== 'hidden'
+      applyActivity()
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
-        onScreen = (entries[entries.length - 1]?.intersectionRatio ?? 0) >= 0.1
-        apply()
+        onScreenRef.current = (entries[entries.length - 1]?.intersectionRatio ?? 0) >= 0.1
+        applyActivity()
       },
       { threshold: [0, 0.1] }
     )
@@ -89,7 +98,7 @@ export function Stage({ state }: { state: MascotState }) {
       document.removeEventListener('visibilitychange', onVisibility)
       observer.disconnect()
     }
-  }, [])
+  }, [applyActivity])
 
   useEffect(() => {
     const check = () => stageRef.current?.hold(blocked())

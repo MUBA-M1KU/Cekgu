@@ -1,6 +1,7 @@
 import { Application } from 'pixi.js'
 import type { Cubism4InternalModel, Live2DModel } from 'pixi-live2d-display/cubism4'
-import { CATS, type Cat, type MascotMotion, MOTION_PLAN, STAGE_HEIGHT, STAGE_WIDTH } from './motions'
+import { CATS, type Cat, type MascotMotion, STAGE_HEIGHT, STAGE_WIDTH } from './motions'
+import { type CatSchedule, cuesFor, shouldRestartLoop, shouldStop } from './scheduler'
 import type { MascotState } from './state'
 
 // The Cubism core is not on npm under a redistributable licence, so it is fetched from Live2D's
@@ -86,9 +87,15 @@ function giveClippingManager(model: Live2DModel, live2d: typeof import('pixi-liv
   renderer._clippingManager = manager
 }
 
-export async function createStage(canvas: HTMLCanvasElement, onFailure: () => void): Promise<MascotStage> {
+async function buildStage(
+  canvas: HTMLCanvasElement,
+  onFailure: () => void,
+  initiallyPaused: boolean
+): Promise<MascotStage> {
   const live2d = await loadLive2D()
 
+  // The ticker never runs before the caller has said the stage is on screen, so a canvas that
+  // mounts below the fold costs no frames at all (FR-MASCOT-4).
   const app = new Application({
     view: canvas,
     width: STAGE_WIDTH,
@@ -97,7 +104,8 @@ export async function createStage(canvas: HTMLCanvasElement, onFailure: () => vo
     antialias: true,
     autoDensity: true,
     resolution: Math.min(window.devicePixelRatio || 1, 2),
-    sharedTicker: false
+    sharedTicker: false,
+    autoStart: !initiallyPaused
   })
 
   const loadModel = (cat: Cat): Promise<Live2DModel> =>
@@ -112,13 +120,16 @@ export async function createStage(canvas: HTMLCanvasElement, onFailure: () => vo
   const [tororo, hijiki] = await Promise.all([loadModel('tororo'), loadModel('hijiki')])
   const models: Record<Cat, Live2DModel> = { tororo, hijiki }
   for (const cat of CATS) giveClippingManager(models[cat], live2d)
+
   const baseScale: Record<Cat, number> = { tororo: 1, hijiki: 1 }
-  const looping: Record<Cat, MascotMotion | null> = { tororo: null, hijiki: null }
-  const restarting: Record<Cat, boolean> = { tororo: false, hijiki: false }
+  const schedules: Record<Cat, CatSchedule> = {
+    tororo: { looping: null, openingPending: false, starting: false },
+    hijiki: { looping: null, openingPending: false, starting: false }
+  }
   const timers = new Set<ReturnType<typeof setTimeout>>()
 
   let held = false
-  let paused = false
+  let paused = initiallyPaused
 
   // A lost context is the failure that matters once the stage is up: the cats vanish and nothing
   // else in the app notices, so the still image has to take over.
@@ -138,21 +149,33 @@ export async function createStage(canvas: HTMLCanvasElement, onFailure: () => vo
 
   function start(cat: Cat, entry: MascotMotion) {
     const model = models[cat]
+    const schedule = schedules[cat]
     model.scale.x = entry.mirror ? -baseScale[cat] : baseScale[cat]
-    restarting[cat] = true
-    void model.motion(entry.group, entry.index, live2d.MotionPriority.FORCE).then((started) => {
-      restarting[cat] = false
-      if (!started) looping[cat] = null
-    })
+    schedule.openingPending = false
+    schedule.starting = true
+
+    model
+      .motion(entry.group, entry.index, live2d.MotionPriority.FORCE)
+      .then((started) => {
+        schedule.starting = false
+        if (!started) schedule.looping = null
+      })
+      .catch((error: unknown) => {
+        schedule.starting = false
+        schedule.looping = null
+        console.debug('A mascot motion did not play.', error)
+        onFailure()
+      })
   }
 
   // 0.5.0-beta's own idle restart is disabled above, so the looping entry is restarted here when
-  // the queue empties. The guard keeps the restart from firing again before the motion has begun.
+  // the queue empties and the scheduler says the opening has had its turn.
   function tick() {
     for (const cat of CATS) {
-      const entry = looping[cat]
-      if (!entry || restarting[cat]) continue
-      if (models[cat].internalModel.motionManager.isFinished()) start(cat, entry)
+      const schedule = schedules[cat]
+      if (!shouldRestartLoop(schedule, models[cat].internalModel.motionManager.isFinished())) continue
+      const entry = schedule.looping
+      if (entry) start(cat, entry)
     }
   }
 
@@ -173,14 +196,17 @@ export async function createStage(canvas: HTMLCanvasElement, onFailure: () => vo
       clearTimers()
 
       for (const cat of CATS) {
-        const plan = MOTION_PLAN[state][cat]
-        const opening = plan.find((entry) => !entry.loop)
-        looping[cat] = plan.find((entry) => entry.loop) ?? null
+        const cues = cuesFor(state, cat)
+        schedules[cat] = cues.schedule
 
-        if (!opening) {
+        if (shouldStop(cues)) {
+          models[cat].internalModel.motionManager.stopAllMotions()
           models[cat].scale.x = baseScale[cat]
           continue
         }
+
+        const opening = cues.opening
+        if (!opening) continue
 
         const timer = setTimeout(() => {
           timers.delete(timer)
@@ -206,6 +232,47 @@ export async function createStage(canvas: HTMLCanvasElement, onFailure: () => vo
       canvas.removeEventListener('webglcontextlost', onContextLost)
       app.ticker.remove(tick)
       app.destroy(false, { children: true, texture: true, baseTexture: true })
+    }
+  }
+}
+
+type SharedStage = { promise: Promise<MascotStage>; refs: number }
+
+const shared = new WeakMap<HTMLCanvasElement, SharedStage>()
+
+// React's StrictMode mounts, unmounts and remounts an effect in development, so two createStage
+// calls race on one canvas. A second Application takes the WebGL context from the first, and
+// destroying either loses it for both, which silently degrades the stage to the still image. One
+// build per canvas, released only when the last caller destroys it.
+export async function createStage(
+  canvas: HTMLCanvasElement,
+  onFailure: () => void,
+  initiallyPaused = false
+): Promise<MascotStage> {
+  const entry = shared.get(canvas) ?? { refs: 0, promise: buildStage(canvas, onFailure, initiallyPaused) }
+  entry.refs += 1
+  shared.set(canvas, entry)
+
+  let stage: MascotStage
+  try {
+    stage = await entry.promise
+  } catch (error) {
+    entry.refs -= 1
+    if (entry.refs <= 0) shared.delete(canvas)
+    throw error
+  }
+
+  let released = false
+
+  return {
+    ...stage,
+    destroy() {
+      if (released) return
+      released = true
+      entry.refs -= 1
+      if (entry.refs > 0) return
+      shared.delete(canvas)
+      stage.destroy()
     }
   }
 }
