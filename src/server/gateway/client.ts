@@ -103,7 +103,28 @@ export async function callGonka(requestedModel: string, prompt: string, now = Da
   const fallbackHeader = response.headers.get('x-gonka-fallback')
   const httpStatus = response.status
 
-  const raw = await response.text()
+  // Guarded for the same reason the receipt fetch below is: a call that fails must still return
+  // provenance. The abort signal covers the body read as well as the headers, and a connection can
+  // drop mid-body, so an unguarded read throws out of here and takes with it an x-request-id the
+  // gateway has already issued — the one thing the attempts row exists to record.
+  let raw: string
+  try {
+    raw = await response.text()
+  } catch (cause) {
+    const aborted = cause instanceof Error && (cause.name === 'TimeoutError' || cause.name === 'AbortError')
+    return {
+      ...blank,
+      requestId,
+      devshardId,
+      fallbackHeader,
+      httpStatus,
+      latencyMs: now() - started,
+      error: aborted
+        ? `The call passed the ${CALL_TIMEOUT_MS / 1000} second evidence cutoff while reading the body.`
+        : `The response body could not be read. ${String(cause)}`
+    }
+  }
+
   const latencyMs = now() - started
   const base: Provenance = { ...blank, requestId, devshardId, fallbackHeader, httpStatus, latencyMs }
 
