@@ -59,6 +59,36 @@ Six revisions, all from the owner's notes on 3 September.
 The evidence-panel use is the one that earns its place rather than decorating: the cats are the two **seats**, never a
 particular model. Which family serves a seat varies per item, so a fixed cat-to-model mapping would be a lie.
 
+## The second revision
+
+Four more notes from the owner, after seeing the first revision.
+
+- **The mascot images are generated now, not cropped from the Live2D preview.** `cat-tororo.png` and `cat-hijiki.png`
+  are a chibi pair produced through the Codex CLI in one image and split, so the two read as siblings rather than as two
+  separate generations. They carry their own outline, which is why the tinted disc that was propping the white cat up on
+  white surfaces could go. The Live2D rig is unchanged and still owns the animated stage
+- **The mascot appears in three places, not seven.** Hero, the Reader A and Reader B avatars in the evidence panel, and
+  the empty state. Dropped: the topbar run indicator, the drawer footer, the sign-in greeting, and step two of How It
+  Works — that last one put the cats 200 px below the hero that already introduces them, and the same claim is made more
+  precisely by two rings converging on one bubble
+- **Sign-in is back to the first version**: one card beside a quiet figure rather than two centred cards, and without
+  the shared-workspace note
+- **The post-auth shell is SolarSim's, taken as-is.** A 64 px rail that expands to 200 px on hover with a blurred
+  backdrop, section headings that crossfade from divider to label, an active item marked by a 2 px bar; a 56 px glass
+  topbar offset by the rail carrying breadcrumbs, a theme switch, a notification popover with an unread badge and a
+  profile popover; and the padded content container. The footer is MakanLah's: right-aligned, stacked, glass, and
+  deliberately almost empty
+
+### The hero clip carries a watermark, and it is still there
+
+Gemini bakes a four-point sparkle into the frame at roughly 91% across and 83% down — its AI-content mark. The hero now
+shows the **top-left 80%** of the clip, which moves the mark out of view and is also the better crop: the nib and the
+marked bubble sit there and the lower right is empty paper.
+
+**The mark has not been removed from `hero.mp4`.** Stripping a provider's provenance mark from an asset is a decision
+about how the project represents its own material, not a formatting choice, so it is left for the owner to make
+deliberately. Anyone reframing or reusing this clip should know the mark is in the file.
+
 ## What the diagnosis rests on
 
 Measured against the deployed build at 1440 px and at 853 px, which is a 1280 px projector at the 150% zoom the demo

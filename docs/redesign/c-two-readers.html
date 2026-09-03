@@ -25,7 +25,7 @@
          · The record workspace gets a topbar, a drawer sidebar (MakanLah's dialog drawer, not
            SolarSim's hover rail) and a content layer.
          · Tororo and Hijiki are promoted from one 240x160 stage on one screen to the product's
-           second visual system. See the MASCOT notes through the file.
+           second visual system, in three places rather than seven. See the MASCOT notes below.
 
          The atom is unchanged: one answer bubble, from 420 px in the hero to 12 px in a row.
          ============================================================================ */
@@ -262,7 +262,9 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        object-position: center;
+        object-position: left top;
+        transform: scale(1.26);
+        transform-origin: top left;
       }
 
       .hero-scrim {
@@ -413,7 +415,7 @@
         flex: none;
       }
 
-      /* MASCOT 1 of 7 — the hero. The two cats ARE the two readers, and until now they lived
+      /* MASCOT 1 of 3 — the hero. The two cats ARE the two readers, and until now they lived
          on one 240x160 stage on one authenticated screen that a judge may never open. Here
          they are the first thing a visitor meets, at the size the idea deserves. */
       .hero-cats {
@@ -561,26 +563,8 @@
         margin-bottom: 0.35rem;
       }
 
-      .step .cats img {
-        border-radius: 999px;
-        background: #dfe3e8;
-        box-shadow: inset 0 0 0 1px rgb(20 24 31 / 0.06);
-      }
 
-      /* MASCOT 2 of 7 — step two. The step that says "two independent readers" shows the two
-         readers, so the sentence and the picture are the same claim. */
-      .step .cats {
-        display: flex;
-        align-items: flex-end;
-        gap: 0.35rem;
-      }
 
-      .step .cats img {
-        width: 3rem;
-        height: 3rem;
-        padding: 0.15rem;
-        object-fit: contain;
-      }
 
       /* ---- Sample Report ------------------------------------------------------------ */
       .sample-panel {
@@ -669,7 +653,7 @@
         font-weight: 500;
       }
 
-      /* MASCOT 3 of 7, and the one that earns its place most — the evidence panel. Reader A
+      /* MASCOT 2 of 3, and the one that earns its place most — the evidence panel. Reader A
          is Tororo and reader B is Hijiki, so the two-reader idea is legible before a word is
          read. The cats are the two SEATS, never a particular model: which family serves a
          seat varies per item, so a fixed cat-to-model mapping would be a lie. */
@@ -693,11 +677,7 @@
       .ev-head img {
         width: 2.5rem;
         height: 2.5rem;
-        padding: 0.15rem;
         object-fit: contain;
-        border-radius: 999px;
-        background: #dfe3e8;
-        box-shadow: inset 0 0 0 1px rgb(20 24 31 / 0.06);
         flex: none;
       }
 
@@ -932,38 +912,28 @@
       }
 
       /* ============================ SCREEN 2 · AUTH ============================ */
+      /* Reverted to the first version of this screen at the owner's request: one card beside
+         a quiet figure, rather than two centred cards side by side. The shared-workspace note
+         is gone — a guest workspace announces itself by being one. */
       .auth {
         display: grid;
-        place-items: center;
-        min-height: 44rem;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+        align-items: center;
+        gap: 4rem;
+        min-height: 40rem;
         padding-block: 4rem;
       }
 
-      .auth-cards {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1.5rem;
-        width: 100%;
-        max-width: 54rem;
-        margin-inline: auto;
-      }
-
-      /* The owner's note: centre the content of both cards. */
       .auth-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 2.5rem 2rem;
+        max-width: 27rem;
+        padding: 2.5rem;
         border-radius: 1.75rem;
         background: var(--raise);
         box-shadow: 0 1px 2px rgb(20 24 31 / 0.05), 0 24px 56px -34px rgb(20 24 31 / 0.4);
       }
 
-      .auth-card .field {
-        width: 100%;
-        margin-top: 1.1rem;
-        text-align: left;
+      .field {
+        margin-top: 1.2rem;
       }
 
       .field label {
@@ -981,7 +951,6 @@
         border-radius: 999px;
         background: var(--ground);
         font: inherit;
-        text-align: center;
       }
 
       .field input:focus-visible {
@@ -989,241 +958,511 @@
         outline-offset: 1px;
       }
 
-      /* MASCOT 4 of 7 — sign-in. One cat, waiting, at the size of an avatar rather than an
-         illustration. It is the only thing on the screen that is not a form control. */
-      .auth-card .greet {
-        width: 5rem;
-        height: 5rem;
-        padding: 0.35rem;
-        object-fit: contain;
-        border-radius: 999px;
-        background: #dfe3e8;
-        margin-bottom: 0.75rem;
+      .auth-aside {
+        display: grid;
+        place-items: center;
       }
 
       /* ============================ SCREEN 3 · APP ============================ */
+      /* SolarSim's shell, taken as-is at the owner's request: a 64 px rail that expands to
+         200 px on hover with a blurred backdrop behind it, a 56 px glass topbar offset by the
+         rail, the padded content container, and a mobile drawer. The footer is MakanLah's:
+         right-aligned, stacked, glass, and deliberately almost empty. */
       .app {
         position: relative;
-        min-height: 46rem;
+        min-height: 52rem;
         background: var(--ground);
         overflow: hidden;
       }
 
-      /* Topbar: fixed height, drawer toggle at the leading edge. MakanLah replaces the
-         wordmark with the toggle inside the app, so there is one brand mark per screen. */
+
+      /* ---- the rail ---------------------------------------------------------------- */
+      .rail {
+        position: absolute;
+        inset-block: 0;
+        left: 0;
+        z-index: 60;
+        display: flex;
+        flex-direction: column;
+        width: 4rem;
+        overflow: hidden;
+        background: var(--raise);
+        border-right: 1px solid var(--line);
+        transition: width 0.18s var(--ease), box-shadow 0.18s var(--ease);
+      }
+
+      .rail:hover,
+      .rail:focus-within {
+        width: 12.5rem;
+        box-shadow: 0 8px 40px rgb(20 24 31 / 0.16);
+      }
+
+      .rail-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        height: var(--topbar);
+        flex: none;
+        padding-inline: 1.125rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .rail-logo svg {
+        flex: none;
+      }
+
+      .rail-logo span {
+        white-space: nowrap;
+        font-size: 0.9375rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        opacity: 0;
+        transition: opacity 0.15s var(--ease);
+      }
+
+      .rail:hover .rail-logo span,
+      .rail:focus-within .rail-logo span {
+        opacity: 1;
+      }
+
+      .rail-nav {
+        flex: 1;
+        padding: 0.75rem 0.5rem;
+        overflow: hidden auto;
+      }
+
+      /* The crossfade SolarSim uses: a divider while collapsed, the section name once open. */
+      .rail-head {
+        position: relative;
+        display: flex;
+        align-items: center;
+        height: 1.25rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .rail-head:not(:first-child) {
+        margin-top: 1rem;
+      }
+
+      .rail-head hr {
+        position: absolute;
+        inset-inline: 0;
+        margin: 0;
+        border: 0;
+        border-top: 1px solid var(--line);
+        transition: opacity 0.15s var(--ease);
+      }
+
+      .rail-head span {
+        padding-inline: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.15s var(--ease);
+      }
+
+      .rail:hover .rail-head hr,
+      .rail:focus-within .rail-head hr {
+        opacity: 0;
+      }
+
+      .rail:hover .rail-head span,
+      .rail:focus-within .rail-head span {
+        opacity: 1;
+      }
+
+      .rail-link {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        height: 3rem;
+        padding-inline: 0.5rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--ink-2);
+        text-decoration: none;
+      }
+
+      .rail-link:hover {
+        background: var(--sunk);
+        color: var(--ink);
+      }
+
+      .rail-link[aria-current] {
+        background: var(--sunk);
+        font-weight: 500;
+        color: var(--ink);
+      }
+
+      .rail-link[aria-current]::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.5rem;
+        bottom: 0.5rem;
+        width: 2px;
+        border-radius: 999px;
+        background: var(--pen);
+      }
+
+      .rail-link i {
+        display: grid;
+        place-items: center;
+        width: 2rem;
+        flex: none;
+      }
+
+      .rail-link span {
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.15s var(--ease);
+      }
+
+      .rail:hover .rail-link span,
+      .rail:focus-within .rail-link span {
+        opacity: 1;
+      }
+
+      .rail-collapse {
+        flex: none;
+        width: 4rem;
+        display: grid;
+        place-items: center;
+        padding-block: 0.75rem;
+        color: var(--ink-3);
+      }
+
+      .rail-collapse svg {
+        transition: transform 0.15s var(--ease);
+        transform: rotate(180deg);
+      }
+
+      .rail:hover .rail-collapse svg,
+      .rail:focus-within .rail-collapse svg {
+        transform: rotate(0deg);
+      }
+
+      .rail-backdrop {
+        position: absolute;
+        inset: 0;
+        z-index: 55;
+        opacity: 0;
+        pointer-events: none;
+        background: rgb(20 24 31 / 0.16);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        transition: opacity 0.18s var(--ease);
+      }
+
+      .rail:hover ~ .rail-backdrop {
+        opacity: 1;
+      }
+
+      /* ---- the topbar --------------------------------------------------------------- */
       .topbar {
         position: relative;
         z-index: 40;
         display: flex;
         align-items: center;
-        gap: 1rem;
+        justify-content: space-between;
+        gap: 0.5rem;
         height: var(--topbar);
-        padding-inline: 1rem;
-        background: rgb(255 255 255 / 0.9);
+        margin-left: 4rem;
+        padding-inline: 1.5rem;
+        background: rgb(255 255 255 / 0.88);
         backdrop-filter: blur(12px) saturate(160%);
         -webkit-backdrop-filter: blur(12px) saturate(160%);
         border-bottom: 1px solid var(--line);
       }
 
-      .drawer-toggle {
-        display: inline-grid;
-        place-items: center;
-        width: 2.5rem;
-        height: 2.5rem;
-        border: 0;
-        border-radius: 999px;
-        background: transparent;
-        color: var(--ink);
-      }
-
-      .drawer-toggle:hover {
-        background: var(--sunk);
-      }
-
-      .topbar .crumb {
-        font-size: 0.9375rem;
+      .crumbs {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        min-width: 0;
+        font-size: 0.875rem;
         color: var(--ink-2);
       }
 
-      .topbar .crumb b {
-        color: var(--ink);
-        font-weight: 500;
-      }
-
-      .topbar-right {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        margin-left: auto;
-      }
-
-      /* MASCOT 5 of 7 — the topbar status. The cats already carry seven product states in
-         src/client/mascot/state.ts and the product renders them on one screen. In the topbar
-         the pair doubles as the run indicator, so the state is visible from every page. */
-      .status-cats {
-        display: flex;
-        align-items: center;
-        gap: 0.15rem;
-        padding: 0.25rem 0.7rem 0.25rem 0.35rem;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        font-size: 0.75rem;
-        color: var(--ink-2);
-      }
-
-      .status-cats img {
-        width: 1.5rem;
-        height: 1.5rem;
-        padding: 0.1rem;
-        object-fit: contain;
-        border-radius: 999px;
-        background: #dfe3e8;
-      }
-
-      .status-cats span {
-        margin-left: 0.4rem;
-        font-family: var(--mono);
-      }
-
-      /* The drawer: a modal dialog, not a rail. MakanLah's pattern — scrim with a blur, a
-         panel that slides, focus trapped, Escape closes, body scroll locked. */
-      /* position: absolute rather than fixed only because this comp stacks three screens in
-         one document; in the product it is fixed to the viewport. */
-      .drawer {
-        position: absolute;
-        inset: 0;
-        z-index: 80;
-        display: flex;
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        background: rgb(20 24 31 / 0.34);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        transition: opacity 0.24s var(--ease), visibility 0s 0.24s;
-      }
-
-      .drawer.open {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-        transition: opacity 0.24s var(--ease), visibility 0s;
-      }
-
-      .drawer-panel {
-        display: flex;
-        flex-direction: column;
-        width: min(19rem, 82vw);
-        height: 100%;
-        padding: 1.25rem;
-        background: var(--raise);
-        border-right: 1px solid var(--line);
-        box-shadow: 0 0 60px rgb(20 24 31 / 0.28);
-        transform: translateX(-100%);
-        transition: transform 0.24s var(--ease);
-      }
-
-      .drawer.open .drawer-panel {
-        transform: translateX(0);
-      }
-
-      .drawer-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding-bottom: 1.1rem;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .drawer nav {
-        display: flex;
-        flex-direction: column;
-        gap: 0.2rem;
-        padding-block: 1rem;
-      }
-
-      .drawer nav a {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        min-height: 2.75rem;
-        padding: 0 0.85rem;
-        border-radius: 999px;
-        font-size: 0.9375rem;
-        color: var(--ink-2);
+      .crumbs a {
+        color: inherit;
         text-decoration: none;
       }
 
-      .drawer nav a:hover {
+      .crumbs a:hover {
+        color: var(--ink);
+      }
+
+      .crumbs .sep {
+        color: var(--line);
+      }
+
+      .crumbs b {
+        font-weight: 500;
+        color: var(--ink);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .bar-right {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        flex: none;
+      }
+
+      .icon-btn {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        border: 0;
+        border-radius: 0.5rem;
+        background: transparent;
+        color: var(--ink-2);
+      }
+
+      .icon-btn:hover {
         background: var(--sunk);
         color: var(--ink);
       }
 
-      .drawer nav a[aria-current] {
-        background: var(--ink);
-        color: var(--raise);
+      .icon-btn .badge {
+        position: absolute;
+        top: 0.15rem;
+        right: 0.15rem;
+        display: grid;
+        place-items: center;
+        min-width: 1rem;
+        height: 1rem;
+        padding-inline: 0.2rem;
+        border-radius: 999px;
+        background: var(--pen);
+        color: #fff;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1;
+      }
+
+      .avatar {
+        display: grid;
+        place-items: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 999px;
+        background: color-mix(in oklab, var(--pen) 14%, var(--raise));
+        color: var(--pen);
+        font-size: 0.75rem;
         font-weight: 500;
       }
 
-      .drawer-sec {
-        margin-top: 0.9rem;
-        padding-top: 0.9rem;
-        border-top: 1px solid var(--line);
+      /* Both popovers use one shape, which is how SolarSim keeps them reading as siblings. */
+      .pop {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        right: 0;
+        z-index: 50;
+        width: min(20rem, calc(100vw - 2rem));
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 0.75rem;
+        background: var(--raise);
+        box-shadow: 0 20px 40px -18px rgb(20 24 31 / 0.35);
       }
 
-      .legend {
-        display: grid;
-        gap: 0.45rem;
-        font-size: 0.8125rem;
-      }
-
-      .legend div {
+      .pop-head {
         display: flex;
         align-items: center;
-        gap: 0.6rem;
+        justify-content: space-between;
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .pop-head h3 {
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      .pop-item {
+        display: block;
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .pop-item:last-child {
+        border-bottom: 0;
+      }
+
+      .pop-item h4 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .pop-item h4 i {
+        width: 0.375rem;
+        height: 0.375rem;
+        border-radius: 999px;
+        background: var(--pen);
+        flex: none;
+      }
+
+      .pop-item p {
+        margin-top: 0.2rem;
+        font-size: 0.8125rem;
         color: var(--ink-2);
       }
 
-      .legend b {
-        margin-left: auto;
+      .pop-item time {
+        display: block;
+        margin-top: 0.2rem;
         font-family: var(--mono);
-        font-weight: 500;
-        color: var(--ink);
-      }
-
-      .legend i {
-        width: 0.5rem;
-        height: 0.5rem;
-        border-radius: 999px;
-        background: currentColor;
-      }
-
-      /* MASCOT 6 of 7 — the drawer foot. The pair sits with the reduce-motion control they
-         obey, so the setting is next to the thing it settles. */
-      .drawer-foot {
-        margin-top: auto;
-        padding-top: 1rem;
-        border-top: 1px solid var(--line);
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        font-size: 0.8125rem;
+        font-size: 0.75rem;
         color: var(--ink-3);
       }
 
-      .drawer-foot img {
-        width: 1.75rem;
-        height: 1.75rem;
-        padding: 0.1rem;
-        object-fit: contain;
-        border-radius: 999px;
-        background: #dfe3e8;
+      .pop-user {
+        padding: 0.75rem 0.9rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .pop-user .who {
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .pop-user .plan {
+        font-size: 0.75rem;
+        color: var(--ink-3);
+      }
+
+      .pop-row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        width: 100%;
+        padding: 0.6rem 0.9rem;
+        border: 0;
+        background: transparent;
+        font-size: 0.875rem;
+        color: var(--ink);
+        text-align: left;
+        text-decoration: none;
+      }
+
+      .pop-row:hover {
+        background: var(--sunk);
+      }
+
+      .pop-row.danger {
+        color: var(--pen);
+        border-top: 1px solid var(--line);
+      }
+
+      .pop-row.danger:hover {
+        background: color-mix(in oklab, var(--pen) 8%, var(--raise));
+      }
+
+      /* ---- the content layer -------------------------------------------------------- */
+      .shell-body {
+        margin-left: 4rem;
+        min-height: 40rem;
+        display: flex;
+        flex-direction: column;
       }
 
       .content {
-        max-width: 64rem;
+        flex: 1;
+        width: 100%;
+        max-width: 100rem;
         margin: 0 auto;
-        padding: 2rem 1.5rem 4rem;
+        padding: 1.5rem 1rem 2rem;
+      }
+
+      /* The record is a document, so it keeps a readable measure inside the wide container
+         rather than stretching to 1600 px. */
+      .doc {
+        max-width: 60rem;
+      }
+
+      /* ---- MakanLah's footer -------------------------------------------------------- */
+      .app-foot {
+        margin-left: 4rem;
+        border-top: 1px solid var(--line);
+        background: rgb(255 255 255 / 0.7);
+        backdrop-filter: blur(10px) saturate(1.18);
+        -webkit-backdrop-filter: blur(10px) saturate(1.18);
+        box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6);
+      }
+
+      .app-foot-inner {
+        max-width: 100rem;
+        margin: 0 auto;
+        padding: 1.75rem 1rem;
+        display: grid;
+        justify-items: end;
+        align-content: center;
+        gap: 0.6rem;
+        text-align: right;
+      }
+
+      .app-foot-motto {
+        font-size: 0.875rem;
+        color: var(--ink-2);
+      }
+
+      .app-foot a.link-quiet {
+        font-size: 0.8125rem;
+        color: var(--ink-2);
+        text-decoration: none;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .app-foot a.link-quiet:hover {
+        color: var(--ink);
+      }
+
+      /* The topbar's switch has to do something or it is a control that lies. Scoped to this
+         screen so flipping it does not change the two screens above it mid-review. */
+      .app.dark {
+        --ground: #12161c;
+        --raise: #1a2029;
+        --sunk: #222a35;
+        --ink: #eceae4;
+        --ink-2: #b3bcc7;
+        --ink-3: #9aa4b0;
+        --line: #2f3947;
+        --pen: #f07079;
+        --clear: #7cc79c;
+        --key: #f2a468;
+        --amb: #b9a6f2;
+        --split: #8fb8f7;
+        --unver: #a0aab6;
+        color: var(--ink);
+      }
+
+      .app.dark .topbar {
+        background: rgb(26 32 41 / 0.88);
+      }
+
+      .app.dark .app-foot {
+        background: rgb(26 32 41 / 0.7);
+        box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05);
+      }
+
+      .app.dark .ev-head img,
+      .app.dark .empty img {
+        background: #2b3441;
       }
 
       .work-head {
@@ -1337,8 +1576,8 @@
         font-size: 0.875rem;
       }
 
-      /* MASCOT 7 of 7 — the empty state. A screen with nothing on it is the one place a
-         product can afford a picture, and the cats already have a resting pose. */
+      /* MASCOT 3 of 3 — the empty state. A screen with nothing on it is the one place a
+         product can afford a picture. */
       .empty {
         display: grid;
         justify-items: center;
@@ -1349,12 +1588,9 @@
       }
 
       .empty img {
-        width: 7.5rem;
-        height: 7.5rem;
-        padding: 0.75rem;
+        width: 8rem;
+        height: 8rem;
         object-fit: contain;
-        border-radius: 999px;
-        background: var(--sunk);
       }
 
       .to-top {
@@ -1545,7 +1781,7 @@
 
           <article class="step">
             <div class="fig">
-              <span class="cats"><img src="cat-tororo.png" alt="" /><img src="cat-hijiki.png" alt="" /></span>
+              <span class="slot ra rb">B</span><span class="slot">C</span>
             </div>
             <p class="n">02</p>
             <h3>Two Readers Answer Blind</h3>
@@ -1849,49 +2085,55 @@
     <!-- ============================ SIGN IN ============================ -->
     <div class="frame-label">Direction C · Two Readers <span>Screen 2 of 3 — Sign In</span></div>
 
-    <section class="auth">
-      <div class="wrap">
-        <div class="auth-cards">
-          <div class="auth-card">
-            <!-- MASCOT 4: one cat, waiting. -->
-            <img class="greet" src="cat-tororo.png" alt="" />
-            <h2 style="font-size: 1.75rem">Welcome Back</h2>
-            <p style="margin-top: 0.5rem; max-width: 30ch; color: var(--ink-2)">
-              Your papers are in your account, and nothing is shared between accounts.
-            </p>
-            <div class="field">
-              <label for="c-email">Email</label>
-              <input id="c-email" type="email" placeholder="you@school.edu.my" />
-            </div>
-            <div class="field">
-              <label for="c-pass">Password</label>
-              <input id="c-pass" type="password" />
-            </div>
-            <button class="btn btn-solid" type="button" style="width: 100%; margin-top: 1.5rem">Sign In</button>
-            <button class="btn btn-ring" type="button" style="width: 100%; margin-top: 0.6rem">
-              Continue as Guest
-            </button>
+    <section class="auth-wrap">
+      <div class="wrap auth">
+        <div class="auth-card">
+          <a class="lockup" href="/" style="font-size: 1.1875rem">
+            <svg width="22" height="22" viewBox="0 0 64 64" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M25 12a20 20 0 1 0 0 40 20 20 0 0 0 0-40Zm14.5 3.2a20 20 0 0 0-8.2 1.9 23 23 0 0 1 0 29.8 20 20 0 1 0 8.2-31.7Z"
+              />
+              <circle cx="39.5" cy="32" r="17" fill="none" stroke="currentColor" stroke-width="3" />
+              <path
+                d="M22 34.5 30 43l16-22"
+                fill="none"
+                stroke="var(--pen)"
+                stroke-width="4.5"
+                stroke-linecap="round"
+              />
+            </svg>
+            Cekgu
+          </a>
+          <h2 style="margin-top: 1.75rem; font-size: 1.875rem">Sign In</h2>
+          <div class="field">
+            <label for="c-email">Email</label>
+            <input id="c-email" type="email" placeholder="you@school.edu.my" />
           </div>
+          <div class="field">
+            <label for="c-pass">Password</label>
+            <input id="c-pass" type="password" />
+          </div>
+          <div style="display: flex; gap: 0.7rem; margin-top: 1.5rem">
+            <button class="btn btn-solid" type="button">Sign In</button>
+            <button class="btn btn-ring" type="button">Create an Account</button>
+          </div>
+          <hr style="margin: 1.75rem 0 1.25rem; border: 0; border-top: 1px solid var(--line)" />
+          <button class="btn btn-ring" type="button" style="width: 100%; justify-content: center">
+            Sign In as Guest
+          </button>
+        </div>
 
-          <div class="auth-card">
-            <img class="greet" src="cat-hijiki.png" alt="" />
-            <h2 style="font-size: 1.75rem">Create an Account</h2>
-            <p style="margin-top: 0.5rem; max-width: 30ch; color: var(--ink-2)">
-              Keep your papers, your decisions and every receipt in one place.
-            </p>
-            <div class="field">
-              <label for="c-email2">Email</label>
-              <input id="c-email2" type="email" placeholder="you@school.edu.my" />
-            </div>
-            <div class="field">
-              <label for="c-pass2">Choose a password</label>
-              <input id="c-pass2" type="password" />
-            </div>
-            <button class="btn btn-solid" type="button" style="width: 100%; margin-top: 1.5rem">Create Account</button>
-            <p style="margin-top: 0.85rem; font-size: 0.8125rem; color: var(--ink-3); max-width: 32ch">
-              By creating an account you agree to the Terms and the Privacy Notice.
-            </p>
-          </div>
+        <!-- The atom at rest. Sign-in is the one screen with nothing to report, so the figure
+             holds still rather than performing, and the cats stay out of it entirely. -->
+        <div class="auth-aside">
+          <svg viewBox="0 0 400 300" style="width: 100%; max-width: 26rem" role="img" aria-label="The Cekgu mark">
+            <circle cx="165" cy="150" r="86" fill="var(--ink)" opacity="0.09" />
+            <circle cx="235" cy="150" r="86" fill="none" stroke="var(--ink)" stroke-width="7" opacity="0.16" />
+          </svg>
+          <p style="margin-top: 1rem; max-width: 34ch; text-align: center; color: var(--ink-2)">
+            Nine of twelve questions on the sample paper came back Clear. The other three are waiting inside.
+          </p>
         </div>
       </div>
     </section>
@@ -1902,221 +2144,347 @@
     </div>
 
     <div class="app">
-      <div class="topbar">
-        <button class="drawer-toggle" type="button" id="drawerOpen" aria-label="Menu" aria-controls="appDrawer">
-          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-            <path d="M2 4.5h14M2 9h14M2 13.5h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <aside class="rail" aria-label="Sections">
+        <a class="rail-logo" href="/">
+          <svg width="20" height="20" viewBox="0 0 64 64" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M25 12a20 20 0 1 0 0 40 20 20 0 0 0 0-40Zm14.5 3.2a20 20 0 0 0-8.2 1.9 23 23 0 0 1 0 29.8 20 20 0 1 0 8.2-31.7Z"
+            />
+            <circle cx="39.5" cy="32" r="17" fill="none" stroke="currentColor" stroke-width="3" />
+            <path d="M22 34.5 30 43l16-22" fill="none" stroke="var(--pen)" stroke-width="4.5" stroke-linecap="round" />
           </svg>
-        </button>
-        <p class="crumb">Records / <b>Introductory computer science practice set</b></p>
-        <div class="topbar-right">
-          <!-- MASCOT 5: the pair as the run indicator, visible from every page. -->
-          <span class="status-cats" title="Both readers idle">
-            <img src="cat-tororo.png" alt="" /><img src="cat-hijiki.png" alt="" /><span>idle</span>
-          </span>
-          <a class="btn btn-solid btn-sm" href="/new-check">New Check</a>
-        </div>
-      </div>
+          <span>Cekgu</span>
+        </a>
 
-      <div class="drawer" id="appDrawer" role="dialog" aria-modal="true" aria-label="Menu">
-        <div class="drawer-panel">
-          <div class="drawer-head">
-            <a class="lockup" href="/" style="font-size: 1.125rem">
-              <svg width="20" height="20" viewBox="0 0 64 64" aria-hidden="true">
-                <path
-                  fill="currentColor"
-                  d="M25 12a20 20 0 1 0 0 40 20 20 0 0 0 0-40Zm14.5 3.2a20 20 0 0 0-8.2 1.9 23 23 0 0 1 0 29.8 20 20 0 1 0 8.2-31.7Z"
-                />
-                <circle cx="39.5" cy="32" r="17" fill="none" stroke="currentColor" stroke-width="3" />
-                <path
-                  d="M22 34.5 30 43l16-22"
-                  fill="none"
-                  stroke="var(--pen)"
-                  stroke-width="4.5"
-                  stroke-linecap="round"
-                />
+        <nav class="rail-nav">
+          <div class="rail-head"><hr /><span>Overview</span></div>
+          <a class="rail-link" href="/dashboard">
+            <i aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1" />
+                <rect x="9" y="1.5" width="5.5" height="5.5" rx="1" />
+                <rect x="1.5" y="9" width="5.5" height="5.5" rx="1" />
+                <rect x="9" y="9" width="5.5" height="5.5" rx="1" />
               </svg>
-              Cekgu
-            </a>
-            <button class="drawer-toggle" type="button" id="drawerClose" aria-label="Close menu">✕</button>
-          </div>
+            </i>
+            <span>Dashboard</span>
+          </a>
 
-          <nav>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/new-check">New Check</a>
-            <a href="/records" aria-current="page">Records</a>
-            <a href="/settings">Settings</a>
-          </nav>
+          <div class="rail-head"><hr /><span>Papers</span></div>
+          <a class="rail-link" href="/new-check">
+            <i aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M8 2.5v11M2.5 8h11" stroke-linecap="round" />
+              </svg>
+            </i>
+            <span>New Check</span>
+          </a>
+          <a class="rail-link" href="/records" aria-current="page">
+            <i aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M3 2.5h10v11H3z" />
+                <path d="M5.5 6h5M5.5 9h3" stroke-linecap="round" />
+              </svg>
+            </i>
+            <span>Records</span>
+          </a>
 
-          <div class="drawer-sec">
-            <p class="label" style="margin-bottom: 0.7rem; font-size: 0.6875rem">This record</p>
-            <div class="legend">
-              <div style="color: var(--key)"><i></i> Possible Key Error <b>2</b></div>
-              <div style="color: var(--amb)"><i></i> Possible Ambiguity <b>1</b></div>
-              <div style="color: var(--split)"><i></i> Split Opinion <b>0</b></div>
-              <div style="color: var(--unver)"><i></i> Unverified <b>0</b></div>
-              <div style="color: var(--clear)"><i></i> Clear <b>9</b></div>
-            </div>
-          </div>
+          <div class="rail-head"><hr /><span>Account</span></div>
+          <a class="rail-link" href="/settings">
+            <i aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <circle cx="8" cy="8" r="2.25" />
+                <path d="M8 1.5v1.6M8 12.9v1.6M14.5 8h-1.6M3.1 8H1.5M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1M12.6 12.6l-1.1-1.1M4.5 4.5 3.4 3.4" stroke-linecap="round" />
+              </svg>
+            </i>
+            <span>Settings</span>
+          </a>
+        </nav>
 
-          <!-- MASCOT 6: the pair beside the setting that governs them. -->
-          <div class="drawer-foot">
-            <img src="cat-tororo.png" alt="" /><img src="cat-hijiki.png" alt="" />
-            <span>Reduce motion is off</span>
-          </div>
+        <div class="rail-collapse" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M10 3.5 5.5 8l4.5 4.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
         </div>
-      </div>
+      </aside>
+      <div class="rail-backdrop" aria-hidden="true"></div>
 
-      <div class="content">
-        <div class="work-head">
-          <h2>Introductory computer science practice set</h2>
-          <span class="pill pill-ring">Ready</span>
-          <span class="pill pill-solid">Sample</span>
-        </div>
-        <p style="margin-top: 0.4rem; font-size: 0.875rem; color: var(--ink-2)">
-          Computer Science · English · 12 questions · preserved benchmark evidence
-        </p>
+      <header class="topbar">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/dashboard">Dashboard</a>
+          <span class="sep" aria-hidden="true">/</span>
+          <a href="/records">Records</a>
+          <span class="sep" aria-hidden="true">/</span>
+          <b>Introductory computer science practice set</b>
+        </nav>
 
-        <div class="summary">
-          <button class="sfilter" type="button" aria-pressed="true" style="color: var(--key)">
-            <span class="n">2</span> Possible Key Error
+        <div class="bar-right">
+          <button class="icon-btn" type="button" id="themeBtn" aria-label="Switch to dark theme">
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M13.2 9.4A5.5 5.5 0 0 1 6.6 2.8a5.5 5.5 0 1 0 6.6 6.6Z" stroke-linejoin="round" />
+            </svg>
           </button>
-          <button class="sfilter" type="button" style="color: var(--amb)"><span class="n">1</span> Possible Ambiguity</button>
-          <button class="sfilter" type="button" style="color: var(--split)"><span class="n">0</span> Split Opinion</button>
-          <button class="sfilter" type="button" style="color: var(--unver)"><span class="n">0</span> Unverified</button>
-          <button class="sfilter" type="button" style="color: var(--clear)"><span class="n">9</span> Clear</button>
-          <span class="attention">3 items need attention</span>
-        </div>
 
-        <div class="items">
-          <article class="card-item flag">
-            <span class="idx mono" style="color: var(--ink-3); font-size: 0.875rem">3</span>
-            <div>
-              <div class="row-top">
-                <p class="stem" style="font-family: var(--paper); font-size: 1.1875rem">
-                  Which data structure removes elements in first in, first out order?
-                </p>
-                <span class="vtag" style="color: var(--key)"><i></i> Possible Key Error</span>
+          <div style="position: relative">
+            <button class="icon-btn" type="button" id="bellBtn" aria-expanded="false" aria-label="Notifications">
+              <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M4 6.5a4 4 0 0 1 8 0c0 3 1 4 1 4H3s1-1 1-4Z" stroke-linejoin="round" />
+                <path d="M6.6 13a1.6 1.6 0 0 0 2.8 0" stroke-linecap="round" />
+              </svg>
+              <span class="badge">2</span>
+            </button>
+            <div class="pop" id="bellPop" hidden>
+              <div class="pop-head">
+                <h3>Notifications</h3>
+                <button class="link" type="button" style="font-size: 0.8125rem">Clear All</button>
               </div>
-              <div class="readrow" role="img" aria-label="Key A. Both readers chose B.">
-                <span class="slot key">A</span><span class="slot ra rb">B</span><span class="slot">C</span
-                ><span class="slot">D</span>
+              <div class="pop-item">
+                <h4><i></i> Check finished</h4>
+                <p>Introductory computer science practice set — 3 items need attention.</p>
+                <time>2 minutes ago</time>
               </div>
-              <p class="why">
-                Both readers chose <b>Queue</b>. The supplied key is <b>Stack</b>. Rule: two verified readings agree on
-                a non-key option, so Possible Key Error.
-              </p>
-              <div class="actions">
-                <button class="link pen" type="button">Mark This Item</button>
-                <button class="link" type="button">Hide Evidence</button>
-              </div>
-              <div class="ev">
-                <div>
-                  <div class="ev-head">
-                    <img src="cat-tororo.png" alt="" />
-                    <div>
-                      <p class="who">Reader A</p>
-                      <p class="model">moonshotai/Kimi-K2.6</p>
-                    </div>
-                  </div>
-                  <p class="quote">
-                    A queue is defined by the first-in, first-out principle, where elements are removed in the same
-                    order they were added. A stack uses last-in, first-out order.
-                  </p>
-                  <p class="rid">req-1788426625321985624-411634 · <span class="ok">verified</span></p>
-                </div>
-                <div>
-                  <div class="ev-head">
-                    <img src="cat-hijiki.png" alt="" />
-                    <div>
-                      <p class="who">Reader B</p>
-                      <p class="model">MiniMaxAI/MiniMax-M2.7</p>
-                    </div>
-                  </div>
-                  <p class="quote">
-                    A queue is a linear structure that follows first-in, first-out when removing elements. A stack uses
-                    LIFO, and binary search trees and hash tables do not enforce a FIFO order.
-                  </p>
-                  <p class="rid">req-1788426625329857263-411637 · <span class="ok">verified</span></p>
-                </div>
+              <div class="pop-item">
+                <h4><i></i> A reading could not be verified</h4>
+                <p>One attempt on item 7 returned no request id and was not counted.</p>
+                <time>18 minutes ago</time>
               </div>
             </div>
-          </article>
+          </div>
 
-          <article class="card-item flag">
-            <span class="idx mono" style="color: var(--ink-3); font-size: 0.875rem">9</span>
-            <div>
-              <div class="row-top">
-                <p class="stem" style="font-family: var(--paper); font-size: 1.1875rem">
-                  What is the main job of the Domain Name System?
-                </p>
-                <span class="vtag" style="color: var(--key)"><i></i> Possible Key Error</span>
+          <div style="position: relative">
+            <button class="icon-btn" type="button" id="userBtn" aria-expanded="false" aria-label="Account">
+              <span class="avatar">A</span>
+            </button>
+            <div class="pop" id="userPop" style="width: 14rem" hidden>
+              <div class="pop-user">
+                <p class="who">aina@smkbandarutama.edu.my</p>
+                <p class="plan">Teacher plan</p>
               </div>
-              <div class="readrow" role="img" aria-label="Key C. Both readers chose A.">
-                <span class="slot ra rb">A</span><span class="slot">B</span><span class="slot key">C</span
-                ><span class="slot">D</span>
+              <a class="pop-row" href="/settings">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <circle cx="8" cy="8" r="2.25" />
+                  <path d="M8 1.5v1.6M8 12.9v1.6M14.5 8h-1.6M3.1 8H1.5" stroke-linecap="round" />
+                </svg>
+                Settings
+              </a>
+              <button class="pop-row danger" type="button">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path d="M6 2.5H3.5v11H6M10 5l3 3-3 3M13 8H6.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="shell-body">
+        <main class="content">
+          <div class="doc">
+            <div class="work-head">
+              <h2>Introductory computer science practice set</h2>
+              <span class="pill pill-ring">Ready</span>
+              <span class="pill pill-solid">Sample</span>
+            </div>
+            <p style="margin-top: 0.4rem; font-size: 0.875rem; color: var(--ink-2)">
+              Computer Science · English · 12 questions · preserved benchmark evidence
+            </p>
+
+            <div class="summary">
+              <button class="sfilter" type="button" aria-pressed="true" style="color: var(--key)">
+                <span class="n">2</span> Possible Key Error
+              </button>
+              <button class="sfilter" type="button" style="color: var(--amb)">
+                <span class="n">1</span> Possible Ambiguity
+              </button>
+              <button class="sfilter" type="button" style="color: var(--split)">
+                <span class="n">0</span> Split Opinion
+              </button>
+              <button class="sfilter" type="button" style="color: var(--unver)">
+                <span class="n">0</span> Unverified
+              </button>
+              <button class="sfilter" type="button" style="color: var(--clear)">
+                <span class="n">9</span> Clear
+              </button>
+              <span class="attention">3 items need attention</span>
+            </div>
+
+            <div class="items">
+              <article class="card-item flag">
+                <span class="idx mono" style="color: var(--ink-3); font-size: 0.875rem">3</span>
+                <div>
+                  <div class="row-top">
+                    <p class="stem" style="font-family: var(--paper); font-size: 1.1875rem">
+                      Which data structure removes elements in first in, first out order?
+                    </p>
+                    <span class="vtag" style="color: var(--key)"><i></i> Possible Key Error</span>
+                  </div>
+                  <div class="readrow" role="img" aria-label="Key A. Both readers chose B.">
+                    <span class="slot key">A</span><span class="slot ra rb">B</span><span class="slot">C</span
+                    ><span class="slot">D</span>
+                  </div>
+                  <p class="why">
+                    Both readers chose <b>Queue</b>. The supplied key is <b>Stack</b>. Rule: two verified readings agree
+                    on a non-key option, so Possible Key Error.
+                  </p>
+                  <div class="actions">
+                    <button class="link pen" type="button">Mark This Item</button>
+                    <button class="link" type="button">Hide Evidence</button>
+                  </div>
+                  <div class="ev">
+                    <div>
+                      <div class="ev-head">
+                        <img src="cat-tororo.png" alt="" />
+                        <div>
+                          <p class="who">Reader A</p>
+                          <p class="model">moonshotai/Kimi-K2.6</p>
+                        </div>
+                      </div>
+                      <p class="quote">
+                        A queue is defined by the first-in, first-out principle, where elements are removed in the same
+                        order they were added. A stack uses last-in, first-out order.
+                      </p>
+                      <p class="rid">req-1788426625321985624-411634 · <span class="ok">verified</span></p>
+                    </div>
+                    <div>
+                      <div class="ev-head">
+                        <img src="cat-hijiki.png" alt="" />
+                        <div>
+                          <p class="who">Reader B</p>
+                          <p class="model">MiniMaxAI/MiniMax-M2.7</p>
+                        </div>
+                      </div>
+                      <p class="quote">
+                        A queue is a linear structure that follows first-in, first-out when removing elements. A stack
+                        uses LIFO, and binary search trees and hash tables do not enforce a FIFO order.
+                      </p>
+                      <p class="rid">req-1788426625329857263-411637 · <span class="ok">verified</span></p>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="card-item flag">
+                <span class="idx mono" style="color: var(--ink-3); font-size: 0.875rem">9</span>
+                <div>
+                  <div class="row-top">
+                    <p class="stem" style="font-family: var(--paper); font-size: 1.1875rem">
+                      What is the main job of the Domain Name System?
+                    </p>
+                    <span class="vtag" style="color: var(--key)"><i></i> Possible Key Error</span>
+                  </div>
+                  <div class="readrow" role="img" aria-label="Key C. Both readers chose A.">
+                    <span class="slot ra rb">A</span><span class="slot">B</span><span class="slot key">C</span
+                    ><span class="slot">D</span>
+                  </div>
+                  <p class="why">
+                    Both readers chose <b>Translating domain names into IP addresses</b>. The supplied key is
+                    <b>Encrypting the traffic between a browser and a web server</b>.
+                  </p>
+                  <div class="actions">
+                    <button class="link pen" type="button">Mark This Item</button>
+                    <button class="link" type="button">Show Evidence</button>
+                  </div>
+                </div>
+              </article>
+
+              <div class="quiet">
+                <span class="idx">1</span>
+                <span class="stem">What is the time complexity of reading the element at a known index in an array?</span>
+                <span class="vtag" style="color: var(--clear)"><i></i> Clear</span>
               </div>
-              <p class="why">
-                Both readers chose <b>Translating domain names into IP addresses</b>. The supplied key is
-                <b>Encrypting the traffic between a browser and a web server</b>.
-              </p>
-              <div class="actions">
-                <button class="link pen" type="button">Mark This Item</button>
-                <button class="link" type="button">Show Evidence</button>
+              <div class="quiet">
+                <span class="idx">2</span>
+                <span class="stem">Which transport protocol retransmits lost segments so that data arrives in order?</span>
+                <span class="vtag" style="color: var(--clear)"><i></i> Clear</span>
+              </div>
+              <div class="quiet">
+                <span class="idx">4</span>
+                <span class="stem">In big-O notation, what does O(n) say about an algorithm?</span>
+                <span class="vtag" style="color: var(--clear)"><i></i> Clear</span>
+              </div>
+              <div class="quiet">
+                <span class="idx">6</span>
+                <span class="stem">Which layer of the TCP/IP model does HTTP belong to?</span>
+                <span class="vtag" style="color: var(--clear)"><i></i> Clear</span>
               </div>
             </div>
-          </article>
 
-          <div class="quiet">
-            <span class="idx">1</span>
-            <span class="stem">What is the time complexity of reading the element at a known index in an array?</span>
-            <span class="vtag" style="color: var(--clear)"><i></i> Clear</span>
+            <div class="empty" style="margin-top: 2rem">
+              <img src="cat-hijiki.png" alt="" />
+              <h3 style="margin-top: 1rem; font-size: 1.25rem">No Records Yet</h3>
+              <p style="margin-top: 0.5rem; max-width: 36ch; color: var(--ink-2)">
+                Type a paper and two readers will sit it before your learners do.
+              </p>
+              <a class="btn btn-solid" href="/new-check" style="margin-top: 1.25rem">Check Your First Paper</a>
+            </div>
           </div>
-          <div class="quiet">
-            <span class="idx">2</span>
-            <span class="stem">Which transport protocol retransmits lost segments so that data arrives in order?</span>
-            <span class="vtag" style="color: var(--clear)"><i></i> Clear</span>
-          </div>
-          <div class="quiet">
-            <span class="idx">4</span>
-            <span class="stem">In big-O notation, what does O(n) say about an algorithm?</span>
-            <span class="vtag" style="color: var(--clear)"><i></i> Clear</span>
-          </div>
-          <div class="quiet">
-            <span class="idx">6</span>
-            <span class="stem">Which layer of the TCP/IP model does HTTP belong to?</span>
-            <span class="vtag" style="color: var(--clear)"><i></i> Clear</span>
-          </div>
-        </div>
-
-        <!-- MASCOT 7: the empty state, shown here so the pattern is visible in the comp. -->
-        <div class="empty" style="margin-top: 2rem">
-          <img src="cat-hijiki.png" alt="" />
-          <h3 style="margin-top: 1rem; font-size: 1.25rem">No Records Yet</h3>
-          <p style="margin-top: 0.5rem; max-width: 36ch; color: var(--ink-2)">
-            Type a paper and two readers will sit it before your learners do.
-          </p>
-          <a class="btn btn-solid" href="/new-check" style="margin-top: 1.25rem">Check Your First Paper</a>
-        </div>
+        </main>
       </div>
+
+      <footer class="app-foot" role="contentinfo">
+        <div class="app-foot-inner">
+          <a class="lockup" href="/" style="font-size: 1.125rem">
+            <svg width="20" height="20" viewBox="0 0 64 64" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M25 12a20 20 0 1 0 0 40 20 20 0 0 0 0-40Zm14.5 3.2a20 20 0 0 0-8.2 1.9 23 23 0 0 1 0 29.8 20 20 0 1 0 8.2-31.7Z"
+            />
+            <circle cx="39.5" cy="32" r="17" fill="none" stroke="currentColor" stroke-width="3" />
+            <path d="M22 34.5 30 43l16-22" fill="none" stroke="var(--pen)" stroke-width="4.5" stroke-linecap="round" />
+          </svg>
+            Cekgu
+          </a>
+          <p class="app-foot-motto">Two readers, and the receipts to prove it.</p>
+          <a class="link-quiet" href="/privacy">Privacy</a>
+        </div>
+      </footer>
     </div>
 
     <script>
-      // Three behaviours, all of which the comp needs to be judged honestly: the nav's solid
-      // state, the drawer, and the back-to-top control.
+      // Only what the comp needs to be judged honestly: the nav's solid state, the two
+      // topbar popovers, the theme switch, and back-to-top.
       const nav = document.getElementById('siteNav')
       const onScroll = () => nav.classList.toggle('solid', window.scrollY > 24)
       onScroll()
       window.addEventListener('scroll', onScroll, { passive: true })
 
-      const drawer = document.getElementById('appDrawer')
-      document.getElementById('drawerOpen').addEventListener('click', () => drawer.classList.add('open'))
-      document.getElementById('drawerClose').addEventListener('click', () => drawer.classList.remove('open'))
-      drawer.addEventListener('click', (e) => {
-        if (e.target === drawer) drawer.classList.remove('open')
+      // One popover open at a time, closed by outside click and by Escape — the behaviour
+      // SolarSim implements with a pointerdown listener per menu.
+      const pops = [
+        [document.getElementById('bellBtn'), document.getElementById('bellPop')],
+        [document.getElementById('userBtn'), document.getElementById('userPop')]
+      ]
+      const closeAll = (except) => {
+        for (const [btn, pop] of pops) {
+          if (pop === except) continue
+          pop.hidden = true
+          btn.setAttribute('aria-expanded', 'false')
+        }
+      }
+      for (const [btn, pop] of pops) {
+        btn.addEventListener('click', (event) => {
+          event.stopPropagation()
+          const open = pop.hidden
+          closeAll(open ? pop : null)
+          pop.hidden = !open
+          btn.setAttribute('aria-expanded', String(open))
+        })
+        pop.addEventListener('click', (event) => event.stopPropagation())
+      }
+      document.addEventListener('click', () => closeAll(null))
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeAll(null)
       })
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') drawer.classList.remove('open')
+
+      // The switch flips this screen only, so the comp can show both sides without the page
+      // around it changing underneath the reviewer.
+      const themeBtn = document.getElementById('themeBtn')
+      const app = document.querySelector('.app')
+      themeBtn.addEventListener('click', () => {
+        const dark = app.classList.toggle('dark')
+        themeBtn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme')
       })
 
       document
