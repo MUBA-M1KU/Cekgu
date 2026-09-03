@@ -39,6 +39,11 @@ const attempt = z.object({
   receiptJson: z.unknown().nullable().default(null),
   readingJson: reading.nullable().default(null),
   latencyMs: z.number().int().nullable().default(null),
+  // Optional because the 3 September file predates them. When a capture supplies them the sample
+  // carries the real instants, which is what makes TRD section 15's "newest first" ordering of the
+  // attempts table mean anything; without them every row shares its item's insert time.
+  startedAt: z.iso.datetime().nullable().default(null),
+  finishedAt: z.iso.datetime().nullable().default(null),
   admitted: z.boolean(),
   rejectionReason: z.string().nullable().default(null)
 })
@@ -93,6 +98,18 @@ function verdictFor(admitted: PassAttempt[], key: string, options: Option[]) {
   )
 
   return verdict(readings, key, options)
+}
+
+// Real instants when the pass recorded them. Otherwise the row is stamped now and finished by its
+// measured latency: the absolute time is unknown for such a file and inventing one would be a
+// fabrication, but the duration is a number the capture actually measured. The previous code took
+// a fresh `new Date()` for finishedAt while letting startedAt default in the database, which landed
+// microseconds later and gave every attempt a negative duration.
+function attemptTimes(row: PassAttempt): { startedAt: Date; finishedAt: Date } {
+  const startedAt = row.startedAt ? new Date(row.startedAt) : new Date()
+  const finishedAt = row.finishedAt ? new Date(row.finishedAt) : new Date(startedAt.getTime() + (row.latencyMs ?? 0))
+
+  return { startedAt, finishedAt }
 }
 
 export async function seedSample(path: string): Promise<string | null> {
@@ -156,7 +173,7 @@ export async function seedSample(path: string): Promise<string | null> {
         receiptJson: row.receiptJson,
         readingJson: row.readingJson,
         latencyMs: row.latencyMs,
-        finishedAt: new Date(),
+        ...attemptTimes(row),
         admitted: row.admitted,
         rejectionReason: row.rejectionReason
       }))

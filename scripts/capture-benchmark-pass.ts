@@ -72,6 +72,10 @@ for (const [index, spec] of paper.entries()) {
         receiptJson: attempt.receiptJson,
         readingJson: attempt.readingJson,
         latencyMs: attempt.latencyMs,
+        // AttemptRow carries both as real Dates. Dropping them made every seeded attempt share its
+        // item's insert time, which left the attempts table with no order to sort by.
+        startedAt: attempt.startedAt.toISOString(),
+        finishedAt: attempt.finishedAt.toISOString(),
         admitted: attempt.admitted,
         rejectionReason: attempt.rejectionReason
       })

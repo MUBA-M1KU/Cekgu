@@ -213,6 +213,64 @@ describeDb('the sample record', () => {
     })
   })
 
+  // The 3 September pass predates the timestamp fields, so this is the shape production actually
+  // seeded from, and the fallback is what it exercises.
+  describe('attempt timestamps', () => {
+    test('an attempt never finishes before it started', async () => {
+      await seedSample(passPath)
+      const sample = await readSample()
+
+      const all = (sample?.items ?? []).flatMap((item) => item.attempts)
+      expect(all.length).toBeGreaterThan(0)
+      for (const attempt of all) {
+        expect(new Date(attempt.finishedAt ?? 0).getTime()).toBeGreaterThanOrEqual(
+          new Date(attempt.startedAt).getTime()
+        )
+      }
+    })
+
+    test('without timestamps the duration is the measured latency', async () => {
+      await seedSample(passPath)
+      const sample = await readSample()
+
+      const attempt = sample?.items[0]?.attempts[0]
+      const elapsed = new Date(attempt?.finishedAt ?? 0).getTime() - new Date(attempt?.startedAt ?? 0).getTime()
+      expect(elapsed).toBe(attempt?.latencyMs ?? -1)
+    })
+
+    test('a capture that records them keeps the real instants, in capture order', async () => {
+      const early = '2026-09-03T09:25:53.000Z'
+      const late = '2026-09-03T09:26:11.000Z'
+      const finish = (at: string) => new Date(new Date(at).getTime() + 12_000).toISOString()
+
+      const timed = await writePass({
+        ...PASS,
+        items: [
+          {
+            stem: 'FIFO?',
+            options: OPTIONS,
+            key: 'A',
+            attempts: [
+              { ...verified('m-one', 'B'), startedAt: early, finishedAt: finish(early) },
+              { ...verified('m-two', 'B'), startedAt: late, finishedAt: finish(late) }
+            ]
+          }
+        ]
+      })
+
+      await seedSample(timed)
+      const sample = await readSample()
+
+      // TRD section 15 asks for attempts newest first, and that ordering is only meaningful once
+      // the instants differ — which is the second thing dropping them broke.
+      const attempts = sample?.items[0]?.attempts ?? []
+      expect(attempts.map((attempt) => attempt.startedAt)).toEqual([late, early])
+      expect(new Date(attempts[0]?.startedAt ?? 0).getTime()).toBeGreaterThan(
+        new Date(attempts[1]?.startedAt ?? 0).getTime()
+      )
+    })
+  })
+
   describe('reset', () => {
     test('clears dispositions and returns the record to ready', async () => {
       await seedSample(passPath)

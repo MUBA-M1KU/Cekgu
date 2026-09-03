@@ -85,7 +85,14 @@ takes `E2E_FLOW=1` and is skipped without it, because a round is two live model 
 
 ```bash
 docker run -d --name cekgu-test -e POSTGRES_PASSWORD=x -e POSTGRES_DB=cekgu -p 55432:5432 postgres:18-alpine
-TEST_DATABASE_URL='postgres://postgres:x@127.0.0.1:55432/cekgu' bun test src/server
+export TEST_DATABASE_URL='postgres://postgres:x@127.0.0.1:55432/cekgu'
+
+# One file at a time. Each truncates the database it connects to, so running them
+# together in one process makes them clear each other's fixtures mid-run.
+bun test src/server/sample.test.ts
+bun test src/server/guest.sweep.test.ts
+bun test src/server/queue/claim.concurrency.test.ts
+bun test src/server/routes/records.test.ts
 
 E2E_FLOW=1 bunx playwright test e2e/flow.e2e.ts   # types a check, waits for the verdict
 ```
