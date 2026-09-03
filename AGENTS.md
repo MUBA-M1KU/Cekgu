@@ -22,7 +22,8 @@ Contents:
 
 ## Project
 
-**MUBA Blockchain Hackathon 2026**, track **GonkaRouter - AI for Society**. Repo: `github.com/MUBA-M1KU/dev` (private).
+**MUBA Blockchain Hackathon 2026**, track **GonkaRouter - AI for Society**. Repo: `github.com/MUBA-M1KU/Cekgu`
+(private).
 
 **Submission deadline: 5 Sept 2026, 23:59 MYT**, on Devfolio. No submission means disqualification from pitching. Every
 other event fact lives in [`docs/brief.md`](docs/brief.md), which is the single source of truth for them; organizer
