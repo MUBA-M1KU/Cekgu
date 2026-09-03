@@ -57,7 +57,7 @@ export function Settings() {
         <>
           <dl className="mt-3 m-0 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1">
             <dt className="type-caption text-ink-muted">Signed in as</dt>
-            <dd className="type-body m-0">{session.isGuest ? 'Guest' : session.user.name || session.user.email}</dd>
+            <dd className="type-ui m-0">{session.isGuest ? 'Guest' : session.user.name || session.user.email}</dd>
             {session.isGuest ? null : (
               <>
                 <dt className="type-caption text-ink-muted">Email</dt>
@@ -84,7 +84,7 @@ export function Settings() {
           ) : null}
         </>
       ) : (
-        <p className="mt-3 type-body text-ink-muted">
+        <p className="mt-3 type-ui text-ink-muted">
           {session.status === 'loading' ? 'Checking your session.' : 'You are not signed in.'}
         </p>
       )}
@@ -92,12 +92,12 @@ export function Settings() {
       {session.status === 'in' ? (
         <>
           <h2 className="mt-10">Your Data</h2>
-          <p className="type-body mt-3 max-w-[64ch] text-ink-muted">
+          <p className="type-ui mt-3 max-w-[64ch] text-ink-muted">
             {isGuest
               ? 'This is the shared Guest workspace. Records here are removed 24 hours after they are created, and anyone signed in as Guest can read or delete them before that happens.'
               : `Records are kept for ${RETENTION_MONTHS} months by default, counted from the last time you opened or changed one. A record you delete goes to Trash and is destroyed ${TRASH_DAYS} days after that.`}
           </p>
-          <p className="type-body mt-3 max-w-[64ch] text-ink-muted">
+          <p className="type-ui mt-3 max-w-[64ch] text-ink-muted">
             {isGuest
               ? 'Deleting everything clears the whole shared workspace straight away, including records other guests added. The protected sample is left alone.'
               : 'Deleting everything removes every record this account holds, Trash included, straight away. Nothing is kept and nothing can be recovered.'}
@@ -134,7 +134,7 @@ export function Settings() {
             checked={reduceMotion}
             onChange={(event) => setReduceMotion(event.target.checked)}
             aria-describedby="reduce-motion-helper"
-            className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--ink)]"
+            className="check-box mt-0.5"
           />
           <span className="min-w-0">
             <span className="type-label block">Reduce Motion</span>

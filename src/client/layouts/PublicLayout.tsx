@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router'
+import { BackToTop } from '../components/BackToTop'
 import { Lockup } from '../components/Lockup'
 
 // Plain anchors rather than Link, so a fragment on the current path scrolls and a fragment on
@@ -13,7 +14,7 @@ const PUBLIC_NAV = [
 
 const FOOTER_LINKS = [
   { href: '/#how-it-works', label: 'How It Works' },
-  { href: '/sample', label: 'Sample Report' },
+  { href: '/#sample', label: 'Sample Report' },
   { href: '/#trust', label: 'Trust and Privacy' }
 ]
 
@@ -43,7 +44,13 @@ export function PublicLayout() {
 
   return (
     <div className="min-h-dvh bg-paper">
-      <header className="nav-sticky" data-solid={!overHero || scrolled ? 'true' : 'false'}>
+      {/* data-glass only where there is media behind the bar for the blur to act on. Everywhere
+          else it is solid: a translucent bar over a flat ground is not glass, it is see-through. */}
+      <header
+        className="nav-sticky"
+        data-solid={!overHero || scrolled ? 'true' : 'false'}
+        data-glass={overHero ? 'true' : 'false'}
+      >
         <div className="wrap flex h-[4.25rem] items-center gap-8">
           <Lockup to="/" />
           <nav aria-label="Primary" className="ml-auto hidden items-center gap-7 md:flex">
@@ -82,6 +89,8 @@ export function PublicLayout() {
           </nav>
         </div>
       </footer>
+
+      <BackToTop />
     </div>
   )
 }

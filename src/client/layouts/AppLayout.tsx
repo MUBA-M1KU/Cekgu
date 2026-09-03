@@ -5,6 +5,7 @@ import { listRecords } from '../api'
 import { AppRail } from '../components/AppRail'
 import { AppTopbar } from '../components/AppTopbar'
 import { GuestBanner } from '../components/GuestBanner'
+import { Mark } from '../components/Mark'
 import { useSession } from '../session'
 
 export function AppLayout() {
@@ -20,7 +21,7 @@ export function AppLayout() {
   }, [])
 
   return (
-    <div className="min-h-dvh bg-paper">
+    <div className="app-shell min-h-dvh bg-paper">
       <AppRail />
       <AppTopbar records={records} />
 
@@ -35,16 +36,23 @@ export function AppLayout() {
             <Outlet />
           </div>
         </main>
-
-        <footer className="app-footer" role="contentinfo">
-          <div className="app-footer-inner">
-            <p className="type-caption text-ink-muted">Two readers, and the receipts to prove it.</p>
-            <Link to="/" className="type-caption text-ink-muted underline">
-              Cekgu
-            </Link>
-          </div>
-        </footer>
       </div>
+
+      {/* A sibling of the scrolling body, not a child of it: the page is painted over this and
+          uncovers it at the end. MakanLah's pattern, and the reason its blur has anything to act
+          on. Right aligned and stacked: mark, name, one line, one link. */}
+      <footer className="app-footer" role="contentinfo">
+        <div className="app-footer-inner">
+          <Link to="/" className="app-footer-brand" aria-label="Cekgu home">
+            <Mark className="h-7 w-7 shrink-0" />
+            <span className="app-footer-name">Cekgu</span>
+          </Link>
+          <p className="type-ui text-ink-muted">Two readers, and the receipts to prove it.</p>
+          <Link to="/#trust" className="app-footer-link type-caption">
+            Trust and Privacy
+          </Link>
+        </div>
+      </footer>
     </div>
   )
 }

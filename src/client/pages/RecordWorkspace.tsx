@@ -31,7 +31,7 @@ export function RecordWorkspace() {
     return (
       <Sheet>
         <h1>Record</h1>
-        <p className="mt-3 type-body text-ink-muted">We could not open this record. It may have expired.</p>
+        <p className="mt-3 type-ui text-ink-muted">We could not open this record. It may have expired.</p>
       </Sheet>
     )
   }
@@ -39,7 +39,7 @@ export function RecordWorkspace() {
   if (!record) {
     return (
       <Sheet>
-        <p className="type-body text-ink-muted">Opening this record.</p>
+        <p className="type-ui text-ink-muted">Opening this record.</p>
       </Sheet>
     )
   }
@@ -96,7 +96,7 @@ export function RecordWorkspace() {
       <h2 className="mt-8">Items</h2>
       {shown.length === 0 ? (
         <div className="py-12">
-          <p className="type-body text-ink-muted">No items match this filter.</p>
+          <p className="type-ui text-ink-muted">No items match this filter.</p>
           <button
             type="button"
             onClick={() => setFilter(null)}
