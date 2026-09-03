@@ -164,6 +164,42 @@ describe('callGonka', () => {
     expect(result.receiptStatus).toBe('verified')
   })
 
+  // Regression, found by dev-b0 on #86. fetchReceipt sat outside the try, so a reset or a 200
+  // carrying non-JSON threw out of callGonka and took the request id with it — losing the attempts
+  // row that NFR-PROV-3 and FR-EVIDENCE-2 need in order to say what happened.
+  test('a receipt endpoint that throws still returns provenance', async () => {
+    globalThis.fetch = (async (url: string | URL | Request) => {
+      if (String(url).includes('/receipts/')) throw new TypeError('fetch failed')
+      return new Response(completion('{"answer":"A","defensible":["A"],"reason":"x"}'), {
+        status: 200,
+        headers: { 'x-request-id': REQUEST_ID, 'x-devshard-id': '70158' }
+      })
+    }) as typeof fetch
+
+    const result = await callGonka(MODEL, 'prompt')
+
+    expect(result.requestId).toBe(REQUEST_ID)
+    expect(result.devshardId).toBe('70158')
+    expect(result.httpStatus).toBe(200)
+    expect(result.receiptStatus).toBe('missing')
+    expect(result.error).toContain('could not be read')
+  })
+
+  test('a receipt that answers 200 with a body that is not JSON does not throw', async () => {
+    globalThis.fetch = (async (url: string | URL | Request) => {
+      if (String(url).includes('/receipts/')) return new Response('<html>', { status: 200 })
+      return new Response(completion('{"answer":"A","defensible":["A"],"reason":"x"}'), {
+        status: 200,
+        headers: { 'x-request-id': REQUEST_ID }
+      })
+    }) as typeof fetch
+
+    const result = await callGonka(MODEL, 'prompt')
+
+    expect(result.requestId).toBe(REQUEST_ID)
+    expect(result.receiptStatus).toBe('missing')
+  })
+
   test('a receipt that never appears is not verified', async () => {
     stubGateway({ receipt: null })
     const result = await callGonka(MODEL, 'prompt')

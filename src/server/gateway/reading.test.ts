@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import type { Option } from '../../shared/types'
+import { verdict } from '../../shared/verdict'
 import type { Provenance } from './client'
 import { admitReading, solverPrompt } from './reading'
 
@@ -106,10 +107,34 @@ describe('admitReading', () => {
     expect(result.admitted && result.reading.defensible).toEqual(['B', 'A'])
   })
 
-  test('a defensible letter that is not an option is dropped', () => {
+  test('a defensible letter that is not an option is refused, not dropped', () => {
     const result = admitReading(verified('{"answer":"B","defensible":["B","Z"],"reason":"x"}'), OPTIONS)
 
-    expect(result.admitted && result.reading.defensible).toEqual(['B'])
+    expect(result.admitted).toBe(false)
+    expect(!result.admitted && result.rejectionReason).toBe('The model called Z defensible, which is not an option.')
+  })
+
+  // Regression, found by dev-b0 on #86. Trimming the invented letter left reader one committed to a
+  // single option, and an item both readers hedged on reported Clear instead of Possible Ambiguity.
+  test('trimming an invented letter would have downgraded a verdict', () => {
+    const one = admitReading(verified('{"answer":"B","defensible":["B","E"],"reason":"x"}'), OPTIONS)
+    const two = admitReading(verified('{"answer":"B","defensible":["B","C"],"reason":"x"}'), OPTIONS)
+
+    expect(one.admitted).toBe(false)
+    expect(two.admitted).toBe(true)
+
+    // With reader one refused there is one reading, so the rule fails closed rather than clearing it.
+    const readings = [one, two].flatMap((result) => (result.admitted ? [result.reading] : []))
+    expect(verdict(readings, 'B', OPTIONS).verdict).toBe('unverified')
+  })
+
+  test('a reading with no serving model is refused rather than labelled with the requested one', () => {
+    const result = admitReading(
+      verified('{"answer":"B","defensible":["B"],"reason":"x"}', { servedModel: null }),
+      OPTIONS
+    )
+
+    expect(!result.admitted && result.rejectionReason).toBe('The receipt named no serving model.')
   })
 
   test('a missing reason is refused rather than defaulted', () => {

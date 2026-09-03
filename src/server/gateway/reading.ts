@@ -45,7 +45,14 @@ export function admitReading(provenance: Provenance, options: Option[]): Admissi
     return { admitted: false, rejectionReason: 'The model did not return the requested JSON.' }
   }
 
-  const reading = asReading(parsed, provenance.servedModel ?? provenance.requestedModel)
+  // Never fall back to the requested model. Distinctness is proven by receipt (TRD section 14), and
+  // a reading labelled with what we asked for rather than what served it would let two calls to one
+  // model count as two readers, which makes cross-verification fiction.
+  if (!provenance.servedModel) {
+    return { admitted: false, rejectionReason: 'The receipt named no serving model.' }
+  }
+
+  const reading = asReading(parsed, provenance.servedModel)
   if (!reading) return { admitted: false, rejectionReason: 'The model did not return the requested JSON.' }
 
   const letters = new Set(options.map((option) => option.letter))
@@ -53,10 +60,15 @@ export function admitReading(provenance: Provenance, options: Option[]): Admissi
     return { admitted: false, rejectionReason: `The model answered ${reading.answer}, which is not an option.` }
   }
 
-  return {
-    admitted: true,
-    reading: { ...reading, defensible: reading.defensible.filter((letter) => letters.has(letter)) }
+  // Refused rather than trimmed. Dropping a letter that is not an option turns a reader that hedged
+  // onto two options into a reader that committed to one, and an item both readers hedged on then
+  // reports Clear instead of Possible Ambiguity. Leniency must never remove a flag.
+  const invented = reading.defensible.find((letter) => !letters.has(letter))
+  if (invented) {
+    return { admitted: false, rejectionReason: `The model called ${invented} defensible, which is not an option.` }
   }
+
+  return { admitted: true, reading }
 }
 
 // Models wrap the JSON in prose or a fenced block often enough that refusing it would throw away
