@@ -1,5 +1,4 @@
 import { Outlet } from 'react-router'
-import { Attribution } from '../components/Attribution'
 import { GuestBanner } from '../components/GuestBanner'
 import { Lockup } from '../components/Lockup'
 import { Nav } from '../components/Nav'
@@ -32,8 +31,6 @@ export function AppLayout() {
       <main className="mx-auto max-w-[880px] px-4 py-6 sm:px-8">
         <Outlet />
       </main>
-
-      <Attribution />
     </div>
   )
 }

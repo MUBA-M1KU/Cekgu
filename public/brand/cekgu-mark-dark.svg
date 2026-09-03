@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Cekgu">
+  <!-- Dark-ground variant. The in-app mark is inline (src/client/components/Mark.tsx) and follows
+       the theme on its own; this file is for surfaces that can only take an <img> or a raster: the
+       deck, Devfolio, a README rendered on GitHub's dark theme. Ink is --ink dark (#eceae4) and the
+       pen is --pen dark (#f07079), both from docs/DESIGN.md rather than picked by eye. -->
+  <path fill="#eceae4" fill-rule="evenodd" d="M7 36a17 17 0 1 0 34 0a17 17 0 1 0-34 0M20.5 28a19.5 19.5 0 1 0 39 0a19.5 19.5 0 1 0-39 0M25.5 28a14.5 14.5 0 1 0 29 0a14.5 14.5 0 1 0-29 0"/>
+  <path fill="none" stroke="#f07079" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M16 36l11 12q13-20 27-33"/>
+</svg>

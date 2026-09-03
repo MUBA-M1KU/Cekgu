@@ -1,9 +1,12 @@
 @import "tailwindcss";
 
 /* Tokens copied verbatim from docs/DESIGN.md. One source of truth per colour via light-dark();
-   color-scheme follows the system unless data-theme on the root forces one side. */
+   light is the default and data-theme on the root forces either side. */
 :root {
-  color-scheme: light dark;
+  /* Light is the default rather than the system's choice: the demo is presented on a projector
+     and a judge's own dark setting should not change what they are shown. The [data-theme] blocks
+     below still switch, so the dark palette stays reachable rather than dead. */
+  color-scheme: light;
 
   --paper: light-dark(#f1efea, #12171e); /* the desk: page ground */
   --sheet: light-dark(#fbfaf7, #1a2029); /* the review document and every raised surface */

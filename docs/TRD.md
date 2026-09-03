@@ -1239,8 +1239,12 @@ that generation.
 **Fallbacks.** `prefers-reduced-motion: reduce` or the user's Reduce Motion setting stops the loop on the first idle
 frame. A failed WebGL context, core script or asset swaps the canvas for the still PNG in `public/brand/` with no error
 surfaced. The canvas is `aria-hidden`, ignores pointer events, pauses on `visibilitychange` and when scrolled off
-screen, and is hidden below 768 px wide. State text on the record remains the only authoritative signal. Attribution to
-Live2D's Tororo and Hijiki sample characters and the Cubism SDK is in the page footer (FR-MASCOT-5).
+screen, and is hidden below 768 px wide. State text on the record remains the only authoritative signal.
+
+Tororo and Hijiki are Live2D sample characters, used under the Live2D Free Material License Agreement, and are not
+Cekgu's own. Built with the Live2D Cubism SDK. That attribution used to render as a footer on every page; AlaskanTuna
+removed it from the frontend on 3 September and owns the licence position, so it lives here and in the README instead
+(FR-MASCOT-5).
 
 ## 18. Testing
 

@@ -1,4 +1,7 @@
+<!-- Light-ground variant. Ink is --ink light (#17202b) from docs/DESIGN.md, written literally
+     because currentColor does not inherit into an <img>-loaded SVG. The in-app mark is inline in
+     src/client/components/Mark.tsx and does follow the theme. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Cekgu">
-  <path fill="currentColor" fill-rule="evenodd" d="M7 36a17 17 0 1 0 34 0a17 17 0 1 0-34 0M20.5 28a19.5 19.5 0 1 0 39 0a19.5 19.5 0 1 0-39 0M25.5 28a14.5 14.5 0 1 0 29 0a14.5 14.5 0 1 0-29 0"/>
+  <path fill="#17202b" fill-rule="evenodd" d="M7 36a17 17 0 1 0 34 0a17 17 0 1 0-34 0M20.5 28a19.5 19.5 0 1 0 39 0a19.5 19.5 0 1 0-39 0M25.5 28a14.5 14.5 0 1 0 29 0a14.5 14.5 0 1 0-29 0"/>
   <path fill="none" stroke="#B3202F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M16 36l11 12q13-20 27-33"/>
 </svg>

@@ -48,6 +48,7 @@ source of truth for them.</sub>
     <li><a href="#what-cekgu-cannot-do">What Cekgu cannot do</a></li>
     <li><a href="#how-work-ships">How work ships</a></li>
     <li><a href="#see-also">See also</a></li>
+    <li><a href="#credits">Credits</a></li>
   </ol>
 </details>
 
@@ -487,6 +488,14 @@ remain forbidden.
 | [Workshop transcript][recording] | Workshop recording. Q&A rulings not in the deck                     |
 
 The repo root deliberately has **no README**. It lives here.
+
+## Credits
+
+Tororo and Hijiki are Live2D sample characters, used under the Live2D Free Material License Agreement, and are not
+Cekgu's own. Built with the Live2D Cubism SDK.
+
+The brand mark is Cekgu's own. `public/brand/` carries a light and a dark variant of the mark, the lockup and the
+wordmark; the in-app mark is inline in `src/client/components/Mark.tsx` so it follows the theme without a swap.
 
 [devfolio]: https://muba-hackathon.devfolio.co/overview
 [ceremony]: source/opening-ceremony-transcript.md
