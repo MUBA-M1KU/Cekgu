@@ -170,6 +170,18 @@ Any of these missed disqualifies the entry:
 1. **Gonka Request IDs displayed** per inference step, the on-chain proof.
 1. **Consensus logic** for model disagreement, called out as "a major plus".
 
+**Third-party AI providers are allowed for additional features**, answered by mrJiang on Discord on 3 September to a
+direct question from our own team. Once the mandatory requirements above are satisfied through GonkaRouter, a feature
+outside that path may use another provider such as Gemini or Qwen. His full answer was "Yes, that's fine."
+
+This relaxes requirement 1, which is written here and in [`../AGENTS.md`](../AGENTS.md) as though any third-party call
+disqualifies. It does not; only the mandatory reasoning and verification path is constrained.
+
+**We are not taking the option, and that is a decision rather than an oversight.** Cekgu routes every inference through
+GonkaRouter, so NFR-SEC-1 stays as written: a judge can grep the repository for provider hostnames and SDK imports and
+find nothing but `api.gonkarouter.io`. That is a cleaner claim than one needing a caveat about which calls count. If a
+later feature genuinely needs a provider the gateway does not carry, this note is the permission to point at.
+
 ### Track prizes
 
 | Award  | Value                                                  |
@@ -195,6 +207,17 @@ closed on "solve real-world problems". These are **inspiration, not constraints.
 
 All three share one flat rate, input and output priced alike. **Verify ids against `/models` with your own key before
 hardcoding** — catalogs differ per plan. Measured behaviour and the wiring contract live in [`TRD.md`](TRD.md).
+
+**MiniMax is the most reliable of the three right now**, per mrJiang troubleshooting another team on Discord on 3
+September: "MiniMaxAI/MiniMax-M2.7 <- try this one first, it's the most reliable right now." That matches our own
+[3 September benchmark](TRD.md#3-models-measured), where MiniMax completed 24 of 24 item calls while Kimi completed 13
+of 24. Worth knowing for the queue's model ordering in #27, though availability rotated across all three within a single
+evening, so it is a starting order and not a fixed one.
+
+The same reply confirms the wiring we already measured: the OpenAI-surface endpoint is
+`https://api.gonkarouter.io/v1/chat/completions`, the key goes in `Authorization: Bearer sk-…`, and the model id must be
+the full vendor-prefixed string — he names `deepseek-v4-flash` and `minimax` as the shortened ids that fail, which is
+[gotcha 4](TRD.md#5-verified-gotchas).
 
 ### Credits
 
