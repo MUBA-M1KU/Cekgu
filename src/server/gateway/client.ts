@@ -128,7 +128,16 @@ export async function callGonka(requestedModel: string, prompt: string, now = Da
     return { ...base, content, error: 'The response carried no x-request-id, so it cannot be verified.' }
   }
 
-  const receipt = await fetchReceipt(requestId)
+  // Guarded, because a rejected call must still return provenance. Letting a DNS blip on the
+  // receipt endpoint throw out of here would lose an x-request-id the gateway already issued, and
+  // with it the attempts row that NFR-PROV-3 and FR-EVIDENCE-2 need to say what happened.
+  let receipt: Receipt | null = null
+  try {
+    receipt = await fetchReceipt(requestId)
+  } catch (cause) {
+    return { ...base, content, error: `The receipt for ${requestId} could not be read. ${String(cause)}` }
+  }
+
   if (!receipt) {
     return { ...base, content, error: `No receipt appeared for ${requestId} within ${RECEIPT_BUDGET_MS / 1000}s.` }
   }
@@ -147,14 +156,26 @@ export async function callGonka(requestedModel: string, prompt: string, now = Da
 }
 
 // Gotcha 11: the receipt is written asynchronously and a single immediate fetch always 404s. One
-// fetch here would make every item unverified and no verdict would ever render.
+// fetch here would make every item unverified and no verdict would ever render. Every measured
+// call 404'd on the first try, so the wait comes before the first fetch rather than after it.
+//
+// Each request carries its own abort signal. Without one the budget bounds when an iteration
+// starts, not how long it takes, and a single hung receipt request makes callGonka unbounded —
+// which is the guarantee the queue sizes its 25 second hedge against.
 async function fetchReceipt(requestId: string): Promise<Receipt | null> {
   const deadline = Date.now() + RECEIPT_BUDGET_MS
+
   while (Date.now() < deadline) {
-    const response = await fetch(`${env.gonkaBaseUrlOpenai}/receipts/${requestId}`)
+    await new Promise((resolve) => setTimeout(resolve, RECEIPT_INTERVAL_MS))
+
+    const response = await fetch(`${env.gonkaBaseUrlOpenai}/receipts/${requestId}`, {
+      headers: { authorization: `Bearer ${env.gonkaApiKey}` },
+      signal: AbortSignal.timeout(Math.max(RECEIPT_INTERVAL_MS, deadline - Date.now()))
+    })
+
     if (response.status === 200) return (await response.json()) as Receipt
     await response.body?.cancel()
-    await new Promise((resolve) => setTimeout(resolve, RECEIPT_INTERVAL_MS))
   }
+
   return null
 }
