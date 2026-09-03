@@ -29,6 +29,7 @@ Plus **two or more models cross-verifying**, and **Gonka Request IDs surfaced in
 - [`superpowers/research/README.md`](superpowers/research/README.md) — eleven-round concept research and ranked
   candidates
 - [`../AGENTS.md`](../AGENTS.md) — project instructions for agentic tools, and humans
+- **X** — [@Cekgu0903](https://x.com/Cekgu0903) — project updates
 
 Work in progress lives in the [Issues board](https://github.com/MUBA-M1KU/dev/issues), not in a checklist here.
 
