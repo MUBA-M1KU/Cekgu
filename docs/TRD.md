@@ -11,7 +11,9 @@ API, provenance display, mascot runtime and tests, and section 19 indexes the de
 The initial verified sections were measured against the live API on **2026-08-29** with our own key. Receipt and
 fallback behaviour was verified on **2026-08-31**; availability and account concurrency were measured again on
 **2026-09-03** and are dated where introduced. Where a measurement contradicts organizer material, the measurement is
-recorded and the contradiction is named. The application decisions were taken on **2026-09-03**.
+recorded and the contradiction is named. The application decisions were taken on **2026-09-03**. The application
+described in sections 9 to 19 shipped on 3 September 2026 and is deployed; where this half of the document describes
+gateway behaviour, it remains a measurement record rather than a description of our code.
 
 Contents:
 
@@ -277,7 +279,8 @@ Kimi all returned `404` from `GET /v1/receipts/{x-request-id}` on the first fetc
 between 664 ms and 808 ms later. Path, auth and query-string variants were all `404` in that window, so this is
 propagation delay rather than a wrong URL — the endpoint is unauthenticated and takes the id exactly as the header gives
 it. **A client that verifies the receipt inline and fails closed on `404` produces `unverified` for every item and no
-verdict ever renders.** Poll with a short interval and a budget of a few seconds instead. The body is:
+verdict ever renders.** Poll with a short interval and a budget of a few seconds instead. The shipped client polls at
+250 ms intervals with a 5 s budget. The body is:
 
 ```json
 {
@@ -364,14 +367,26 @@ GUEST_PASSWORD=                                         # Used server-side only 
 MASCOT_ENABLED=false                                    # FR-MASCOT-1 feature flag. true for the demo
 ```
 
-The three model ids are not configuration. They are a constant list in `src/server/gateway/models.ts`, checked against
-`GET /v1/models` at server start so a renamed id fails loudly rather than as a `400` mid-queue. The Anthropic surface is
-unused by the product; the base-URL rule in [section 1](#1-gateway-base-urls-and-auth) still stands for anyone pointing
-Claude Code at the gateway.
+The three model ids are not configuration. They are a constant list in `src/server/gateway/models.ts`. **They are not
+verified against `GET /v1/models` at start**, which was the intention when this section was first written and is not
+what shipped: a renamed id would surface as a `400` on the first call of a round rather than as a loud failure at boot.
+The gateway has returned the same three ids on every check since 29 August, so the exposure is a gateway rename during
+the event, and the round's own rejection path records it as an attempt with its reason rather than losing it.
 
-**`.env.example` must change to match**, in a separate commit: drop `GONKA_BASE_URL_ANTHROPIC` and the three
-`GONKA_MODEL_*` lines, add the eight new names above with their comments and empty values, and keep the two GonkaRouter
-lines. The `env-drift` hook compares `.env` against `.env.example`, so the two files change together.
+**Adding the check now would be worse than the gap it closes**, which is the reason it is not a to-do. A boot-time
+`GET /v1/models` makes the process's ability to start depend on the gateway being reachable, and
+[gotcha 10](#5-verified-gotchas) is account-level rate limiting that reaches every endpoint. A window like the twenty
+minutes DeepSeek spent returning `429` on 3 September would then have meant no deploy succeeding and Cloud Run holding
+no healthy revision to route to: a total outage manufactured by the guard against a partial one. The queue's whole
+design treats the gateway as unreliable and degrades around it, and boot must not treat it as a precondition. The
+Anthropic surface is unused by the product; the base-URL rule in [section 1](#1-gateway-base-urls-and-auth) still stands
+for anyone pointing Claude Code at the gateway.
+
+**`.env.example` carries exactly the names above**, with their comments and empty values, and is committed. The
+`env-drift` hook compares `.env` against it, so the two files change together. Two further variables exist in the
+server's environment and deliberately do not appear here: `MIGRATE_ON_START` and `WORKER_ENABLED`, both defaulting to
+on, which only a preview revision sets to `false`. They are explained in [section 10](#10-hosting-and-cicd), because
+they are a deployment concern rather than part of the contract a developer fills in. `PORT` defaults to `8080`.
 
 **Account state, 2026-08-29:** balance **20.00 USDT**, monthly cost 0.00 after 9 test requests and 1,011 tokens. Tokens
 are unlimited for the event; email Jack if the credit is ever exhausted.
@@ -394,15 +409,19 @@ critical path, and Bun runs TypeScript directly so the server has no build step.
 src/
   client/            Vite + React 19 single-page app, TypeScript strict, Tailwind v4
   server/            Hono on Bun: /api routes, static serving, the queue worker
-    gateway/         the hand-rolled fetch client and the model-id constant (section 14 and 8)
-    queue/           claim, dispatch, hedge, health (section 13)
+    db/              the Drizzle schema and the pooled connection
+    gateway/         the hand-rolled fetch client, reading admission, the model-id constant (sections 14 and 8)
+    queue/           claim, round, hedge, health, semaphore, worker (section 13)
+    records/         the query layer the records routes call
     routes/          one file per resource in section 15
+    fixtures/        the committed evaluation set and the benchmark pass the sample is seeded from
     index.ts         entry point: migrate, seed the Guest user and sample, start the worker, listen
   shared/            TypeScript types, zod schemas, verdict.ts (the rule as a pure function)
 public/              static assets, copied into the client build as-is
   brand/             logo, favicon, the still mascot PNGs
   live2d/            tororo/runtime and hijiki/runtime, committed Cubism runtime files
 drizzle/             SQL migrations generated by drizzle-kit, committed
+e2e/                 Playwright: smoke.e2e.ts against a deployed URL, flow.e2e.ts behind E2E_FLOW=1
 .github/workflows/   ci.yml (pull request) and deploy.yml (main)
 Dockerfile           multi-stage on oven/bun:1
 vite.config.ts       client build, dev proxy of /api to the server
@@ -415,16 +434,17 @@ from one definition, which is what keeps FR-CHECK-2's server-side checks equal t
 
 ### Stack
 
-| Layer             | Choice                                | Reason                                                                                  |
-| ----------------- | ------------------------------------- | --------------------------------------------------------------------------------------- |
-| Runtime, packages | Bun                                   | Already the project's runner; runs TypeScript without a compile step                    |
-| HTTP              | Hono                                  | Small, typed, runs on Bun natively, streams SSE without an adapter                      |
-| Client            | Vite, React 19, Tailwind v4           | Fast build, no framework server to host; the app is one SPA behind `/api`               |
-| ORM               | Drizzle with drizzle-kit migrations   | Schema in TypeScript, SQL migrations committed, Better Auth adapter exists              |
-| Auth              | Better Auth                           | Google OAuth and email/password with a Drizzle adapter, sessions in Postgres            |
-| Validation        | zod, in `src/shared`                  | One schema for the form and the API boundary                                            |
-| Lint, format      | Biome for code, Prettier for Markdown | Unchanged from the tooling table in [`AGENTS.md`](../AGENTS.md#tech-stack-and-commands) |
-| Tests             | `bun test`, Playwright                | See [Testing](#18-testing)                                                              |
+| Layer             | Choice                                        | Reason                                                                                  |
+| ----------------- | --------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Runtime, packages | Bun                                           | Already the project's runner; runs TypeScript without a compile step                    |
+| HTTP              | Hono                                          | Small, typed, runs on Bun natively, streams SSE without an adapter                      |
+| Client            | Vite 8, React 19, React Router 8, Tailwind v4 | Fast build, no framework server to host; the app is one SPA behind `/api`               |
+| Language          | TypeScript 7, strict                          | `noUncheckedIndexedAccess`; the shared types are the contract between the halves        |
+| ORM               | Drizzle with drizzle-kit migrations           | Schema in TypeScript, SQL migrations committed, Better Auth adapter exists              |
+| Auth              | Better Auth                                   | Google OAuth and email/password with a Drizzle adapter, sessions in Postgres            |
+| Validation        | zod, in `src/shared`                          | One schema for the form and the API boundary                                            |
+| Lint, format      | Biome for code, Prettier for Markdown         | Unchanged from the tooling table in [`AGENTS.md`](../AGENTS.md#tech-stack-and-commands) |
+| Tests             | `bun test`, Playwright                        | See [Testing](#18-testing)                                                              |
 
 The client talks to the server only through the contracts in [section 15](#15-api-contracts). The GonkaRouter key never
 reaches the client (NFR-SEC-2); every inference call originates in `src/server/gateway`.
@@ -549,12 +569,14 @@ the records library needs attention counts per record (FR-RECORD-5) without a jo
 ```ts
 import {
   boolean,
+  index,
   integer,
   jsonb,
   pgEnum,
   pgTable,
   text,
   timestamp,
+  unique,
   uuid,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema"; // generated by Better Auth: user, session, account, verification
@@ -608,7 +630,9 @@ export const records = pgTable("records", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+}, (table) => [
+  index("records_user_id_deleted_at_idx").on(table.userId, table.deletedAt),
+]);
 
 export const items = pgTable("items", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -625,7 +649,12 @@ export const items = pgTable("items", {
   verdictReason: text("verdict_reason"),
   status: itemStatus("status").notNull().default("queued"),
   attemptsUsed: integer("attempts_used").notNull().default(0),
-});
+  claimedAt: timestamp("claimed_at", { withTimezone: true }),
+}, (table) => [
+  index("items_record_id_status_idx").on(table.recordId, table.status),
+  index("items_status_idx").on(table.status),
+  unique("items_record_id_position_key").on(table.recordId, table.position),
+]);
 
 export const attempts = pgTable("attempts", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -648,7 +677,9 @@ export const attempts = pgTable("attempts", {
   finishedAt: timestamp("finished_at", { withTimezone: true }),
   admitted: boolean("admitted").notNull().default(false),
   rejectionReason: text("rejection_reason"),
-});
+}, (table) => [
+  index("attempts_item_id_started_at_idx").on(table.itemId, table.startedAt),
+]);
 
 export const dispositions = pgTable("dispositions", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -662,7 +693,9 @@ export const dispositions = pgTable("dispositions", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+}, (table) => [
+  index("dispositions_item_id_created_at_idx").on(table.itemId, table.createdAt),
+]);
 
 export const modelHealth = pgTable("model_health", {
   model: text("model").primaryKey(),
@@ -690,6 +723,10 @@ Notes on the shape:
   after the latest such disposition, so a retry never counts an earlier reading twice (FR-QUEUE-5)
 - `model_health` is the on-disk mirror of the worker's in-memory stats, one row per model, written every 30 seconds and
   read by `GET /api/health`
+- `items.claimed_at` records when the worker took the item. A claim older than the fifteen-minute lease in
+  [section 13](#13-queue-and-worker) is released back to `queued`, so a crash mid-round does not strand an item
+- The unique constraint on `(record_id, position)` is what makes an item's position in the paper its identity, so a
+  duplicated submission cannot produce two item 3s
 
 ## 12. Auth and the Guest account
 
@@ -747,6 +784,11 @@ RETURNING *
 holds, and a crashed claim is released with its transaction. On start the worker resets any item left in `running` to
 `queued`, because a Cloud Run restart mid-round leaves no one to finish it.
 
+A claim also carries a **fifteen-minute lease**. `items.claimed_at` is stamped when the item is taken, and a sweep
+returns any item whose claim is older than the lease to `queued`. `SKIP LOCKED` protects against two workers racing; the
+lease protects against the case it cannot see, which is a worker that took an item and then died without its transaction
+rolling back — a Cloud Run instance replaced mid-round leaves exactly that.
+
 ### One round
 
 1. Take the **healthy set**: the three model ids ordered by rolling 15-minute success rate, then median latency, from
@@ -762,6 +804,9 @@ holds, and a crashed claim is released with its transaction. On start the worker
 1. **Deferred hedge:** if a call has not returned after **45 s**, fire a duplicate of the same call to the same model,
    holding another slot. Whichever returns first is the candidate; the other is recorded and discarded
 1. **Hard cutoff** at **90 s** per call. A call past the cutoff is aborted and recorded as timed out with no request id
+   A second ceiling of **120 s** bounds the whole call including its receipt poll, because a receipt fetch that never
+   resolves would otherwise hold a seat open indefinitely; it is the outer bound, and the 90 s cutoff is what the
+   evidence view names.
 1. If one family fails, after rejection, timeout or a non-200, try the **third family** for that seat
 1. Each model has a **retry budget of three attempts per item** per round, hedges included. When both seats have an
    admitted reading, or every family in the healthy set has exhausted its budget, the round ends
@@ -1089,6 +1134,21 @@ private session, `404` `sample_not_loaded` when no sample is seeded.
 **Public.** No body. Signs the caller into the Guest user as described in [section 12](#12-auth-and-the-guest-account)
 and returns `{ "user": { "id": "…", "isGuest": true } }` with the session cookie set (FR-AUTH-2).
 
+### `GET /api/session`
+
+**Public**, and registered ahead of the session gate so a signed-out caller gets an answer rather than a 401. Returns
+who the caller is and whether this is the shared Guest account, which the client cannot work out for itself because the
+Guest test is a comparison against server configuration.
+
+```json
+{
+  "user": { "id": "…", "email": "…", "name": "…" },
+  "isGuest": true
+}
+```
+
+Signed out, the body is `{ "user": null, "isGuest": false }`.
+
 ### `GET /api/health`
 
 **Public.** Per-model rolling health from `model_health`, plus the mascot flag so the client learns it without a second
@@ -1169,20 +1229,35 @@ Live2D's Tororo and Hijiki sample characters and the Cubism SDK is in the page f
 
 ## 18. Testing
 
-**`bun test`** covers the three pieces that must be right before any screen exists:
+`bun test`: 194 pass, 59 skip, 0 fail, 253 tests across 22 files; the Playwright pass: 9 passed, 1 skipped.
 
 - `src/shared/verdict.test.ts`: every row of the [rule table](#14-consensus-rule) plus the two edge cases, with the
   reason text asserted
 - `src/server/gateway/client.test.ts`: the gateway client with a mocked `fetch`, covering a clean 200, a
   `X-Gonka-Fallback` response, a receipt whose model mismatches, a `<think>`-wrapped body, unparseable JSON, a 429 and a
   timeout. Each asserts the returned provenance record and the rejection reason
-- `src/server/queue/claim.test.ts`: two concurrent claims never take the same item, a crashed claim is released, and the
-  semaphore never exceeds four
+- `src/server/queue/claim.concurrency.test.ts`: two concurrent claims never take the same item, a crashed claim is
+  released, and the semaphore never exceeds four
 
-**Playwright smoke** runs against the deployed URL after every production deploy and on demand against a preview: Sign
-In as Guest lands in the Guest workspace with the warning banner, the sample opens with its counts, and one evidence
-panel shows two model names and two request ids. It is the first three steps of the
-[demo acceptance test](PRD.md#the-submission-demo-as-an-acceptance-test) automated.
+**The database-backed suites are opt-in, and are run one file at a time.** They are the 59 skips in the count above,
+opting in through `TEST_DATABASE_URL`. Each truncates the database it connects to, so running them together in one
+process makes them clear each other's fixtures mid-run, which is also why they refuse any host but localhost. One file
+at a time, against a throwaway Postgres:
+
+```bash
+docker run -d --name cekgu-test -e POSTGRES_PASSWORD=x -e POSTGRES_DB=cekgu -p 55432:5432 postgres:18-alpine
+export TEST_DATABASE_URL='postgres://postgres:x@127.0.0.1:55432/cekgu'
+
+bun test src/server/sample.test.ts                    # 17 pass
+bun test src/server/guest.sweep.test.ts               # 5 pass
+bun test src/server/queue/claim.concurrency.test.ts   # 8 pass
+bun test src/server/routes/records.test.ts            # 23 pass
+```
+
+**The Playwright pass** runs against a **deployed URL**, never a local build: production by default, any other
+deployment through `E2E_BASE_URL`, and automatically after every production deploy. It asserts rendered content rather
+than that a root element is attached, because an attached root passes against a blank page, against a failed fetch shown
+as an empty state, and against a React error boundary.
 
 The CI order in [section 10](#10-hosting-and-cicd) runs `bun test` before the image is built, so a broken rule never
 gets a preview URL.
@@ -1207,3 +1282,10 @@ Every decision that was open on 2 September is now a section above.
 **What was fixed before any of this and still is:** the gateway, the model ids returned by `GET /v1/models`, the two
 base URLs, the no-fallback contract, receipt verification, and the requirement that every call returns its
 `x-request-id` alongside its content.
+
+**What changed after this table was written.** Sections 9 to 18 were a plan when they were first committed and are now a
+description: the service is deployed, the sample record is seeded and public, and the figures in section 18 come from
+real runs. Two things in this half are still design rather than description, and are marked where they appear: the
+model-id list is not verified against the gateway at boot ([section 8](#8-configuration-contract)), and the hedge
+threshold is a constant rather than being derived from the rolling median ([section 13](#13-queue-and-worker)). Both are
+deliberate, and both are cheaper to state than to change two days before a submission.
