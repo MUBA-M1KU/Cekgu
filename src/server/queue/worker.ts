@@ -28,6 +28,11 @@ export async function processNextItem(): Promise<boolean> {
     return true
   }
 
+  // Before the round, not only after it. FR-RECORD-2 puts a record in `checking` while any item is
+  // running, and a round can take minutes — leaving it on `queued` tells an educator nothing has
+  // started when the gateway is already working.
+  await refreshRecordStatus(item.recordId)
+
   const prompt = solverPrompt({ stem: item.stem, options: item.options }, record.subject, record.language)
 
   const result = await runRound(prompt, item.options, item.key, {

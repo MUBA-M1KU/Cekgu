@@ -7,7 +7,6 @@ import {
   itemCharCount
 } from '../shared/schemas'
 import type { ApiError } from '../shared/types'
-import { auth } from './auth'
 import { db } from './db'
 import { user } from './db/auth-schema'
 import { records } from './db/schema'
