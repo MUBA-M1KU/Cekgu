@@ -74,8 +74,37 @@
       }
 
       header.top {
-        padding-block: 5rem 3.5rem;
+        padding-block: 3.5rem;
         border-bottom: 1px solid var(--line);
+      }
+
+      .chosen {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 1rem 2rem;
+        margin-bottom: 2.5rem;
+        padding: 1.25rem 1.4rem;
+        border: 1px solid #3d5a49;
+        border-radius: 4px;
+        background: #1b2620;
+      }
+
+      .chosen p {
+        flex: 1;
+        min-width: 24rem;
+        max-width: 72ch;
+        color: var(--dim);
+      }
+
+      .chosen b {
+        color: var(--ok);
+        font-weight: 500;
+      }
+
+      .chosen a {
+        white-space: nowrap;
+        font-weight: 500;
       }
 
       header.top h1 {
@@ -353,6 +382,14 @@
   <body>
     <div class="wrap">
       <header class="top">
+        <div class="chosen">
+          <p><b>Direction C is chosen.</b> AlaskanTuna picked it on 3 September and it has since been revised against
+          their notes: the landing takes SolarSim's structure and folds How It Works, Sample Report, Pricing and Trust
+          into one page behind a generated hero video; sign-in loses the shared-workspace note and centres both cards;
+          the record workspace gets a topbar and a drawer; and Tororo and Hijiki are used in seven places rather than
+          one. A and B are kept below as the record of what was decided against.</p>
+          <a href="c-two-readers.html">Open direction C →</a>
+        </div>
         <h1>Three ways out of the wireframe.</h1>
         <p class="standfirst">
           The shipped frontend is not badly designed so much as under-designed: a sound system, described in
@@ -557,17 +594,18 @@
               <p class="tag">Direction C</p>
               <h3>Two Readers</h3>
               <p class="pitch">
-                Cekgu owns a shape nobody else in the category owns, and currently uses it at 24 px in the corner of the
-                navigation. Here the answer bubble is the entire visual language, from 420 px in the hero to 8 px in a
-                legend.
+                Cekgu owns a shape nobody else in the category owns, and used it at 24 px in the corner of the
+                navigation. Here the answer bubble is the entire visual language, and the two cats stop being one
+                stage on one screen and become the product's second visual system.
               </p>
               <dl>
                 <dt>Commits to</dt>
                 <dd>One atom, and colour. The five verdicts become a palette rather than five chips.</dd>
                 <dt>Signature</dt>
                 <dd>Two rings on one bubble: inner is reader A, outer is reader B, agreement at a glance.</dd>
-                <dt>Record height</dt>
-                <dd>Between A and B; Clear items collapse to a single pill.</dd>
+                <dt>Since chosen</dt>
+                <dd>Landing rebuilt on SolarSim's structure with a generated hero video; four routes folded into one
+                page; topbar and drawer on the app.</dd>
                 <dt>Risk</dt>
                 <dd>The boldest, and the one that most changes what Cekgu looks like from across a room.</dd>
               </dl>

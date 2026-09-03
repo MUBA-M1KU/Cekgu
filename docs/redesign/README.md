@@ -1,8 +1,9 @@
 # Frontend redesign proposals
 
 Three complete visual directions for Cekgu's frontend, built as standalone HTML against the deployed build and the real
-sample record. They exist to be chosen between; **none of them ships until one is picked**, and no product code is
-touched by anything in this directory.
+sample record. **Direction C is chosen**, and has been revised against the owner's notes; A and B are kept as the record
+of what was decided against. No product code is touched by anything in this directory — adopting C means a separate
+change to `src/client/` and to [`../DESIGN.md`](../DESIGN.md).
 
 Raised by [issue #44](https://github.com/MUBA-M1KU/Cekgu/issues/44). The design system these argue with is
 [`../DESIGN.md`](../DESIGN.md), which stays canonical until a direction is adopted and folded into it.
@@ -35,6 +36,29 @@ design; it is there so a screen can be judged without the label competing with i
 - **C · Two Readers.** Makes the answer bubble the entire visual language, from 420 px in the hero to 12 px in a row,
   and turns the five verdicts into a colour palette rather than five chips
 
+## What changed in C after it was chosen
+
+Six revisions, all from the owner's notes on 3 September.
+
+- **The landing takes the structure of SolarSim, another project of the owner's**: a sticky nav that solidifies on
+  scroll, a full-viewport hero with background media behind a two-axis scrim, a marquee trust band, then sections
+- **Four routes became one page.** How It Works, Sample Report, Pricing and Trust and Privacy are sections with anchors,
+  not separate screens
+- **The hero carries a generated video.** `hero.mp4` is 10 seconds, 1280 x 720, 539 KB, no audio track, with
+  `hero-poster.jpg` and a CSS gradient behind it so the hero is composed before a byte of video arrives. It was
+  generated in Gemini and regenerated once: the first pass laid down **navy** ink, which contradicts the design system's
+  rule that red is the human hand and nothing else is
+- **Sign-in loses the shared-workspace note** and both cards centre their content
+- **The record workspace gets a topbar and a drawer.** The drawer is MakanLah's pattern, from the same owner rather than
+  SolarSim's hover rail: a modal dialog with a blurred scrim, a sliding panel, and a hamburger at the topbar's leading
+  edge
+- **Tororo and Hijiki appear in seven places, not one.** They were a single 240 x 160 stage on one authenticated screen.
+  They are now the hero pair, step two of How It Works, the Reader A and Reader B avatars in every evidence panel, the
+  sign-in greeting, the topbar run indicator, the drawer footer beside the reduce-motion setting, and the empty state
+
+The evidence-panel use is the one that earns its place rather than decorating: the cats are the two **seats**, never a
+particular model. Which family serves a seat varies per item, so a fixed cat-to-model mapping would be a lie.
+
 ## What the diagnosis rests on
 
 Measured against the deployed build at 1440 px and at 853 px, which is a 1280 px projector at the 150% zoom the demo
@@ -50,7 +74,7 @@ runs at. The findings that drove the work:
 
 ## Quality checks run against these files
 
-`impeccable`'s slop detector was run over this directory, and the first pass returned **122 findings**. Sixty-nine were
+`impeccable`'s slop detector was run over this directory. The first pass returned **122 findings**. Sixty-nine were
 genuine WCAG AA contrast failures introduced by darkening the grounds without re-solving the muted text on them, and
 those are fixed: every text token in all four files now clears 4.5:1 on every ground it sits on, solved numerically
 rather than by eye. Also fixed, and worth naming because they were reached for by reflex: a tracked-caps eyebrow above
@@ -68,6 +92,11 @@ announcing liveness on a static page, and a decorative repeating-gradient textur
   walking the live DOM for any shadow whose colour is not neutral. Worth adding to
   [#118](https://github.com/MUBA-M1KU/Cekgu/issues/118) as a false-positive class
 
+Re-running it after C's revision found eight more contrast failures introduced by the new recessed evidence ground, and
+those are fixed the same way. Two findings are new and declined: `marquee` on the trust band, which is the structure the
+owner asked for and which the reduced-motion reset in `_shared.css` stops outright; and one `tight-leading`, which is a
+4.75 rem display line at 1.05 and correct at that size.
+
 All four pages render with **zero page errors and no horizontal overflow** at 1440 px and 853 px.
 
 ## What is deliberately not here
@@ -77,5 +106,7 @@ All four pages render with **zero page errors and no horizontal overflow** at 14
 - **No dashboard, records list, new-check or settings screen.** Landing, sign-in and the record workspace are the three
   the demo and the judging turn on. The rest follow from whichever direction wins
 - **No shader, particle or liquid effect**, despite the references that prompted this pointing at them. The motion
-  budget went to the one animation per direction that carries information; the honest read is that a teacher reviewing a
-  paper under time pressure is not the audience for an effects layer
+  budget went to the one animation per direction that carries information, plus the hero video; the honest read is that
+  a teacher reviewing a paper under time pressure is not the audience for an effects layer
+- **The cats are not in the mark, the favicon or the wordmark.** They are licensed Live2D sample characters, so they
+  appear in the product and never as Cekgu's own identity. That line is in [`../DESIGN.md`](../DESIGN.md) and holds
