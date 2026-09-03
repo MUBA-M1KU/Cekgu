@@ -1,5 +1,4 @@
 import { Link } from 'react-router'
-import { Sheet } from '../components/Sheet'
 
 // FR-PUBLIC-2. The claims here are deliberately smaller than the product feels, because prompts
 // traverse a decentralised network and a receipt is metadata rather than proof.
@@ -49,57 +48,58 @@ const NOTICES = [
   }
 ]
 
-export function Trust() {
+export function TrustSection() {
   return (
-    <>
-      <Sheet>
-        <h1>Trust and Privacy</h1>
-        <p className="type-body mt-3 max-w-[64ch]">
-          Cekgu asks you to send your questions to a network of machines that we do not control, so it is worth being
-          plain about what that means and what it does not.
-        </p>
-        <p className="type-body mt-4 max-w-[64ch]">
-          Your records belong to your account. A private account's library is visible only to that account. The Guest
-          workspace is shared by everyone who uses it and is not private in any sense.
-        </p>
-      </Sheet>
+    <section id="trust" className="bg-well py-[clamp(4rem,8vw,7rem)]">
+      <div className="wrap">
+        <div className="max-w-[46rem]">
+          <h2 className="text-[clamp(2rem,3.4vw,2.75rem)]/[1.1] tracking-[-0.025em]">
+            Your questions leave our server. Here is what that means.
+          </h2>
+          <p className="type-lead mt-5 text-ink-muted">
+            Cekgu asks you to send your questions to a network of machines that we do not control, so it is worth being
+            plain about what that means and what it does not. Your records belong to your account. A private account's
+            library is visible only to that account. The Guest workspace is shared by everyone who uses it and is not
+            private in any sense.
+          </p>
+        </div>
 
-      <section className="mt-10">
-        <h2>Questions People Ask</h2>
-        <dl className="mt-5 m-0">
+        <dl className="mt-10 m-0 grid gap-5 lg:grid-cols-2">
           {FAQ.map((entry) => (
-            <div key={entry.q} className="border-t border-rule py-4">
+            <div key={entry.q} className="card-soft p-6">
               <dt className="type-label">{entry.q}</dt>
               <dd className="type-body m-0 mt-2 max-w-[64ch] text-ink-muted">{entry.a}</dd>
             </div>
           ))}
         </dl>
-      </section>
 
-      <section className="mt-10">
-        <h2>Notices</h2>
-        <ul className="mt-5 m-0 list-none p-0">
-          {NOTICES.map((notice) => (
-            <li key={notice.to} className="border-t border-rule py-4">
-              <Link to={notice.to} className="type-label underline">
-                {notice.name}
-              </Link>
-              <p className="type-body m-0 mt-2 max-w-[64ch] text-ink-muted">{notice.gist}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
+        <div className="mt-5 grid gap-5 lg:grid-cols-2">
+          <div className="card-soft p-6">
+            <h3 className="type-label">Notices</h3>
+            <ul className="mt-3 m-0 list-none p-0">
+              {NOTICES.map((notice) => (
+                <li key={notice.to} className="mt-3 first:mt-0">
+                  <Link to={notice.to} className="type-label underline">
+                    {notice.name}
+                  </Link>
+                  <p className="type-body m-0 mt-1 max-w-[64ch] text-ink-muted">{notice.gist}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-      <section className="mt-10">
-        <h2>Reach the Team</h2>
-        <p className="type-body mt-4 max-w-[64ch]">
-          Cekgu is a hackathon demo built by a small team, not a staffed product. Reach us on X at{' '}
-          <a href="https://x.com/Cekgu0903" target="_blank" rel="noreferrer" className="underline">
-            @Cekgu0903
-          </a>
-          . There is no support desk behind that account and no promised reply time.
-        </p>
-      </section>
-    </>
+          <div className="card-soft p-6">
+            <h3 className="type-label">Reach the Team</h3>
+            <p className="type-body mt-3 max-w-[64ch] text-ink-muted">
+              Cekgu is a hackathon demo built by a small team, not a staffed product. Reach us on X at{' '}
+              <a href="https://x.com/Cekgu0903" target="_blank" rel="noreferrer" className="underline">
+                @Cekgu0903
+              </a>
+              . There is no support desk behind that account and no promised reply time.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }

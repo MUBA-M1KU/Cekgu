@@ -1,12 +1,10 @@
-import { BrowserRouter, Route, Routes } from 'react-router'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import { AppLayout } from './layouts/AppLayout'
 import { PublicLayout } from './layouts/PublicLayout'
 import { AcceptableUse } from './pages/AcceptableUse'
 import { Dashboard } from './pages/Dashboard'
 import { Home } from './pages/Home'
-import { HowItWorks } from './pages/HowItWorks'
 import { NewCheck } from './pages/NewCheck'
-import { Pricing } from './pages/Pricing'
 import { Privacy } from './pages/Privacy'
 import { Records } from './pages/Records'
 import { RecordWorkspace } from './pages/RecordWorkspace'
@@ -14,7 +12,6 @@ import { SampleReport } from './pages/SampleReport'
 import { Settings } from './pages/Settings'
 import { SignIn } from './pages/SignIn'
 import { Terms } from './pages/Terms'
-import { Trust } from './pages/Trust'
 
 // A record is the route back to progress, results and evidence: these are states of one
 // object, not disconnected tools. PRODUCT.md Navigation model.
@@ -24,10 +21,14 @@ export function App() {
       <Routes>
         <Route element={<PublicLayout />}>
           <Route index element={<Home />} />
-          <Route path="how-it-works" element={<HowItWorks />} />
+          {/* How It Works, Pricing and Trust are sections of the landing page now rather than
+              routes of their own. The old paths are kept because they are linked from the README
+              and from the deck, and they land on the section they named. */}
+          <Route path="how-it-works" element={<Navigate to="/#how-it-works" replace />} />
+          <Route path="pricing" element={<Navigate to="/#pricing" replace />} />
+          <Route path="trust" element={<Navigate to="/#trust" replace />} />
+          {/* The full sample stays a route: it is the working tool, filters and all, not a section. */}
           <Route path="sample" element={<SampleReport />} />
-          <Route path="pricing" element={<Pricing />} />
-          <Route path="trust" element={<Trust />} />
           <Route path="terms" element={<Terms />} />
           <Route path="privacy" element={<Privacy />} />
           <Route path="acceptable-use" element={<AcceptableUse />} />

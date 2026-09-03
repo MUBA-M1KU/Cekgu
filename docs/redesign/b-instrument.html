@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cekgu redesign · B · Instrument</title>
+    <link rel="stylesheet" href="_shared.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&family=Source+Serif+4:opsz,wght@8..60,400&family=Spline+Sans+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ============================================================================
+         DIRECTION B — INSTRUMENT
+         The argument: Cekgu is not a document, it is an apparatus. Two independent probes
+         read the same question and the disagreement between them is the measurement. Once
+         you accept that framing, the design problems solve themselves in a different order
+         from direction A.
+
+         1. Density is the feature. The shipped record is 5 076 px for twelve questions. Here
+            the whole paper is a matrix that fits above the fold, and you read agreement down
+            a column instead of scrolling to find it.
+         2. The reading matrix is the signature. Item, key, reader A, reader B, verdict, in
+            one row. Where the two readers agree with each other and disagree with the key,
+            that row is visibly wrong at a glance, with nothing opened.
+         3. The receipts are promoted. Request ids are the track's proof and the shipped UI
+            sets them in 13 px grey at the bottom of an expanded panel. Here they are a
+            standing ledger — the instrument's tape.
+
+         Deliberately NOT done: no chart, no neon, no glow, no gradient. The five verdict
+         hues are the only colour and every one of them is attached to a real count. The bans
+         in AGENTS.md name "a dark dashboard with neon chart lines and no data behind them",
+         and the defence against it is that there is no chart here at all.
+         ============================================================================ */
+
+      :root {
+        --void: #0d1219;
+        --panel: #151c25;
+        --panel-2: #1b2430;
+        --line: #28313d;
+        --line-strong: #3a4653;
+        --text: #e9e7e1;
+        --text-dim: #98a2ad;
+        --text-faint: #818c9b;
+        --pen: #f07079;
+
+        --v-clear: #7cc79c;
+        --v-key: #f2a468;
+        --v-amb: #b9a6f2;
+        --v-split: #8fb8f7;
+        --v-unver: #a0aab6;
+
+        --ui: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif;
+        --paper: 'Source Serif 4', Georgia, serif;
+        --mono: 'Spline Sans Mono', ui-monospace, Menlo, Consolas, monospace;
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      body {
+        background: var(--void);
+        color: var(--text);
+        font-family: var(--ui);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: -0.028em;
+        line-height: 1.06;
+        text-wrap: balance;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .mono {
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums slashed-zero;
+      }
+
+      .dim {
+        color: var(--text-dim);
+      }
+
+      .faint {
+        color: var(--text-faint);
+      }
+
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+      }
+
+      .wrap {
+        max-width: 82rem;
+        margin: 0 auto;
+        padding-inline: 2rem;
+      }
+
+      /* A single hairline grid, drawn once on the page rather than as borders on components.
+         An instrument has a chassis; this is it. */
+      .grid-bg {
+        background-image:
+          linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px);
+        background-size: 100% 3rem, 8.5rem 100%;
+        background-position: -1px -1px;
+        opacity: 0.28;
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        mask-image: radial-gradient(120% 90% at 70% 0%, #000 20%, transparent 78%);
+      }
+
+      /* ---- controls ---------------------------------------------------------------- */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        height: 2.5rem;
+        padding: 0 1.05rem;
+        border: 1px solid transparent;
+        border-radius: 2px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease);
+      }
+
+      .btn-primary {
+        background: var(--text);
+        color: var(--void);
+      }
+
+      .btn-primary:hover {
+        background: #fff;
+      }
+
+      .btn-ghost {
+        border-color: var(--line-strong);
+        color: var(--text);
+      }
+
+      .btn-ghost:hover {
+        background: var(--panel-2);
+        border-color: var(--text-faint);
+      }
+
+      .btn-text {
+        height: auto;
+        padding: 0;
+        border: 0;
+        background: none;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        text-decoration: underline;
+        text-underline-offset: 0.25em;
+      }
+
+      .btn-text:hover {
+        color: var(--text);
+      }
+
+      /* ============================ SCREEN 1 · LANDING ============================ */
+      .nav {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        padding-block: 1.25rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .lockup {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        font-size: 1.1875rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        margin-left: auto;
+        font-size: 0.875rem;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: var(--text-dim);
+      }
+
+      .nav-links a:hover {
+        color: var(--text);
+      }
+
+      .hero {
+        position: relative;
+        display: grid;
+        gap: 3.5rem;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        align-items: center;
+        padding-block: 5rem 5.5rem;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.5rem, 4.6vw, 3.75rem);
+      }
+
+      .hero .lead {
+        max-width: 40ch;
+        margin-top: 1.35rem;
+        font-size: 1.0625rem;
+        line-height: 1.6;
+        color: var(--text-dim);
+      }
+
+      .hero-cta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 2rem;
+      }
+
+      /* ---- the signature: the reading matrix --------------------------------------- */
+      .instrument {
+        position: relative;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        box-shadow: 0 10px 24px -14px #000;
+        overflow: hidden;
+      }
+
+      .instrument-head {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.7rem 1rem;
+        border-bottom: 1px solid var(--line);
+        background: var(--panel-2);
+      }
+
+      .instrument-head .title {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.04em;
+      }
+
+      .live {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--v-clear);
+      }
+
+      .live::before {
+        content: '';
+        width: 0.4rem;
+        height: 0.4rem;
+        border-radius: 999px;
+        background: currentColor;
+      }
+
+      table.matrix {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+        font-family: var(--mono);
+        font-size: 0.8125rem;
+        font-variant-numeric: tabular-nums slashed-zero;
+      }
+
+      .matrix th {
+        padding: 0.55rem 0.75rem;
+        border-bottom: 1px solid var(--line);
+        font-family: var(--ui);
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+        text-align: left;
+        white-space: nowrap;
+      }
+
+      .matrix th.n,
+      .matrix td.n {
+        text-align: center;
+        width: 3rem;
+      }
+
+      .matrix th.v,
+      .matrix td.v {
+        width: 8.5rem;
+      }
+
+      .matrix th.d,
+      .matrix td.d {
+        width: 4.5rem;
+      }
+
+      .sr {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      .matrix td {
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid var(--line);
+        color: var(--text-dim);
+      }
+
+      .matrix tbody tr {
+        transition: background-color 0.14s var(--ease);
+      }
+
+      .matrix tbody tr:hover {
+        background: var(--panel-2);
+      }
+
+      .matrix tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .matrix .stem {
+        font-family: var(--paper);
+        font-size: 0.9375rem;
+        color: var(--text);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* A letter cell. The key is outlined, a reader's pick is filled. When the two filled
+         cells line up with each other but not with the outline, the row is the finding. */
+      .cell {
+        display: inline-grid;
+        place-items: center;
+        width: 1.375rem;
+        height: 1.375rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .cell.key {
+        border: 1px solid var(--text-faint);
+        color: var(--text-dim);
+      }
+
+      .cell.read {
+        background: var(--text);
+        color: var(--void);
+      }
+
+      .cell.miss {
+        background: var(--v-key);
+        color: #2a1400;
+      }
+
+      tr.disagree td {
+        background: color-mix(in oklab, var(--v-key) 8%, transparent);
+      }
+
+      tr.disagree:hover td {
+        background: color-mix(in oklab, var(--v-key) 13%, transparent);
+      }
+
+      .vchip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: var(--ui);
+        font-size: 0.75rem;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .dot {
+        width: 0.4375rem;
+        height: 0.4375rem;
+        border-radius: 999px;
+        background: currentColor;
+        flex: none;
+      }
+
+      /* ---- the tape: request ids as a standing ledger ------------------------------ */
+      .tape {
+        display: flex;
+        gap: 0;
+        border-top: 1px solid var(--line);
+        background: var(--void);
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--text-faint);
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .tape span {
+        padding: 0.5rem 1rem;
+        border-right: 1px solid var(--line);
+      }
+
+      .tape b {
+        color: var(--v-clear);
+        font-weight: 400;
+      }
+
+      /* ---- landing sections -------------------------------------------------------- */
+      section.rule {
+        border-top: 1px solid var(--line);
+      }
+
+      .band {
+        padding-block: 5rem;
+      }
+
+      .stat-row {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      /* Not a hero-metric template: every number here is a count from the sample record that
+         is on this page, and the label says which. A figure with nothing behind it is the
+         thing the bans are about. */
+      .stat {
+        padding: 1.5rem 1.5rem 1.35rem;
+        border-right: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      .stat:last-child {
+        border-right: 0;
+      }
+
+      .stat .v {
+        font-family: var(--mono);
+        font-size: 2rem;
+        font-weight: 500;
+        letter-spacing: -0.03em;
+        line-height: 1;
+      }
+
+      .stat .k {
+        margin-top: 0.55rem;
+        font-size: 0.8125rem;
+        color: var(--text-dim);
+      }
+
+      .two-col {
+        display: grid;
+        gap: 4rem;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: start;
+      }
+
+      .prose {
+        max-width: 58ch;
+        font-size: 1rem;
+        line-height: 1.65;
+        color: var(--text-dim);
+      }
+
+      .prose p + p {
+        margin-top: 0.9rem;
+      }
+
+      .prose strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      .spec {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      .spec dl {
+        margin: 0;
+        display: grid;
+        grid-template-columns: 10rem minmax(0, 1fr);
+        font-family: var(--mono);
+        font-size: 0.8125rem;
+      }
+
+      .spec dt {
+        padding: 0.65rem 1rem;
+        border-bottom: 1px solid var(--line);
+        border-right: 1px solid var(--line);
+        color: var(--text-faint);
+        background: var(--panel);
+      }
+
+      .spec dd {
+        margin: 0;
+        padding: 0.65rem 1rem;
+        border-bottom: 1px solid var(--line);
+        color: var(--text);
+      }
+
+      .spec dl > :nth-last-child(-n + 2) {
+        border-bottom: 0;
+      }
+
+      /* ============================ SCREEN 2 · SIGN IN ============================ */
+      .auth {
+        position: relative;
+        display: grid;
+        min-height: 38rem;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+        align-items: center;
+        gap: 4rem;
+        padding-block: 4rem;
+      }
+
+      .auth-card {
+        max-width: 26rem;
+        padding: 2.25rem;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        box-shadow: 0 10px 24px -16px #000;
+      }
+
+      .field {
+        margin-top: 1.1rem;
+      }
+
+      .field label {
+        display: block;
+        margin-bottom: 0.35rem;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+      }
+
+      .field input {
+        width: 100%;
+        height: 2.5rem;
+        padding: 0 0.75rem;
+        border: 1px solid var(--line-strong);
+        border-radius: 2px;
+        background: var(--void);
+        color: var(--text);
+        font: inherit;
+      }
+
+      .field input:focus-visible {
+        outline: 2px solid var(--text);
+        outline-offset: 1px;
+      }
+
+      .notice {
+        margin-top: 1rem;
+        padding: 0.85rem 1rem;
+        border: 1px solid color-mix(in oklab, var(--pen) 38%, var(--line));
+        border-radius: 2px;
+        background: color-mix(in oklab, var(--pen) 8%, transparent);
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        color: var(--text-dim);
+      }
+
+      /* ============================ SCREEN 3 · RECORD ============================ */
+      .app {
+        display: grid;
+        grid-template-columns: 15rem minmax(0, 1fr);
+        min-height: 46rem;
+        border-top: 1px solid var(--line);
+      }
+
+      .side {
+        border-right: 1px solid var(--line);
+        padding: 1.25rem 1rem;
+        background: var(--panel);
+      }
+
+      .side nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        margin-top: 1.5rem;
+      }
+
+      .side nav a {
+        padding: 0.45rem 0.65rem;
+        border-radius: 2px;
+        font-size: 0.875rem;
+        color: var(--text-dim);
+        text-decoration: none;
+      }
+
+      .side nav a:hover {
+        background: var(--panel-2);
+        color: var(--text);
+      }
+
+      .side nav a[aria-current] {
+        background: var(--panel-2);
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      .side .group {
+        margin-top: 1.75rem;
+      }
+
+      .side .group h3 {
+        margin: 0 0 0.6rem 0.65rem;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        font-weight: 400;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+      }
+
+      .legend {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        padding-inline: 0.65rem;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+      }
+
+      .legend div {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-dim);
+      }
+
+      .legend b {
+        margin-left: auto;
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      .main {
+        padding: 1.5rem 1.75rem 3rem;
+      }
+
+      .rec-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.75rem 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .rec-head h2 {
+        font-size: 1.4375rem;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        height: 1.375rem;
+        padding: 0 0.55rem;
+        border: 1px solid var(--line-strong);
+        border-radius: 2px;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--text-dim);
+      }
+
+      .tag.solid {
+        background: var(--text);
+        border-color: var(--text);
+        color: var(--void);
+      }
+
+      .attention {
+        margin-left: auto;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--pen);
+      }
+
+      /* The expanded row. Progressive disclosure: the shipped screen renders a five-option
+         disposition form on all twelve items at once; here one row is open at a time and it
+         opens inside the matrix, so the paper never leaves the screen. */
+      tr.open td {
+        border-bottom: 0;
+      }
+
+      .drawer td {
+        padding: 0;
+        border-bottom: 1px solid var(--line);
+        background: var(--void);
+      }
+
+      .drawer-inner {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: 1fr 1fr 15rem;
+        padding: 1.25rem 1rem 1.35rem;
+      }
+
+      .reader h3 {
+        margin: 0 0 0.5rem;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+        font-weight: 400;
+      }
+
+      .reader .model {
+        font-family: var(--mono);
+        font-size: 0.8125rem;
+        color: var(--text);
+      }
+
+      .reader .why {
+        margin-top: 0.5rem;
+        font-family: var(--paper);
+        font-size: 0.9375rem;
+        line-height: 1.5;
+        color: var(--text-dim);
+      }
+
+      .reader .rid {
+        margin-top: 0.7rem;
+        padding-top: 0.55rem;
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--text-faint);
+      }
+
+      .ok {
+        color: var(--v-clear);
+      }
+
+      .decide h3 {
+        margin: 0 0 0.6rem;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+        font-weight: 400;
+      }
+
+      .decide button {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.3rem;
+        padding: 0.45rem 0.7rem;
+        border: 1px solid var(--line-strong);
+        border-radius: 2px;
+        background: transparent;
+        color: var(--text-dim);
+        font-size: 0.8125rem;
+        text-align: left;
+        transition: border-color 0.14s var(--ease), color 0.14s var(--ease);
+      }
+
+      .decide button:hover {
+        border-color: var(--pen);
+        color: var(--pen);
+      }
+
+      @media (max-width: 62rem) {
+        .hero,
+        .two-col,
+        .auth,
+        .drawer-inner {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .stat-row {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .app {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .side {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame-label">
+      Direction B · Instrument <span>Screen 1 of 3 — Landing</span>
+      <a href="index.html">All three directions ↩</a>
+    </div>
+
+    <!-- ============================ LANDING ============================ -->
+    <div class="wrap" style="position: relative">
+      <div class="grid-bg" aria-hidden="true"></div>
+
+      <header class="nav">
+        <a class="lockup" href="/">
+          <svg width="24" height="24" viewBox="0 0 64 64" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M25 12a20 20 0 1 0 0 40 20 20 0 0 0 0-40Zm14.5 3.2a20 20 0 0 0-8.2 1.9 23 23 0 0 1 0 29.8 20 20 0 1 0 8.2-31.7Z"
+            />
+            <circle cx="39.5" cy="32" r="17" fill="none" stroke="currentColor" stroke-width="3" />
+            <path d="M22 34.5 30 43l16-22" fill="none" stroke="var(--pen)" stroke-width="4.5" stroke-linecap="round" />
+          </svg>
+          Cekgu
+        </a>
+        <nav class="nav-links">
+          <a href="/how-it-works">How It Works</a>
+          <a href="/sample">Sample Report</a>
+          <a href="/pricing">Pricing</a>
+          <a href="/trust">Trust and Privacy</a>
+        </nav>
+        <a class="btn btn-primary" href="/sign-in">Sign In</a>
+      </header>
+
+      <section class="hero">
+        <div>
+          <h1>A learner should never lose marks to a wrong answer key.</h1>
+          <p class="lead">
+            Two independent models sit every question blind, before your learners do. Where they agree with each other
+            and disagree with your key, Cekgu says so — and hands you the request id that proves each reading happened.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="/new-check">Run a Paper</a>
+            <a class="btn btn-ghost" href="/sample">Open the Sample</a>
+          </div>
+          <p class="mono faint" style="margin-top: 1.5rem; font-size: 0.75rem">
+            Every inference routed through GonkaRouter · no fallback · receipts on chain
+          </p>
+        </div>
+
+        <div class="instrument">
+          <div class="instrument-head">
+            <span class="title">READING MATRIX · introductory-cs-practice-set</span>
+            <span class="live">READY</span>
+          </div>
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th class="n">#</th>
+                <th>Question</th>
+                <th class="n">Key</th>
+                <th class="n">A</th>
+                <th class="n">B</th>
+                <th class="v">Verdict</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="disagree">
+                <td class="n">3</td>
+                <td class="stem">Which data structure removes elements in first in, first out order?</td>
+                <td class="n"><span class="cell key">A</span></td>
+                <td class="n"><span class="cell miss">B</span></td>
+                <td class="n"><span class="cell miss">B</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-key)"><span class="dot"></span>Key Error</span></td>
+              </tr>
+              <tr class="disagree">
+                <td class="n">9</td>
+                <td class="stem">What is the main job of the Domain Name System?</td>
+                <td class="n"><span class="cell key">C</span></td>
+                <td class="n"><span class="cell miss">A</span></td>
+                <td class="n"><span class="cell miss">A</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-key)"><span class="dot"></span>Key Error</span></td>
+              </tr>
+              <tr>
+                <td class="n">11</td>
+                <td class="stem">How many bytes are there in one kilobyte?</td>
+                <td class="n"><span class="cell key">C</span></td>
+                <td class="n"><span class="cell read">A</span></td>
+                <td class="n"><span class="cell read">B</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-amb)"><span class="dot"></span>Ambiguity</span></td>
+              </tr>
+              <tr>
+                <td class="n">1</td>
+                <td class="stem">What is the time complexity of reading the element at a known index in an array?</td>
+                <td class="n"><span class="cell key">A</span></td>
+                <td class="n"><span class="cell read">A</span></td>
+                <td class="n"><span class="cell read">A</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-clear)"><span class="dot"></span>Clear</span></td>
+              </tr>
+              <tr>
+                <td class="n">2</td>
+                <td class="stem">Which transport protocol retransmits lost segments so that data arrives in order?</td>
+                <td class="n"><span class="cell key">B</span></td>
+                <td class="n"><span class="cell read">B</span></td>
+                <td class="n"><span class="cell read">B</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-clear)"><span class="dot"></span>Clear</span></td>
+              </tr>
+              <tr>
+                <td class="n">4</td>
+                <td class="stem">In big-O notation, what does O(n) say about an algorithm?</td>
+                <td class="n"><span class="cell key">C</span></td>
+                <td class="n"><span class="cell read">C</span></td>
+                <td class="n"><span class="cell read">C</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-clear)"><span class="dot"></span>Clear</span></td>
+              </tr>
+              <tr>
+                <td class="n">5</td>
+                <td class="stem">Mutual exclusion, hold and wait, and no preemption are three of four. The fourth?</td>
+                <td class="n"><span class="cell key">D</span></td>
+                <td class="n"><span class="cell read">D</span></td>
+                <td class="n"><span class="cell read">D</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-clear)"><span class="dot"></span>Clear</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="tape">
+            <span>req-1788426625321985624-411634 <b>✓</b></span>
+            <span>req-1788426625329857263-411637 <b>✓</b></span>
+            <span style="border-right: 0">+22 more</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="rule">
+      <div class="wrap band">
+        <p class="eyebrow">From the sample record on this page</p>
+        <div class="stat-row" style="margin-top: 1.25rem">
+          <div class="stat">
+            <p class="v">12</p>
+            <p class="k">Questions read, each by two model families</p>
+          </div>
+          <div class="stat">
+            <p class="v" style="color: var(--v-key)">2</p>
+            <p class="k">Keys both readers disagreed with</p>
+          </div>
+          <div class="stat">
+            <p class="v" style="color: var(--v-amb)">1</p>
+            <p class="k">Questions with more than one defensible answer</p>
+          </div>
+          <div class="stat">
+            <p class="v">24</p>
+            <p class="k">Request ids issued, each resolving to a receipt</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rule">
+      <div class="wrap band two-col">
+        <div>
+          <h2 style="font-size: clamp(1.625rem, 2.8vw, 2.125rem)">Two readers, or Cekgu says nothing</h2>
+          <div class="prose" style="margin-top: 1.15rem">
+            <p>
+              One AI gives you one opinion, and it will happily agree with the answer key you show it. Cekgu withholds
+              your key and asks <strong>two different model families</strong> to answer independently.
+            </p>
+            <p>
+              Where fewer than two independent readings survive verification, the item is marked
+              <strong>Unverified</strong> rather than guessed. A reading whose request id cannot be resolved to a
+              receipt does not count, so the floor is enforced by the gateway rather than by trust.
+            </p>
+            <p>
+              Cekgu is a first pass, not a vetting committee. Agreement between models is not proof of truth, and it
+              does not certify a paper, change a key, or grade anyone.
+            </p>
+          </div>
+        </div>
+        <div>
+          <p class="eyebrow" style="margin-bottom: 0.85rem">Reading 3A · as recorded</p>
+          <div class="spec">
+            <dl>
+              <dt>requested</dt>
+              <dd>moonshotai/Kimi-K2.6</dd>
+              <dt>served</dt>
+              <dd>moonshotai/Kimi-K2.6</dd>
+              <dt>request id</dt>
+              <dd>req-1788426625321985624-411634</dd>
+              <dt>receipt</dt>
+              <dd class="ok">Verified</dd>
+              <dt>fallback</dt>
+              <dd>refused · X-Gonka-No-Fallback</dd>
+              <dt>answered</dt>
+              <dd>B · Queue</dd>
+            </dl>
+          </div>
+          <p class="dim" style="margin-top: 0.9rem; font-size: 0.8125rem; max-width: 46ch">
+            Requested and served are printed separately on purpose. If the gateway had substituted a different model,
+            the two lines would disagree and the reading would not count toward the two-reader floor.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ SIGN IN ============================ -->
+    <div class="frame-label">Direction B · Instrument <span>Screen 2 of 3 — Sign In</span></div>
+
+    <div class="wrap" style="position: relative">
+      <div class="grid-bg" aria-hidden="true"></div>
+      <section class="auth">
+        <div class="auth-card">
+          <a class="lockup" href="/" style="font-size: 1.0625rem">
+            <svg width="20" height="20" viewBox="0 0 64 64" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M25 12a20 20 0 1 0 0 40 20 20 0 0 0 0-40Zm14.5 3.2a20 20 0 0 0-8.2 1.9 23 23 0 0 1 0 29.8 20 20 0 1 0 8.2-31.7Z"
+              />
+              <circle cx="39.5" cy="32" r="17" fill="none" stroke="currentColor" stroke-width="3" />
+              <path
+                d="M22 34.5 30 43l16-22"
+                fill="none"
+                stroke="var(--pen)"
+                stroke-width="4.5"
+                stroke-linecap="round"
+              />
+            </svg>
+            Cekgu
+          </a>
+          <h2 style="margin-top: 1.5rem; font-size: 1.625rem">Sign In</h2>
+          <div class="field">
+            <label for="b-email">Email</label>
+            <input id="b-email" type="email" placeholder="you@school.edu.my" />
+          </div>
+          <div class="field">
+            <label for="b-pass">Password</label>
+            <input id="b-pass" type="password" />
+          </div>
+          <div style="display: flex; gap: 0.6rem; margin-top: 1.35rem">
+            <button class="btn btn-primary" type="button">Sign In</button>
+            <button class="btn btn-ghost" type="button">Create an Account</button>
+          </div>
+          <hr style="margin: 1.5rem 0 1.15rem; border: 0; border-top: 1px solid var(--line)" />
+          <button class="btn btn-ghost" type="button" style="width: 100%; justify-content: center">
+            Continue as Guest
+          </button>
+          <p class="notice">
+            <b style="color: var(--text); font-weight: 500">Shared demo workspace.</b> Anything you add can be viewed or
+            deleted by other guests. Do not enter real, personal or confidential exam content.
+          </p>
+        </div>
+
+        <!-- The right half runs the instrument idle: three readings already on the tape, so the
+             sign-in screen is still showing the thing being signed into. -->
+        <div class="instrument">
+          <div class="instrument-head">
+            <span class="title">GATEWAY · api.gonkarouter.io</span>
+            <span class="live">CONNECTED</span>
+          </div>
+          <div class="spec" style="border: 0">
+            <dl>
+              <dt>families</dt>
+              <dd>3 available · 2 required per item</dd>
+              <dt>kimi</dt>
+              <dd class="ok">100% of calls · median 4.1s</dd>
+              <dt>minimax</dt>
+              <dd class="ok">100% of calls · median 5.6s</dd>
+              <dt>deepseek</dt>
+              <dd class="ok">100% of calls · median 2.9s</dd>
+              <dt>window</dt>
+              <dd>last 15 minutes</dd>
+            </dl>
+          </div>
+          <div class="tape">
+            <span>req-1788426625321985624-411634 <b>✓</b></span>
+            <span>req-1788426631044271882-411641 <b>✓</b></span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================ RECORD WORKSPACE ============================ -->
+    <div class="frame-label">
+      Direction B · Instrument <span>Screen 3 of 3 — Record workspace, twelve questions above the fold</span>
+    </div>
+
+    <div class="app">
+      <aside class="side">
+        <a class="lockup" href="/" style="font-size: 1.0625rem">
+          <svg width="20" height="20" viewBox="0 0 64 64" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M25 12a20 20 0 1 0 0 40 20 20 0 0 0 0-40Zm14.5 3.2a20 20 0 0 0-8.2 1.9 23 23 0 0 1 0 29.8 20 20 0 1 0 8.2-31.7Z"
+            />
+            <circle cx="39.5" cy="32" r="17" fill="none" stroke="currentColor" stroke-width="3" />
+            <path d="M22 34.5 30 43l16-22" fill="none" stroke="var(--pen)" stroke-width="4.5" stroke-linecap="round" />
+          </svg>
+          Cekgu
+        </a>
+        <nav>
+          <a href="/dashboard">Dashboard</a>
+          <a href="/new-check">New Check</a>
+          <a href="/records" aria-current="page">Records</a>
+          <a href="/settings">Settings</a>
+        </nav>
+        <div class="group">
+          <h3>This record</h3>
+          <div class="legend">
+            <div style="color: var(--v-key)"><span class="dot"></span> Key Error <b>2</b></div>
+            <div style="color: var(--v-amb)"><span class="dot"></span> Ambiguity <b>1</b></div>
+            <div style="color: var(--v-split)"><span class="dot"></span> Split <b>0</b></div>
+            <div style="color: var(--v-unver)"><span class="dot"></span> Unverified <b>0</b></div>
+            <div style="color: var(--v-clear)"><span class="dot"></span> Clear <b>9</b></div>
+          </div>
+        </div>
+        <div class="group">
+          <h3>Gateway</h3>
+          <div class="legend">
+            <div>kimi <b class="ok">100%</b></div>
+            <div>minimax <b class="ok">100%</b></div>
+            <div>deepseek <b class="ok">100%</b></div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="rec-head">
+          <h2>Introductory computer science practice set</h2>
+          <span class="tag">Ready</span>
+          <span class="tag solid">Sample</span>
+          <span class="attention">3 items need attention</span>
+        </div>
+
+        <div class="instrument" style="margin-top: 1.25rem; box-shadow: none">
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th class="n">#</th>
+                <th>Question</th>
+                <th class="n">Key</th>
+                <th class="n">A</th>
+                <th class="n">B</th>
+                <th class="v">Verdict</th>
+                <th class="d"><span class="sr">Decision</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="disagree open">
+                <td class="n">3</td>
+                <td class="stem">Which data structure removes elements in first in, first out order?</td>
+                <td class="n"><span class="cell key">A</span></td>
+                <td class="n"><span class="cell miss">B</span></td>
+                <td class="n"><span class="cell miss">B</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-key)"><span class="dot"></span>Key Error</span></td>
+                <td class="d"><button class="btn-text" type="button">close</button></td>
+              </tr>
+              <tr class="drawer">
+                <td colspan="7">
+                  <div class="drawer-inner">
+                    <div class="reader">
+                      <h3>Reader A</h3>
+                      <p class="model">moonshotai/Kimi-K2.6</p>
+                      <p class="why">
+                        A queue is defined by the first-in, first-out principle, where elements are removed in the same
+                        order they were added. A stack uses last-in, first-out order.
+                      </p>
+                      <p class="rid">req-1788426625321985624-411634 · <span class="ok">verified</span></p>
+                    </div>
+                    <div class="reader">
+                      <h3>Reader B</h3>
+                      <p class="model">MiniMaxAI/MiniMax-M2.7</p>
+                      <p class="why">
+                        A queue is a linear structure that follows first-in, first-out when removing elements. A stack
+                        uses LIFO, and binary search trees and hash tables do not enforce a FIFO order.
+                      </p>
+                      <p class="rid">req-1788426625329857263-411637 · <span class="ok">verified</span></p>
+                    </div>
+                    <div class="decide">
+                      <h3>Your decision</h3>
+                      <button type="button">Key Corrected</button>
+                      <button type="button">Wording Revised</button>
+                      <button type="button">Key Confirmed</button>
+                      <button type="button">Flag Dismissed</button>
+                      <button type="button">Retry Requested</button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="disagree">
+                <td class="n">9</td>
+                <td class="stem">What is the main job of the Domain Name System?</td>
+                <td class="n"><span class="cell key">C</span></td>
+                <td class="n"><span class="cell miss">A</span></td>
+                <td class="n"><span class="cell miss">A</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-key)"><span class="dot"></span>Key Error</span></td>
+                <td class="d"><button class="btn-text" type="button">open</button></td>
+              </tr>
+              <tr>
+                <td class="n">11</td>
+                <td class="stem">How many bytes are there in one kilobyte?</td>
+                <td class="n"><span class="cell key">C</span></td>
+                <td class="n"><span class="cell read">A</span></td>
+                <td class="n"><span class="cell read">B</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-amb)"><span class="dot"></span>Ambiguity</span></td>
+                <td class="d"><button class="btn-text" type="button">open</button></td>
+              </tr>
+              <tr>
+                <td class="n">1</td>
+                <td class="stem">What is the time complexity of reading the element at a known index in an array?</td>
+                <td class="n"><span class="cell key">A</span></td>
+                <td class="n"><span class="cell read">A</span></td>
+                <td class="n"><span class="cell read">A</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-clear)"><span class="dot"></span>Clear</span></td>
+                <td class="d"><button class="btn-text" type="button">open</button></td>
+              </tr>
+              <tr>
+                <td class="n">2</td>
+                <td class="stem">Which transport protocol retransmits lost segments so that data arrives in order?</td>
+                <td class="n"><span class="cell key">B</span></td>
+                <td class="n"><span class="cell read">B</span></td>
+                <td class="n"><span class="cell read">B</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-clear)"><span class="dot"></span>Clear</span></td>
+                <td class="d"><button class="btn-text" type="button">open</button></td>
+              </tr>
+              <tr>
+                <td class="n">4</td>
+                <td class="stem">In big-O notation, what does O(n) say about an algorithm?</td>
+                <td class="n"><span class="cell key">C</span></td>
+                <td class="n"><span class="cell read">C</span></td>
+                <td class="n"><span class="cell read">C</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-clear)"><span class="dot"></span>Clear</span></td>
+                <td class="d"><button class="btn-text" type="button">open</button></td>
+              </tr>
+              <tr>
+                <td class="n">5</td>
+                <td class="stem">
+                  Mutual exclusion, hold and wait, and no preemption are three of the four conditions for deadlock. What
+                  is the fourth?
+                </td>
+                <td class="n"><span class="cell key">D</span></td>
+                <td class="n"><span class="cell read">D</span></td>
+                <td class="n"><span class="cell read">D</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-clear)"><span class="dot"></span>Clear</span></td>
+                <td class="d"><button class="btn-text" type="button">open</button></td>
+              </tr>
+              <tr>
+                <td class="n">6</td>
+                <td class="stem">Which layer of the TCP/IP model does HTTP belong to?</td>
+                <td class="n"><span class="cell key">C</span></td>
+                <td class="n"><span class="cell read">C</span></td>
+                <td class="n"><span class="cell read">C</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-clear)"><span class="dot"></span>Clear</span></td>
+                <td class="d"><button class="btn-text" type="button">open</button></td>
+              </tr>
+              <tr>
+                <td class="n">7</td>
+                <td class="stem">What does a primary key guarantee about a relational table?</td>
+                <td class="n"><span class="cell key">D</span></td>
+                <td class="n"><span class="cell read">D</span></td>
+                <td class="n"><span class="cell read">D</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-clear)"><span class="dot"></span>Clear</span></td>
+                <td class="d"><button class="btn-text" type="button">open</button></td>
+              </tr>
+              <tr>
+                <td class="n">8</td>
+                <td class="stem">What does a compiler do with a source program?</td>
+                <td class="n"><span class="cell key">A</span></td>
+                <td class="n"><span class="cell read">A</span></td>
+                <td class="n"><span class="cell read">A</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-clear)"><span class="dot"></span>Clear</span></td>
+                <td class="d"><button class="btn-text" type="button">open</button></td>
+              </tr>
+              <tr>
+                <td class="n">10</td>
+                <td class="stem">Why does a processor have a cache?</td>
+                <td class="n"><span class="cell key">B</span></td>
+                <td class="n"><span class="cell read">B</span></td>
+                <td class="n"><span class="cell read">B</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-clear)"><span class="dot"></span>Clear</span></td>
+                <td class="d"><button class="btn-text" type="button">open</button></td>
+              </tr>
+              <tr>
+                <td class="n">12</td>
+                <td class="stem">What does creating a branch in Git let a developer do?</td>
+                <td class="n"><span class="cell key">D</span></td>
+                <td class="n"><span class="cell read">D</span></td>
+                <td class="n"><span class="cell read">D</span></td>
+                <td class="v"><span class="vchip" style="color: var(--v-clear)"><span class="dot"></span>Clear</span></td>
+                <td class="d"><button class="btn-text" type="button">open</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="faint" style="margin-top: 1rem; font-size: 0.8125rem">
+          All twelve questions, both readers and the key are on screen at once. Scanning the two reader columns for a
+          pair that agrees with each other and not with the outlined key is the whole review.
+        </p>
+      </main>
+    </div>
+  </body>
+</html>

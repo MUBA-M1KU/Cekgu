@@ -102,6 +102,18 @@ Everywhere else red is a stroke, a glyph or text.
 
 ### Tokens
 
+**The ground is a cool grey, not a warm off-white.** The palette moved on 3 September, when direction C was adopted.
+Warm cream plus a serif body is the most saturated look in AI-generated design right now and Cekgu was one step from it
+on two technicalities: the serif is body copy rather than a display face, and the accent is a crimson pen rather than
+terracotta. That is a narrow margin. Moving the ground to a cool grey widens it and leaves the pen red as the only warm
+thing on the page, which is what the pen is for. `--rule-strong` moved with it, to `#6b7480`, because the old value no
+longer cleared 3:1 on the new well.
+
+Every pair was re-solved numerically against all three grounds in both themes rather than adjusted by eye, and the
+result is checked against the running product: a script walks every text node on all seven routes in both themes,
+composites translucent layers down to the first opaque one, and computes the ratio a person actually sees. Fourteen
+route-and-theme combinations, zero failures, nothing below the 12 px floor.
+
 The frontend copies this block verbatim into its global stylesheet. Every token is written once with `light-dark()`, so
 there is one source of truth per colour; `color-scheme` follows the system unless a `data-theme` attribute on the root
 forces one side. `light-dark()` and `color-mix()` are supported in every evergreen browser since 2024, and the demo runs
@@ -111,16 +123,16 @@ on one.
 :root {
   color-scheme: light dark;
 
-  --paper: light-dark(#f1efea, #12171e); /* the desk: page ground */
-  --sheet: light-dark(#fbfaf7, #1a2029); /* the review document and every raised surface */
-  --well: light-dark(#eae7e0, #222a35); /* recessed areas: evidence panel, code, table stripes */
-  --ink: light-dark(#17202b, #eceae4); /* text, filled bubbles, primary buttons */
-  --ink-muted: light-dark(#4f5a68, #a6afba); /* secondary text, helper text, timestamps */
-  --rule: light-dark(#d6d2c9, #323b47); /* hairlines between rows, non-interactive borders */
-  --rule-strong: light-dark(#7a828c, #6b7682); /* input and control borders, at least 3:1 on the sheet */
+  --paper: light-dark(#edeff1, #12161c); /* the desk: page ground */
+  --sheet: light-dark(#ffffff, #1a2029); /* the review document and every raised surface */
+  --well: light-dark(#e3e6ea, #222a35); /* recessed areas: evidence panel, code, table stripes */
+  --ink: light-dark(#14181f, #eceae4); /* text, filled bubbles, primary buttons */
+  --ink-muted: light-dark(#4d5560, #a6afba); /* secondary text, helper text, timestamps */
+  --rule: light-dark(#d7dbe0, #323b47); /* hairlines between rows, non-interactive borders */
+  --rule-strong: light-dark(#6b7480, #6b7682); /* input and control borders, at least 3:1 on the sheet */
   --pen: light-dark(#b3202f, #f07079); /* the human's red: dispositions, attention count, delete */
-  --pen-ink: light-dark(#fbfaf7, #12171e); /* text on a filled pen surface */
-  --on-ink: light-dark(#fbfaf7, #12171e); /* text on a filled ink surface */
+  --pen-ink: light-dark(#ffffff, #12161c); /* text on a filled pen surface */
+  --on-ink: light-dark(#ffffff, #12161c); /* text on a filled ink surface */
 
   --verdict-clear: light-dark(#2c6e49, #7cc79c);
   --verdict-key-error: light-dark(#a34a08, #f2a468);
@@ -130,8 +142,8 @@ on one.
 
   --focus: var(--ink);
   --focus-halo: var(--sheet);
-  --shadow-tint: light-dark(rgb(23 32 43 / 0.06), transparent);
-  --shadow-overlay-tint: light-dark(rgb(23 32 43 / 0.18), rgb(0 0 0 / 0.5));
+  --shadow-tint: light-dark(rgb(20 24 31 / 0.07), transparent);
+  --shadow-overlay-tint: light-dark(rgb(20 24 31 / 0.2), rgb(0 0 0 / 0.5));
   --shadow-sheet: 0 1px 2px var(--shadow-tint);
   --shadow-overlay: 0 12px 32px var(--shadow-overlay-tint);
 }
