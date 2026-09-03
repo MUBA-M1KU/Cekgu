@@ -66,8 +66,11 @@ export function PricingSection() {
               ))}
             </ul>
             <div className="mt-auto pt-7">
+              {/* Not "Sign In as Guest": that phrase belongs to the sign-in screen's own control,
+                  and two links carrying it on one page is one ambiguous target for anyone
+                  navigating by accessible name, the smoke suite included. */}
               <Link to="/sign-in" className="type-label underline">
-                {plan.name === 'Guest' ? 'Sign In as Guest' : 'Start With Free'}
+                {plan.name === 'Guest' ? 'Open the Guest Workspace' : 'Start With Free'}
               </Link>
             </div>
           </section>
