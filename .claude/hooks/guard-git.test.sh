@@ -24,7 +24,8 @@ check_in() {
   local status
 
   set +e
-  output=$(cd "$directory" && jq -nc --arg command "$command" '{tool_input: {command: $command}}' | bash "$hook" 2>&1)
+  output=$(cd "$directory" && jq -nc --arg command "$command" --arg cwd "$directory" \
+    '{cwd: $cwd, tool_input: {command: $command}}' | bash "$hook" 2>&1)
   status=$?
   set -e
 
@@ -62,6 +63,12 @@ check "combined force flag" 2 "git push -fu origin feature"
 check "rtk wrapped main push" 2 "rtk git push origin HEAD:main"
 check "git global option main push" 2 "git -C . push origin HEAD:main"
 check_in "$main_repo" "implicit push from main" 2 "git push"
+
+# The branch must be resolved for the directory the command runs in, not for whichever checkout the
+# hook process happens to sit in. Both directions, because the permissive one is the dangerous half.
+check_in "$main_repo" "feature worktree while the session sits on main" 0 "git -C $feature_repo push -u origin chore/guard-test"
+check_in "$feature_repo" "main worktree while the session sits on a branch" 2 "git -C $main_repo push"
+check_in "$feature_repo" "cd into a main worktree first" 2 "cd $main_repo && git push"
 
 check "read-only API request" 0 "gh api repos/MUBA-M1KU/dev/pulls/12"
 check "API main ref update" 2 "gh api -X PATCH repos/MUBA-M1KU/dev/git/refs/heads/main -f sha=$sha"

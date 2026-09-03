@@ -4,7 +4,8 @@
 set -uo pipefail
 
 command -v jq >/dev/null 2>&1 || exit 0
-cmd=$(jq -r '.tool_input.command // empty' 2>/dev/null) || exit 0
+payload=$(cat) || exit 0
+cmd=$(jq -r '.tool_input.command // empty' <<<"$payload" 2>/dev/null) || exit 0
 [[ -n "$cmd" ]] || exit 0
 
 # exit 2 plus stderr feeds the reason back to the agent
@@ -40,7 +41,20 @@ if has 'git([[:space:]]+[^[:space:]]+)*[[:space:]]+push([[:space:]]|$)'; then
   if has '(^|[[:space:]])((refs/heads/)?main)([[:space:]]|$)'; then
     deny "direct push to main. Branch and open a PR (see AGENTS.md)."
   fi
-  current_branch=$(git branch --show-current 2>/dev/null || true)
+  # Resolve the branch of the directory the command actually runs in. A bare `git branch
+  # --show-current` answers for the process working directory, which is blind to worktrees in both
+  # directions: it denies a legitimate push from a feature worktree while the shared checkout sits
+  # on main, and it waves through a push from a worktree that really is on main while the shared
+  # one is not. The permissive half is the one that matters.
+  push_dir=$(jq -r '.cwd // empty' <<<"$payload" 2>/dev/null || true)
+  push_dir=${push_dir:-$PWD}
+  if [[ "$cmd" =~ git[[:space:]]+-C[[:space:]]+\'?\"?([^[:space:]\'\"]+) ]]; then
+    push_dir=${BASH_REMATCH[1]}
+  elif [[ "$cmd" =~ (^|[[:space:]]|\&|\;)cd[[:space:]]+\'?\"?([^[:space:]\'\"\&\;]+) ]]; then
+    push_dir=${BASH_REMATCH[2]}
+  fi
+
+  current_branch=$(git -C "$push_dir" branch --show-current 2>/dev/null || true)
   if [[ "$current_branch" == "main" ]]; then
     deny "pushing from main is forbidden. Branch and open a PR (see AGENTS.md)."
   fi
