@@ -95,11 +95,13 @@ jobs:
           ALL_SECRETS: ${{ toJSON(secrets) }}
         run: ./.github/scripts/render-env-vars.sh "$RUNNER_TEMP/env-vars.json"
 
+      # shell: bash adds pipefail, so a failed describe fails this step instead of posting an empty URL.
       # No traffic, and min-instances 0 so a preview revision is not held warm.
       # Production keeps min-instances 1 from deploy.yml; that is a revision-level setting.
       - name: Deploy the pr-${{ github.event.pull_request.number }} revision
         id: deploy
         if: steps.service.outputs.exists == 'true'
+        shell: bash
         run: |
           tag="pr-${{ github.event.pull_request.number }}"
           gcloud run deploy "${{ vars.CLOUD_RUN_SERVICE }}" \
@@ -123,6 +125,10 @@ jobs:
             --project "${{ vars.GCP_PROJECT_ID }}" \
             --region "${{ vars.GCP_REGION }}" \
             --format=json | jq -r --arg tag "$tag" '.status.traffic[] | select(.tag == $tag) | .url')
+          if [ -z "$url" ] || [ "$url" = 'null' ]; then
+            echo "::error::no tagged url returned for $tag"
+            exit 1
+          fi
           echo "url=$url" >> "$GITHUB_OUTPUT"
           printf 'Preview: %s\n' "$url" >> "$GITHUB_STEP_SUMMARY"
 
