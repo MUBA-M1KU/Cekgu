@@ -90,8 +90,8 @@ export function HowItWorks() {
       <h2 className="mt-10">You Decide, Not the Model</h2>
       <p className="type-body mt-4 max-w-[64ch]">
         Cekgu never changes a key, edits a question or approves a paper. A verdict is a place to look. You record what
-        you actually did — corrected the key, revised the wording, confirmed the key was right, dismissed the flag, or
-        asked for another attempt — and your decision is stored beside the machine verdict without replacing it. The
+        you actually did: corrected the key, revised the wording, confirmed the key was right, dismissed the flag, or
+        asked for another attempt. Your decision is stored beside the machine verdict without replacing it, so the
         history shows both what Cekgu observed and what you decided.
       </p>
 

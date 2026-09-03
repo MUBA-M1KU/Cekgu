@@ -31,19 +31,19 @@ export function Home() {
         <h2>What Goes Wrong</h2>
         <div className="mt-5 grid gap-6 sm:grid-cols-3">
           <div>
-            <p className="type-label">A wrong key</p>
+            <p className="type-label">A Wrong Key</p>
             <p className="type-body mt-2 text-ink-muted">
               Everyone who answered correctly is marked wrong. You find out when the complaints arrive.
             </p>
           </div>
           <div>
-            <p className="type-label">Two defensible answers</p>
+            <p className="type-label">Two Defensible Answers</p>
             <p className="type-body mt-2 text-ink-muted">
               The question is fair to whoever guessed your intent, and unfair to everyone who read it carefully.
             </p>
           </div>
           <div>
-            <p className="type-label">Wording that shifts the meaning</p>
+            <p className="type-label">Wording That Shifts the Meaning</p>
             <p className="type-body mt-2 text-ink-muted">
               You knew what you meant. The paper says something slightly different.
             </p>
