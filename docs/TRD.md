@@ -512,6 +512,15 @@ registered, so previews are tested through Guest and email sign-in; and `BETTER_
 origin, so `POST /api/auth/guest` on a preview sets a cookie for the preview origin only because Better Auth derives the
 cookie domain from the request, not from that variable.
 
+**Sharing the database is not the same as sharing the right to change it.** A preview revision additionally sets
+`MIGRATE_ON_START=false` and `WORKER_ENABLED=false`. Without them, opening a preview URL — which CI posts on the pull
+request so that people click it — boots an unreviewed revision that applies that branch's pending migrations to the
+production database and starts its own copy of every background timer against production rows. `--min-instances 0`
+narrows the window to "while a tab is open"; it does not close it. Both variables default to on when unset, so
+production, local development and a developer's own `.env` are unaffected and neither name belongs in
+[section 8](#8-configuration-contract). A preview still serves the full UI and API against production data, which is
+what this section wanted; it simply cannot alter the schema or delete rows on a timer.
+
 ## 11. Data model
 
 Neon Postgres, Singapore region (`ap-southeast-1`), one database, one schema. Drizzle ORM defines the tables in

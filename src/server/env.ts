@@ -20,6 +20,11 @@ export const env = {
   guestEmail: required('GUEST_EMAIL'),
   guestPassword: required('GUEST_PASSWORD'),
   mascotEnabled: process.env.MASCOT_ENABLED === 'true',
+  // Both default on, so production and local development are unchanged by their absence. A preview
+  // revision sets them to 'false': it shares production's DATABASE_URL by TRD section 10, and an
+  // instance nobody has reviewed yet must not apply migrations or run a delete loop against those rows.
+  migrateOnStart: process.env.MIGRATE_ON_START !== 'false',
+  workerEnabled: process.env.WORKER_ENABLED !== 'false',
   // Google stays optional so a deployment without an OAuth client still boots with
   // email and Guest sign-in working. FR-AUTH-2 is the demo path, not Google.
   google: googleClientId && googleClientSecret ? { clientId: googleClientId, clientSecret: googleClientSecret } : null
