@@ -1,12 +1,7 @@
 import { expect, test } from 'bun:test'
 
-// env.ts reads process.env once at import, so the placeholders have to be in place before the
-// route module is pulled in. They are stand-ins, not credentials: nothing here opens a connection.
-process.env.DATABASE_URL = 'postgres://cekgu@localhost:5432/cekgu'
-process.env.BETTER_AUTH_SECRET = 'placeholder'
-process.env.GUEST_EMAIL = 'guest@example.invalid'
-process.env.GUEST_PASSWORD = 'placeholder'
-process.env.MASCOT_ENABLED = 'true'
+// The environment comes from test-env.ts, preloaded by bunfig.toml, because env.ts snapshots
+// process.env at first import and one test file cannot own that for the whole suite.
 
 const { healthRoutes } = await import('./health')
 

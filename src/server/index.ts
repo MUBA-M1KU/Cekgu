@@ -3,6 +3,7 @@ import { Hono } from 'hono'
 import { serveStatic } from 'hono/bun'
 import { db } from './db'
 import { env } from './env'
+import { startGuestSweep } from './guest'
 import { api } from './routes'
 import { seedGuestUser } from './seed'
 
@@ -10,6 +11,7 @@ const CLIENT_DIR = './dist/client'
 
 await migrate(db, { migrationsFolder: './drizzle' })
 await seedGuestUser()
+startGuestSweep()
 
 const app = new Hono()
 
