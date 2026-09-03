@@ -469,3 +469,254 @@ section[id] {
   background: var(--sheet);
   box-shadow: 0 1px 2px var(--shadow-tint);
 }
+
+/* ---------------------------------------------------------------------------------------------
+   The post-authentication shell: a hover rail, a glass topbar, the content container and a quiet
+   footer. The rail is the one piece here that is genuinely bespoke — it animates width, which the
+   usual advice forbids, but a 64 px rail that becomes 200 px is a width change and faking it with
+   a transform would move the icons it is supposed to leave still. */
+
+.app-rail {
+  position: fixed;
+  inset-block: 0;
+  left: 0;
+  z-index: 40;
+  display: flex;
+  width: 4rem;
+  flex-direction: column;
+  gap: var(--s-5);
+  padding: var(--s-4) 0;
+  border-right: 1px solid var(--rule);
+  background: var(--sheet);
+  overflow: hidden;
+  transition: width var(--t-panel) var(--ease-out);
+}
+
+.app-rail:hover,
+.app-rail:focus-within {
+  width: 12.5rem;
+}
+
+.app-rail-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 39;
+  opacity: 0;
+  pointer-events: none;
+  background: color-mix(in oklab, var(--ink) 22%, transparent);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  transition: opacity var(--t-panel) var(--ease-out);
+}
+
+.app-rail:hover ~ .app-rail-backdrop,
+.app-rail:focus-within ~ .app-rail-backdrop {
+  opacity: 1;
+}
+
+.app-rail-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.25rem;
+  padding-inline: 1.125rem;
+  color: var(--ink);
+}
+
+/* Without this the mark loses its own width to the label as the rail opens: the span keeps its
+   layout width while only its opacity animates, and 20 + 12 + 40 does not fit in a 28 px box. */
+.app-rail-logo svg {
+  flex: none;
+}
+
+.app-rail-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 1.5rem;
+  padding-inline: 1.125rem;
+}
+
+.app-rail-rule {
+  width: 1.25rem;
+  flex: none;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.app-rail-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.5rem;
+  padding-inline: 1.125rem;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  transition: color var(--t-quick) var(--ease-out);
+}
+
+.app-rail-link:hover {
+  color: var(--ink);
+}
+
+.app-rail-link.active {
+  color: var(--ink);
+}
+
+/* The active mark is a 2 px bar at the leading edge, which reads at 64 px and at 200 px alike. */
+.app-rail-link.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 2px;
+  border-radius: 0 2px 2px 0;
+  background: var(--pen);
+}
+
+.app-rail-icon {
+  display: grid;
+  width: 1.375rem;
+  flex: none;
+  place-items: center;
+}
+
+/* Labels and section headings crossfade rather than slide, so nothing moves horizontally except
+   the rail's own edge. */
+.app-rail-text {
+  opacity: 0;
+  transition: opacity var(--t-quick) var(--ease-out);
+}
+
+.app-rail:hover .app-rail-text,
+.app-rail:focus-within .app-rail-text {
+  opacity: 1;
+}
+
+.app-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  height: 3.5rem;
+  margin-left: 4rem;
+  padding-inline: var(--s-4);
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in oklab, var(--sheet) 82%, transparent);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+}
+
+.app-icon-button,
+.app-avatar {
+  position: relative;
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: var(--r-bubble);
+  color: var(--ink-muted);
+  transition:
+    background-color var(--t-quick) var(--ease-out),
+    color var(--t-quick) var(--ease-out);
+}
+
+.app-icon-button:hover,
+.app-avatar:hover {
+  background: var(--well);
+  color: var(--ink);
+}
+
+.app-avatar {
+  border: 1px solid var(--rule-strong);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.app-badge {
+  position: absolute;
+  top: 0.1875rem;
+  right: 0.1875rem;
+  display: grid;
+  min-width: 1rem;
+  height: 1rem;
+  place-items: center;
+  padding-inline: 0.25rem;
+  border-radius: var(--r-bubble);
+  background: var(--pen);
+  color: var(--pen-ink);
+}
+
+.app-pop {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 60;
+  width: min(20rem, calc(100vw - 2rem));
+  border: 1px solid var(--rule);
+  border-radius: var(--r-sheet);
+  background: var(--sheet);
+  box-shadow: var(--shadow-overlay);
+  overflow: hidden;
+}
+
+.app-pop-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 0.625rem var(--s-4);
+  transition: background-color var(--t-quick) var(--ease-out);
+}
+
+.app-pop-row:hover {
+  background: var(--well);
+}
+
+.app-body {
+  display: flex;
+  min-height: 100dvh;
+  margin-left: 4rem;
+  flex-direction: column;
+}
+
+/* SolarSim's dashboard container: centred, capped, and the same on every authenticated screen so
+   no page has a measure of its own to get wrong. */
+.app-content {
+  flex: 1;
+  width: 100%;
+  max-width: 100rem;
+  margin-inline: auto;
+  padding: var(--s-5) var(--s-4) var(--s-6);
+}
+
+/* The document keeps DESIGN.md's 880 px measure inside that container, unchanged from the layout
+   this replaces. margin-inline: auto is what centres it: without it the measure caps the width and
+   the page hangs off the left edge of a container up to 1600 px wide. */
+.app-doc {
+  max-width: 55rem;
+  margin-inline: auto;
+}
+
+.app-footer {
+  border-top: 1px solid var(--rule);
+  background: color-mix(in oklab, var(--sheet) 70%, transparent);
+  backdrop-filter: blur(10px) saturate(118%);
+  -webkit-backdrop-filter: blur(10px) saturate(118%);
+}
+
+.app-footer-inner {
+  display: grid;
+  max-width: 100rem;
+  margin-inline: auto;
+  padding: var(--s-6) var(--s-4);
+  gap: 0.6rem;
+  justify-items: end;
+  align-content: center;
+  text-align: right;
+}
