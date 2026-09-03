@@ -66,13 +66,13 @@ export function Mascot({ record }: { record: RecordDetail | null }) {
   const showBadge = record !== null && enabled && placement === 'badge'
 
   useEffect(() => {
-    // DESIGN.md puts the badge in the record header beside the status chips. The workspace hands
-    // the mascot no slot, so it is found from the mascot's own position inside the sheet.
+    // DESIGN.md puts the badge in the record header beside the status chips. The workspace marks
+    // that row with data-mascot-slot, so the contract is greppable from both sides.
     if (!showBadge) {
       setSlot(null)
       return
     }
-    setSlot(anchor.current?.closest('section')?.querySelector<HTMLElement>('header > div') ?? null)
+    setSlot(anchor.current?.closest('section')?.querySelector<HTMLElement>('[data-mascot-slot]') ?? null)
   }, [showBadge])
 
   if (!record || !enabled || placement === 'none') return null
@@ -99,7 +99,7 @@ export function Mascot({ record }: { record: RecordDetail | null }) {
   }
 
   return (
-    <div aria-hidden="true" className="pointer-events-none relative mt-8 h-40">
+    <div aria-hidden="true" className="pointer-events-none relative mt-8" style={{ height: `${STAGE_HEIGHT}px` }}>
       <div className="absolute right-0 bottom-0">
         {reduceMotion ? (
           <img src="/brand/mascot-still.png" alt="" width={STAGE_WIDTH} height={STAGE_HEIGHT} />

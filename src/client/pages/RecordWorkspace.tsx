@@ -65,7 +65,8 @@ export function RecordWorkspace() {
   return (
     <Sheet>
       <header>
-        <div className="flex flex-wrap items-center gap-3">
+        {/* data-mascot-slot is where Mascot.tsx portals the compact badge. */}
+        <div data-mascot-slot className="flex flex-wrap items-center gap-3">
           <h1 className="min-w-0">{record.title}</h1>
           <StatusChip status={record.status} />
           {record.isSample ? <span className="status-chip type-label">Sample</span> : null}
