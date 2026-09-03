@@ -391,7 +391,7 @@ submission can show a coherent destination without pretending every page ships t
 | ------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------- |
 | **Profile & Preferences** | Manage display name, language, theme and accessibility choices           | Minimal account identity only                       |
 | **Usage & Billing**       | Show plan, question allowance, invoices, payment method and cancellation | Pricing hypothesis only; no submission payment flow |
-| **Data & Security**       | Export account data, delete account and review active sessions           | Paid launch                                         |
+| **Data & Security**       | Export account data, delete account and review active sessions           | Deleting every record, and the retention notice     |
 | **Help**                  | Provide product guidance, status and contact support                     | FAQ and one support route                           |
 | **Service Status**        | Disclose model availability incidents and degraded queue behaviour       | Later public status page; in-app status now         |
 

@@ -712,7 +712,10 @@ export const modelHealth = pgTable("model_health", {
 Notes on the shape:
 
 - `records.status` has no `deleted` value. Deletion is `deleted_at`; a soft-deleted private record is filtered from
-  every list and is purged after 30 days (FR-RECORD-7). A Guest deletion is a hard `DELETE` and cascades
+  every list and is purged by `sweepRetiredRecords` once `TRASH_DAYS` have passed (FR-RECORD-7). A Guest deletion is a
+  hard `DELETE` and cascades
+- `records.updated_at` is what retention is measured from, so a record still being worked on does not age out
+  (FR-RECORD-8)
 - `records.expires_at` is set to creation plus 24 hours for Guest records and left null for private ones (FR-AUTH-4)
 - `items.options` is an ordered array of `{letter, text}`; `items.key` is a letter. Learner data has no column anywhere
   (NFR-SEC-3, FR-RECORD-1)
@@ -752,10 +755,14 @@ and shares one library, which is exactly what [PRODUCT.md](PRODUCT.md#the-shared
 Server-side limits on Guest requests: 12 items per record, 2,000 characters per item across stem and options, 20
 non-sample records at once (FR-AUTH-5).
 
-The worker runs a sweep every five minutes that hard-deletes Guest records whose `expires_at` has passed, except any
-with `is_sample = true`, and purges private records whose `deleted_at` is more than 30 days old. The sample record is
-owned by the Guest user, is the one record with `is_sample = true`, and is refused by every mutating route except
-dispositions (FR-SAMPLE-2, FR-SAMPLE-3).
+The worker runs two sweeps. `sweepExpiredGuestRecords` runs every five minutes and hard-deletes Guest records whose
+`expires_at` has passed. `sweepRetiredRecords` runs hourly, hard-deletes any record whose `deleted_at` is more than
+`TRASH_DAYS` old, and hard-deletes any record untouched for `RETENTION_DAYS` (FR-RECORD-7, FR-RECORD-8). Both windows
+live in `src/shared/schemas.ts` because Settings prints them, so the notice and the sweep cannot drift apart. The hourly
+cadence is deliberate: the shorter of the two windows is thirty days.
+
+Both sweeps exempt `is_sample = true`. The sample record is owned by the Guest user, is the one record with that flag,
+and is refused by every mutating route except dispositions (FR-SAMPLE-2, FR-SAMPLE-3).
 
 ## 13. Queue and worker
 
@@ -1092,6 +1099,14 @@ Body `{ "ids": ["<uuid>", …] }`. For a private session, sets `deleted_at` on e
 hard-deletes. The sample is skipped and named in the response (FR-RECORD-6, FR-RECORD-7, FR-SAMPLE-2). Response:
 `{ "deleted": ["<uuid>"], "skipped": [{ "id": "<uuid>", "reason": "sample" }], "mode": "trash" | "immediate" }`.
 
+### `DELETE /api/account/records`
+
+No body. Hard-deletes every record owned by the session, private and Guest alike, including rows already carrying a
+`deleted_at`. This is FR-RECORD-8 erasure rather than the `DELETE /api/records` soft path, and the difference is
+deliberate: a control labelled **Delete All Records** that left a recoverable copy for thirty days would be untrue. The
+sample is skipped and named, which is what keeps the demo record alive when a guest presses it. Response is the same
+shape as `DELETE /api/records`, with `mode` always `"immediate"`.
+
 ### `POST /api/records/:id/duplicate`
 
 Copies title, subject, language, context and the items' stems, options and keys into a new `queued` record owned by the
@@ -1229,7 +1244,7 @@ Live2D's Tororo and Hijiki sample characters and the Cubism SDK is in the page f
 
 ## 18. Testing
 
-`bun test`: 194 pass, 59 skip, 0 fail, 253 tests across 22 files; the Playwright pass: 9 passed, 1 skipped.
+`bun test`: 194 pass, 72 skip, 0 fail, 266 tests across 24 files; the Playwright pass: 9 passed, 1 skipped.
 
 - `src/shared/verdict.test.ts`: every row of the [rule table](#14-consensus-rule) plus the two edge cases, with the
   reason text asserted
@@ -1238,8 +1253,12 @@ Live2D's Tororo and Hijiki sample characters and the Cubism SDK is in the page f
   timeout. Each asserts the returned provenance record and the rejection reason
 - `src/server/queue/claim.concurrency.test.ts`: two concurrent claims never take the same item, a crashed claim is
   released, and the semaphore never exceeds four
+- `src/server/retention.sweep.test.ts`: a record either side of each of the two windows, so a flipped comparison fails
+  rather than only a wrong window, and the sample surviving however old it is
+- `src/server/routes/account.test.ts`: erasure taking a private account's Trash with its live records, the sample
+  refused and named, and another account untouched
 
-**The database-backed suites are opt-in, and are run one file at a time.** They are the 59 skips in the count above,
+**The database-backed suites are opt-in, and are run one file at a time.** They are the 72 skips in the count above,
 opting in through `TEST_DATABASE_URL`. Each truncates the database it connects to, so running them together in one
 process makes them clear each other's fixtures mid-run, which is also why they refuse any host but localhost. One file
 at a time, against a throwaway Postgres:
@@ -1250,8 +1269,10 @@ export TEST_DATABASE_URL='postgres://postgres:x@127.0.0.1:55432/cekgu'
 
 bun test src/server/sample.test.ts                    # 17 pass
 bun test src/server/guest.sweep.test.ts               # 5 pass
+bun test src/server/retention.sweep.test.ts           # 5 pass
 bun test src/server/queue/claim.concurrency.test.ts   # 8 pass
 bun test src/server/routes/records.test.ts            # 23 pass
+bun test src/server/routes/account.test.ts            # 6 pass
 ```
 
 **The Playwright pass** runs against a **deployed URL**, never a local build: production by default, any other
