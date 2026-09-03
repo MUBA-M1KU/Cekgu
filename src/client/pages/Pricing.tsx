@@ -24,14 +24,14 @@ const PLANS = [
   {
     name: 'Cekgu Plus',
     price: 'RM29',
-    period: 'per month, or RM290 per year',
+    period: 'Per month, or RM290 per year.',
     who: 'A tutor or course creator with recurring assessments',
     limits: ['300 questions per month', 'Full history', 'Exports and notifications', 'Priority retries']
   },
   {
     name: 'Cekgu Studio',
     price: 'RM79',
-    period: 'per month',
+    period: 'Per month.',
     who: 'A small training operator',
     limits: ['1,500 questions per month', 'Three collaborators', 'Shared question bank, after launch']
   }
