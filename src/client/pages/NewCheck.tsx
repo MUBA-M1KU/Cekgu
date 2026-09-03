@@ -142,7 +142,7 @@ export function NewCheck() {
       </p>
 
       {isGuest ? (
-        <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-sheet border border-rule-strong p-4">
+        <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-sheet bg-well p-4">
           <div className="min-w-0 flex-1">
             <p className="type-label">Signed In as Guest</p>
             <p className="mt-1 max-w-[62ch] type-caption text-ink-muted">
@@ -159,7 +159,7 @@ export function NewCheck() {
           </button>
           {prefilled ? (
             <button type="button" onClick={clearForm} className="type-label shrink-0 underline">
-              Clear The Form
+              Clear the Form
             </button>
           ) : null}
         </div>
@@ -231,6 +231,7 @@ export function NewCheck() {
                     <span className="type-label w-4 shrink-0 text-ink-muted">{option.letter}</span>
                     <input
                       id={`option-${index}-${optionIndex}`}
+                      aria-label={`Question ${index + 1}, option ${option.letter}`}
                       className={inputClass}
                       value={option.text}
                       onChange={(e) =>
