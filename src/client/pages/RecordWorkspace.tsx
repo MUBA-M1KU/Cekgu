@@ -8,6 +8,7 @@ import { Sheet } from '../components/Sheet'
 import { StatusChip } from '../components/StatusChip'
 import { ATTENTION_VERDICTS, VerdictFilters } from '../components/VerdictFilters'
 import { Mascot } from '../mascot/Mascot'
+import { count } from '../plural'
 
 // Attention verdicts first and Clear last, so the filter row reads in the order the educator
 // should work through it. FR-RECORD-3, DESIGN.md Layout.
@@ -68,8 +69,8 @@ export function RecordWorkspace() {
           {record.isSample ? <span className="status-chip type-label">Sample</span> : null}
         </div>
         <p className="mt-2 type-caption text-ink-muted">
-          {record.subject} · {record.language === 'ms' ? 'Bahasa Malaysia' : 'English'} · {record.items.length}{' '}
-          questions
+          {record.subject} · {record.language === 'ms' ? 'Bahasa Malaysia' : 'English'} ·{' '}
+          {count(record.items.length, 'question')}
         </p>
         {record.isSample ? (
           <p className="mt-2 max-w-[70ch] type-caption text-ink-muted">

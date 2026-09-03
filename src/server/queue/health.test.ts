@@ -56,11 +56,36 @@ describe('stats', () => {
 })
 
 describe('healthyOrder', () => {
-  test('it drops a family that is down', () => {
+  test('it drops a family that is down while two healthy ones remain', () => {
     for (let i = 0; i < 3; i += 1) recordOutcome(DEEPSEEK, false, 1_200, NOW)
 
     expect(healthyOrder(NOW)).not.toContain(DEEPSEEK)
     expect(healthyOrder(NOW)).toHaveLength(2)
+  })
+
+  // Found on production, 3 September: MiniMax was the only healthy family, so the round had one
+  // candidate and every item came back Unverified without a second call being attempted — while
+  // both excluded families were answering ordinary prompts in under 25 seconds.
+  test('a demoted family comes back when fewer than two are healthy', () => {
+    for (let i = 0; i < 3; i += 1) {
+      recordOutcome(DEEPSEEK, false, 1_200, NOW)
+      recordOutcome(KIMI, false, 90_000, NOW)
+    }
+    recordOutcome(MINIMAX, true, 12_000, NOW)
+
+    const order = healthyOrder(NOW)
+    expect(order).toHaveLength(3)
+    expect(order[0]).toBe(MINIMAX)
+    expect(order.slice(1)).toContain(DEEPSEEK)
+    expect(order.slice(1)).toContain(KIMI)
+  })
+
+  test('a demoted family never outranks a healthy one', () => {
+    for (let i = 0; i < 3; i += 1) recordOutcome(KIMI, false, 90_000, NOW)
+    for (let i = 0; i < 3; i += 1) recordOutcome(DEEPSEEK, false, 1_200, NOW)
+    recordOutcome(MINIMAX, true, 12_000, NOW)
+
+    expect(healthyOrder(NOW)[0]).toBe(MINIMAX)
   })
 
   test('better success rate comes first', () => {
