@@ -195,8 +195,11 @@ const NOTICES = ['/terms', '/privacy', '/acceptable-use']
 test('every notice is reachable from Trust and Privacy', async ({ page }) => {
   await page.goto('/trust')
 
+  // Scoped to the section: the footer carries the same three hrefs, so an unscoped locator
+  // matches twice and fails on strict mode rather than on the thing being asserted.
+  const trust = page.locator('#trust')
   for (const href of NOTICES) {
-    await expect(page.locator(`a[href="${href}"]`)).toBeVisible()
+    await expect(trust.locator(`a[href="${href}"]`)).toBeVisible()
   }
 })
 
