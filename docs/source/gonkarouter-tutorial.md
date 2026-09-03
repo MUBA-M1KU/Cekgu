@@ -41,12 +41,11 @@ video's screenshots are otherwise still accurate.
 
 ## 2. Getting an API key
 
-| Step | Action                                                                                                           |
-| ---- | ---------------------------------------------------------------------------------------------------------------- |
-| 1    | Open the **Dashboard** at gonkarouter.io                                                                         |
-| 2    | Sign in — **email or Google** (docs) / **Connect MetaMask** wallet (video UI, with a _Continue as guest_ option) |
-| 3    | **Create API Key** → give it a label → copy the `sk-…` value                                                     |
-| 4    | New accounts get a **one-time $20 free credit** (the docs also mention a `$20/day for 7 days` variant)           |
+1. Open the **Dashboard** at gonkarouter.io
+2. Sign in — **email or Google** (docs) / **Connect MetaMask** wallet (video UI, with a _Continue as guest_ option)
+3. **Create API Key** → give it a label → copy the `sk-…` value
+
+New accounts get a **one-time $20 free credit** (the docs also mention a `$20/day for 7 days` variant).
 
 **Dashboard layout**, from the video: sidebar = `Dashboard · Chat · Models · Transactions`, plus a **Deposit** button
 and connected-wallet chip. Dashboard cards = **Balance** (USDT) · **Monthly Cost** · **Requests** · **Tokens**,
