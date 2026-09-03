@@ -62,10 +62,14 @@ export function stats(now = Date.now()): ModelStats[] {
 }
 
 // The order the worker picks readers in: healthy first, best success rate, then fastest.
+// An unknown latency sorts last rather than first — a family nobody has called yet is not the
+// fastest one, and at equal success rate the reader we have measured is the better bet.
 export function healthyOrder(now = Date.now()): string[] {
+  const latency = (model: ModelStats) => model.medianLatencyMs ?? Number.POSITIVE_INFINITY
+
   return stats(now)
     .filter((model) => model.healthy)
-    .sort((a, b) => b.successRate - a.successRate || (a.medianLatencyMs ?? 0) - (b.medianLatencyMs ?? 0))
+    .sort((a, b) => b.successRate - a.successRate || latency(a) - latency(b))
     .map((model) => model.model)
 }
 
@@ -96,8 +100,16 @@ export async function mirrorHealth(now = new Date()): Promise<void> {
   }
 }
 
+// GET /api/health is public and is what the client's availability display reads, so it degrades to
+// "no data yet" rather than 500ing when the database is briefly out of reach.
 export async function readHealth(): Promise<HealthModel[]> {
-  const rows = await db.select().from(modelHealth)
+  let rows: (typeof modelHealth.$inferSelect)[] = []
+  try {
+    rows = await db.select().from(modelHealth)
+  } catch (error) {
+    console.error('health read failed', error)
+  }
+
   const byModel = new Map(rows.map((row) => [row.model, row]))
 
   return MODELS.map((model) => {

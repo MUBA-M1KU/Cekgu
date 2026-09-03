@@ -58,15 +58,30 @@ export async function runRound(prompt: string, options: Option[], key: string, d
     return true
   }
 
-  // A seat never takes a family another seat holds, which is what keeps the two readings distinct
-  // before the rule ever checks. A family with no budget left is finished for this round.
+  // A seat never takes a family another seat holds, nor one that has already produced a reading.
+  // Without the second condition a family that succeeded could fill both seats once the others
+  // failed, and the round would end with two readings from one model — which the rule correctly
+  // refuses as non-distinct, but only after the third family was never tried.
   const nextFamily = (): string | null =>
-    order.find((model) => !inUse.has(model) && (budget.get(model) ?? 0) > 0) ?? null
+    order.find(
+      (model) =>
+        !inUse.has(model) && !readings.some((reading) => reading.model === model) && (budget.get(model) ?? 0) > 0
+    ) ?? null
 
-  const record = async (model: string, provenance: Provenance, startedAt: Date): Promise<Reading | null> => {
+  const record = async (
+    model: string,
+    provenance: Provenance,
+    startedAt: Date,
+    discarded = false
+  ): Promise<Reading | null> => {
     attempts += 1
     const admission = admitReading(provenance, options)
     deps.onOutcome?.(model, admission.admitted, provenance.latencyMs)
+
+    // A hedge that lost its race is evidence of what the gateway did, but it did not enter the
+    // verdict. Writing it as admitted would show two readings from one model in the evidence view
+    // where the rule used one, which misstates the provenance the whole product rests on.
+    const used = admission.admitted && !discarded
 
     await deps.onAttempt({
       requestedModel: model,
@@ -81,11 +96,15 @@ export async function runRound(prompt: string, options: Option[], key: string, d
       latencyMs: provenance.latencyMs,
       startedAt,
       finishedAt: new Date(startedAt.getTime() + provenance.latencyMs),
-      admitted: admission.admitted,
-      rejectionReason: admission.admitted ? null : admission.rejectionReason
+      admitted: used,
+      rejectionReason: admission.admitted
+        ? discarded
+          ? 'A hedge of this call returned first, so this reading was recorded and discarded.'
+          : null
+        : admission.rejectionReason
     })
 
-    return admission.admitted ? admission.reading : null
+    return used ? (admission as { admitted: true; reading: Reading }).reading : null
   }
 
   // The deferred hedge. At 25 s a duplicate of the same call goes to the same model; whichever
@@ -122,7 +141,7 @@ export async function runRound(prompt: string, options: Option[], key: string, d
 
     pending.push(
       candidate.other.then(
-        (provenance) => void record(model, provenance, candidate.otherStartedAt),
+        (provenance) => void record(model, provenance, candidate.otherStartedAt, true),
         () => undefined
       )
     )

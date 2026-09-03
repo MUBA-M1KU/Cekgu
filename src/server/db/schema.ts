@@ -56,7 +56,10 @@ export const items = pgTable(
     verdict: verdict('verdict').notNull().default('pending'),
     verdictReason: text('verdict_reason'),
     status: itemStatus('status').notNull().default('queued'),
-    attemptsUsed: integer('attempts_used').notNull().default(0)
+    attemptsUsed: integer('attempts_used').notNull().default(0),
+    // When the running claim was taken. A Cloud Run deploy overlaps two instances, so the release
+    // on start has to tell a stranded claim from one the outgoing instance is still working.
+    claimedAt: timestamp('claimed_at', { withTimezone: true })
   },
   (table) => [
     index('items_record_id_status_idx').on(table.recordId, table.status),

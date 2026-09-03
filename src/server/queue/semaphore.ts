@@ -10,11 +10,19 @@ export class Semaphore {
   async acquire(): Promise<() => void> {
     if (this.inFlight < this.limit) {
       this.inFlight += 1
-      return () => this.release()
+    } else {
+      // A releaser hands its slot straight to the next waiter, so inFlight is already correct here.
+      await new Promise<void>((resolve) => this.waiting.push(resolve))
     }
 
-    await new Promise<void>((resolve) => this.waiting.push(resolve))
-    return () => this.release()
+    // Guarded because a caller with an error path and a finally can release twice, and a second
+    // release frees a slot nobody took — five calls in flight against a cap of four.
+    let released = false
+    return () => {
+      if (released) return
+      released = true
+      this.release()
+    }
   }
 
   private release(): void {

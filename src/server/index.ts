@@ -4,6 +4,8 @@ import { serveStatic } from 'hono/bun'
 import { db } from './db'
 import { env } from './env'
 import { startGuestSweep } from './guest'
+import { startHealthMirror } from './queue/health'
+import { startWorker } from './queue/worker'
 import { api } from './routes'
 import { seedGuestUser } from './seed'
 
@@ -11,7 +13,11 @@ const CLIENT_DIR = './dist/client'
 
 if (env.migrateOnStart) await migrate(db, { migrationsFolder: './drizzle' })
 await seedGuestUser()
-if (env.workerEnabled) startGuestSweep()
+if (env.workerEnabled) {
+  startGuestSweep()
+  startHealthMirror()
+  await startWorker()
+}
 
 const app = new Hono()
 
