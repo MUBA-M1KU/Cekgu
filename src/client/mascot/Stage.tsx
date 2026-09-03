@@ -61,7 +61,15 @@ export function Stage({ state }: { state: MascotState }) {
     return () => {
       live = false
       stageRef.current = null
-      stage?.destroy()
+      // The boundary with a third-party WebGL runtime, so this is the one place a try/catch is
+      // warranted rather than a smell. A throw here lands in React's commit phase and unmounts
+      // the entire app, which is how a decorative canvas blanked the product. The mascot is never
+      // the only signal on screen, so failing to tear it down cleanly must cost nothing visible.
+      try {
+        stage?.destroy()
+      } catch (error) {
+        console.debug('The mascot stage did not tear down cleanly.', error)
+      }
     }
   }, [failed, applyActivity])
 
