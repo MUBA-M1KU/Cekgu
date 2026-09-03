@@ -63,10 +63,12 @@ retargeting below.
 
 **Retargeting matters here.** These came from a **Qwen Brainrot Hackathon** repo that hardcoded a Creativity 50 /
 Presentation 30 / Qwen Integration 20 rubric, a 2-hour on-site rebuild, a 1080x1080 poster and community voting. **All
-of it is wrong for MUBA.** Each skill's frontmatter was rewritten and a `> ## This Event` block added with our real
-constraints, which **wins wherever the body below still names the old rules**. The generic method underneath is
-unchanged. Residual Qwen references survive inside `hackathon-shared-resources/knowledge/` and `playbooks/`; the
-`This Event` block is the override.
+of it is wrong for MUBA.**
+
+Each skill's frontmatter was rewritten and a `> ## This Event` block added with our real constraints, which **wins
+wherever the body below still names the old rules**. The generic method underneath is unchanged. Residual Qwen
+references survive inside `hackathon-shared-resources/knowledge/` and `playbooks/`; the `This Event` block is the
+override.
 
 `claude-in-chrome` is the eighth. It was transcribed from the version Claude Code ships **inside its binary**, so there
 is nothing to install from. It can drift as Claude Code updates; the built-in wins on mechanics.

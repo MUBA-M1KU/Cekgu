@@ -145,9 +145,18 @@ model. The answer key stayed local until classification.
 
 Two preliminary runs were rejected as invalid rather than counted against the product. Putting all twelve items in one
 prompt made all three models exceed 30 seconds, reproducing the known long-prompt failure. Sending 36 item-level calls
-at once then returned
-`{"error":{"code":"rate_limited","message":"too many concurrent requests for this account; lower your parallelism and retry"}}`
-across the account. The valid run processed two questions at a time, four concurrent calls, which the gateway accepted.
+at once then returned this across the account:
+
+```json
+{
+  "error": {
+    "code": "rate_limited",
+    "message": "too many concurrent requests for this account; lower your parallelism and retry"
+  }
+}
+```
+
+The valid run processed two questions at a time, four concurrent calls, which the gateway accepted.
 
 | Result                                     | Pass 1    | Pass 2    | Acceptance threshold                |
 | ------------------------------------------ | --------- | --------- | ----------------------------------- |
@@ -183,10 +192,12 @@ full-paper demo. Choosing that architecture changes the demo and needs team appr
 
 **Method.** The committed paper in `src/server/fixtures/evaluation-set.json` — 20 clean controls, 5 items mis-keyed on
 purpose, 5 written to be ambiguous — run twice through the **deployed** pipeline rather than a local harness, so every
-verdict came from the queue, worker and gateway client a judge exercises. The Guest account caps a record at 12 items,
-so each pass ran as three records of ten; the worker drains one item at a time regardless. Verdicts, request ids and
-latencies were read back from `GET /api/records/:id`, nothing was written by hand, and the six records were deleted
-afterwards. Turnaround is the item's own wall clock: its first attempt starting to its last one finishing.
+verdict came from the queue, worker and gateway client a judge exercises.
+
+The Guest account caps a record at 12 items, so each pass ran as three records of ten; the worker drains one item at a
+time regardless. Verdicts, request ids and latencies were read back from `GET /api/records/:id`, nothing was written by
+hand, and the six records were deleted afterwards. Turnaround is the item's own wall clock: its first attempt starting
+to its last one finishing.
 
 | Result                            | Pass A      | Pass B      | Both        |
 | --------------------------------- | ----------- | ----------- | ----------- |
@@ -205,10 +216,11 @@ the product.
 
 **Of the 20 planted-defect runs: 14 caught, 5 Unverified, 1 false negative.** The single false negative is
 `http-model-layer` in pass A, which came back **Clear** on an item written to be ambiguous. It is the same item, with
-the same failure, that the sample capture missed on 3 September, so this is a characterised limitation rather than a
-fluke: the rule only sees ambiguity when a reader _says_ more than one option is defensible, and two confident readers
-are indistinguishable from an unambiguous question. In pass B the same item returned **Unverified**, so it has never
-produced the same confident error twice.
+the same failure, that the sample capture missed on 3 September.
+
+That makes it a characterised limitation rather than a fluke: the rule only sees ambiguity when a reader _says_ more
+than one option is defensible, and two confident readers are indistinguishable from an unambiguous question. In pass B
+the same item returned **Unverified**, so it has never produced the same confident error twice.
 
 No item caught in one pass came back **Clear** in the other. The disagreements are all catch-versus-abstain, which is
 the fail-closed rule doing what it was written to do rather than the verdict being unstable.

@@ -1,9 +1,9 @@
-# Verification: Gig Deactivation Notices, Tested For Specificity
+# Verification: gig deactivation notices, tested for specificity
 
 **VIABLE, 76/100.** Passes the 70 bar and every kill criterion, but two things must change before it is written up as
-`PRODUCT.md`: the legal framing is currently an over-claim, see [The Framing Problem](#the-framing-problem), and the
+`PRODUCT.md`: the legal framing is currently an over-claim, see [The framing problem](#the-framing-problem), and the
 2025-26 Malaysian evidence that notices are vague is thin, see
-[Vague Deactivations As A Live Complaint](#vague-deactivations-as-a-live-complaint).
+[Vague deactivations as a live complaint](#vague-deactivations-as-a-live-complaint).
 
 **Method.** Verified 2 September 2026 against [`RUBRIC.md`](RUBRIC.md). Budget used: 15 of 15 search/fetch calls, plus a
 local text extraction of the Act 872 PDF linked under [In Force Date](#in-force-date-the-team-is-correct). In tables the
@@ -11,19 +11,19 @@ source is a reference link; its definition, at the end of the section, carries t
 
 Contents:
 
-1. [The Law](#the-law)
-1. [The Phenomenon](#the-phenomenon)
-1. [Ground Truth](#ground-truth)
+1. [The law](#the-law)
+1. [The phenomenon](#the-phenomenon)
+1. [Ground truth](#ground-truth)
 1. [Incumbents](#incumbents)
-1. [Predicted Competition](#predicted-competition)
+1. [Predicted competition](#predicted-competition)
 1. [Scores](#scores)
-1. [Novelty Test](#novelty-test)
-1. [Kill Criteria](#kill-criteria)
-1. [What Must Change Before PRODUCT.md](#what-must-change-before-productmd)
+1. [Novelty test](#novelty-test)
+1. [Kill criteria](#kill-criteria)
+1. [What must change before PRODUCT.md](#what-must-change-before-productmd)
 
-## The Law
+## The law
 
-### In Force Date: The Team Is Correct
+### In force date: the team is correct
 
 Act 872 s.1(2) says the Act "comes into operation on a date to be appointed by the Minister by notification in the
 Gazette". The appointed date was 31 March 2026.
@@ -41,7 +41,7 @@ Gazette". The appointed date was 31 March 2026.
 
 Headcount correction: **1.64 million** (Bernama; ISEAS Perspective 2026/48, 7 July 2026), not "over 1.6 million".
 
-### What Section 14 Actually Requires
+### What Section 14 actually requires
 
 Verbatim from Act 872, abridged only where marked.
 
@@ -57,7 +57,7 @@ Verbatim from Act 872, abridged only where marked.
 | 14(9)       | "shall give a written explanation to the gig worker for any decision made under subsection (6)"                                                                                                                                                                        | Written reasons are mandatory for the final decision                                                                                        |
 | 14(10)      | "Any platform provider who contravenes subsection (4), (5), (7), (8) or (9) commits an offence"                                                                                                                                                                        | Breach is a criminal offence, not just a tribunal matter                                                                                    |
 
-### Corrections To The Team's Competitor-Scan Paragraph
+### Corrections to the team's competitor-scan paragraph
 
 | Team wrote                                                                    | Correct                                                                                                                                                                                                                                                                                                                                                  | Source                      |
 | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
@@ -67,7 +67,7 @@ Verbatim from Act 872, abridged only where marked.
 | "over 1.6 million workers"                                                    | 1.64 million                                                                                                                                                                                                                                                                                                                                             | Bernama; ISEAS 2026/48      |
 | "creates a Gig Workers Tribunal"                                              | Correct. s.24 establishes it; s.33 gives jurisdiction over disputes referred by the Conciliator or Minister under Part IV; s.42(4)(d) lets it order that a worker "is entitled to perform his service or to access the digital intermediary system"; s.42(1) says awards where practicable within 30 days of the last hearing; s.44 appeal to High Court | Act 872 ss.24, 33, 42, 44   |
 
-### Tribunal Status: Operating Since Yesterday, No Decisions Yet
+### Tribunal status: operating since yesterday, no decisions yet
 
 - Free Malaysia Today, "Gig Workers Tribunal hears first case", 2 September 2026,
   https://www.freemalaysiatoday.com/category/nation/2026/09/02/gig-workers-tribunal-hears-first-case
@@ -82,7 +82,7 @@ Verbatim from Act 872, abridged only where marked.
   https://www.maukerja.my/career-advice/blog/ms/33862/akta-pekerja-gig-malaysia, says an **eAduan Gig** complaint portal
   opened 1 April 2026 and targets resolution within 21 working days. Verify on the KESUMA site before citing
 
-### SEGiM: Not In The Act
+### SEGiM: not in the Act
 
 A case-insensitive search of the extracted Act text for `segim` and `gig economy commission` returns 0 matches. The
 Act's own body is the **Consultative Council** (Part VI, ss.46-68). SEGiM is a separate, Cabinet-approved commission:
@@ -102,7 +102,7 @@ Act's own body is the **Consultative Council** (Part VI, ss.46-68). SEGiM is a s
 SEGiM's establishing instrument was not found in this pass (negative result). Say "Cabinet-approved March 2026, scope
 limited to platform gig workers" and nothing stronger.
 
-### The Framing Problem
+### The framing problem
 
 **The Act does not require a platform to cite a specific rule.** This is the most important legal finding. s.14(4)
 requires "a notice in writing"; s.14(9) requires "a written explanation". A notice that says "your account is suspended
@@ -116,9 +116,9 @@ meaningful right to be heard under s.14(7)**, because the worker cannot answer a
 argument the drafted response makes to the platform or tribunal, not a statutory breach the product declares. The
 s.14(1)(a) test, "in accordance with the terms and conditions", is what the rule-mapping actually probes.
 
-## The Phenomenon
+## The phenomenon
 
-### Vague Deactivations As A Live Complaint
+### Vague deactivations as a live complaint
 
 **2021-2022 (strong, but old):**
 
@@ -145,7 +145,7 @@ s.14(1)(a) test, "in accordance with the terms and conditions", is what the rule
   unexplained deactivations was found in this pass. The claim "vague notices are a live 2026 complaint" currently rests
   on the ministry's one sentence about tribunal filings. This is the weakest evidentiary leg
 
-### Are The Codes Of Conduct Public Text?
+### Are the codes of conduct public text?
 
 | Platform             | Status                                                                                                                                                                                        | Source            |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
@@ -159,9 +159,9 @@ taxonomy the team writes. Ship Foodpanda first.
 [Foodpanda rules]: https://pandariders.my/sistem-pematuhan/ 'Sistem pematuhan'
 [Grab help]: https://help.grab.com/passenger/en-id/360000022027 'Grab help centre appeal-process page, Indonesia locale'
 
-## Ground Truth
+## Ground truth
 
-### Malaysian Decisions
+### Malaysian decisions
 
 - Tribunal: none published, see [Tribunal Status](#tribunal-status-operating-since-yesterday-no-decisions-yet)
 - Earlier channels: Malay Mail, "In possible test case, former Grab driver reports firm for unfair dismissal", 4 January
@@ -172,7 +172,7 @@ taxonomy the team writes. Ship Foodpanda first.
   https://www.lexology.com/library/detail.aspx?g=0b33bc80-4eda-4a38-8f72-edc53a6214ae
 - **Malaysian appeal-overturn figure: negative result**
 
-### The 80% Figure: Source Found, The Team's Phrasing Is Wrong
+### The 80% figure: source found, the team's phrasing is wrong
 
 - Cornell ILR School, Andrew Wolf, "Just Cause for NYC Gig Workers Provides Human Review for Algorithmic Firings", 6
   November 2025,
@@ -214,7 +214,7 @@ uses model disagreement as a signal, and no "AI deactivation appeal chatbot" mar
 [Terms.Law demand-letter templates]:
   https://terms.law/Demand-Letters/Employment/california-rideshare-deactivation-demand.html
 
-## Predicted Competition
+## Predicted competition
 
 **Estimate: 2 teams build something recognisably similar in domain; 0-1 in mechanism.**
 
@@ -240,9 +240,9 @@ rights".
 | Buildability           | 20      |     15 | No partnership or private data; Foodpanda rules are public Malay text; Grab rules unverified; Malay-language notices must be read reliably by all three models                                                                                                                                                                            |
 | **Total**              | **100** | **76** | Above the 70 bar                                                                                                                                                                                                                                                                                                                          |
 
-## Novelty Test
+## Novelty test
 
-1. **Convergence count:** 2 in domain, 0-1 in mechanism, see [Predicted Competition](#predicted-competition). Under
+1. **Convergence count:** 2 in domain, 0-1 in mechanism, see [Predicted competition](#predicted-competition). Under
    five. What makes ours unrecognisable: the product's output is a verdict on the _notice_, not advice to the worker;
    disagreement between three labs is the measurement, not a bug to average away
 2. **Incumbent test:** named under [Incumbents](#incumbents). Structural gap: platforms cannot be an independent reader
@@ -251,7 +251,7 @@ rights".
    pastes that to check whether the explanation now names a rule the first notice did not; or a Penghantar volunteer on
    a Monday morning with five members' notices from the weekend. Passes, so Real User is not capped at 8
 
-## Kill Criteria
+## Kill criteria
 
 | Criterion                                                   | Triggered?         | Why                                                                                                         |
 | ----------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------- |
@@ -261,12 +261,12 @@ rights".
 | Demo needs more than 90 seconds of setup                    | No                 | One paste                                                                                                   |
 | Buildability depends on data or access we lack              | **Flag, not kill** | Foodpanda's rules are public; Grab's are unverified. Scope to Foodpanda first and the dependency disappears |
 
-## What Must Change Before PRODUCT.md
+## What must change before PRODUCT.md
 
 1. Replace "fails the Act's notice-and-hearing requirement" with "cannot support a meaningful s.14(7) right to be
-   heard", see [The Framing Problem](#the-framing-problem)
+   heard", see [The framing problem](#the-framing-problem)
 2. Fix the four factual errors in the competitor-scan paragraph, see
-   [Corrections To The Team's Competitor-Scan Paragraph](#corrections-to-the-teams-competitor-scan-paragraph), and the
+   [Corrections to the team's competitor-scan paragraph](#corrections-to-the-teams-competitor-scan-paragraph), and the
    80% phrasing, see [The 80% Figure](#the-80-figure-source-found-the-teams-phrasing-is-wrong)
 3. Find one 2025-26 Malaysian data point on vague notices: a Penghantar statement post-31 March 2026, or an eAduan Gig
    filing count from KESUMA. Without it, Real User stays at 13

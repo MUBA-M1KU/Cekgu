@@ -40,7 +40,7 @@ Contents:
 **Announced in the hackathon Discord by the GonkaRouter tech lead and verified live by us the same day.** This
 supersedes the earlier finding that a Request ID resolves to nothing.
 
-```
+```http
 GET https://api.gonkarouter.io/v1/receipts/{x-request-id}      # no auth required
 ```
 
@@ -70,7 +70,7 @@ signature has to arrive as a stream trailer. **Do not claim signatures exist.**
 retries), the gateway **serves a different model rather than failing**. It is flagged, but only in a response header
 most teams will never read:
 
-```
+```http
 X-Gonka-Fallback: deepseek-ai/DeepSeek-V4-Flash-0731 -> MiniMaxAI/MiniMax-M2.7
 X-Gonka-No-Fallback: true     # request header: enforce the exact model, get a real 429 instead
 ```
@@ -118,11 +118,20 @@ seconds. Kimi completed 13 of 24, none within 30 seconds, at 35.1–82.7 seconds
 then exceeded 90 seconds in separate one-item health probes. Only 13 of 24 item-runs obtained two model families inside
 90 seconds, and none obtained two inside 30 seconds.
 
-The preceding 36-call attempt was rejected by the gateway across models with
-`{"error":{"code":"rate_limited","message":"too many concurrent requests for this account; lower your parallelism and retry"}}`.
-Four concurrent calls were accepted consistently in the valid run. Interpretation: a paper must enter a bounded,
-asynchronous queue; the UI must expose **Unverified** as an ordinary state, and the demo cannot wait for a fresh full
-paper. Full classification results and request-id examples are in
+The preceding 36-call attempt was rejected by the gateway across models. Four concurrent calls were accepted
+consistently in the valid run.
+
+```json
+{
+  "error": {
+    "code": "rate_limited",
+    "message": "too many concurrent requests for this account; lower your parallelism and retry"
+  }
+}
+```
+
+**Interpretation.** A paper must enter a bounded, asynchronous queue; the UI must expose **Unverified** as an ordinary
+state; and the demo cannot wait for a fresh full paper. Full classification results and request-id examples are in
 [`three-day-rescore.md`](three-day-rescore.md#the-mechanism-benchmark--failed-3-september).
 
 ## Track requirement clarified
@@ -170,7 +179,7 @@ source measures cross-family error correlation for these three specifically.
 
 The mechanism, from the TRD's live capture:
 
-```
+```http
 x-request-id:  req-1788016913316163460-503197
 x-devshard-id: 65725
 ```
@@ -197,10 +206,10 @@ behaviour had not been checked. **Checked 2026-09-02**, below.
 
 Live against `api.gonkarouter.io` with our own key, on the OpenAI surface.
 
-| Test                                                        | Result                                                                                                                                  |
-| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `stream: true` on `/v1/chat/completions`                    | `x-request-id` present in the response headers; first SSE chunk received; `GET /v1/receipts/{id}` for that id returned `"stream": true` |
-| The same request body sent repeatedly at `temperature: 0.8` | Byte-identical response bodies in 70–190 ms; each repeat still received a fresh `x-request-id` and its own receipt                      |
+- **`stream: true` on `/v1/chat/completions`.** `x-request-id` present in the response headers; first SSE chunk
+  received; `GET /v1/receipts/{id}` for that id returned `"stream": true`.
+- **The same request body sent repeatedly at `temperature: 0.8`.** Byte-identical response bodies in 70–190 ms; each
+  repeat still received a fresh `x-request-id` and its own receipt.
 
 **Streaming is settled.** The id arrives as a header, so it is in hand before the first chunk, and the public receipt
 confirms the call was streamed. The open question above is closed and track requirement 3 no longer rests on an untested

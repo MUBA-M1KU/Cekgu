@@ -134,10 +134,10 @@ workaround.
 
 **If no CLI exists, drive the browser yourself.** Pick by whether the task needs a logged-in session:
 
-| Task                                                              | Tool                                                                     |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| Behind a login: Devfolio, the GonkaRouter dashboard, OAuth        | `claude-in-chrome`. Read its `SKILL.md` first; it carries banned actions |
-| Our own deployed app: smoke tests, screenshots, checking a render | Playwright, headless. Scriptable, needs no human                         |
+- **Behind a login** — Devfolio, the GonkaRouter dashboard, OAuth: `claude-in-chrome`. Read its `SKILL.md` first; it
+  carries banned actions
+- **Our own deployed app** — smoke tests, screenshots, checking a render: Playwright, headless. Scriptable, needs no
+  human
 
 Headless Chromium cannot see the desktop browser's cookies, which is the whole reason that split exists.
 

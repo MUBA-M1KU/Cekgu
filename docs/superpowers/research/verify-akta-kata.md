@@ -1,7 +1,7 @@
-# Verification: Akta Kata, Tested For Consistency
+# Verification: Akta Kata, tested for consistency
 
 **VIABLE, 79/100.** The question is whether the law says what the government says it says. Not LOCK, for two reasons set
-out in [What Would Move It To LOCK](#what-would-move-it-to-lock): the phenomenon is proven for ministers' assurances and
+out in [What would move it to LOCK](#what-would-move-it-to-lock): the phenomenon is proven for ministers' assurances and
 briefings, not for the formal Explanatory Statement the candidate names as its primary input, and the concept sits one
 sentence away from the track's own Fact Checker example. Both are fixable in the `PRODUCT.md` framing, not in code.
 
@@ -15,22 +15,22 @@ Contents:
 1. [Phenomenon](#phenomenon)
 1. [Data](#data)
 1. [Incumbents](#incumbents)
-1. [Ground Truth](#ground-truth)
-1. [Predicted Competition](#predicted-competition)
+1. [Ground truth](#ground-truth)
+1. [Predicted competition](#predicted-competition)
 1. [Scores](#scores)
-1. [Novelty Test](#novelty-test)
-1. [Kill Criteria](#kill-criteria)
-1. [What Would Move It To LOCK](#what-would-move-it-to-lock)
-1. [Sources Used](#sources-used)
+1. [Novelty test](#novelty-test)
+1. [Kill criteria](#kill-criteria)
+1. [What would move it to LOCK](#what-would-move-it-to-lock)
+1. [Sources used](#sources-used)
 
 ## Phenomenon
 
 The disputes found are between **what a minister or agency said** and **what the clause says**. None of the 15 calls
 surfaced a case where the formal Penyata Huraian (Explanatory Statement, drafted by the AG's Chambers) was itself
 accused of misstating a bill. That is a negative result with a product consequence, covered in
-[What Would Move It To LOCK](#what-would-move-it-to-lock).
+[What would move it to LOCK](#what-would-move-it-to-lock).
 
-### Urban Renewal Bill 2025: The Clean Case
+### Urban Renewal Bill 2025: the clean case
 
 | Side             | Quote                                                                                                                                                                                                                                                                         | Source                       |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
@@ -42,19 +42,21 @@ accused of misstating a bill. That is a negative result with a product consequen
 | Critic           | HBA's Chang Kim Loong: "a property could be compulsorily redeveloped even if 20% of the owners oppose it"                                                                                                                                                                     | [FMT, 26 Feb 2025]           |
 
 Consent thresholds moved during the dispute, which is exactly the "someone later finds out" event that condition iii in
-[`disagreement-as-product.md`](disagreement-as-product.md#the-finding-that-constrains-everything) needs: the draft set
-80% under 30 years, 75% over 30, 51% abandoned (FMT, 26 Feb 2025); after the Parliamentary Select Committee on
-Infrastructure, Transport and Communications met on 21 Aug 2025 the government revised to 80% regardless of age and
-undertook to amend Clause 18 on demographic data (The Edge, "Urban Renewal Bill: Govt to raise consent threshold to 80%
-for all projects, demographics to be considered as debate pushed back to next Parliament sitting", Aug 2025,
-https://theedgemalaysia.com/node/768606). The Bar's position that thresholds "are set too low" and "risk undermining the
-rights of minority owners" is at https://theedgemalaysia.com/node/767508 (The Edge, "Malaysia tables Urban Renewal Bill
-to lower consent thresholds for redevelopment", Aug 2025).
+[`disagreement-as-product.md`](disagreement-as-product.md#the-finding-that-constrains-everything) needs:
+
+- **The draft** set 80% under 30 years, 75% over 30, 51% abandoned (FMT, 26 Feb 2025)
+- **After the Parliamentary Select Committee** on Infrastructure, Transport and Communications met on 21 Aug 2025, the
+  government revised to 80% regardless of age and undertook to amend Clause 18 on demographic data (The Edge, "Urban
+  Renewal Bill: Govt to raise consent threshold to 80% for all projects, demographics to be considered as debate pushed
+  back to next Parliament sitting", Aug 2025, https://theedgemalaysia.com/node/768606)
+- **The Bar's position** that thresholds "are set too low" and "risk undermining the rights of minority owners" is at
+  https://theedgemalaysia.com/node/767508 (The Edge, "Malaysia tables Urban Renewal Bill to lower consent thresholds for
+  redevelopment", Aug 2025)
 
 Caveat: Anwar's quote is from February 2025, before tabling. The Bar statement is from August 2025 against the tabled
 text. The product would have to date-stamp which draft a claim was made against; the candidate has not said so.
 
-### Constitution (Amendment) Bill 2024, Citizenship: Effect Dispute, Partly Adjudicable
+### Constitution (Amendment) Bill 2024, citizenship: effect dispute, partly adjudicable
 
 | Side       | Claim                                                                                                                                                        | Source                                                 |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
@@ -80,7 +82,7 @@ honest boundary the product must draw on screen.
   https://www.malaysianow.com/news/2024/03/18/rights-body-schools-saifuddin-after-bizarre-defence-of-citizenship-law-changes
   "Rights body schools Saifuddin after 'bizarre' defence of citizenship law changes"
 
-### Online Safety Bill 2024: Clause Readings Exist, The Contrast Is Implicit
+### Online Safety Bill 2024: clause readings exist, the contrast is implicit
 
 | Side       | Claim                                                                                                                                                                                                                                                                                                                                                           | Source                       |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
@@ -107,7 +109,7 @@ put them side by side. That is an opportunity and a warning: the demo would be t
   https://www.article19.org/resources/malaysia-passage-of-the-online-safety-bill-a-grave-blow-to-foe/
   'Malaysia: Passage of Online Safety Bill a grave blow to free expression'
 
-### Cyber Security Act 2024 And Gig Workers Act 2025: Negative Results
+### Cyber Security Act 2024 and Gig Workers Act 2025: negative results
 
 | Act                     | Finding                                                                                                                                                                                                                                                                               | Source                                                           |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
@@ -176,9 +178,10 @@ with one `pdftotext` run before committing to the pipeline.
 | GovTrack, TheyWorkForYou, LegiScan, Lexis, Westlaw | **Negative result.** The search returned no claim-versus-clause feature on any of them                                | Not applicable                                                                                                                                  | Search of 2 Sep 2026, query recorded in the session |
 
 **Negative result on the core question:** no tool was found, Malaysian or global, that checks an official explainer
-against clause text with any model, and none with multi-model disagreement. The Australian and UK rules that an
-explanatory memorandum "must be accurate and not misleading, and must reflect the final form of the bill" (PM&C,
-Legislation Handbook, Chapter 7,
+against clause text with any model, and none with multi-model disagreement.
+
+The Australian and UK rules that an explanatory memorandum "must be accurate and not misleading, and must reflect the
+final form of the bill" (PM&C, Legislation Handbook, Chapter 7,
 https://www.pmc.gov.au/resources/legislation-handbook/chapter-7-preparing-support-material-explanatory-memorandum-and-second-reading-speech)
 show the obligation exists on paper with no automated check behind it.
 
@@ -199,7 +202,7 @@ show the obligation exists on paper with no automated check behind it.
   https://www.techpolicy.press/governments-are-using-ai-to-draft-legislation-what-could-possibly-go-wrong/
   'Governments Are Using AI To Draft Legislation. What Could Possibly Go Wrong?'
 
-## Ground Truth
+## Ground truth
 
 | Claim type                         | Example                                                                                     | Adjudicable?                                                                                  |
 | ---------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
@@ -208,30 +211,38 @@ show the obligation exists on paper with no automated check behind it.
 | Delegated or deferred              | "will be addressed in the Rules" versus s.29 giving the Minister sole rule-making power     | Partly. The text proves the deferral; whether the Rules arrive is unfalsifiable until they do |
 | Effect or prediction               | "won't worsen statelessness", "does not censor"                                             | No. A three-reader split here is opinion and must be labelled "contested", not "inconsistent" |
 
-How the courts treat it: section 17A of the Interpretation Acts 1948 and 1967 (Act 388) directs that "a construction
-that would promote the purpose or object underlying the Act, whether express or implied, shall be preferred" (Act 388
-reprint, https://www.jkptg.gov.my/images/pdf/perundangan-tanah/Act_388-intepret.pdf). The Federal Court in PJD Regency
-"revisited the Hansard of the 3rd Reading of the Housing Development (Control and Licensing) Bill on 25 March 1966, and
-cited the words of Khaw Kai Boh, the then Minister" (Conventus Law, "Malaysia: The Dichotomy Between Social Legislation
-And Contractual Interpretation: HDA 1966",
-https://conventuslaw.com/report/malaysia-the-dichotomy-between-social-legislation/).
+How the courts treat it:
 
-Two consequences. First, a minister's statement is legally relevant, so a gap between it and the clause is not a
-pedantic finding; a court may later use the statement to read the clause. Second, and cutting the other way, the
-explainer can legitimately shape the reading, so "the clause is the ground truth" is only true for the first two claim
-types above. Condition iii is met in practice by three events that arrive within weeks of tabling: committee-stage
-amendments (URA thresholds, 21 Aug 2025), government withdrawals (citizenship s.1(e) and s.19B, 22 Mar 2024), and the
-minister's winding-up speech in Hansard.
+- Section 17A of the Interpretation Acts 1948 and 1967 (Act 388) directs that "a construction that would promote the
+  purpose or object underlying the Act, whether express or implied, shall be preferred" (Act 388 reprint,
+  https://www.jkptg.gov.my/images/pdf/perundangan-tanah/Act_388-intepret.pdf)
+- The Federal Court in PJD Regency "revisited the Hansard of the 3rd Reading of the Housing Development (Control and
+  Licensing) Bill on 25 March 1966, and cited the words of Khaw Kai Boh, the then Minister" (Conventus Law, "Malaysia:
+  The Dichotomy Between Social Legislation And Contractual Interpretation: HDA 1966",
+  https://conventuslaw.com/report/malaysia-the-dichotomy-between-social-legislation/)
 
-## Predicted Competition
+Two consequences follow:
+
+- **A minister's statement is legally relevant**, so a gap between it and the clause is not a pedantic finding; a court
+  may later use the statement to read the clause.
+- **Cutting the other way, the explainer can legitimately shape the reading**, so "the clause is the ground truth" is
+  only true for the first two claim types above.
+
+Condition iii is met in practice by three events that arrive within weeks of tabling: committee-stage amendments (URA
+thresholds, 21 Aug 2025), government withdrawals (citizenship s.1(e) and s.19B, 22 Mar 2024), and the minister's
+winding-up speech in Hansard.
+
+## Predicted competition
 
 **Convergence count: 1 of roughly 30 teams**, defended as follows. The predictable brainstorm returns "legal chatbot for
 tenants and workers" (banned cluster) and "fact-check social media claims" (the doc's own example). Neither has the
 shape of this concept: the input is a pair of official documents, the unit of work is one claim against one clause,
 there is no chat and no web retrieval, and the user is a journalist auditing the state rather than a citizen asking a
-question. Expect two to three legal-explainer bots and zero to one Hansard summariser; a claim-versus-clause consistency
-checker with blind readers is expected from at most one other team, and that team would have to have read the Bar's
-statement to think of it.
+question.
+
+Expect two to three legal-explainer bots and zero to one Hansard summariser. A claim-versus-clause consistency checker
+with blind readers is expected from at most one other team, and that team would have to have read the Bar's statement to
+think of it.
 
 It does not sit inside the legal-aid Q&A cluster: the product never answers a legal question for a person; it answers
 "what does this clause say" for a document. It **does** sit next to the Fact Checker. A judge will say "this is the
@@ -250,9 +261,9 @@ disagreement being surfaced is between the government and its own statute, which
 | Buildability           | 20      |     15 | Text only, public PDFs; claim-to-clause matching is the hard part; parlimen.gov.my TLS chain is broken for fetchers  |
 | **Total**              | **100** | **79** | Above the 70 floor                                                                                                   |
 
-## Novelty Test
+## Novelty test
 
-1. **Convergence count:** 1, see [Predicted Competition](#predicted-competition).
+1. **Convergence count:** 1, see [Predicted competition](#predicted-competition).
 2. **Incumbent test:** The Malaysian Bar and ARTICLE 19 do it by hand; BillTrack50 and Plural do the inverse with one
    model; NZ PCO drafts the explainer with AI. What they structurally cannot do: the Bar and NGOs are parties, so their
    reading is discounted; the summarisers consume the official summary as input; the PCO is the author of the note it
@@ -261,7 +272,7 @@ disagreement being surfaced is between the government and its own statute, which
    amended clause text and the minister's new statement, re-runs the same claim list, and the s.21(4) flag either clears
    or does not. That is a real second open; the first open is the day the bill is tabled.
 
-## Kill Criteria
+## Kill criteria
 
 | Criterion                                                       | Triggered? | Why                                                                                                                                |
 | --------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------- |
@@ -271,7 +282,7 @@ disagreement being surfaced is between the government and its own statute, which
 | Demo needs more than 90 seconds of setup                        | No         | Pre-load URA with the Anwar claim; the s.21(4) split is the first screen                                                           |
 | Buildability depends on data or access we do not have           | No         | Public PDFs and press statements. Two caveats: parlimen.gov.my's broken TLS chain, and PDF text extraction unverified this session |
 
-## What Would Move It To LOCK
+## What would move it to LOCK
 
 1. One 20-minute call with a journalist or NGO researcher who has written a clause-level rebuttal (the FMT explainer's
    author, the Bar's secretariat, ARTICLE 19 Malaysia). Real User goes from 14 to 17 or drops the concept.
@@ -279,7 +290,7 @@ disagreement being surfaced is between the government and its own statute, which
    releases, agency briefings, FAQs, and the Explanatory Statement". The evidence says the disputes live in the former.
 1. Extract text from one 2025 bill PDF and confirm it is not a scan, and confirm a fetch of parlimen.gov.my works with
    the intermediate CA bundled.
-1. Put the claim-type taxonomy from [Ground Truth](#ground-truth) on screen so a three-reader split on an effect claim
+1. Put the claim-type taxonomy from [Ground truth](#ground-truth) on screen so a three-reader split on an effect claim
    is never shown as "the government is wrong".
 
 **Strongest fact:** in February 2025 the Prime Minister said there would be "no provision under the proposed act that
@@ -291,15 +302,22 @@ tool, Malaysian or global, was found that checks an official explainer against c
 the candidate names as its input, and a judge will file it beside the track's own Fact Checker unless the pitch says why
 a fixed statute is not retrieved evidence.
 
-## Sources Used
+## Sources used
 
-FMT 26 Feb 2025; Malaysian Bar 27 Aug 2025; The Edge nodes 767508 and 768606 (Aug 2025); Malay Mail 19 Mar 2024, 17 Dec
-2024, 28 Aug 2025; Aliran (citizenship, 2024); MalaysiaNow 18 and 22 Mar 2024; ARTICLE 19 11 Dec 2024 and Dec 2024;
-Global Voices 16 Dec 2024; RDS Law Partners; Mayer Brown Dec 2024; NACSA Act 854; MOHR Act 872; JHEKS MOHR; FMT 6 Jul
-2026; Life News Agency; Portal Rasmi Parlimen Malaysia bills page and ipms/eps PDF; Parlimen Hansard PDFs and verbatim
-handbook; NDI 2021; University of Melbourne libguide; Sinar Project pardocs, govdocs, GitHub; UNDI18 Wikipedia;
-BillTrack50; Plural Policy; CaseMark; Quorum; NZ PCO and Catalyst IT; TechPolicy.Press; PM&C Legislation Handbook
-Chapter 7; Act 388 reprint (JKPTG); Conventus Law on PJD Regency. Full URLs appear inline above.
+Full URLs appear inline above.
+
+- **Urban Renewal Bill** — FMT 26 Feb 2025; Malaysian Bar 27 Aug 2025; The Edge nodes 767508 and 768606 (Aug 2025)
+- **Citizenship amendment** — Malay Mail 19 Mar 2024, 17 Dec 2024, 28 Aug 2025; Aliran (citizenship, 2024); MalaysiaNow
+  18 and 22 Mar 2024
+- **Online Safety Bill** — ARTICLE 19 11 Dec 2024 and Dec 2024; Global Voices 16 Dec 2024; RDS Law Partners; Mayer Brown
+  Dec 2024
+- **Negative-result Acts** — NACSA Act 854; MOHR Act 872; JHEKS MOHR; FMT 6 Jul 2026; Life News Agency
+- **Parliamentary sources** — Portal Rasmi Parlimen Malaysia bills page and ipms/eps PDF; Parlimen Hansard PDFs and
+  verbatim handbook; NDI 2021; University of Melbourne libguide; Sinar Project pardocs, govdocs, GitHub; UNDI18
+  Wikipedia
+- **Incumbents** — BillTrack50; Plural Policy; CaseMark; Quorum; NZ PCO and Catalyst IT; TechPolicy.Press
+- **Interpretation and drafting practice** — PM&C Legislation Handbook Chapter 7; Act 388 reprint (JKPTG); Conventus Law
+  on PJD Regency
 
 [FMT, 26 Feb 2025]:
   https://www.freemalaysiatoday.com/category/nation/2025/02/26/the-urban-renewal-act-controversy-explained

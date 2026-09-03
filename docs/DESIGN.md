@@ -103,11 +103,12 @@ Everywhere else red is a stroke, a glyph or text.
 ### Tokens
 
 **The ground is a cool grey, not a warm off-white.** The palette moved on 3 September, when direction C was adopted.
-Warm cream plus a serif body is the most saturated look in AI-generated design right now and Cekgu was one step from it
+Warm cream plus a serif body is the most saturated look in AI-generated design right now, and Cekgu was one step from it
 on two technicalities: the serif is body copy rather than a display face, and the accent is a crimson pen rather than
-terracotta. That is a narrow margin. Moving the ground to a cool grey widens it and leaves the pen red as the only warm
-thing on the page, which is what the pen is for. `--rule-strong` moved with it, to `#6b7480`, because the old value no
-longer cleared 3:1 on the new well.
+terracotta. That is a narrow margin.
+
+Moving the ground to a cool grey widens it and leaves the pen red as the only warm thing on the page, which is what the
+pen is for. `--rule-strong` moved with it, to `#6b7480`, because the old value no longer cleared 3:1 on the new well.
 
 Every pair was re-solved numerically against all three grounds in both themes rather than adjusted by eye, and the
 result is checked against the running product: a script walks every text node on all seven routes in both themes,
