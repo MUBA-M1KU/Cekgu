@@ -1,4 +1,4 @@
-import { Sheet } from '../components/Sheet'
+import { Link } from 'react-router'
 
 // Every price is labelled a pilot plan and nothing here collects payment details (FR-PUBLIC-3).
 const PLANS = [
@@ -37,35 +37,42 @@ const PLANS = [
   }
 ]
 
-export function Pricing() {
+export function PricingSection() {
   return (
-    <>
-      <Sheet>
-        <h1>Pricing</h1>
-        <p className="type-body mt-3 max-w-[62ch]">
-          These are pilot plans. The prices and allowances below are a hypothesis we are testing, not a published price
-          list, and there is no checkout on this site yet.
+    <section id="pricing" className="wrap py-[clamp(4rem,8vw,7rem)]">
+      <div className="max-w-[46rem]">
+        <h2 className="text-[clamp(2rem,3.4vw,2.75rem)]/[1.1] tracking-[-0.025em]">
+          Pilot plans, and no checkout on this site.
+        </h2>
+        <p className="type-lead mt-5 text-ink-muted">
+          The prices and allowances below are a hypothesis we are testing, not a published price list. Nothing here
+          collects a payment detail.
         </p>
-      </Sheet>
+      </div>
 
-      <div className="mt-8 grid gap-6 sm:grid-cols-2">
+      <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {PLANS.map((plan) => (
-          <section key={plan.name} className="border-t border-rule pt-5">
-            <h2 className="text-[1.25rem]/[1.25]">{plan.name}</h2>
-            <p className="type-mono mt-2 text-[1.5rem]">{plan.price}</p>
-            {plan.period ? <p className="type-caption text-ink-muted">{plan.period}</p> : null}
-            <p className="type-caption mt-1 text-ink-muted">Pilot plan</p>
-            <p className="type-body mt-3">{plan.who}</p>
-            <ul className="mt-3 m-0 list-none p-0">
+          <section key={plan.name} className="card-soft flex flex-col rounded-[1.5rem] p-7">
+            <h3 className="text-[1.25rem]">{plan.name}</h3>
+            <p className="type-mono mt-3 text-[2rem] tracking-[-0.03em]">{plan.price}</p>
+            <p className="type-caption text-ink-muted">{plan.period || 'Pilot plan'}</p>
+            {plan.period ? <p className="type-caption text-ink-muted">Pilot plan</p> : null}
+            <p className="type-body mt-4">{plan.who}</p>
+            <ul className="mt-4 m-0 list-none p-0">
               {plan.limits.map((limit) => (
                 <li key={limit} className="type-body border-t border-rule py-2 text-ink-muted">
                   {limit}
                 </li>
               ))}
             </ul>
+            <div className="mt-auto pt-7">
+              <Link to="/sign-in" className="type-label underline">
+                {plan.name === 'Guest' ? 'Sign In as Guest' : 'Start With Free'}
+              </Link>
+            </div>
           </section>
         ))}
       </div>
-    </>
+    </section>
   )
 }
