@@ -15,6 +15,7 @@
     "lint": "biome check . && prettier --check \"**/*.{md,markdown,yaml,yml}\"",
     "format": "biome format --write . && prettier --write \"**/*.{md,markdown,yaml,yml}\"",
     "typecheck": "tsc --noEmit",
+    "check:anchors": "bun scripts/check-anchors.ts",
     "test:guard": "bash .claude/hooks/guard-git.test.sh",
     "prepare": "husky"
   },
