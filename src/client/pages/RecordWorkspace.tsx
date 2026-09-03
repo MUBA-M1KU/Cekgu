@@ -44,7 +44,12 @@ export function RecordWorkspace() {
     )
   }
 
-  const attentionCount = ATTENTION_VERDICTS.reduce((total, verdict) => total + record.counts[verdict], 0)
+  // Flagged and undecided, which is what the sentence beneath the chips says. The chips above it
+  // stay on the machine's own tallies: they are a filter over what Cekgu found, not over what is
+  // left to do, and the two numbers disagreeing after a decision is the point rather than a bug.
+  const attentionCount = record.items.filter(
+    (item) => ATTENTION_VERDICTS.includes(item.verdict) && item.dispositions.length === 0
+  ).length
   const ordered = [...record.items].sort((a, b) => {
     const rank = (verdict: ItemVerdict) => (verdict === 'clear' ? 1 : 0)
     return rank(a.verdict) - rank(b.verdict) || a.position - b.position
