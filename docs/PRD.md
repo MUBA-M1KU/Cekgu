@@ -153,6 +153,15 @@ workspace.
 - Given the educator closes the tab during **Queued** or **Checking**, when they return, then the record and its
   progress are intact
 
+**FR-CHECK-4.** On the shared Guest account, **New Check** says so and offers a paper that fills every field in one
+action. A demo on a projector must not open with typing.
+
+- The control is offered only to the Guest account. A private account is not shown it
+- Given it is used, then title, subject, language, context, three questions with their options and all three keys are
+  filled, and the form is submittable without another keystroke
+- A second control reverses it, so a presenter can go back to an empty form on stage
+- The copy says what is in the paper, never what the readers will decide about it
+
 ### The queue
 
 **FR-QUEUE-1.** Items are processed by a bounded queue that never exceeds four concurrent gateway calls for the account
@@ -445,6 +454,7 @@ contract and where request ids are rendered without reading the code.
 | As an educator, I see an Unverified item, understand why, and retry it later                        | FR-VERDICT-2, FR-QUEUE-5, FR-EVIDENCE-2 |
 | As an educator, I select several old records and delete them with a clear warning                   | FR-RECORD-6, FR-RECORD-7                |
 | As an educator, I delete everything my account holds and see how long data is kept                  | FR-RECORD-8                             |
+| As a presenter, I fill the check form in one action so a live demo does not open with typing        | FR-CHECK-4, FR-AUTH-2                   |
 | As a guest, I enter with one click and am told plainly that others can see and delete my records    | FR-AUTH-2, FR-AUTH-3                    |
 | As a guest, I try a real three-question check within the limits and it queues                       | FR-AUTH-5, FR-CHECK-3, FR-QUEUE-1       |
 | As a guest, I cannot delete the sample but I can reset my dispositions on it                        | FR-SAMPLE-2, FR-SAMPLE-3                |

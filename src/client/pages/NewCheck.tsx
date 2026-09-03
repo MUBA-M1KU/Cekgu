@@ -5,6 +5,7 @@ import { ApiError, createRecord } from '../api'
 import { BubbleRow } from '../components/BubbleRow'
 import { Field, inputClass } from '../components/Field'
 import { Sheet } from '../components/Sheet'
+import { DEMO_PAPER } from '../demo-paper'
 import { useSession } from '../session'
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F']
@@ -27,6 +28,15 @@ function emptyItem(): DraftItem {
   }
 }
 
+function demoItems(): DraftItem[] {
+  return DEMO_PAPER.items.map((item) => ({
+    id: crypto.randomUUID(),
+    stem: item.stem,
+    options: item.options.map((option) => ({ ...option })),
+    key: item.key
+  }))
+}
+
 // Letters are positional, so removing option B has to renumber everything after it.
 function relabel(options: { letter: string; text: string }[]) {
   return options.map((option, index) => ({ ...option, letter: LETTERS[index] ?? option.letter }))
@@ -44,8 +54,29 @@ export function NewCheck() {
   const [items, setItems] = useState<DraftItem[]>([emptyItem()])
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
+  const [prefilled, setPrefilled] = useState(false)
 
   const maxItems = isGuest ? GUEST_MAX_ITEMS : Number.POSITIVE_INFINITY
+
+  function fillWithDemo() {
+    setTitle(DEMO_PAPER.title)
+    setSubject(DEMO_PAPER.subject)
+    setLanguage(DEMO_PAPER.language)
+    setContext(DEMO_PAPER.context)
+    setItems(demoItems())
+    setErrors({})
+    setPrefilled(true)
+  }
+
+  function clearForm() {
+    setTitle('')
+    setSubject('')
+    setLanguage('en')
+    setContext('')
+    setItems([emptyItem()])
+    setErrors({})
+    setPrefilled(false)
+  }
 
   function patchItem(index: number, patch: Partial<DraftItem>) {
     setItems((current) => current.map((item, i) => (i === index ? { ...item, ...patch } : item)))
@@ -109,6 +140,30 @@ export function NewCheck() {
       <p className="mt-3 max-w-[62ch] type-body text-ink-muted">
         Type the questions you are about to publish. Two independent models answer each one without seeing your key.
       </p>
+
+      {isGuest ? (
+        <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-sheet border border-rule-strong p-4">
+          <div className="min-w-0 flex-1">
+            <p className="type-label">Signed In as Guest</p>
+            <p className="mt-1 max-w-[62ch] type-caption text-ink-muted">
+              A demo should not start with typing. This fills every field with a three-question paper: one key is wrong
+              on purpose, and one question has two defensible answers depending on the convention.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={fillWithDemo}
+            className="inline-flex h-9 shrink-0 items-center rounded-sheet border border-rule-strong px-4 font-medium"
+          >
+            Fill With Demo Content
+          </button>
+          {prefilled ? (
+            <button type="button" onClick={clearForm} className="type-label shrink-0 underline">
+              Clear The Form
+            </button>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="mt-6 flex flex-col gap-5">
         <Field label="Assessment Title" htmlFor="title" error={errorFor('title')}>
