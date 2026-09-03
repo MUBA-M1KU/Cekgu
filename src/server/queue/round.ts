@@ -112,9 +112,13 @@ export async function runRound(prompt: string, options: Option[], key: string, d
     return used ? (admission as { admitted: true; reading: Reading }).reading : null
   }
 
-  // The deferred hedge. At 25 s a duplicate of the same call goes to the same model; whichever
-  // returns first is the candidate and the other is still written as an attempts row, because an
-  // attempt nobody used is still evidence of what the gateway did.
+  // The deferred hedge. Past HEDGE_AFTER_MS a duplicate of the same call goes to the same model;
+  // whichever returns first is the candidate and the other is still written as an attempts row,
+  // because an attempt nobody used is still evidence of what the gateway did.
+  //
+  // Note it duplicates the model, not the family. A slow model gets a second concurrent call to
+  // itself, so the hedge loads the exact thing already struggling — which is why the threshold has
+  // to sit above the measured completion floor rather than below it.
   const callOnce = async (model: string): Promise<Reading | null> => {
     const startedAt = new Date()
     const primary = deps.call(model, prompt)

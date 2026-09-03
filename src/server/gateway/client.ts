@@ -161,7 +161,7 @@ export async function callGonka(requestedModel: string, prompt: string, now = Da
 //
 // Each request carries its own abort signal. Without one the budget bounds when an iteration
 // starts, not how long it takes, and a single hung receipt request makes callGonka unbounded —
-// which is the guarantee the queue sizes its 25 second hedge against.
+// which is the guarantee the queue sizes its deferred hedge against.
 async function fetchReceipt(requestId: string): Promise<Receipt | null> {
   const deadline = Date.now() + RECEIPT_BUDGET_MS
 
