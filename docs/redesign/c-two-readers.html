@@ -243,7 +243,9 @@
         padding-top: 4.25rem;
         display: flex;
         align-items: center;
-        overflow: hidden;
+        /* Not overflow: hidden. Hijiki hangs past the bottom edge on purpose, and .hero-media
+           does its own clipping, so nothing else here needs the section to clip. */
+        --cat-w: clamp(8rem, 17vw, 16rem);
       }
 
       .hero-media {
@@ -257,13 +259,17 @@
           linear-gradient(160deg, #f7f6f3 0%, #e9e7e1 46%, #dedbd3 100%);
       }
 
+      /* The clip carries the generator's own sparkle mark at 91% across and 83% down its frame.
+         Scaling from the top left pushes that corner past the right edge at every viewport the
+         page supports, and costs 14% of the frame rather than the 26% the first pass took. The
+         mark is not removed from hero.mp4; it is framed out of the shot. */
       .hero-media video,
       .hero-media img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         object-position: left top;
-        transform: scale(1.26);
+        transform: scale(1.14);
         transform-origin: top left;
       }
 
@@ -415,43 +421,32 @@
         flex: none;
       }
 
-      /* MASCOT 1 of 3 — the hero. The two cats ARE the two readers, and until now they lived
-         on one 240x160 stage on one authenticated screen that a judge may never open. Here
-         they are the first thing a visitor meets, at the size the idea deserves. */
-      .hero-cats {
+      /* MASCOT 1 of 3 — the hero. Hijiki is draped over the line where the hero ends: body on
+         the light ground above it, both front paws hanging down across the ticker band below.
+         The pose was rendered around an invisible ledge that falls at 66.3% of the image
+         height, so the negative offset is 34.5% of the width (0.337 x 1.025 aspect), not a
+         number found by nudging. Tororo is not here — one cat leaning on the edge is a
+         character, two lined up on it is a mascot shelf. */
+      .hero-cat {
         position: absolute;
-        right: clamp(1rem, 4vw, 4rem);
-        bottom: 0;
-        display: flex;
-        align-items: flex-end;
-        gap: clamp(0.5rem, 2vw, 2rem);
+        right: clamp(1rem, 4vw, 4.5rem);
+        bottom: calc(var(--cat-w) * -0.345);
+        width: var(--cat-w);
+        height: auto;
         pointer-events: none;
         z-index: 1;
+        filter: drop-shadow(0 16px 20px rgb(20 24 31 / 0.32));
+        animation: catgrip 1.1s var(--ease) 0.45s both;
       }
 
-      .hero-cats img {
-        width: clamp(6rem, 11vw, 10.5rem);
-        height: auto;
-        filter: drop-shadow(0 2px 3px rgb(255 255 255 / 0.5)) drop-shadow(0 18px 26px rgb(20 24 31 / 0.28));
-      }
-
-      .hero-cats .a {
-        animation: catrise 1s var(--ease) 0.4s both;
-      }
-
-      .hero-cats .b {
-        animation: catrise 1s var(--ease) 0.8s both;
-      }
-
-      /* Offset by design: DESIGN.md says the cats never move in unison, because synchronised
-         readers would say the opposite of what the product claims. */
-      @keyframes catrise {
+      /* It pulls itself up onto the edge rather than fading in on the spot. */
+      @keyframes catgrip {
         from {
-          transform: translateY(22%);
+          transform: translateY(26%) rotate(-2.5deg);
           opacity: 0;
         }
         to {
-          transform: translateY(0);
+          transform: translateY(0) rotate(0);
           opacity: 1;
         }
       }
@@ -1389,10 +1384,12 @@
         padding: 1.5rem 1rem 2rem;
       }
 
-      /* The record is a document, so it keeps a readable measure inside the wide container
-         rather than stretching to 1600 px. */
+      /* The record is a document, so it keeps a readable measure rather than stretching to the
+         container's 1600 px. margin-inline: auto is what centres it: without it the measure
+         caps the width and the whole page hangs off the left edge of the content box. */
       .doc {
         max-width: 60rem;
+        margin-inline: auto;
       }
 
       /* ---- MakanLah's footer -------------------------------------------------------- */
@@ -1577,7 +1574,8 @@
       }
 
       /* MASCOT 3 of 3 — the empty state. A screen with nothing on it is the one place a
-         product can afford a picture. */
+         product can afford a picture, and the pose has to earn it: a reader with nothing to
+         read is asleep, which is the state the screen is reporting. */
       .empty {
         display: grid;
         justify-items: center;
@@ -1587,10 +1585,16 @@
         border-radius: 1.5rem;
       }
 
+      /* The sleeping pose is a black cat and the dark theme's card is within a few points of it,
+         so the disc is the ground it needs to read against rather than decoration. --sunk is a
+         step off --raise in both themes, which is exactly the separation this needs. */
       .empty img {
-        width: 8rem;
-        height: 8rem;
+        width: 9.5rem;
+        height: 9.5rem;
+        padding: 0.75rem;
         object-fit: contain;
+        border-radius: 999px;
+        background: var(--sunk);
       }
 
       .to-top {
@@ -1623,10 +1627,8 @@
           margin-left: 0;
         }
 
-        .hero-cats {
-          position: static;
-          justify-content: flex-start;
-          margin-top: 2rem;
+        .hero {
+          --cat-w: clamp(7rem, 22vw, 11rem);
         }
 
         .steps,
@@ -1738,10 +1740,7 @@
         </div>
       </div>
 
-      <div class="hero-cats" aria-hidden="true">
-        <img class="a" src="cat-tororo.png" alt="" />
-        <img class="b" src="cat-hijiki.png" alt="" />
-      </div>
+      <img class="hero-cat" src="cat-hijiki-ledge.png" alt="" aria-hidden="true" />
     </section>
 
     <div class="marquee">
@@ -2412,7 +2411,7 @@
             </div>
 
             <div class="empty" style="margin-top: 2rem">
-              <img src="cat-hijiki.png" alt="" />
+              <img src="cat-hijiki-sleep.png" alt="" />
               <h3 style="margin-top: 1rem; font-size: 1.25rem">No Records Yet</h3>
               <p style="margin-top: 0.5rem; max-width: 36ch; color: var(--ink-2)">
                 Type a paper and two readers will sit it before your learners do.

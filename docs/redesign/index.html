@@ -347,6 +347,41 @@
         color: var(--dim);
       }
 
+      /* The sheet is shown by driving background-position over the real file, so the tiles below
+         are the sprite sheet rather than a picture of it. Four columns, two rows, square cells. */
+      .sprites {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .sprites figure {
+        margin: 0;
+      }
+
+      .sprites .cell {
+        aspect-ratio: 1;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background-color: #e3e6ea;
+        background-image: url('mascot-sprites.png');
+        background-repeat: no-repeat;
+        background-size: 400% 200%;
+        background-position: calc(var(--col) * 33.3333%) calc(var(--row) * 100%);
+      }
+
+      .sprites figcaption {
+        margin-top: 0.55rem;
+        font-size: 0.8125rem;
+        color: var(--dim);
+      }
+
+      .sprites figcaption span {
+        display: block;
+        color: var(--faint);
+      }
+
       .callout {
         margin-top: 1.75rem;
         padding: 1.25rem 1.4rem;
@@ -376,6 +411,10 @@
         .shots {
           grid-template-columns: minmax(0, 1fr);
         }
+
+        .sprites {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
       }
     </style>
   </head>
@@ -386,8 +425,8 @@
           <p><b>Direction C is chosen.</b> AlaskanTuna picked it on 3 September and it has since been revised against
           their notes: the landing takes SolarSim's structure and folds How It Works, Sample Report, Pricing and Trust
           into one page behind a generated hero video; sign-in loses the shared-workspace note and centres both cards;
-          the record workspace gets a topbar and a drawer; and Tororo and Hijiki are used in seven places rather than
-          one. A and B are kept below as the record of what was decided against.</p>
+          the record workspace gets a topbar and a drawer; and Tororo and Hijiki were redrawn and are placed where they
+          carry information rather than decoration. A and B are kept below as the record of what was decided against.</p>
           <a href="c-two-readers.html">Open direction C →</a>
         </div>
         <h1>Three ways out of the wireframe.</h1>
@@ -612,6 +651,72 @@
               <span class="go"><a href="c-two-readers.html">Open direction C →</a></span>
             </div>
           </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The mascot set</h2>
+        <div class="prose">
+          <p>
+            The first pass drew Tororo and Hijiki as flat vector cartoons with black outlines, which read as clip art
+            next to everything else on the page. They are redrawn here as soft-matte 3D characters — no outlines, one
+            diffuse key light from the upper left, chibi proportions, pointed neko ears — matching the art direction of
+            <strong>PandAI</strong>, the mascot set AlaskanTuna made for another project. Eight poses, on one sprite
+            sheet at <span class="mono">mascot-sprites.png</span>: 1152 × 576, four columns by two rows, 288 px cells,
+            Tororo on the top row and Hijiki on the bottom.
+          </p>
+          <p>
+            Three of the eight are placed in direction C. The rest exist because a state that needs a character later —
+            a queued check, a flagged item, a first run — should not need a new render on the day.
+          </p>
+        </div>
+
+        <div class="sprites">
+          <figure>
+            <div class="cell" style="--col: 0; --row: 0" role="img" aria-label="Tororo, portrait bust"></div>
+            <figcaption>Tororo, bust <span>Reader A avatar, evidence panel</span></figcaption>
+          </figure>
+          <figure>
+            <div class="cell" style="--col: 1; --row: 0" role="img" aria-label="Tororo holding a sheet of paper"></div>
+            <figcaption>Tororo, reading <span>Unplaced. For a check in progress</span></figcaption>
+          </figure>
+          <figure>
+            <div class="cell" style="--col: 2; --row: 0" role="img" aria-label="Tororo with a paw at its chin"></div>
+            <figcaption>Tororo, considering <span>Unplaced. For Possible Ambiguity</span></figcaption>
+          </figure>
+          <figure>
+            <div class="cell" style="--col: 3; --row: 0" role="img" aria-label="Tororo waving"></div>
+            <figcaption>Tororo, greeting <span>Unplaced. For a first run</span></figcaption>
+          </figure>
+          <figure>
+            <div class="cell" style="--col: 0; --row: 1" role="img" aria-label="Hijiki, portrait bust"></div>
+            <figcaption>Hijiki, bust <span>Reader B avatar, evidence panel</span></figcaption>
+          </figure>
+          <figure>
+            <div class="cell" style="--col: 1; --row: 1" role="img" aria-label="Hijiki draped over a ledge"></div>
+            <figcaption>Hijiki, on the edge <span>Landing hero, over the section boundary</span></figcaption>
+          </figure>
+          <figure>
+            <div class="cell" style="--col: 2; --row: 1" role="img" aria-label="Hijiki holding a red pen"></div>
+            <figcaption>Hijiki, flagging <span>Unplaced. For Possible Key Error</span></figcaption>
+          </figure>
+          <figure>
+            <div class="cell" style="--col: 3; --row: 1" role="img" aria-label="Hijiki asleep"></div>
+            <figcaption>Hijiki, asleep <span>Empty state, no records yet</span></figcaption>
+          </figure>
+        </div>
+
+        <div class="callout">
+          <h3>Where the hero cat sits, and why there</h3>
+          <p>
+            Hijiki is draped over the line where the hero ends: body on the light ground, both front paws hanging across
+            the ticker band below it. The pose was rendered around an invisible ledge falling at 66.3% of the image
+            height, so the offset that puts the paws on the boundary is computed from the artwork rather than nudged
+            into place. That corner is also where the hero video carries the generator's own sparkle mark, at 91% across
+            and 83% down its frame. The mark is <strong>not</strong> removed from
+            <span class="mono">hero.mp4</span>; the video is framed so it falls outside the visible crop, which was
+            checked at sixty viewport sizes from 768 × 700 to 2560 × 1440.
+          </p>
         </div>
       </section>
 
