@@ -44,7 +44,7 @@ export function PricingSection() {
         <h2 className="text-[clamp(2rem,3.4vw,2.75rem)]/[1.1] tracking-[-0.025em]">
           Pilot plans, and no checkout on this site.
         </h2>
-        <p className="type-lead mt-5 text-ink-muted">
+        <p className="type-ui mt-5 text-[1.0625rem]/[1.6] text-ink-muted">
           The prices and allowances below are a hypothesis we are testing, not a published price list. Nothing here
           collects a payment detail.
         </p>
@@ -57,10 +57,10 @@ export function PricingSection() {
             <p className="type-mono mt-3 text-[2rem] tracking-[-0.03em]">{plan.price}</p>
             <p className="type-caption text-ink-muted">{plan.period || 'Pilot plan'}</p>
             {plan.period ? <p className="type-caption text-ink-muted">Pilot plan</p> : null}
-            <p className="type-body mt-4">{plan.who}</p>
+            <p className="type-ui mt-4">{plan.who}</p>
             <ul className="mt-4 m-0 list-none p-0">
               {plan.limits.map((limit) => (
-                <li key={limit} className="type-body border-t border-rule py-2 text-ink-muted">
+                <li key={limit} className="type-ui border-t border-rule py-2 text-ink-muted">
                   {limit}
                 </li>
               ))}

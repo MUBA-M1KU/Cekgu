@@ -1,6 +1,6 @@
 import { Link } from 'react-router'
-import type { Item, RecordDetail } from '../../../shared/types'
-import { BubbleRow } from '../../components/BubbleRow'
+import type { Attempt, Item, RecordDetail } from '../../../shared/types'
+import { ReadRow } from '../../components/ReadRow'
 import { VerdictChip } from '../../components/VerdictChip'
 
 const RECEIPT_BASE = 'https://api.gonkarouter.io/v1/receipts/'
@@ -24,9 +24,21 @@ function worked(record: RecordDetail): Item | null {
   )
 }
 
+// Distinctness is proven by the receipt, so the two seats are chosen on served model. The same
+// rule EvidencePanel applies; both sections would otherwise disagree about who reader B was.
+function admittedSeats(item: Item): Attempt[] {
+  const seats: Attempt[] = []
+  for (const attempt of item.attempts) {
+    if (!attempt.admitted || !attempt.reading) continue
+    if (seats.some((chosen) => chosen.servedModel === attempt.servedModel)) continue
+    seats.push(attempt)
+    if (seats.length === 2) break
+  }
+  return seats
+}
+
 function Reading({ item, index }: { item: Item; index: number }) {
-  const admitted = item.attempts.filter((attempt) => attempt.admitted && attempt.reading !== null)
-  const attempt = admitted[index]
+  const attempt = admittedSeats(item)[index]
   const seat = SEATS[index]
   if (!attempt || !seat || !attempt.reading) return null
 
@@ -61,7 +73,7 @@ export function SampleSection({ record }: { record: RecordDetail | null }) {
           <h2 className="text-[clamp(2rem,3.4vw,2.75rem)]/[1.1] tracking-[-0.025em]">
             One question, two readings, both receipts.
           </h2>
-          <p className="type-lead mt-5 text-ink-muted">
+          <p className="type-ui mt-5 text-[1.0625rem]/[1.6] text-ink-muted">
             This is a real record, kept as it was produced. Every id below resolves to the gateway's public receipt, and
             the receipt names the model that actually served the call.
           </p>
@@ -74,11 +86,19 @@ export function SampleSection({ record }: { record: RecordDetail | null }) {
               <VerdictChip verdict={item.verdict} />
             </div>
 
+            {/* One row, three facts: your key filled, and a ring for each reader who chose that
+                option. Two rings on a letter the fill is not on is a key error, seen rather than
+                read. */}
             <div className="mt-5">
-              <BubbleRow options={item.options} filled={item.key} label="The key on the paper" />
+              <ReadRow
+                options={item.options}
+                keyLetter={item.key}
+                readerA={admittedSeats(item)[0]?.reading?.answer ?? null}
+                readerB={admittedSeats(item)[1]?.reading?.answer ?? null}
+              />
             </div>
 
-            {item.verdictReason ? <p className="type-body mt-5 max-w-[70ch]">{item.verdictReason}</p> : null}
+            {item.verdictReason ? <p className="type-ui mt-5 max-w-[70ch]">{item.verdictReason}</p> : null}
 
             <div className="mt-6 grid gap-6 rounded-[1rem] bg-well p-5 sm:p-6 lg:grid-cols-2">
               <Reading item={item} index={0} />
@@ -86,7 +106,7 @@ export function SampleSection({ record }: { record: RecordDetail | null }) {
             </div>
           </div>
         ) : (
-          <p className="type-body mt-10 text-ink-muted">Loading the sample report.</p>
+          <p className="type-ui mt-10 text-ink-muted">Loading the sample report.</p>
         )}
 
         <Link to="/sample" className="type-label mt-6 inline-block underline">

@@ -20,7 +20,7 @@ function Figure({ counts }: { counts: VerdictCounts | null }) {
         <circle cx="105" cy="90" r="66" fill="var(--well)" />
         <circle cx="155" cy="90" r="66" fill="none" stroke="var(--rule-strong)" strokeWidth="1.5" />
       </svg>
-      <p className="type-body max-w-[30ch] text-center text-ink-muted">
+      <p className="type-ui max-w-[30ch] text-center text-ink-muted">
         {counts
           ? `${clear} of ${total} questions on the sample paper came back Clear. The other ${total - clear} are waiting inside.`
           : 'Two independent readers sit every question before your learners do.'}
@@ -144,7 +144,7 @@ export function SignIn() {
           </div>
 
           {error ? (
-            <p role="alert" className="type-body text-pen">
+            <p role="alert" className="type-ui text-pen">
               {error}
             </p>
           ) : null}
