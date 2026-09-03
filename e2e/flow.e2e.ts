@@ -40,6 +40,11 @@ test('a guest types a check and gets a receipt-verified verdict', async ({ page,
   // against a record that has not been read yet. A reason exists only once the rule has run.
   await expect(page.getByText(/The supplied key is Stack/i)).toBeVisible({ timeout: 480_000 })
 
+  // The request ids live behind Show Evidence, which is the affordance a judge clicks. Reading the
+  // page without opening it asserts that provenance is absent, which is the opposite of the point.
+  await page.getByRole('button', { name: 'Show Evidence' }).first().click()
+  await expect(page.locator('a[href*="/v1/receipts/"]').first()).toBeVisible({ timeout: 15_000 })
+
   const body = await page.locator('body').innerText()
   const requestIds = [...new Set([...body.matchAll(/req-\d+-\d+/g)].map((match) => match[0]))]
   const models = ['MiniMaxAI/MiniMax-M2.7', 'moonshotai/Kimi-K2.6', 'deepseek-ai/DeepSeek-V4-Flash-0731'].filter(
