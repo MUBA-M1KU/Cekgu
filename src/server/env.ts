@@ -14,6 +14,10 @@ const googleClientSecret = optional('GOOGLE_CLIENT_SECRET')
 
 export const env = {
   port: Number(process.env.PORT ?? 8080),
+  gonkaApiKey: required('GONKA_API_KEY'),
+  // The product uses the OpenAI surface only. The /v1 suffix belongs in the value, not the path
+  // the client builds, because the two surfaces disagree about it (TRD section 1).
+  gonkaBaseUrlOpenai: optional('GONKA_BASE_URL_OPENAI') ?? 'https://api.gonkarouter.io/v1',
   databaseUrl: required('DATABASE_URL'),
   betterAuthSecret: required('BETTER_AUTH_SECRET'),
   betterAuthUrl: optional('BETTER_AUTH_URL') ?? `http://localhost:${process.env.PORT ?? 8080}`,

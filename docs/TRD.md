@@ -798,6 +798,10 @@ response headers that carry the request id ([section 4](#4-request-ids-and-prove
 1. Parse the reading JSON
 1. `GET /v1/receipts/{x-request-id}` and require its `model` to equal the requested model
 
+Step 6 polls rather than fetches once, because the receipt is written asynchronously ([gotcha 11](#5-verified-gotchas)).
+Step 5 is not the client's: parsing the reading needs the item's option letters and the client takes a model and a
+string, so `admitReading` in `src/server/gateway/reading.ts` does it as part of the admission test below.
+
 It returns one provenance record:
 
 ```ts
@@ -806,12 +810,18 @@ type Provenance = {
   requestId: string | null;
   devshardId: string | null;
   requestedModel: string;
-  servedModel: string | null;
+  servedModel: string | null; // from the receipt, never from what was requested
   fallbackHeader: string | null;
   receiptStatus: "verified" | "mismatch" | "missing";
+  receipt: Receipt | null; // the receipt body, for attempts.receipt_json
+  httpStatus: number | null; // null when the call never returned
   latencyMs: number;
+  error: string | null; // the first failed step, or null
 };
 ```
+
+`receipt`, `httpStatus` and `error` are columns in [`attempts`](#11-data-model) and this is the only layer that sees
+them; `error` becomes `attempts.rejection_reason` when the admission test refuses the call.
 
 ### The reading
 

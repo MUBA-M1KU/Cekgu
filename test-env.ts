@@ -13,3 +13,6 @@ process.env.BETTER_AUTH_SECRET = 'placeholder'
 process.env.GUEST_EMAIL = 'guest@example.invalid'
 process.env.GUEST_PASSWORD = 'placeholder'
 process.env.MASCOT_ENABLED = 'true'
+// Required by env.ts. CI has no .env, so without this every file that reaches the gateway client
+// throws at import. The tests stub fetch and never send it anywhere.
+process.env.GONKA_API_KEY = 'sk-placeholder-not-a-key'
