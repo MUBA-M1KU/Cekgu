@@ -36,6 +36,9 @@ export function PublicLayout() {
   const { pathname } = useLocation()
   // Only the landing has a hero behind the bar. Everywhere else it is solid immediately.
   const overHero = pathname === '/'
+  // Sign-in is a screen rather than a document: it composes its own two-column layout and needs
+  // the full width to do it. Everything else public is a document and keeps the 880 px measure.
+  const fullBleed = overHero || pathname === '/sign-in'
   const scrolled = useSolidNav(24)
 
   return (
@@ -61,7 +64,7 @@ export function PublicLayout() {
 
       {/* The landing is full-bleed: its sections carry their own grounds and their own measure.
           Every other public route is a document and keeps DESIGN.md's 880 px measure. */}
-      <main className={overHero ? undefined : 'mx-auto max-w-[880px] px-4 py-6 sm:px-8'}>
+      <main className={fullBleed ? undefined : 'mx-auto max-w-[880px] px-4 py-6 sm:px-8'}>
         <Outlet />
       </main>
 
