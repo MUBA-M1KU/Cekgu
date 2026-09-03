@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cekgu frontend redesign · three directions</title>
+    <link rel="stylesheet" href="_shared.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&family=Source+Serif+4:opsz,wght@8..60,400&family=Spline+Sans+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* The cover. Deliberately plainer than the three proposals: it is the argument, not a
+         fourth candidate, and it must not compete with what it is presenting. */
+      :root {
+        --bg: #16181c;
+        --panel: #1e2128;
+        --line: #2f343d;
+        --text: #eceae6;
+        --dim: #9aa1ab;
+        --faint: #828a96;
+        --pen: #f07079;
+        --ok: #7cc79c;
+        --ui: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif;
+        --paper: 'Source Serif 4', Georgia, serif;
+        --mono: 'Spline Sans Mono', ui-monospace, Menlo, Consolas, monospace;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--ui);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: -0.028em;
+        line-height: 1.1;
+        text-wrap: balance;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .wrap {
+        max-width: 68rem;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .mono {
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums slashed-zero;
+      }
+
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+
+      header.top {
+        padding-block: 5rem 3.5rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      header.top h1 {
+        margin-top: 1rem;
+        font-size: clamp(2.25rem, 4.4vw, 3.25rem);
+      }
+
+      .standfirst {
+        max-width: 60ch;
+        margin-top: 1.35rem;
+        font-family: var(--paper);
+        font-size: 1.125rem;
+        line-height: 1.62;
+        color: var(--dim);
+      }
+
+      section {
+        padding-block: 3.5rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      h2 {
+        font-size: 1.625rem;
+      }
+
+      .prose {
+        max-width: 68ch;
+        margin-top: 1.25rem;
+        color: var(--dim);
+      }
+
+      .prose p + p {
+        margin-top: 0.85rem;
+      }
+
+      .prose strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      /* The diagnosis: each finding is a measurement, not an adjective. */
+      ol.findings {
+        margin: 1.75rem 0 0;
+        padding: 0;
+        list-style: none;
+        counter-reset: f;
+      }
+
+      ol.findings li {
+        display: grid;
+        grid-template-columns: 2.75rem minmax(0, 1fr);
+        gap: 0 1rem;
+        padding: 1.1rem 0;
+        border-top: 1px solid var(--line);
+        counter-increment: f;
+      }
+
+      ol.findings li::before {
+        content: counter(f, decimal-leading-zero);
+        font-family: var(--mono);
+        font-size: 0.8125rem;
+        color: var(--faint);
+        padding-top: 0.15rem;
+      }
+
+      ol.findings b {
+        display: block;
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      ol.findings span {
+        display: block;
+        margin-top: 0.2rem;
+        color: var(--dim);
+      }
+
+      ol.findings em {
+        font-family: var(--mono);
+        font-style: normal;
+        font-size: 0.8125rem;
+        color: var(--pen);
+      }
+
+      figure.before {
+        margin: 0;
+      }
+
+      .shots {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.25rem;
+        margin-top: 2rem;
+        align-items: start;
+      }
+
+      .shots img {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 3px;
+      }
+
+      .shots figcaption {
+        margin-top: 0.6rem;
+        font-size: 0.8125rem;
+        color: var(--faint);
+      }
+
+      /* The three cards. Same shape so the comparison is fair; a swatch strip is the only
+         thing that differs, because colour is the fastest read. */
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.25rem;
+        margin-top: 2rem;
+      }
+
+      .card {
+        display: flex;
+        flex-direction: column;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .swatches {
+        display: flex;
+        height: 5rem;
+      }
+
+      .swatches i {
+        flex: 1;
+      }
+
+      .card-body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding: 1.35rem 1.35rem 1.5rem;
+      }
+
+      .card h3 {
+        font-size: 1.25rem;
+      }
+
+      .card .tag {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+
+      .card .pitch {
+        margin-top: 0.7rem;
+        font-family: var(--paper);
+        font-size: 0.9375rem;
+        line-height: 1.55;
+        color: var(--dim);
+      }
+
+      .card dl {
+        margin: 1.1rem 0 0;
+        font-size: 0.8125rem;
+      }
+
+      .card dt {
+        margin-top: 0.7rem;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+
+      .card dd {
+        margin: 0.15rem 0 0;
+        color: var(--dim);
+      }
+
+      .card .go {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: auto;
+        padding-top: 1.35rem;
+      }
+
+      .go a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        height: 2.5rem;
+        justify-content: center;
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background-color 0.15s ease, border-color 0.15s ease;
+      }
+
+      .go a:hover {
+        background: #262a32;
+        border-color: var(--faint);
+      }
+
+      table.compare {
+        width: 100%;
+        margin-top: 1.75rem;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+      }
+
+      .compare th,
+      .compare td {
+        padding: 0.7rem 0.85rem;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .compare thead th {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--faint);
+        font-weight: 400;
+      }
+
+      .compare tbody th {
+        width: 12rem;
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      .compare td {
+        color: var(--dim);
+      }
+
+      .callout {
+        margin-top: 1.75rem;
+        padding: 1.25rem 1.4rem;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--panel);
+      }
+
+      .callout h3 {
+        font-size: 1rem;
+      }
+
+      .callout p {
+        margin-top: 0.55rem;
+        color: var(--dim);
+        max-width: 74ch;
+      }
+
+      footer {
+        padding-block: 3rem 5rem;
+        color: var(--faint);
+        font-size: 0.8125rem;
+      }
+
+      @media (max-width: 60rem) {
+        .cards,
+        .shots {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="top">
+        <h1>Three ways out of the wireframe.</h1>
+        <p class="standfirst">
+          The shipped frontend is not badly designed so much as under-designed: a sound system, described in
+          <span class="mono" style="font-size: 0.9em">docs/DESIGN.md</span>, that the screens only half implement. What
+          follows is the diagnosis from the deployed pages, then three complete directions, each of which commits to
+          something the others do not. They are proposals to choose between, not three shades of the same idea.
+        </p>
+      </header>
+
+      <section>
+        <h2>What is actually wrong</h2>
+        <div class="prose">
+          <p>
+            Measured against the deployed build at 1440 px and at 853 px, which is a 1280 px projector at the 150% zoom
+            the demo runs at. Every number below is from those pages, not an impression.
+          </p>
+        </div>
+
+        <ol class="findings">
+          <li>
+            <div>
+              <b>No composition anywhere.</b>
+              <span
+                >Every page is one centred sheet holding a top-to-bottom stack of heading, paragraph, list. There is no
+                second column, no full-bleed, no asymmetry, and no page whose shape differs from any other page's.</span
+              >
+            </div>
+          </li>
+          <li>
+            <div>
+              <b>The document metaphor is invisible.</b>
+              <span
+                >The design system says Cekgu is a review document on a desk. <em>#fbfaf7 on #f1efea</em> is a two
+                percent luminance step, so the sheet never reads as an object and the desk never reads as a
+                surface.</span
+              >
+            </div>
+          </li>
+          <li>
+            <div>
+              <b>The hero's right half is empty.</b>
+              <span
+                >Roughly 45% of the hero panel is blank, and the marketing site shows no picture of the product at any
+                point. A tool whose pitch is "two readers disagreed with your key, here is the receipt" proves none of it
+                on screen.</span
+              >
+            </div>
+          </li>
+          <li>
+            <div>
+              <b>The record workspace repeats itself.</b>
+              <span
+                >A five-option disposition form and a Record Decision button render on all twelve items, open, always —
+                including the nine that need no decision. The sample record is <em>5 076 px tall</em> and most of that is
+                identical chrome.</span
+              >
+            </div>
+          </li>
+          <li>
+            <div>
+              <b>A Clear item and a Key Error item look the same.</b>
+              <span
+                >Same type size, same row height, same controls. The one distinction is a small chip at the row's right
+                edge, which is the last place the eye lands.</span
+              >
+            </div>
+          </li>
+          <li>
+            <div>
+              <b>Every button has the same weight.</b>
+              <span
+                >A 36 px bordered rectangle at 4 px radius, up to fourteen of them on one screen, so nothing on the page
+                is more important than anything else.</span
+              >
+            </div>
+          </li>
+          <li>
+            <div>
+              <b>Sign-in is an unstyled form.</b>
+              <span
+                >A 575 px form floating at the top left of a 1130 px panel, with roughly 400 px of empty ground beneath
+                it. It is the second screen in the demo.</span
+              >
+            </div>
+          </li>
+          <li>
+            <div>
+              <b>No motion, no depth, no image, no texture.</b>
+              <span
+                >Nothing on any screen moves, nothing casts a shadow that means anything, and the only artwork in the
+                product is the mascot.</span
+              >
+            </div>
+          </li>
+        </ol>
+
+        <div class="shots">
+          <figure class="before">
+            <img src="current-home.jpg" alt="The deployed home page at 1440 px" />
+            <figcaption>Deployed home. The hero's right half carries nothing.</figcaption>
+          </figure>
+          <figure class="before">
+            <img src="current-sign-in.jpg" alt="The deployed sign-in page at 1440 px" />
+            <figcaption>Deployed sign-in. A form in the corner of a large empty box.</figcaption>
+          </figure>
+          <figure class="before">
+            <img src="current-record.jpg" alt="The deployed record workspace at 1440 px" />
+            <figcaption>Deployed record, top third of 5 076 px. The rest is more of the same.</figcaption>
+          </figure>
+        </div>
+
+        <div class="callout">
+          <h3>One thing worth defending</h3>
+          <p>
+            The system underneath is genuinely good and it is not generated-looking. Paper for what a person wrote,
+            grotesque for what Cekgu says, mono for what a machine issued; five verdict hues chosen for what each asks of
+            the reader; round for bubbles and square for paper. All three directions keep that. The problem is that the
+            screens spend none of it.
+          </p>
+        </div>
+
+        <div class="callout">
+          <h3>And one risk in the current palette</h3>
+          <p>
+            Warm off-white ground plus a serif body sits one step away from the most saturated look in AI-generated
+            design right now — the warm cream editorial page. Cekgu escapes it today on two technicalities: the serif is
+            body copy rather than a display face, and the accent is a crimson pen rather than terracotta. That is a
+            narrow margin, and each direction below widens it differently: A darkens the ground away from cream, B leaves
+            the light palette to the marketing site, C answers with saturated colour.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>The three directions</h2>
+        <div class="prose">
+          <p>
+            Each is a full landing page, sign-in screen and record workspace, built with the product's real copy and the
+            real sample paper. Open them at a wide window; they are also correct at 853 px.
+          </p>
+        </div>
+
+        <div class="cards">
+          <article class="card">
+            <div class="swatches" aria-hidden="true">
+              <i style="background: #c3c1b6"></i><i style="background: #fcfbf8"></i><i style="background: #161d26"></i
+              ><i style="background: #b3202f"></i>
+            </div>
+            <div class="card-body">
+              <p class="tag">Direction A</p>
+              <h3>Marked Paper</h3>
+              <p class="pitch">
+                Stop describing the metaphor and build it. A real desk, a real sheet with an edge, a ruled red margin,
+                and a verdict that is a hand-drawn ring around the option the readers actually chose.
+              </p>
+              <dl>
+                <dt>Commits to</dt>
+                <dd>The document. Annotation as the interface.</dd>
+                <dt>Signature</dt>
+                <dd>The pen ring, drawn on, around a live option.</dd>
+                <dt>Record height</dt>
+                <dd>About a third of the shipped 5 076 px.</dd>
+                <dt>Risk</dt>
+                <dd>Nearest to the editorial-warm lane. Held off by a green-grey desk, not cream.</dd>
+              </dl>
+              <span class="go"><a href="a-marked-paper.html">Open direction A →</a></span>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="swatches" aria-hidden="true">
+              <i style="background: #0d1219"></i><i style="background: #151c25"></i><i style="background: #e9e7e1"></i
+              ><i style="background: #f2a468"></i>
+            </div>
+            <div class="card-body">
+              <p class="tag">Direction B</p>
+              <h3>Instrument</h3>
+              <p class="pitch">
+                Cekgu is not a document, it is an apparatus. Two probes read the same question and the disagreement is
+                the measurement. Dark, dense, mono-forward, and the request ids are promoted from footnote to fixture.
+              </p>
+              <dl>
+                <dt>Commits to</dt>
+                <dd>Density and proof. Nothing hidden behind a click that could be a column.</dd>
+                <dt>Signature</dt>
+                <dd>The reading matrix: item, key, reader A, reader B, verdict, one row each.</dd>
+                <dt>Record height</dt>
+                <dd>All twelve questions above the fold.</dd>
+                <dt>Risk</dt>
+                <dd>Dark tooling is a crowded look, and the design standards ban the neon-dashboard version of it.</dd>
+              </dl>
+              <span class="go"><a href="b-instrument.html">Open direction B →</a></span>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="swatches" aria-hidden="true">
+              <i style="background: #f4f2ee"></i><i style="background: #a34a08"></i><i style="background: #6b4fbb"></i
+              ><i style="background: #2c6e49"></i>
+            </div>
+            <div class="card-body">
+              <p class="tag">Direction C</p>
+              <h3>Two Readers</h3>
+              <p class="pitch">
+                Cekgu owns a shape nobody else in the category owns, and currently uses it at 24 px in the corner of the
+                navigation. Here the answer bubble is the entire visual language, from 420 px in the hero to 8 px in a
+                legend.
+              </p>
+              <dl>
+                <dt>Commits to</dt>
+                <dd>One atom, and colour. The five verdicts become a palette rather than five chips.</dd>
+                <dt>Signature</dt>
+                <dd>Two rings on one bubble: inner is reader A, outer is reader B, agreement at a glance.</dd>
+                <dt>Record height</dt>
+                <dd>Between A and B; Clear items collapse to a single pill.</dd>
+                <dt>Risk</dt>
+                <dd>The boldest, and the one that most changes what Cekgu looks like from across a room.</dd>
+              </dl>
+              <span class="go"><a href="c-two-readers.html">Open direction C →</a></span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Choosing between them</h2>
+
+        <table class="compare">
+          <thead>
+            <tr>
+              <th>&nbsp;</th>
+              <th>A · Marked Paper</th>
+              <th>B · Instrument</th>
+              <th>C · Two Readers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>What a judge sees first</th>
+              <td>A marked exam paper. The product, immediately.</td>
+              <td>A working instrument with live readings and receipts.</td>
+              <td>A confident brand shape and five colours with names.</td>
+            </tr>
+            <tr>
+              <th>Serves the track brief</th>
+              <td>Request ids on the paper's margin, in the hero.</td>
+              <td>Strongest. Ids are a standing fixture, and requested-versus-served is printed.</td>
+              <td>Ids in a receipt card, one step back from the hero.</td>
+            </tr>
+            <tr>
+              <th>Distance from the current build</th>
+              <td>Smallest. Same tokens, deepened; mostly layout and one new component.</td>
+              <td>Largest. A dark theme the app does not currently default to, and a new table.</td>
+              <td>Middle. Same light ground, new component language throughout.</td>
+            </tr>
+            <tr>
+              <th>Cost to implement before 5 Sept</th>
+              <td>Lowest. The pen ring is one SVG; the rest is CSS the system already implies.</td>
+              <td>Highest. Every screen is re-laid out, and dark contrast needs re-checking.</td>
+              <td>Medium. The atom is one component reused at three scales.</td>
+            </tr>
+            <tr>
+              <th>Where it is weakest</th>
+              <td>Least surprising. It improves the existing idea rather than proposing a new one.</td>
+              <td>A teacher is not an operator; density can read as intimidating to the actual user.</td>
+              <td>Colour fields are the furthest from "quiet tool", and the most fashion-dependent.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <h3>If you want a recommendation</h3>
+          <p>
+            <strong>A for the product, B's record workspace inside it.</strong> A wins the first five seconds with the
+            audience that matters, a judge who has never seen the tool, because it shows a marked exam paper rather than
+            an interface. But B's reading matrix is the better answer to the one screen the demo turns on: twelve
+            questions, two readers and the key on screen at once beats scrolling, and it is the clearest picture of the
+            multi-model consensus the track is judging. They compose — A's desk and margin will hold B's matrix without
+            argument. C is the strongest brand and the weakest fit for someone reviewing a paper at 11 pm; its bubble
+            atom is worth stealing for the summary row whichever direction wins.
+          </p>
+        </div>
+      </section>
+
+      <footer>
+        Built against the deployed build and the real sample record. No product code is touched by these files — they are
+        static proposals under <span class="mono">docs/redesign/</span>, and nothing here ships until one is chosen.
+      </footer>
+    </div>
+  </body>
+</html>

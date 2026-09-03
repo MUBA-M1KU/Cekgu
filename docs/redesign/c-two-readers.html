@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cekgu redesign · C · Two Readers</title>
+    <link rel="stylesheet" href="_shared.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Spline+Sans+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ============================================================================
+         DIRECTION C — TWO READERS
+         The argument: Cekgu already owns a shape nobody else in this category owns — two
+         answer bubbles, one filled and one open, overlapping. The shipped product uses it at
+         24 px in the corner of the navigation and nowhere else. This direction makes it the
+         whole visual language.
+
+         1. One atom, three orders of magnitude. The bubble is 420 px in the hero, 22 px in a
+            row, 8 px in a legend. Nothing else is invented, so every screen is recognisably
+            the same product without a single decorative element.
+         2. Overlap is the meaning. Two readers agreeing is two rings converging on the same
+            centre; two readers splitting is two rings apart. The hero animates that once, and
+            the record's rows are the same figure at row scale.
+         3. The five verdicts get to be a palette, not five chips. Each has a field it owns,
+            so the marketing page teaches the colour language the product then uses.
+
+         Deliberately NOT done: no shader, no particles, no glass. The user's references point
+         at liquid and metal effects, and the honest read is that this product is used by a
+         teacher under time pressure at 11 pm — the motion budget belongs to the one idea that
+         carries information, and everything else stays still. This is the interpretation of
+         that taste, not a copy of it.
+         ============================================================================ */
+
+      :root {
+        --ground: #edeff1;
+        --raise: #ffffff;
+        --ink: #14181f;
+        --ink-2: #4d5560;
+        --ink-3: #616874;
+        --line: #dfdbd3;
+        --pen: #b3202f;
+
+        --clear: #2c6e49;
+        --key: #a34a08;
+        --amb: #6b4fbb;
+        --split: #2456a6;
+        --unver: #5b6470;
+
+        --ui: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif;
+        --paper: 'Source Serif 4', Georgia, serif;
+        --mono: 'Spline Sans Mono', ui-monospace, Menlo, Consolas, monospace;
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      body {
+        background: var(--ground);
+        color: var(--ink);
+        font-family: var(--ui);
+        font-size: 15px;
+        line-height: 1.5;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.04;
+        text-wrap: balance;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .mono {
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums slashed-zero;
+      }
+
+      .wrap {
+        max-width: 80rem;
+        margin: 0 auto;
+        padding-inline: 2rem;
+      }
+
+      .eyebrow {
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        height: 2.875rem;
+        padding: 0 1.4rem;
+        border: 1.5px solid transparent;
+        border-radius: 999px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background-color 0.16s var(--ease), transform 0.16s var(--ease);
+      }
+
+      /* Every control is a bubble, because the product's atom is round. The one exception is
+         a text field, which is paper. */
+      .btn-solid {
+        background: var(--ink);
+        color: var(--raise);
+      }
+
+      .btn-solid:hover {
+        transform: translateY(-1px);
+      }
+
+      .btn-ring {
+        border-color: var(--ink);
+      }
+
+      .btn-ring:hover {
+        background: var(--raise);
+      }
+
+      /* ---- the atom ---------------------------------------------------------------- */
+      .b {
+        display: inline-grid;
+        place-items: center;
+        border-radius: 999px;
+        font-family: var(--ui);
+        font-weight: 500;
+        flex: none;
+      }
+
+      .b-open {
+        border: 1.5px solid var(--ink-3);
+        color: var(--ink-3);
+      }
+
+      .b-fill {
+        background: var(--ink);
+        color: var(--raise);
+      }
+
+      .b-sm {
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 0.75rem;
+      }
+
+      /* ============================ SCREEN 1 · LANDING ============================ */
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        padding-block: 1.5rem;
+      }
+
+      .lockup {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 1.375rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.75rem;
+        margin-left: auto;
+        font-size: 0.9375rem;
+      }
+
+      .nav-links a {
+        color: var(--ink-2);
+        text-decoration: none;
+      }
+
+      .nav-links a:hover {
+        color: var(--ink);
+      }
+
+      .hero {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: center;
+        gap: 3rem;
+        padding-block: 3rem 6rem;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.75rem, 5.4vw, 4.5rem);
+      }
+
+      .hero .lead {
+        max-width: 36ch;
+        margin-top: 1.5rem;
+        font-family: var(--paper);
+        font-size: 1.1875rem;
+        line-height: 1.58;
+        color: var(--ink-2);
+      }
+
+      /* ---- the convergence: the mark at hero scale, played once -------------------- */
+      .converge {
+        position: relative;
+        aspect-ratio: 1;
+        max-width: 30rem;
+        margin-inline: auto;
+      }
+
+      .converge svg {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      .reader-a,
+      .reader-b {
+        animation: settle 2.6s var(--ease) 0.3s both;
+      }
+
+      .reader-b {
+        animation-name: settle-b;
+      }
+
+      @keyframes settle {
+        0% {
+          transform: translateX(-14%);
+          opacity: 0;
+        }
+        35% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes settle-b {
+        0% {
+          transform: translateX(16%);
+          opacity: 0;
+        }
+        35% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .verdict-draw {
+        stroke-dasharray: 300;
+        stroke-dashoffset: 300;
+        animation: draw 0.9s var(--ease) 2.2s forwards;
+      }
+
+      @keyframes draw {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      .converge figcaption {
+        position: absolute;
+        left: 50%;
+        bottom: 0.5rem;
+        transform: translateX(-50%);
+        max-width: 100%;
+        text-align: center;
+        font-size: 0.8125rem;
+        color: var(--ink-2);
+        opacity: 0;
+        animation: fade 0.6s var(--ease) 2.8s forwards;
+      }
+
+      @keyframes fade {
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* ---- verdict fields ---------------------------------------------------------- */
+      .fields {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .field-v {
+        position: relative;
+        min-height: 19rem;
+        padding: 1.75rem 1.35rem 1.5rem;
+        color: var(--raise);
+        overflow: hidden;
+      }
+
+      .field-v h2 {
+        font-size: 1.125rem;
+        letter-spacing: -0.015em;
+      }
+
+      .field-v p {
+        margin-top: 0.6rem;
+        font-family: var(--paper);
+        font-size: 0.9375rem;
+        line-height: 1.5;
+        opacity: 0.86;
+      }
+
+      .field-v .count {
+        position: absolute;
+        left: 1.35rem;
+        bottom: 1.4rem;
+        font-family: var(--mono);
+        font-size: 2.5rem;
+        line-height: 1;
+        opacity: 0.55;
+      }
+
+      /* Each field carries its own verdict figure, drawn from the same atom. This is what the
+         "glyph" column of the design system asks for, at a size where it can be read. */
+      .figure {
+        display: flex;
+        gap: 0.35rem;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .figure span {
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 999px;
+        border: 2px solid currentColor;
+      }
+
+      .figure span.on {
+        background: currentColor;
+      }
+
+      .figure span.half {
+        background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+      }
+
+      .figure span.dash {
+        border-style: dashed;
+      }
+
+      /* ---- prose band -------------------------------------------------------------- */
+      .band {
+        padding-block: 5.5rem;
+      }
+
+      .two {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 4rem;
+        align-items: start;
+      }
+
+      .prose {
+        max-width: 56ch;
+        font-family: var(--paper);
+        font-size: 1.0625rem;
+        line-height: 1.62;
+        color: var(--ink-2);
+      }
+
+      .prose p + p {
+        margin-top: 1rem;
+      }
+
+      .prose strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .card {
+        padding: 1.75rem;
+        background: var(--raise);
+        border-radius: 1.25rem;
+        box-shadow: 0 1px 2px rgb(20 24 31 / 0.05), 0 18px 40px -28px rgb(20 24 31 / 0.35);
+      }
+
+      .receipt-line {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.5rem;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 0.8125rem;
+        color: var(--ink-2);
+      }
+
+      .receipt-line:last-child {
+        border-bottom: 0;
+      }
+
+      .receipt-line b {
+        min-width: 5.5rem;
+        color: var(--ink-3);
+        font-weight: 400;
+      }
+
+      .ok {
+        color: var(--clear);
+      }
+
+      /* ============================ SCREEN 2 · SIGN IN ============================ */
+      .auth {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: center;
+        gap: 4rem;
+        min-height: 40rem;
+        padding-block: 4rem;
+      }
+
+      .auth-card {
+        max-width: 27rem;
+        padding: 2.5rem;
+        background: var(--raise);
+        border-radius: 1.75rem;
+        box-shadow: 0 1px 2px rgb(20 24 31 / 0.05), 0 24px 56px -32px rgb(20 24 31 / 0.4);
+      }
+
+      .field {
+        margin-top: 1.2rem;
+      }
+
+      .field label {
+        display: block;
+        margin-bottom: 0.4rem;
+        font-size: 0.8125rem;
+        font-weight: 500;
+      }
+
+      .field input {
+        width: 100%;
+        height: 2.875rem;
+        padding: 0 1rem;
+        border: 1.5px solid var(--line);
+        border-radius: 999px;
+        background: var(--ground);
+        font: inherit;
+      }
+
+      .field input:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 1px;
+      }
+
+      .guest {
+        margin-top: 1.1rem;
+        padding: 0.9rem 1.1rem;
+        border-radius: 1rem;
+        background: color-mix(in oklab, var(--pen) 8%, var(--ground));
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        color: var(--ink-2);
+      }
+
+      /* ============================ SCREEN 3 · RECORD ============================ */
+      .app-bar {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        padding: 1rem 2rem;
+        background: var(--raise);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .app-bar .nav-links {
+        font-size: 0.875rem;
+      }
+
+      .app-bar .nav-links a[aria-current] {
+        font-weight: 500;
+        color: var(--ink);
+      }
+
+      .work {
+        max-width: 64rem;
+        margin: 0 auto;
+        padding: 2.5rem 2rem 4rem;
+      }
+
+      .work-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.75rem 1rem;
+      }
+
+      .work-head h2 {
+        font-size: 2rem;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        height: 1.625rem;
+        padding: 0 0.7rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .pill-ring {
+        border: 1.5px solid var(--line);
+        color: var(--ink-2);
+      }
+
+      .pill-solid {
+        background: var(--ink);
+        color: var(--raise);
+      }
+
+      /* The summary reads as five bubbles sized by count, so the shape of the paper is
+         legible before a single word is. */
+      .summary {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+      }
+
+      .sfilter {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        height: 2.375rem;
+        padding: 0 0.9rem 0 0.6rem;
+        border: 1.5px solid transparent;
+        border-radius: 999px;
+        background: color-mix(in oklab, currentColor 9%, var(--raise));
+        font-size: 0.8125rem;
+        font-weight: 500;
+        transition: border-color 0.15s var(--ease);
+      }
+
+      .sfilter:hover,
+      .sfilter[aria-pressed='true'] {
+        border-color: currentColor;
+      }
+
+      .sfilter .n {
+        display: inline-grid;
+        place-items: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 1.5px solid currentColor;
+        border-radius: 999px;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+      }
+
+      .attention {
+        margin-left: auto;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--pen);
+      }
+
+      .items {
+        margin-top: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .item {
+        display: grid;
+        grid-template-columns: 3rem minmax(0, 1fr);
+        gap: 0 1.25rem;
+        padding: 1.25rem 1.5rem;
+        background: var(--raise);
+        border-radius: 1.25rem;
+        box-shadow: 0 1px 2px rgb(20 24 31 / 0.05);
+      }
+
+      .item.flag {
+        box-shadow: 0 1px 2px rgb(20 24 31 / 0.05), 0 14px 32px -26px rgb(20 24 31 / 0.5);
+      }
+
+      .item .idx {
+        font-family: var(--mono);
+        font-size: 0.875rem;
+        color: var(--ink-3);
+        padding-top: 0.15rem;
+      }
+
+      .item .stem {
+        font-family: var(--paper);
+        font-size: 1.0625rem;
+        line-height: 1.45;
+      }
+
+      .item.flag .stem {
+        font-size: 1.1875rem;
+      }
+
+      .head-row {
+        display: flex;
+        gap: 1.25rem;
+        align-items: flex-start;
+      }
+
+      .vlabel {
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .vlabel .d {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 999px;
+        background: currentColor;
+      }
+
+      /* The row-scale version of the hero figure. The key is the filled bubble; a reader's
+         pick is a ring drawn around whichever bubble they chose. Two rings on one bubble is
+         agreement, and two rings apart is a split, at 22 px. */
+      .readrow {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.85rem;
+      }
+
+      .slot {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 1.375rem;
+        height: 1.375rem;
+        border: 1.5px solid var(--ink-3);
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--ink-3);
+      }
+
+      .slot.key {
+        background: var(--ink);
+        border-color: var(--ink);
+        color: var(--raise);
+      }
+
+      .slot::after,
+      .slot::before {
+        content: '';
+        position: absolute;
+        border-radius: 999px;
+        border: 1.5px solid transparent;
+      }
+
+      .slot.ra::before {
+        inset: -0.28rem;
+        border-color: var(--ink);
+      }
+
+      .slot.rb::after {
+        inset: -0.56rem;
+        border-color: var(--ink-3);
+      }
+
+      .why {
+        margin-top: 0.85rem;
+        max-width: 66ch;
+        font-size: 0.875rem;
+        color: var(--ink-2);
+      }
+
+      .why b {
+        color: var(--ink);
+        font-weight: 500;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        margin-top: 0.9rem;
+        font-size: 0.875rem;
+      }
+
+      .link {
+        background: none;
+        border: 0;
+        padding: 0;
+        font-weight: 500;
+        text-decoration: underline;
+        text-underline-offset: 0.25em;
+      }
+
+      .link.pen {
+        color: var(--pen);
+      }
+
+      .ev {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 1.1rem;
+        padding: 1.35rem;
+        border-radius: 1rem;
+        background: var(--ground);
+      }
+
+      .ev h3 {
+        margin: 0 0 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+
+      .ev .model {
+        font-family: var(--mono);
+        font-size: 0.8125rem;
+      }
+
+      .ev .quote {
+        margin-top: 0.55rem;
+        font-family: var(--paper);
+        font-style: italic;
+        font-size: 0.9375rem;
+        line-height: 1.5;
+        color: var(--ink-2);
+      }
+
+      .ev .rid {
+        margin-top: 0.7rem;
+        padding-top: 0.55rem;
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--ink-3);
+      }
+
+      .quiet {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem 1.25rem;
+        padding: 0.85rem 1.5rem;
+        background: var(--raise);
+        border-radius: 999px;
+        font-size: 0.9375rem;
+      }
+
+      .quiet .idx {
+        font-family: var(--mono);
+        font-size: 0.8125rem;
+        color: var(--ink-3);
+        min-width: 1.5rem;
+      }
+
+      .quiet .stem {
+        flex: 1;
+        min-width: 14rem;
+        font-family: var(--paper);
+        color: var(--ink-2);
+      }
+
+      @media (max-width: 62rem) {
+        .hero,
+        .two,
+        .auth,
+        .ev {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .fields {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame-label">
+      Direction C · Two Readers <span>Screen 1 of 3 — Landing</span>
+      <a href="index.html">All three directions ↩</a>
+    </div>
+
+    <!-- ============================ LANDING ============================ -->
+    <div class="wrap">
+      <header class="nav">
+        <a class="lockup" href="/">
+          <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M25 12a20 20 0 1 0 0 40 20 20 0 0 0 0-40Zm14.5 3.2a20 20 0 0 0-8.2 1.9 23 23 0 0 1 0 29.8 20 20 0 1 0 8.2-31.7Z"
+            />
+            <circle cx="39.5" cy="32" r="17" fill="none" stroke="currentColor" stroke-width="3" />
+            <path d="M22 34.5 30 43l16-22" fill="none" stroke="var(--pen)" stroke-width="4.5" stroke-linecap="round" />
+          </svg>
+          Cekgu
+        </a>
+        <nav class="nav-links">
+          <a href="/how-it-works">How It Works</a>
+          <a href="/sample">Sample Report</a>
+          <a href="/pricing">Pricing</a>
+          <a href="/trust">Trust and Privacy</a>
+        </nav>
+        <a class="btn btn-solid" href="/sign-in">Sign In</a>
+      </header>
+
+      <section class="hero">
+        <div>
+          <h1>Two readers see your paper before your learners do.</h1>
+          <p class="lead">
+            Cekgu withholds your answer key and asks two independent models to sit every question blind. Where they
+            agree with each other and disagree with you, that is worth a second look.
+          </p>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2rem">
+            <a class="btn btn-solid" href="/sign-in">Try Cekgu</a>
+            <a class="btn btn-ring" href="/sample">See a Real Report</a>
+          </div>
+        </div>
+
+        <figure class="converge" style="margin: 0">
+          <svg viewBox="0 0 400 400" role="img" aria-label="Two readers converging on the same answer">
+            <g class="reader-a">
+              <circle cx="160" cy="200" r="112" fill="var(--ink)" />
+            </g>
+            <g class="reader-b">
+              <circle cx="240" cy="200" r="112" fill="none" stroke="var(--ink)" stroke-width="9" />
+            </g>
+            <path
+              class="verdict-draw"
+              d="M128 210 L178 258 L272 138"
+              fill="none"
+              stroke="var(--pen)"
+              stroke-width="15"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <figcaption>Two independent readings, and the mark that only a person can make.</figcaption>
+        </figure>
+      </section>
+    </div>
+
+    <section class="fields">
+      <div class="field-v" style="background: var(--key)">
+        <div class="figure"><span class="on"></span><span></span></div>
+        <h2>Possible Key Error</h2>
+        <p>Both readers agreed on an option that is not the one you keyed.</p>
+        <span class="count">2</span>
+      </div>
+      <div class="field-v" style="background: var(--amb)">
+        <div class="figure"><span class="half"></span><span class="half"></span></div>
+        <h2>Possible Ambiguity</h2>
+        <p>Each reader found more than one option it could defend.</p>
+        <span class="count">1</span>
+      </div>
+      <div class="field-v" style="background: var(--split)">
+        <div class="figure"><span class="on"></span><span class="on" style="opacity: 0.5"></span></div>
+        <h2>Split Opinion</h2>
+        <p>The two readers disagreed with each other. The machine has no opinion to offer.</p>
+        <span class="count">0</span>
+      </div>
+      <div class="field-v" style="background: var(--unver)">
+        <div class="figure"><span class="dash"></span></div>
+        <h2>Unverified</h2>
+        <p>Fewer than two readings survived verification, so Cekgu says nothing.</p>
+        <span class="count">0</span>
+      </div>
+      <div class="field-v" style="background: var(--clear)">
+        <div class="figure"><span class="on"></span></div>
+        <h2>Clear</h2>
+        <p>Both readers chose your key. Nothing is being asked of you.</p>
+        <span class="count">9</span>
+      </div>
+    </section>
+
+    <div class="wrap band two">
+      <div>
+        <h2 style="font-size: clamp(1.75rem, 3.2vw, 2.5rem)">Why the key is withheld</h2>
+        <div class="prose" style="margin-top: 1.25rem">
+          <p>
+            One AI gives you one opinion, and it will happily agree with the answer key you show it. So Cekgu never
+            shows it. Each reader sees the stem and the options and nothing else, and answers as a candidate would.
+          </p>
+          <p>
+            <strong>Two different model families</strong> are used rather than the same model twice, because one model
+            asked twice is one opinion with extra steps.
+          </p>
+          <p>
+            Cekgu is a first pass, not a vetting committee, and agreement between models is not proof of truth. It does
+            not certify a paper, change a key, or grade anyone.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <p class="eyebrow" style="margin-bottom: 0.9rem">Question 3 · both readings</p>
+        <div class="receipt-line"><b>reader a</b> <span>moonshotai/Kimi-K2.6</span> <span class="ok">✓ verified</span></div>
+        <div class="receipt-line"><b></b> <span>req-1788426625321985624-411634</span></div>
+        <div class="receipt-line"><b>reader b</b> <span>MiniMaxAI/MiniMax-M2.7</span> <span class="ok">✓ verified</span></div>
+        <div class="receipt-line"><b></b> <span>req-1788426625329857263-411637</span></div>
+        <p style="margin-top: 1.1rem; font-size: 0.8125rem; color: var(--ink-2)">
+          Every inference runs through GonkaRouter. The request id beside each reading is the one the gateway issued,
+          and it resolves to a receipt you can open.
+        </p>
+      </div>
+    </div>
+
+    <!-- ============================ SIGN IN ============================ -->
+    <div class="frame-label">Direction C · Two Readers <span>Screen 2 of 3 — Sign In</span></div>
+
+    <div class="wrap">
+      <section class="auth">
+        <div class="auth-card">
+          <a class="lockup" href="/" style="font-size: 1.1875rem">
+            <svg width="22" height="22" viewBox="0 0 64 64" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M25 12a20 20 0 1 0 0 40 20 20 0 0 0 0-40Zm14.5 3.2a20 20 0 0 0-8.2 1.9 23 23 0 0 1 0 29.8 20 20 0 1 0 8.2-31.7Z"
+              />
+              <circle cx="39.5" cy="32" r="17" fill="none" stroke="currentColor" stroke-width="3" />
+              <path
+                d="M22 34.5 30 43l16-22"
+                fill="none"
+                stroke="var(--pen)"
+                stroke-width="4.5"
+                stroke-linecap="round"
+              />
+            </svg>
+            Cekgu
+          </a>
+          <h2 style="margin-top: 1.75rem; font-size: 1.875rem">Sign In</h2>
+          <div class="field">
+            <label for="c-email">Email</label>
+            <input id="c-email" type="email" placeholder="you@school.edu.my" />
+          </div>
+          <div class="field">
+            <label for="c-pass">Password</label>
+            <input id="c-pass" type="password" />
+          </div>
+          <div style="display: flex; gap: 0.7rem; margin-top: 1.5rem">
+            <button class="btn btn-solid" type="button">Sign In</button>
+            <button class="btn btn-ring" type="button">Create an Account</button>
+          </div>
+          <hr style="margin: 1.75rem 0 1.25rem; border: 0; border-top: 1px solid var(--line)" />
+          <button class="btn btn-ring" type="button" style="width: 100%; justify-content: center">
+            Sign In as Guest
+          </button>
+          <p class="guest">
+            <b style="color: var(--ink); font-weight: 500">Shared demo workspace.</b> Anything you add can be viewed or
+            deleted by other guests. Do not enter real, personal or confidential exam content.
+          </p>
+        </div>
+
+        <!-- The atom again, at rest. Sign-in is the one screen with nothing to report, so the
+             figure holds still rather than performing. -->
+        <div style="display: grid; place-items: center">
+          <svg viewBox="0 0 400 300" style="width: 100%; max-width: 26rem" role="img" aria-label="The Cekgu mark">
+            <circle cx="165" cy="150" r="86" fill="var(--ink)" opacity="0.09" />
+            <circle cx="235" cy="150" r="86" fill="none" stroke="var(--ink)" stroke-width="7" opacity="0.16" />
+          </svg>
+          <p style="margin-top: 1rem; max-width: 34ch; text-align: center; color: var(--ink-2)">
+            Nine of twelve questions on the sample paper came back Clear. The other three are waiting inside.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================ RECORD ============================ -->
+    <div class="frame-label">
+      Direction C · Two Readers <span>Screen 3 of 3 — Record workspace</span>
+    </div>
+
+    <div class="app-bar">
+      <a class="lockup" href="/" style="font-size: 1.125rem">
+        <svg width="20" height="20" viewBox="0 0 64 64" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M25 12a20 20 0 1 0 0 40 20 20 0 0 0 0-40Zm14.5 3.2a20 20 0 0 0-8.2 1.9 23 23 0 0 1 0 29.8 20 20 0 1 0 8.2-31.7Z"
+          />
+          <circle cx="39.5" cy="32" r="17" fill="none" stroke="currentColor" stroke-width="3" />
+          <path d="M22 34.5 30 43l16-22" fill="none" stroke="var(--pen)" stroke-width="4.5" stroke-linecap="round" />
+        </svg>
+        Cekgu
+      </a>
+      <nav class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/new-check">New Check</a>
+        <a href="/records" aria-current="page">Records</a>
+        <a href="/settings">Settings</a>
+      </nav>
+    </div>
+
+    <div class="work">
+      <div class="work-head">
+        <h2>Introductory computer science practice set</h2>
+        <span class="pill pill-ring">Ready</span>
+        <span class="pill pill-solid">Sample</span>
+      </div>
+      <p style="margin-top: 0.4rem; font-size: 0.875rem; color: var(--ink-2)">
+        Computer Science · English · 12 questions · preserved benchmark evidence
+      </p>
+
+      <div class="summary">
+        <button type="button" class="sfilter" aria-pressed="true" style="color: var(--key)">
+          <span class="n">2</span> Possible Key Error
+        </button>
+        <button type="button" class="sfilter" style="color: var(--amb)"><span class="n">1</span> Possible Ambiguity</button>
+        <button type="button" class="sfilter" style="color: var(--split)"><span class="n">0</span> Split Opinion</button>
+        <button type="button" class="sfilter" style="color: var(--unver)"><span class="n">0</span> Unverified</button>
+        <button type="button" class="sfilter" style="color: var(--clear)"><span class="n">9</span> Clear</button>
+        <span class="attention">3 items need attention</span>
+      </div>
+
+      <div class="items">
+        <article class="item flag">
+          <span class="idx">3</span>
+          <div>
+            <div class="head-row">
+              <p class="stem">Which data structure removes elements in first in, first out order?</p>
+              <span class="vlabel" style="color: var(--key)"><span class="d"></span> Possible Key Error</span>
+            </div>
+            <div class="readrow" role="img" aria-label="Key A. Both readers chose B.">
+              <span class="slot key">A</span><span class="slot ra rb">B</span><span class="slot">C</span
+              ><span class="slot">D</span>
+            </div>
+            <p class="why">
+              Both readers chose <b>Queue</b>. The supplied key is <b>Stack</b>. Rule: two verified readings agree on a
+              non-key option, so Possible Key Error.
+            </p>
+            <div class="actions">
+              <button class="link pen" type="button">Mark This Item</button>
+              <button class="link" type="button">Hide Evidence</button>
+            </div>
+            <div class="ev">
+              <div>
+                <h3>Reader A</h3>
+                <p class="model">moonshotai/Kimi-K2.6</p>
+                <p class="quote">
+                  A queue is defined by the first-in, first-out principle, where elements are removed in the same order
+                  they were added. A stack uses last-in, first-out order.
+                </p>
+                <p class="rid">req-1788426625321985624-411634 · <span class="ok">verified</span></p>
+              </div>
+              <div>
+                <h3>Reader B</h3>
+                <p class="model">MiniMaxAI/MiniMax-M2.7</p>
+                <p class="quote">
+                  A queue is a linear structure that follows first-in, first-out when removing elements. A stack uses
+                  LIFO, and binary search trees and hash tables do not enforce a FIFO order.
+                </p>
+                <p class="rid">req-1788426625329857263-411637 · <span class="ok">verified</span></p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="item flag">
+          <span class="idx">9</span>
+          <div>
+            <div class="head-row">
+              <p class="stem">What is the main job of the Domain Name System?</p>
+              <span class="vlabel" style="color: var(--key)"><span class="d"></span> Possible Key Error</span>
+            </div>
+            <div class="readrow" role="img" aria-label="Key C. Both readers chose A.">
+              <span class="slot ra rb">A</span><span class="slot">B</span><span class="slot key">C</span
+              ><span class="slot">D</span>
+            </div>
+            <p class="why">
+              Both readers chose <b>Translating domain names into IP addresses</b>. The supplied key is
+              <b>Encrypting the traffic between a browser and a web server</b>.
+            </p>
+            <div class="actions">
+              <button class="link pen" type="button">Mark This Item</button>
+              <button class="link" type="button">Show Evidence</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="item flag">
+          <span class="idx">11</span>
+          <div>
+            <div class="head-row">
+              <p class="stem">How many bytes are there in one kilobyte?</p>
+              <span class="vlabel" style="color: var(--amb)"><span class="d"></span> Possible Ambiguity</span>
+            </div>
+            <div class="readrow" role="img" aria-label="Key C. Reader A chose A and reader B chose B.">
+              <span class="slot ra">A</span><span class="slot rb">B</span><span class="slot key">C</span>
+            </div>
+            <p class="why">
+              Both readers found more than one defensible option. Rule: two verified readings each identify more than
+              one defensible option, so Possible Ambiguity.
+            </p>
+            <div class="actions">
+              <button class="link pen" type="button">Mark This Item</button>
+              <button class="link" type="button">Show Evidence</button>
+            </div>
+          </div>
+        </article>
+
+        <div class="quiet">
+          <span class="idx">1</span>
+          <span class="stem">What is the time complexity of reading the element at a known index in an array?</span>
+          <span class="vlabel" style="color: var(--clear)"><span class="d"></span> Clear</span>
+        </div>
+        <div class="quiet">
+          <span class="idx">2</span>
+          <span class="stem">Which transport protocol retransmits lost segments so that data arrives in order?</span>
+          <span class="vlabel" style="color: var(--clear)"><span class="d"></span> Clear</span>
+        </div>
+        <div class="quiet">
+          <span class="idx">4</span>
+          <span class="stem">In big-O notation, what does O(n) say about an algorithm?</span>
+          <span class="vlabel" style="color: var(--clear)"><span class="d"></span> Clear</span>
+        </div>
+        <div class="quiet">
+          <span class="idx">5</span>
+          <span class="stem">Mutual exclusion, hold and wait, and no preemption are three of four. The fourth?</span>
+          <span class="vlabel" style="color: var(--clear)"><span class="d"></span> Clear</span>
+        </div>
+        <div class="quiet">
+          <span class="idx">6</span>
+          <span class="stem">Which layer of the TCP/IP model does HTTP belong to?</span>
+          <span class="vlabel" style="color: var(--clear)"><span class="d"></span> Clear</span>
+        </div>
+        <div class="quiet">
+          <span class="idx">7</span>
+          <span class="stem">What does a primary key guarantee about a relational table?</span>
+          <span class="vlabel" style="color: var(--clear)"><span class="d"></span> Clear</span>
+        </div>
+        <div class="quiet">
+          <span class="idx">8</span>
+          <span class="stem">What does a compiler do with a source program?</span>
+          <span class="vlabel" style="color: var(--clear)"><span class="d"></span> Clear</span>
+        </div>
+        <div class="quiet">
+          <span class="idx">10</span>
+          <span class="stem">Why does a processor have a cache?</span>
+          <span class="vlabel" style="color: var(--clear)"><span class="d"></span> Clear</span>
+        </div>
+        <div class="quiet">
+          <span class="idx">12</span>
+          <span class="stem">What does creating a branch in Git let a developer do?</span>
+          <span class="vlabel" style="color: var(--clear)"><span class="d"></span> Clear</span>
+        </div>
+      </div>
+
+      <p style="margin-top: 1.5rem; font-size: 0.8125rem; color: var(--ink-2); text-align: center">
+        The inner ring is reader A and the outer ring is reader B. Two rings on the filled bubble means both agreed with
+        your key; two rings on the same unfilled bubble is the finding.
+      </p>
+    </div>
+  </body>
+</html>

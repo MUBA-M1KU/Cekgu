@@ -1,0 +1,85 @@
+/* Shared only by the three proposal pages: the frame chrome that presents a screen, never the
+   screens themselves. Each direction owns every token inside its own file, because the point of
+   the exercise is that they disagree about colour, type and density. Nothing here ships. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* The band that names each screen. It sits outside the design so it can be ignored while
+   judging one, and it is deliberately ugly-neutral: system font, no colour of its own. */
+.frame-label {
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 1rem;
+  padding: 0.5rem 1.25rem;
+  border-block: 1px solid #3a3a3a;
+  background: #111;
+  color: #fff;
+  font:
+    500 0.75rem / 1.4 ui-sans-serif,
+    system-ui,
+    sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.frame-label span {
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  opacity: 0.62;
+}
+
+.frame-label a {
+  margin-left: auto;
+  color: inherit;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  opacity: 0.62;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* biome-ignore lint/complexity/noImportantStyles: this reset must outrank every
+       per-component animation, or the guarantee is silently dropped. */
+    animation-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: this reset must outrank every
+       per-component animation, or the guarantee is silently dropped. */
+    animation-iteration-count: 1 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: this reset must outrank every
+       per-component animation, or the guarantee is silently dropped. */
+    transition-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: this reset must outrank every
+       per-component animation, or the guarantee is silently dropped. */
+    scroll-behavior: auto !important;
+  }
+}
