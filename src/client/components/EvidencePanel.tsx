@@ -65,18 +65,35 @@ function seconds(ms: number | null): string {
   return ms === null ? '—' : `${(ms / 1000).toFixed(1)}s`
 }
 
-// A reader's column: model name, its own bubble row, its rationale, then the provenance block.
-// Model names and request ids are text so a judge can copy an id into the receipt URL during Q&A.
+// The cats are the two SEATS, never a particular model: which family serves a seat varies per
+// item, so a fixed cat-to-model mapping would be a lie. The seat is named above the served model
+// rather than instead of it, because the model name is what a judge reads out and copies.
+const SEATS = [
+  { label: 'Reader A', src: '/mascots/tororo.png' },
+  { label: 'Reader B', src: '/mascots/hijiki.png' }
+]
+
+// A reader's column: seat, model name, its own bubble row, its rationale, then the provenance
+// block. Model names and request ids are text so a judge can copy an id into the receipt URL.
 //
-// Above 720px the column is a subgrid of the panel's ten rows, so both readers' model names,
-// bubbles, rationales and provenance lines sit on the same baselines however long either reason
-// runs. The rows are an invisible table; nothing here draws a rule or a cell.
-function ReaderColumn({ item, attempt }: { item: Item; attempt: Attempt }) {
+// Above 720px the column is a subgrid of the panel's eleven rows, so both readers' seats, model
+// names, bubbles, rationales and provenance lines sit on the same baselines however long either
+// rationale runs. The rows are an invisible table; nothing here draws a rule or a cell.
+function ReaderColumn({ item, attempt, seat }: { item: Item; attempt: Attempt; seat: number }) {
   const reading = attempt.reading
   if (!reading) return null
+  const who = SEATS[seat]
 
   return (
-    <div className="min-w-0 min-[720px]:grid min-[720px]:row-span-10 min-[720px]:grid-rows-subgrid">
+    <div className="min-w-0 min-[720px]:grid min-[720px]:row-span-11 min-[720px]:grid-rows-subgrid">
+      {who ? (
+        <p className="mb-3 flex items-center gap-2">
+          <img src={who.src} alt="" aria-hidden="true" className="h-8 w-8 shrink-0 object-contain" />
+          <span className="type-label">{who.label}</span>
+        </p>
+      ) : (
+        <div />
+      )}
       <p className="type-eyebrow text-ink-muted">Served Model</p>
       <p className="type-mono mt-1 break-words">{attempt.servedModel}</p>
 
@@ -140,13 +157,13 @@ export function EvidencePanel({ item }: { item: Item }) {
     <div className="mt-4 bg-well p-4 sm:p-6">
       <h3 className="type-eyebrow text-ink-muted">Evidence</h3>
 
-      <div className="mt-4 flex flex-col gap-6 min-[720px]:grid min-[720px]:grid-cols-2 min-[720px]:grid-rows-[repeat(10,auto)] min-[720px]:gap-x-8 min-[720px]:gap-y-0">
-        {readers[0] ? <ReaderColumn item={item} attempt={readers[0]} /> : null}
+      <div className="mt-4 flex flex-col gap-6 min-[720px]:grid min-[720px]:grid-cols-2 min-[720px]:grid-rows-[repeat(11,auto)] min-[720px]:gap-x-8 min-[720px]:gap-y-0">
+        {readers[0] ? <ReaderColumn item={item} attempt={readers[0]} seat={0} /> : null}
 
         {readers[1] ? (
-          <ReaderColumn item={item} attempt={readers[1]} />
+          <ReaderColumn item={item} attempt={readers[1]} seat={1} />
         ) : (
-          <div className="min-w-0 min-[720px]:row-span-10">
+          <div className="min-w-0 min-[720px]:row-span-11">
             <p className="type-eyebrow text-ink-muted">No Second Reading</p>
             <p className="mt-2 max-w-[46ch] type-body">
               Only one model family produced a reading Cekgu could admit, so no verdict is given. The attempts below

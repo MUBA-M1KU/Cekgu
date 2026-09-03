@@ -21,6 +21,8 @@ recommendation, and links to each. Everything is static: no build step, no serve
 | [`c-two-readers.html`](c-two-readers.html)   | Direction C. Same three screens                                                 |
 | `_shared.css`                                | The band that labels each screen. Frame chrome only, shared by nothing else     |
 | `current-*.jpg`                              | The deployed screens as they were on 3 September, so the diagnosis is evidenced |
+| `mascot-sprites.png`                         | The eight-pose mascot sheet. 1152 x 576, four columns by two rows, 288 px cells |
+| `cat-*.png`                                  | The four poses direction C places, cut from the same renders as the sheet       |
 
 Each direction page is one scroll through three screens, separated by a labelled black band. The band is not part of any
 design; it is there so a screen can be judged without the label competing with it.
@@ -59,6 +61,80 @@ Six revisions, all from the owner's notes on 3 September.
 The evidence-panel use is the one that earns its place rather than decorating: the cats are the two **seats**, never a
 particular model. Which family serves a seat varies per item, so a fixed cat-to-model mapping would be a lie.
 
+## The second revision
+
+Four more notes from the owner, after seeing the first revision.
+
+- **The mascot images are generated now, not cropped from the Live2D preview.** `cat-tororo.png` and `cat-hijiki.png`
+  are a chibi pair produced through the Codex CLI in one image and split, so the two read as siblings rather than as two
+  separate generations. They carry their own outline, which is why the tinted disc that was propping the white cat up on
+  white surfaces could go. The Live2D rig is unchanged and still owns the animated stage
+- **The mascot appears in three places, not seven.** Hero, the Reader A and Reader B avatars in the evidence panel, and
+  the empty state. Dropped: the topbar run indicator, the drawer footer, the sign-in greeting, and step two of How It
+  Works — that last one put the cats 200 px below the hero that already introduces them, and the same claim is made more
+  precisely by two rings converging on one bubble
+- **Sign-in is back to the first version**: one card beside a quiet figure rather than two centred cards, and without
+  the shared-workspace note
+- **The post-auth shell is SolarSim's, taken as-is.** A 64 px rail that expands to 200 px on hover with a blurred
+  backdrop, section headings that crossfade from divider to label, an active item marked by a 2 px bar; a 56 px glass
+  topbar offset by the rail carrying breadcrumbs, a theme switch, a notification popover with an unread badge and a
+  profile popover; and the padded content container. The footer is MakanLah's: right-aligned, stacked, glass, and
+  deliberately almost empty
+
+### The hero clip carries a watermark, and it is still there
+
+Gemini bakes a four-point sparkle into the frame at roughly 91% across and 83% down — its AI-content mark. The hero
+scales the clip **1.14x from its top left**, which carries that corner past the right edge of the visible crop. It costs
+14% of the frame rather than the 26% the first pass spent, and the better half is what survives: the nib and the marked
+bubble sit top-left, the lower right is empty paper.
+
+This is checked rather than assumed. A script walks the live DOM at **sixty viewport sizes**, from 768 x 700 to 2560 x
+1440, computes where the sparkle lands under `object-fit: cover` plus the element transform, and asserts its bounding
+box falls outside the media box. All sixty are clean.
+
+**The mark has not been removed from `hero.mp4`.** Stripping a provider's provenance mark from an asset is a decision
+about how the project represents its own material, not a formatting choice, so it is left for the owner to make
+deliberately. Anyone reframing or reusing this clip should know the mark is in the file.
+
+## The third revision
+
+Four more notes from the owner, after seeing the second revision.
+
+- **The cats are redrawn.** The generated chibi pair was still a flat vector cartoon with a black outline, which reads
+  as clip art beside a photographic hero. The set is now soft-matte 3D: no outlines, one diffuse key light from the
+  upper left, chibi proportions, pointed neko ears, and a matte finish with no specular. The art direction is
+  **PandAI**, the mascot set the owner made for another project, named as the reference rather than approximated from
+  memory
+- **There is a sprite sheet.** Eight poses on `mascot-sprites.png`, Tororo on the top row and Hijiki on the bottom, four
+  columns each: bust, reading, considering and greeting for Tororo; bust, on the edge, flagging and asleep for Hijiki.
+  `index.html` shows the sheet by driving `background-position` over the real file, so what is on that page is the sheet
+  working rather than a picture of it
+- **The hero carries one cat, not two.** Hijiki is draped over the line where the hero ends: body on the light ground,
+  both front paws hanging across the ticker band below it
+- **The record workspace centres its content.** `.doc` capped the measure at 60 rem without an auto margin, so the whole
+  document hung off the left edge of a 100 rem container and left a gutter of up to 320 px on the right alone
+
+### Placing the hero cat
+
+The pose was rendered around an invisible ledge, and the alpha channel says where it falls: scanning row coverage, the
+body ends and the two hanging paws begin at **66.3%** of the image height. So the offset that puts the paws on the
+boundary is `calc(var(--cat-w) * -0.345)` — that fraction times the 1.025 aspect ratio — computed from the artwork
+rather than nudged until it looked right. Resizing the cat keeps the grip on the line.
+
+Only three of the eight poses are placed: the hero, the two evidence-panel avatars, and the empty state. The empty state
+takes the sleeping pose, because a reader with nothing to read is asleep and that is the state the screen is reporting.
+The other five exist so that a screen needing a character later does not need a new render on the day.
+
+Two notes for anyone re-exporting these. The empty state's mascot sits on a disc of `--sunk`, because the sleeping pose
+is a black cat and the dark theme's card is within a few points of the same value; the disc is the ground it needs, not
+decoration. And the PNGs are colour-quantised to 255 entries but keep their **original alpha channel byte for byte** — a
+straight palette conversion folds the transparent background into a low-alpha entry, which is invisible on a light
+ground and a pale square around the cat on a dark one.
+
+**The two cats are not drawn in one consistent fur language.** The busts and Tororo reading came back tufted; the
+remaining five came back smooth. Every pose that shares a screen with another shares its treatment, so nothing on screen
+is mismatched, but anyone extending the set should generate against the smooth renders and expect to redo the busts.
+
 ## What the diagnosis rests on
 
 Measured against the deployed build at 1440 px and at 853 px, which is a 1280 px projector at the 150% zoom the demo
@@ -96,6 +172,10 @@ Re-running it after C's revision found eight more contrast failures introduced b
 those are fixed the same way. Two findings are new and declined: `marquee` on the trust band, which is the structure the
 owner asked for and which the reduced-motion reset in `_shared.css` stops outright; and one `tight-leading`, which is a
 4.75 rem display line at 1.05 and correct at that size.
+
+The third revision was measured against that same baseline rather than reported on its own: the detector returns the
+**identical set of findings** on `c-two-readers.html` and `index.html` before and after it, rule for rule and count for
+count, so the mascot work and the centring fix introduced nothing new.
 
 All four pages render with **zero page errors and no horizontal overflow** at 1440 px and 853 px.
 

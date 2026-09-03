@@ -63,7 +63,7 @@ describe('the pages', () => {
   })
 
   test('price the four plans as pilot plans', () => {
-    const pricing = read('pages/Pricing.tsx')
+    const pricing = read('pages/home/PricingSection.tsx')
     const plans: [string, string][] = [
       ['Guest', 'RM0'],
       ['Free', 'RM0'],

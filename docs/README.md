@@ -278,7 +278,7 @@ e2e/                     Playwright: smoke.e2e.ts and flow.e2e.ts
 docs/                    this documentation tree, and the GitHub-facing readme
 .github/workflows/       CI on pull request with a preview URL, deploy on merge
 Dockerfile               the Cloud Run image
-.agents/skills/          36 skills, the committed source of truth
+.agents/skills/          37 skills, the committed source of truth
 .claude/skills/          symlinks into .agents/skills/, plus impeccable as a real dir
 .claude/agents/          pitch-smith
 .claude/hooks/           session brief, env drift, git guard, formatter
