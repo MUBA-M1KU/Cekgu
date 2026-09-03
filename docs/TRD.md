@@ -1077,6 +1077,13 @@ client falls back to polling `GET /api/records/:id` every 3 seconds if the strea
 **Public.** Returns the record with `is_sample = true` in the same shape as `GET /api/records/:id`, dispositions
 included, so the signed-out Sample Report renders the same evidence read-only (FR-SAMPLE-4).
 
+### `POST /api/sample/reset`
+
+**Guest only.** `PUBLIC_PATHS` lists `/api/sample` but not `/api/sample/reset`, so the session gate runs here. No body.
+Deletes every `dispositions` row belonging to the sample's items and sets the record back to `ready`, returning every
+sample item to Unreviewed before a rehearsal (FR-SAMPLE-3). Response `200`: `{ "reset": true }`, `403` `forbidden` for a
+private session, `404` `sample_not_loaded` when no sample is seeded.
+
 ### `POST /api/auth/guest`
 
 **Public.** No body. Signs the caller into the Guest user as described in [section 12](#12-auth-and-the-guest-account)
@@ -1101,10 +1108,6 @@ config route.
   "mascotEnabled": false
 }
 ```
-
-**Not yet placed.** FR-SAMPLE-3's **Reset Sample** clears every disposition on the sample record. It is one route,
-`POST /api/sample/reset`, Guest session only, deleting `dispositions` rows for the sample's items and setting the sample
-back to `ready`. It is listed here because the demo rehearsal depends on it and it was not in the decided list.
 
 ## 16. Provenance display
 
@@ -1203,5 +1206,4 @@ Every decision that was open on 2 September is now a section above.
 
 **What was fixed before any of this and still is:** the gateway, the model ids returned by `GET /v1/models`, the two
 base URLs, the no-fallback contract, receipt verification, and the requirement that every call returns its
-`x-request-id` alongside its content. The one item still without a contract is **Reset Sample**, named at the end of
-[section 15](#15-api-contracts).
+`x-request-id` alongside its content.
