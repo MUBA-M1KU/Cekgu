@@ -85,8 +85,10 @@ export function RecordWorkspace() {
           printed twice. DESIGN.md Layout. */}
       <div className="flex flex-wrap items-baseline gap-x-4">
         <VerdictFilters counts={record.counts} active={filter} onChange={setFilter} />
-        {/* The number asking for a decision, so it is the one count in pen red. DESIGN.md Colour. */}
-        <p className="type-label mt-4 ml-auto text-pen">
+        {/* The number asking for a decision, so it is the one count in pen red. DESIGN.md Colour.
+            Left-aligned under the chips it counts: ml-auto made it the only right-aligned element
+            on the page, floating away from the row it belongs to. */}
+        <p className="type-label mt-3 text-pen">
           {attentionCount} {attentionCount === 1 ? 'item needs' : 'items need'} attention
         </p>
       </div>
