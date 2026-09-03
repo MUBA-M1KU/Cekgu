@@ -89,11 +89,21 @@ jobs:
           docker push "$image"
           echo "image=$image" >> "$GITHUB_OUTPUT"
 
+      # A preview shares production's DATABASE_URL, which TRD section 10 chose knowing previews
+      # would write to production data. It did not anticipate a preview applying migrations to it
+      # or running the guest sweep's delete loop against it, and an unreviewed revision must do
+      # neither. Both flags default to on when unset, so production and local development are
+      # untouched and neither name belongs in the section 8 contract.
       - name: Render environment variables
         if: steps.service.outputs.exists == 'true'
         env:
           ALL_SECRETS: ${{ toJSON(secrets) }}
-        run: ./.github/scripts/render-env-vars.sh "$RUNNER_TEMP/env-vars.json"
+        run: |
+          ./.github/scripts/render-env-vars.sh "$RUNNER_TEMP/env-vars.json"
+          jq '. + { MIGRATE_ON_START: "false", WORKER_ENABLED: "false" }' \
+            "$RUNNER_TEMP/env-vars.json" > "$RUNNER_TEMP/env-vars.preview.json"
+          mv "$RUNNER_TEMP/env-vars.preview.json" "$RUNNER_TEMP/env-vars.json"
+          printf 'Preview env: %s\n' "$(jq -r 'keys | join(", ")' "$RUNNER_TEMP/env-vars.json")"
 
       # shell: bash adds pipefail, so a failed describe fails this step instead of posting an empty URL.
       # No traffic, and min-instances 0 so a preview revision is not held warm.
