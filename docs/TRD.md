@@ -235,7 +235,9 @@ Every reasoning request must:
 1. Send `X-Gonka-No-Fallback: true`.
 2. Capture `x-request-id`, `x-devshard-id` and `X-Gonka-Fallback` from the raw response.
 3. Reject the response if `X-Gonka-Fallback` is present, even if the body is otherwise successful.
-4. Query `GET /v1/receipts/{x-request-id}` and require the receipt's `model` to equal `requested_model`.
+4. Poll `GET /v1/receipts/{x-request-id}` until it answers, then require the receipt's `model` to equal
+   `requested_model`. The receipt lags the response and a single immediate fetch always misses it, which is
+   [gotcha 11](#5-verified-gotchas).
 5. Admit a result to consensus only when at least two successful records have different `served_model` values.
 
 Failure at any step returns **verification unavailable**, never a consensus answer. The receipt is unsigned gateway
@@ -243,18 +245,19 @@ metadata: it makes the serving model publicly inspectable, but it is not cryptog
 
 ## 5. Verified gotchas
 
-| #   | Gotcha                                               | Detail                                                                                                                                                        |
-| --- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **`<think>` leaks into MiniMax content**             | `MiniMaxAI/MiniMax-M2.7` emits raw `<think>…` inside the message content, on **both** surfaces. Verified twice. Must be stripped before display or comparison |
-| 2   | **Kimi leaks a stray `</think>`**                    | Observed `" p </think> pong"` on a short reply. Same stripping applies                                                                                        |
-| 3   | **Low `max_tokens` yields reasoning only**           | At `max_tokens=64`, MiniMax spent all 64 on `<think>` and returned no answer. **Keep `max_tokens >= 1024`**                                                   |
-| 4   | **Website model ids are wrong**                      | See [models](#3-models-measured). Trust `GET /v1/models`                                                                                                      |
-| 5   | **`/v1` asymmetry between protocols**                | See [the base URL rule](#1-gateway-base-urls-and-auth)                                                                                                        |
-| 6   | **Prompt caching unsupported**                       | The gateway does not implement Anthropic's prompt-caching headers. Disable client-side (`DISABLE_PROMPT_CACHING=1` for Claude Code)                           |
-| 7   | **Silent model fallback**                            | Send `X-Gonka-No-Fallback: true`; reject `X-Gonka-Fallback`; verify the served model via the public receipt before consensus                                  |
-| 8   | **Identical request bodies are cached**              | Byte-identical bodies in 70–190 ms for a repeated identical request at `temperature: 0.8`, each with a fresh id and receipt. Detail below                     |
-| 9   | **Long prompts yield reasoning only**                | On prompts around 1,500 tokens MiniMax failed roughly one call in three, once as raw reasoning with no JSON. Detail below                                     |
-| 10  | **Account concurrency is below the published burst** | A 36-call item fan-out returned account-level `429` responses instructing us to lower parallelism; four concurrent calls were accepted. Detail below          |
+| #   | Gotcha                                               | Detail                                                                                                                                                         |
+| --- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **`<think>` leaks into MiniMax content**             | `MiniMaxAI/MiniMax-M2.7` emits raw `<think>…` inside the message content, on **both** surfaces. Verified twice. Must be stripped before display or comparison  |
+| 2   | **Kimi leaks a stray `</think>`**                    | Observed `" p </think> pong"` on a short reply. Same stripping applies                                                                                         |
+| 3   | **Low `max_tokens` yields reasoning only**           | At `max_tokens=64`, MiniMax spent all 64 on `<think>` and returned no answer. **Keep `max_tokens >= 1024`**                                                    |
+| 4   | **Website model ids are wrong**                      | See [models](#3-models-measured). Trust `GET /v1/models`                                                                                                       |
+| 5   | **`/v1` asymmetry between protocols**                | See [the base URL rule](#1-gateway-base-urls-and-auth)                                                                                                         |
+| 6   | **Prompt caching unsupported**                       | The gateway does not implement Anthropic's prompt-caching headers. Disable client-side (`DISABLE_PROMPT_CACHING=1` for Claude Code)                            |
+| 7   | **Silent model fallback**                            | Send `X-Gonka-No-Fallback: true`; reject `X-Gonka-Fallback`; verify the served model via the public receipt before consensus                                   |
+| 8   | **Identical request bodies are cached**              | Byte-identical bodies in 70–190 ms for a repeated identical request at `temperature: 0.8`, each with a fresh id and receipt. Detail below                      |
+| 9   | **Long prompts yield reasoning only**                | On prompts around 1,500 tokens MiniMax failed roughly one call in three, once as raw reasoning with no JSON. Detail below                                      |
+| 10  | **Account concurrency is below the published burst** | A 36-call item fan-out returned account-level `429` responses instructing us to lower parallelism; four concurrent calls were accepted. Detail below           |
+| 11  | **The receipt is written asynchronously**            | `GET /v1/receipts/{id}` returns `404` immediately after the response and `200` about a second later. Verifying inline fails closed on every call. Detail below |
 
 **Stripping reasoning tags is not optional.** A consensus step that compares raw outputs will compare one model's answer
 against another model's internal monologue. Strip `<think>…</think>` and any orphaned tag before anything reads the
@@ -268,6 +271,40 @@ ran.
 **Gotcha 9, measured 2026-09-02.** On prompts around 1,500 tokens MiniMax failed roughly one call in three: a 524 after
 114 s, two aborts at 114 s, and one reply that was raw reasoning with no JSON — gotcha 3 at prompt scale. A deferred
 hedge is mandatory.
+
+**Gotcha 11, measured 2026-09-03.** The public receipt is not there when the response is. Six calls across MiniMax and
+Kimi all returned `404` from `GET /v1/receipts/{x-request-id}` on the first fetch after the body was read, and `200`
+between 664 ms and 808 ms later. Path, auth and query-string variants were all `404` in that window, so this is
+propagation delay rather than a wrong URL — the endpoint is unauthenticated and takes the id exactly as the header gives
+it. **A client that verifies the receipt inline and fails closed on `404` produces `unverified` for every item and no
+verdict ever renders.** Poll with a short interval and a budget of a few seconds instead. The body is:
+
+```json
+{
+  "x_request_id": "req-1788416980465962869-369929",
+  "x_devshard_id": "70158",
+  "model": "moonshotai/Kimi-K2.6",
+  "created_at": "2026-09-03T06:29:40Z",
+  "outcome": "success",
+  "status_code": 200,
+  "stream": false,
+  "total_tokens": 19,
+  "ttft_ms": 4,
+  "duration_ms": 4
+}
+```
+
+**The fallback substitution, reproduced 2026-09-03.** `deepseek-ai/DeepSeek-V4-Flash-0731` was saturated, which made the
+guard in [section 4](#cross-verification-validity-contract) demonstrable on one pair of calls:
+
+| Request                          | Result                                                                                  |
+| -------------------------------- | --------------------------------------------------------------------------------------- |
+| With `X-Gonka-No-Fallback: true` | `429`, `rate limit exceeded: too many concurrent requests`, no `x-request-id` at all    |
+| Without the header               | `200`, `X-Gonka-Fallback: deepseek-ai/DeepSeek-V4-Flash-0731 -> MiniMaxAI/MiniMax-M2.7` |
+
+The body's own `model` field read `MiniMaxAI/MiniMax-M2.7`. So a DeepSeek and MiniMax pair requested without the header
+would have been MiniMax twice, and nothing in the response body would have said so. Note the header's format is
+`<requested> -> <served>`, and that the `429` carries no `x-request-id`, so a rejected call has no receipt to show.
 
 **Gotcha 10, measured 2026-09-03.** A 36-call item-level fan-out produced account-level `429` responses with
 `{"error":{"code":"rate_limited","message":"too many concurrent requests for this account; lower your parallelism and retry"}}`.
