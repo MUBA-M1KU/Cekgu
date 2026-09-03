@@ -18,8 +18,11 @@ export function Home() {
           >
             Try Cekgu
           </Link>
-          <Link to="/sample" className="type-label underline">
-            See a real report first
+          <Link
+            to="/sample"
+            className="inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium"
+          >
+            See a Real Report
           </Link>
         </div>
       </Sheet>

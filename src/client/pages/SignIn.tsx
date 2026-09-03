@@ -104,9 +104,9 @@ export function SignIn() {
               setMode(mode === 'sign-in' ? 'sign-up' : 'sign-in')
               setError(null)
             }}
-            className="type-label underline"
+            className="inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium"
           >
-            {mode === 'sign-in' ? 'Create an account instead' : 'I already have an account'}
+            {mode === 'sign-in' ? 'Create an Account' : 'Use an Existing Account'}
           </button>
         </div>
 
