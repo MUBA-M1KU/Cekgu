@@ -425,7 +425,9 @@ section[id] {
   background: color-mix(in oklab, var(--sheet) 90%, transparent);
   backdrop-filter: blur(18px) saturate(170%);
   -webkit-backdrop-filter: blur(18px) saturate(170%);
-  box-shadow: 0 14px 30px -18px rgb(20 24 31 / 0.45);
+  /* A contact shadow, not a diffuse glow. The 1 px light border is what separates the card from
+     the photograph behind it; a wide blur on top of that is the generated-UI signature. */
+  box-shadow: 0 8px 16px -10px rgb(20 24 31 / 0.45);
 }
 
 @media (width >= 64rem) {
