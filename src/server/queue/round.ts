@@ -7,6 +7,10 @@ import { admitReading } from '../gateway/reading'
 // without the network, and so the semaphore lives at the worker rather than inside the logic.
 
 const ATTEMPTS_PER_FAMILY = 3
+// The client aborts at 90 s, so this should never fire. It exists because a round that can wait
+// forever holds its claim for the full lease and shows Checking on screen with nothing happening,
+// and the round should not depend on another module's timeout being the only thing that ends a call.
+const CALL_CEILING_MS = 120_000
 // Raised from 25 s on 3 September, measured. At 25 s the hedge fired on nearly every call — Kimi
 // answered an eight-token prompt in 24.8 s and a solver prompt in 52.7 s — so almost every reading
 // cost two gateway calls and two semaphore slots. That doubling is what produces the account-level
@@ -38,6 +42,8 @@ export type RoundDeps = {
   onAttempt: (attempt: AttemptRow) => Promise<void>
   onOutcome?: (model: string, ok: boolean, latencyMs: number) => void
   hedgeAfterMs?: number
+  // Only tests set this; production leaves it at CALL_CEILING_MS.
+  callCeilingMs?: number
   sleep?: (ms: number) => Promise<void>
 }
 
@@ -48,6 +54,7 @@ const defaultSleep = (ms: number) => new Promise<void>((resolve) => setTimeout(r
 export async function runRound(prompt: string, options: Option[], key: string, deps: RoundDeps): Promise<RoundResult> {
   const order = deps.order()
   const hedgeAfterMs = deps.hedgeAfterMs ?? HEDGE_AFTER_MS
+  const callCeilingMs = deps.callCeilingMs ?? CALL_CEILING_MS
   const sleep = deps.sleep ?? defaultSleep
 
   const budget = new Map(order.map((model) => [model, ATTEMPTS_PER_FAMILY]))
@@ -72,6 +79,52 @@ export async function runRound(prompt: string, options: Option[], key: string, d
       (model) =>
         !inUse.has(model) && !readings.some((reading) => reading.model === model) && (budget.get(model) ?? 0) > 0
     ) ?? null
+
+  // Every call resolves, whatever deps.call does. A provenance record that says the call never
+  // returned is worth more than a round that never ends: the attempt is still written, the budget
+  // is still spent, and the seat moves on to another family.
+  const callWithCeiling = async (model: string): Promise<Provenance> => {
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const ceiling = new Promise<Provenance>((resolve) => {
+      timer = setTimeout(
+        () =>
+          resolve({
+            content: '',
+            requestId: null,
+            devshardId: null,
+            requestedModel: model,
+            servedModel: null,
+            fallbackHeader: null,
+            receiptStatus: 'missing',
+            receipt: null,
+            httpStatus: null,
+            latencyMs: callCeilingMs,
+            error: `The call did not return within ${callCeilingMs / 1000} seconds and was abandoned.`
+          }),
+        callCeilingMs
+      )
+    })
+
+    try {
+      return await Promise.race([deps.call(model, prompt), ceiling])
+    } catch (cause) {
+      return {
+        content: '',
+        requestId: null,
+        devshardId: null,
+        requestedModel: model,
+        servedModel: null,
+        fallbackHeader: null,
+        receiptStatus: 'missing',
+        receipt: null,
+        httpStatus: null,
+        latencyMs: 0,
+        error: `The call failed before it reached the gateway. ${String(cause)}`
+      }
+    } finally {
+      clearTimeout(timer)
+    }
+  }
 
   const record = async (
     model: string,
@@ -121,7 +174,7 @@ export async function runRound(prompt: string, options: Option[], key: string, d
   // to sit above the measured completion floor rather than below it.
   const callOnce = async (model: string): Promise<Reading | null> => {
     const startedAt = new Date()
-    const primary = deps.call(model, prompt)
+    const primary = callWithCeiling(model)
     let done = false
     void primary.then(
       () => {
@@ -137,7 +190,7 @@ export async function runRound(prompt: string, options: Option[], key: string, d
     if (done || !spend(model)) return record(model, await primary, startedAt)
 
     const hedgeStartedAt = new Date()
-    const hedge = deps.call(model, prompt)
+    const hedge = callWithCeiling(model)
     const candidate = await Promise.race([
       primary.then((provenance) => ({ provenance, startedAt, other: hedge, otherStartedAt: hedgeStartedAt })),
       hedge.then((provenance) => ({

@@ -160,6 +160,53 @@ describe('runRound', () => {
   })
 })
 
+// Found on production, 3 September: a record sat on Checking for eight minutes with three rate-limited
+// attempts recorded and nothing else. One seat's call never returned, so the round never ended, the
+// claim was held for the whole lease and the screen said Checking with nothing happening.
+describe('a call that never returns', () => {
+  test('does not hang the round', async () => {
+    const recorded: AttemptRow[] = []
+
+    const result = await Promise.race([
+      runRound('prompt', OPTIONS, 'A', {
+        call: async (model) => {
+          if (model === DEEPSEEK) return failed(DEEPSEEK, 'The gateway answered 429.')
+          return new Promise<Provenance>(() => {})
+        },
+        order: () => [DEEPSEEK, MINIMAX],
+        onAttempt: async (attempt) => {
+          recorded.push(attempt)
+        },
+        hedgeAfterMs: 50,
+        callCeilingMs: 300
+      }),
+      new Promise<'hung'>((resolve) => setTimeout(() => resolve('hung'), 5_000))
+    ])
+
+    expect(result).not.toBe('hung')
+    expect(typeof result === 'object' && result.verdict).toBe('unverified')
+  }, 10_000)
+
+  test('is written as an attempt saying so, rather than vanishing', async () => {
+    const recorded: AttemptRow[] = []
+
+    await runRound('prompt', OPTIONS, 'A', {
+      call: async (model) => (model === MINIMAX ? new Promise<Provenance>(() => {}) : failed(model, 'down')),
+      order: () => [MINIMAX],
+      onAttempt: async (attempt) => {
+        recorded.push(attempt)
+      },
+      hedgeAfterMs: 50,
+      callCeilingMs: 200
+    })
+
+    const abandoned = recorded.filter((attempt) => attempt.rejectionReason?.includes('did not return'))
+    expect(abandoned.length).toBeGreaterThan(0)
+    expect(abandoned[0]?.requestId).toBeNull()
+    expect(abandoned[0]?.admitted).toBe(false)
+  }, 10_000)
+})
+
 describe('the deferred hedge', () => {
   test('a call that passes the hedge point fires a duplicate and both are recorded', async () => {
     const recorded: AttemptRow[] = []
