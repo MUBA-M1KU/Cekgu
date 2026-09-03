@@ -185,3 +185,26 @@ test('navigating away from a record with the mascot mounted keeps the app render
   await expect(page.getByRole('link', { name: 'Records' })).toBeVisible()
   expect(errors).toEqual([])
 })
+
+// PRODUCT.md lists Terms, Privacy and Acceptable Use as a launch requirement. The contract worth
+// holding is that a judge can reach all three from the product, so these assert hrefs and a
+// rendered heading rather than the prose: the copy is a legal notice that will be revised, and the
+// redesign in #44 rewrites the surface around it.
+const NOTICES = ['/terms', '/privacy', '/acceptable-use']
+
+test('every notice is reachable from Trust and Privacy', async ({ page }) => {
+  await page.goto('/trust')
+
+  for (const href of NOTICES) {
+    await expect(page.locator(`a[href="${href}"]`)).toBeVisible()
+  }
+})
+
+for (const href of NOTICES) {
+  test(`the notice at ${href} renders`, async ({ page }) => {
+    const response = await page.goto(href)
+
+    expect(response?.status()).toBe(200)
+    await expect(page.getByRole('heading', { level: 1 })).not.toBeEmpty()
+  })
+}
