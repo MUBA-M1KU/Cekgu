@@ -1,3 +1,4 @@
+import { Link } from 'react-router'
 import { Sheet } from '../components/Sheet'
 
 // FR-PUBLIC-2. The claims here are deliberately smaller than the product feels, because prompts
@@ -33,6 +34,21 @@ const FAQ = [
   }
 ]
 
+// PRODUCT.md's Terms, Privacy and Acceptable Use rows. The pages carry the notices; this is the way in.
+const NOTICES = [
+  { to: '/terms', name: 'Terms', gist: 'What Cekgu is for, the limits it sets, and how accounts and records work.' },
+  {
+    to: '/privacy',
+    name: 'Privacy',
+    gist: 'What is stored, where processing happens, who can see a record, and what deletion does.'
+  },
+  {
+    to: '/acceptable-use',
+    name: 'Acceptable Use',
+    gist: 'What must never be submitted, and how the shared Guest workspace may be used.'
+  }
+]
+
 export function Trust() {
   return (
     <>
@@ -58,6 +74,31 @@ export function Trust() {
             </div>
           ))}
         </dl>
+      </section>
+
+      <section className="mt-10">
+        <h2>Notices</h2>
+        <ul className="mt-5 m-0 list-none p-0">
+          {NOTICES.map((notice) => (
+            <li key={notice.to} className="border-t border-rule py-4">
+              <Link to={notice.to} className="type-label underline">
+                {notice.name}
+              </Link>
+              <p className="type-body m-0 mt-2 max-w-[64ch] text-ink-muted">{notice.gist}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="mt-10">
+        <h2>Reach the Team</h2>
+        <p className="type-body mt-4 max-w-[64ch]">
+          Cekgu is a hackathon demo built by a small team, not a staffed product. Reach us on X at{' '}
+          <a href="https://x.com/Cekgu0903" target="_blank" rel="noreferrer" className="underline">
+            @Cekgu0903
+          </a>
+          . There is no support desk behind that account and no promised reply time.
+        </p>
       </section>
     </>
   )
