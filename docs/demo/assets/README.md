@@ -48,3 +48,33 @@ du -sh docs/demo/
 du -h  docs/demo/pitch-deck.pdf
 du -ah docs/demo/assets | sort -h   # find the asset responsible
 ```
+
+## The fonts are inlined, and why
+
+The deck's three faces from [`DESIGN.md`](../../DESIGN.md) are **base64 woff2 inside
+[`pitch-deck.html`](../pitch-deck.html)**, one `@font-face` per family with a weight range, because all three are
+variable fonts.
+
+This is the one deliberate exception to the no-base64 rule above, and it is not a raster. A linked Google Fonts
+stylesheet fails in the two places that matter:
+
+- **Opening the file.** The deck is opened from `file://` on the demo laptop, and venue wifi is the one thing nobody
+  controls. A linked stylesheet means Helvetica on the projector
+- **Printing the PDF.** Chromium printed the whole deck in Helvetica whenever the font request had not resolved, and the
+  failure is silent
+
+A loose `assets/fonts/*.woff2` does not fix it either: Chromium treats `file://` as an opaque origin and blocks the
+cross-origin font fetch, so the deck only rendered correctly when the bytes were in the document.
+
+| Family                | Latin subset | Licence                   |
+| --------------------- | ------------ | ------------------------- |
+| **Schibsted Grotesk** | 46 KB        | SIL Open Font License 1.1 |
+| **Source Serif 4**    | 122 KB       | SIL Open Font License 1.1 |
+| **Spline Sans Mono**  | 36 KB        | SIL Open Font License 1.1 |
+
+Base64 costs a third more, so 204 KB of woff2 becomes 275 KB of CSS. Measured after: the HTML is 324 KB and `docs/demo/`
+is 924 KB, both inside the budget below. `font-display` is `block`, not `swap`, so a slide never flashes a fallback face
+in front of a judge.
+
+Re-fetch them from the same Google Fonts URL the scaffold's `src/client/index.html` uses, keep only the `/* latin */`
+blocks, and base64 each file once.

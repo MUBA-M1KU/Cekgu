@@ -187,7 +187,7 @@ export function NewCheck() {
                     {item.options.length > 2 ? (
                       <button
                         type="button"
-                        className="type-label shrink-0 text-ink-muted underline"
+                        className="inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium shrink-0"
                         onClick={() => {
                           const next = relabel(item.options.filter((_, i) => i !== optionIndex))
                           patchItem(index, {
@@ -233,7 +233,7 @@ export function NewCheck() {
           {items.length > 1 ? (
             <button
               type="button"
-              className="mt-5 type-label text-ink-muted underline"
+              className="mt-5 inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium"
               onClick={() => setItems((current) => current.filter((_, i) => i !== index))}
             >
               Remove Question {index + 1}

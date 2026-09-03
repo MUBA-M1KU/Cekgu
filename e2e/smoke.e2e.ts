@@ -4,18 +4,25 @@ import { expect, test } from '@playwright/test'
 // deployment. The steps that need screens which do not exist yet are marked below with the
 // issue that unblocks them, so a green run never implies the demo path is covered.
 
-test('the app serves its shell', async ({ page }) => {
+// Assert rendered content, never that #root is attached: an attached root passes against a
+// blank page, against a failed fetch rendered as an empty state, and against a React error
+// boundary. It proves the bundle parsed, not that the product works.
+
+test('the app renders its landing page', async ({ page }) => {
   const response = await page.goto('/')
 
   expect(response?.status()).toBe(200)
-  await expect(page.locator('#root')).toBeAttached()
+  // Not the heading's words: #45 rewrites product copy, and pinning it here would break on
+  // a change that is not a regression.
+  await expect(page.getByRole('heading', { level: 1 })).not.toBeEmpty()
+  await expect(page.getByRole('link', { name: 'Sign In' })).toBeVisible()
 })
 
 test('a client route falls back to the shell rather than 404ing', async ({ page }) => {
   const response = await page.goto('/records')
 
   expect(response?.status()).toBe(200)
-  await expect(page.locator('#root')).toBeAttached()
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 })
 
 test('an api path is refused without a session', async ({ request }) => {
@@ -44,9 +51,21 @@ test('an unknown api path answers json once signed in, not the shell', async ({ 
   expect(await response.json()).toMatchObject({ error: { code: 'not_found' } })
 })
 
-// Blocked on the screens, not on this file. Each becomes a real assertion when its issue lands.
-test.fixme('the guest workspace shows the warning banner', async () => {
-  // Needs the app shell and the Guest banner: #32.
+// FR-AUTH-2 and FR-AUTH-3, and the first step of the PRD demo acceptance test. The warning is
+// asserted word for word because FR-AUTH-3 fixes the sentence; it is not ordinary product copy.
+const GUEST_WARNING =
+  'Shared demo workspace. Anything you add can be viewed or deleted by other guests. Do not enter real, personal or confidential exam content.'
+
+test('sign in as guest lands in the guest workspace with the warning banner', async ({ page }) => {
+  await page.goto('/sign-in')
+
+  // FR-AUTH-3 requires the same sentence beside the button and again inside the workspace.
+  await expect(page.getByText(GUEST_WARNING)).toBeVisible()
+
+  await page.getByRole('button', { name: 'Sign In as Guest' }).click()
+
+  await expect(page).toHaveURL(/\/records$/)
+  await expect(page.getByText(GUEST_WARNING)).toBeVisible()
 })
 
 test.fixme('the sample record opens with its counts', async () => {
