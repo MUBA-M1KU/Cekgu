@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="640" viewBox="0 0 1080 640" role="img" aria-labelledby="title desc">
+  <title id="title">One service, one database, one gateway</title>
+  <desc id="desc">A signed-out educator reaches one Bun process on Cloud Run, which serves the Hono JSON API and the React client from one origin and runs the queue worker in-process behind an in-memory semaphore that caps four calls in flight. The worker claims rounds from Neon Postgres with SKIP LOCKED, every inference call goes through the GonkaRouter gateway, and GitHub Actions deploys the image via Artifact Registry.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 Z" fill="#17202b" /></marker>
+    <marker id="arrowgrey" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 Z" fill="#7a828c" /></marker>
+    <style>
+      text { font-family: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; fill: #17202b; }
+      .mono { font-family: 'Spline Sans Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; fill: #4f5a68; }
+      .title { font-size: 24px; font-weight: 700; }
+      .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; fill: #7a828c; }
+      .heading { font-size: 15px; font-weight: 700; }
+      .label { font-size: 13px; font-weight: 600; }
+      .small { font-size: 12px; fill: #4f5a68; }
+      .arrowlabel { font-size: 11px; font-weight: 700; fill: #4f5a68; }
+      .person { fill: #fbfaf7; stroke: #17202b; stroke-width: 2; }
+      .sheet { fill: #fbfaf7; stroke: #7a828c; stroke-width: 1.5; }
+      .well { fill: #eae7e0; stroke: #d6d2c9; stroke-width: 1.5; }
+      .store { fill: #eae7e0; stroke: #2c6e49; stroke-width: 2; }
+      .gateway { fill: #eae7e0; stroke: #17202b; stroke-width: 2; }
+      .group { fill: none; stroke: #7a828c; stroke-width: 1.6; stroke-dasharray: 8 6; }
+      .line { fill: none; stroke: #17202b; stroke-width: 1.8; marker-end: url(#arrow); }
+      .thin { fill: none; stroke: #7a828c; stroke-width: 1.5; stroke-dasharray: 6 5; marker-end: url(#arrowgrey); }
+    </style>
+  </defs>
+  <rect width="1080" height="640" fill="#f1efea" />
+  <text class="title" x="20" y="38">One service, one database, one gateway</text>
+
+  <rect class="person" x="20" y="150" width="160" height="70" rx="4" />
+  <text class="heading" x="100" y="180" text-anchor="middle">Educator</text>
+  <text class="small" x="100" y="200" text-anchor="middle">or a judge, signed out</text>
+  <path class="line" d="M180 185 H242" />
+  <text class="arrowlabel" x="211" y="176" text-anchor="middle">HTTPS</text>
+
+  <rect class="group" x="250" y="96" width="450" height="400" rx="4" />
+  <text class="eyebrow" x="268" y="120">GOOGLE CLOUD RUN — ASIA-SOUTHEAST1</text>
+  <text class="small" x="268" y="139">max 1 instance, min 1, CPU always allocated</text>
+  <rect class="sheet" x="270" y="152" width="410" height="326" rx="4" />
+  <text class="heading" x="290" y="178">One Bun process</text>
+  <rect class="well" x="290" y="196" width="180" height="66" rx="4" />
+  <text class="label" x="380" y="221" text-anchor="middle">Hono</text>
+  <text class="mono" x="380" y="241" text-anchor="middle">JSON API under /api</text>
+  <rect class="well" x="490" y="196" width="170" height="66" rx="4" />
+  <text class="label" x="575" y="221" text-anchor="middle">React client</text>
+  <text class="mono" x="575" y="241" text-anchor="middle">same origin, no CORS</text>
+  <rect class="well" x="290" y="278" width="370" height="76" rx="4" />
+  <text class="label" x="310" y="303">Queue worker, in-process</text>
+  <text class="small" x="310" y="323">claims one item, runs the round, writes the verdict</text>
+  <text class="small" x="310" y="342">no broker, no second deployable</text>
+  <rect class="well" x="290" y="370" width="370" height="44" rx="4" />
+  <text class="label" x="475" y="397" text-anchor="middle">Semaphore: 4 calls in flight</text>
+  <text class="small" x="290" y="440">Max instances is 1 because that semaphore is in memory.</text>
+  <text class="small" x="290" y="459">Two instances would quietly make the cap eight.</text>
+
+  <rect class="gateway" x="770" y="180" width="280" height="130" rx="4" />
+  <text class="heading" x="910" y="212" text-anchor="middle">GonkaRouter</text>
+  <text class="mono" x="910" y="233" text-anchor="middle">api.gonkarouter.io/v1</text>
+  <text class="small" x="910" y="256" text-anchor="middle">the only path to a model</text>
+  <text class="small" x="910" y="276" text-anchor="middle">three model families</text>
+  <text class="mono" x="910" y="296" text-anchor="middle">GET /v1/receipts/{id}</text>
+  <path class="line" d="M700 230 H766" />
+  <text class="arrowlabel" x="733" y="222" text-anchor="middle">every call</text>
+
+  <rect class="store" x="270" y="540" width="290" height="76" rx="4" />
+  <text class="heading" x="290" y="568">Neon Postgres</text>
+  <text class="mono" x="290" y="590">ap-southeast-1, Singapore</text>
+  <text class="small" x="290" y="608">records, items, attempts, dispositions</text>
+  <path class="line" d="M400 496 V536" />
+  <text class="arrowlabel" x="412" y="520">SKIP LOCKED claims</text>
+
+  <rect class="well" x="580" y="540" width="150" height="60" rx="4" />
+  <text class="label" x="655" y="566" text-anchor="middle">GitHub Actions</text>
+  <text class="mono" x="655" y="586" text-anchor="middle">on merge to main</text>
+  <rect class="well" x="760" y="540" width="150" height="60" rx="4" />
+  <text class="label" x="835" y="566" text-anchor="middle">Artifact Registry</text>
+  <text class="mono" x="835" y="586" text-anchor="middle">image tagged by SHA</text>
+  <path class="thin" d="M730 570 H756" />
+  <path class="thin" d="M910 570 H960 Q980 570 980 550 V330 Q980 316 966 316 H704" />
+  <text class="arrowlabel" x="992" y="440" text-anchor="middle" transform="rotate(-90 992 440)">deploy, then assert the serving revision</text>
+</svg>
