@@ -1,11 +1,12 @@
-import { eq, inArray } from 'drizzle-orm'
+import { and, eq, inArray, isNull } from 'drizzle-orm'
 import { z } from 'zod'
-import type { Item, Option, RecordDetail, VerdictCounts } from '../shared/types'
+import type { Option, RecordDetail, VerdictCounts } from '../shared/types'
 import { verdict } from '../shared/verdict'
 import { db } from './db'
 import { user } from './db/auth-schema'
 import { attempts, dispositions, items, records } from './db/schema'
 import { env } from './env'
+import { recordDetail } from './records/queries'
 
 // FR-SAMPLE-1: the sample carries recorded readings and public request ids from a real benchmark
 // pass, and nothing in it is fabricated. Neither the paper nor any pass is in this repository, so
@@ -179,7 +180,7 @@ export async function resetSample(): Promise<boolean> {
   return true
 }
 
-const EMPTY_COUNTS: VerdictCounts = {
+const _EMPTY_COUNTS: VerdictCounts = {
   clear: 0,
   possible_key_error: 0,
   possible_ambiguity: 0,
@@ -189,74 +190,16 @@ const EMPTY_COUNTS: VerdictCounts = {
 }
 
 export async function readSample(): Promise<RecordDetail | null> {
-  const [record] = await db.select().from(records).where(eq(records.isSample, true)).limit(1)
+  const [record] = await db
+    .select({ id: records.id })
+    .from(records)
+    .where(and(eq(records.isSample, true), isNull(records.deletedAt)))
+    .limit(1)
+
   if (!record) return null
 
-  const rows = await db.select().from(items).where(eq(items.recordId, record.id)).orderBy(items.position)
-  const itemIds = rows.map((row) => row.id)
-
-  const attemptRows = itemIds.length
-    ? await db.select().from(attempts).where(inArray(attempts.itemId, itemIds)).orderBy(attempts.startedAt)
-    : []
-  const dispositionRows = itemIds.length
-    ? await db.select().from(dispositions).where(inArray(dispositions.itemId, itemIds)).orderBy(dispositions.createdAt)
-    : []
-
-  const counts = { ...EMPTY_COUNTS }
-  const built: Item[] = rows.map((row) => {
-    counts[row.verdict] += 1
-
-    return {
-      id: row.id,
-      position: row.position,
-      stem: row.stem,
-      options: row.options,
-      key: row.key,
-      status: row.status,
-      verdict: row.verdict,
-      verdictReason: row.verdictReason,
-      attemptsUsed: row.attemptsUsed,
-      attempts: attemptRows
-        .filter((attemptRow) => attemptRow.itemId === row.id)
-        .map((attemptRow) => ({
-          id: attemptRow.id,
-          requestedModel: attemptRow.requestedModel,
-          servedModel: attemptRow.servedModel,
-          requestId: attemptRow.requestId,
-          devshardId: attemptRow.devshardId,
-          fallbackHeader: attemptRow.fallbackHeader,
-          httpStatus: attemptRow.httpStatus,
-          receiptStatus: attemptRow.receiptStatus,
-          reading: attemptRow.readingJson,
-          latencyMs: attemptRow.latencyMs,
-          startedAt: attemptRow.startedAt.toISOString(),
-          finishedAt: attemptRow.finishedAt?.toISOString() ?? null,
-          admitted: attemptRow.admitted,
-          rejectionReason: attemptRow.rejectionReason
-        })),
-      dispositions: dispositionRows
-        .filter((dispositionRow) => dispositionRow.itemId === row.id)
-        .map((dispositionRow) => ({
-          id: dispositionRow.id,
-          kind: dispositionRow.kind,
-          revisedKey: dispositionRow.revisedKey,
-          revisedText: dispositionRow.revisedText,
-          note: dispositionRow.note,
-          createdAt: dispositionRow.createdAt.toISOString()
-        }))
-    }
-  })
-
-  return {
-    id: record.id,
-    title: record.title,
-    subject: record.subject,
-    language: record.language,
-    context: record.context,
-    status: record.status,
-    isSample: record.isSample,
-    expiresAt: record.expiresAt?.toISOString() ?? null,
-    counts,
-    items: built
-  }
+  // Through recordDetail rather than a second builder. TRD section 15 says the sample answers in the
+  // same shape as GET /api/records/:id, and one function is the only way that stays true — the
+  // duplicate here ordered attempts oldest first, where section 15 asks for newest first.
+  return recordDetail(record.id)
 }
