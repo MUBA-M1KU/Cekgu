@@ -321,9 +321,10 @@ first (FR-EVIDENCE-4).
 ### The guest banner
 
 A full-width strip directly under the navigation, ink ground with paper text, 44 px tall on desktop and up to two lines
-at 375 px. It carries the FR-AUTH-3 sentence word for word and nothing else: no icon, no close button, no link. It is
-not sticky, but it is above the fold on every Guest page at 375 px because nothing sits between the navigation and it.
-An inverted strip is the one place the product uses ink as a ground; a stamp on the paper, not a card.
+at 375 px. It carries the FR-AUTH-3 sentence word for word plus one dismiss control at its trailing edge, and nothing
+else: no icon, no link. It is not sticky, but it is above the fold on every Guest page at 375 px because nothing sits
+between the navigation and it. An inverted strip is the one place the product uses ink as a ground; a stamp on the
+paper, not a card.
 
 ### Mobile at 375 px
 

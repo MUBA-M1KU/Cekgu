@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { signOut } from '../api'
+import { GUEST_WARNING } from '../components/GuestBanner'
 import { Sheet } from '../components/Sheet'
 import { setReduceMotion, useReduceMotionSetting } from '../mascot/preferences'
 import { useSession } from '../session'
@@ -43,8 +44,7 @@ export function Settings() {
           </dl>
           {session.isGuest ? (
             <p className="mt-3 max-w-[64ch] type-caption text-ink-muted">
-              This is the shared demo workspace, not a private account. Records here are visible to everyone and are
-              removed after 24 hours.
+              {GUEST_WARNING} Records here are removed after 24 hours.
             </p>
           ) : null}
 
