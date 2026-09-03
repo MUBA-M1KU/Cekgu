@@ -7,12 +7,14 @@ import { startGuestSweep } from './guest'
 import { startHealthMirror } from './queue/health'
 import { startWorker } from './queue/worker'
 import { api } from './routes'
+import { SAMPLE_PASS_PATH, seedSample } from './sample'
 import { seedGuestUser } from './seed'
 
 const CLIENT_DIR = './dist/client'
 
 if (env.migrateOnStart) await migrate(db, { migrationsFolder: './drizzle' })
 await seedGuestUser()
+if (env.migrateOnStart) await seedSample(SAMPLE_PASS_PATH)
 if (env.workerEnabled) {
   startGuestSweep()
   startHealthMirror()

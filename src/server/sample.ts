@@ -1,0 +1,262 @@
+import { eq, inArray } from 'drizzle-orm'
+import { z } from 'zod'
+import type { Item, Option, RecordDetail, VerdictCounts } from '../shared/types'
+import { verdict } from '../shared/verdict'
+import { db } from './db'
+import { user } from './db/auth-schema'
+import { attempts, dispositions, items, records } from './db/schema'
+import { env } from './env'
+
+// FR-SAMPLE-1: the sample carries recorded readings and public request ids from a real benchmark
+// pass, and nothing in it is fabricated. Neither the paper nor any pass is in this repository, so
+// this module loads both from a file supplied by whoever ran the benchmark and refuses to invent
+// either. With no file, there is no sample and GET /api/sample says so.
+
+// Committed by whoever ran the benchmark, alongside the paper it was run on. Absent from this
+// repository today, which is why seeding is a no-op rather than an error.
+export const SAMPLE_PASS_PATH = './src/server/fixtures/benchmark-pass.json'
+
+const option = z.object({ letter: z.string().min(1), text: z.string().min(1) })
+
+const reading = z.object({
+  model: z.string().min(1),
+  answer: z.string().min(1),
+  defensible: z.array(z.string()),
+  reason: z.string()
+})
+
+// One row of the attempts table as the benchmark produced it, including the rejected calls: an
+// attempt that timed out is evidence too (FR-EVIDENCE-2, NFR-PROV-3).
+const attempt = z.object({
+  requestedModel: z.string().min(1),
+  servedModel: z.string().nullable().default(null),
+  requestId: z.string().nullable().default(null),
+  devshardId: z.string().nullable().default(null),
+  fallbackHeader: z.string().nullable().default(null),
+  httpStatus: z.number().int().nullable().default(null),
+  receiptStatus: z.enum(['pending', 'verified', 'mismatch', 'missing']),
+  receiptJson: z.unknown().nullable().default(null),
+  readingJson: reading.nullable().default(null),
+  latencyMs: z.number().int().nullable().default(null),
+  admitted: z.boolean(),
+  rejectionReason: z.string().nullable().default(null)
+})
+
+export const passFile = z.object({
+  pass: z.string().min(1),
+  capturedAt: z.string().min(1),
+  record: z.object({
+    title: z.string().min(1),
+    subject: z.string().min(1),
+    language: z.string().min(1),
+    context: z.string().nullable().default(null)
+  }),
+  items: z
+    .array(
+      z.object({
+        stem: z.string().min(1),
+        options: z.array(option).min(2),
+        key: z.string().min(1),
+        attempts: z.array(attempt)
+      })
+    )
+    .min(1)
+})
+
+export type PassFile = z.infer<typeof passFile>
+
+export async function loadPass(path: string): Promise<PassFile | null> {
+  const file = Bun.file(path)
+  if (!(await file.exists())) return null
+
+  return passFile.parse(await file.json())
+}
+
+async function guestUserId(): Promise<string | null> {
+  const [row] = await db.select({ id: user.id }).from(user).where(eq(user.email, env.guestEmail)).limit(1)
+  return row?.id ?? null
+}
+
+export async function sampleRecordId(): Promise<string | null> {
+  const [row] = await db.select({ id: records.id }).from(records).where(eq(records.isSample, true)).limit(1)
+  return row?.id ?? null
+}
+
+type PassAttempt = PassFile['items'][number]['attempts'][number]
+
+// The verdict is computed by the rule over the readings the pass recorded, never copied from the
+// file. A sample whose verdicts were written by hand would prove nothing about the rule.
+function verdictFor(admitted: PassAttempt[], key: string, options: Option[]) {
+  const readings = admitted.flatMap((row) =>
+    row.readingJson && row.servedModel ? [{ ...row.readingJson, model: row.servedModel }] : []
+  )
+
+  return verdict(readings, key, options)
+}
+
+export async function seedSample(path: string): Promise<string | null> {
+  const existing = await sampleRecordId()
+  if (existing) return existing
+
+  const pass = await loadPass(path)
+  if (!pass) {
+    console.log(`no benchmark pass at ${path}; GET /api/sample will report the sample is not loaded`)
+    return null
+  }
+
+  const userId = await guestUserId()
+  if (!userId) return null
+
+  // expires_at stays null so the Guest sweep's expiry comparison never matches it, which is the
+  // second of the two protections is_sample already gives it.
+  const [record] = await db
+    .insert(records)
+    .values({ ...pass.record, userId, isSample: true, status: 'ready', expiresAt: null })
+    .returning({ id: records.id })
+
+  const recordId = record?.id
+  if (!recordId) return null
+
+  for (const [index, source] of pass.items.entries()) {
+    const decided = verdictFor(
+      source.attempts.filter((row) => row.admitted),
+      source.key,
+      source.options
+    )
+
+    const [item] = await db
+      .insert(items)
+      .values({
+        recordId,
+        position: index + 1,
+        stem: source.stem,
+        options: source.options,
+        key: source.key,
+        status: 'done',
+        verdict: decided.verdict,
+        verdictReason: decided.reason,
+        attemptsUsed: source.attempts.length
+      })
+      .returning({ id: items.id })
+
+    const itemId = item?.id
+    if (!itemId || source.attempts.length === 0) continue
+
+    await db.insert(attempts).values(
+      source.attempts.map((row) => ({
+        itemId,
+        requestedModel: row.requestedModel,
+        servedModel: row.servedModel,
+        requestId: row.requestId,
+        devshardId: row.devshardId,
+        fallbackHeader: row.fallbackHeader,
+        httpStatus: row.httpStatus,
+        receiptStatus: row.receiptStatus,
+        receiptJson: row.receiptJson,
+        readingJson: row.readingJson,
+        latencyMs: row.latencyMs,
+        finishedAt: new Date(),
+        admitted: row.admitted,
+        rejectionReason: row.rejectionReason
+      }))
+    )
+  }
+
+  return recordId
+}
+
+// FR-SAMPLE-3. Clears every disposition on the sample and returns it to ready, so a rehearsal
+// starts from Unreviewed. It never touches the readings or the verdicts.
+export async function resetSample(): Promise<boolean> {
+  const recordId = await sampleRecordId()
+  if (!recordId) return false
+
+  const owned = await db.select({ id: items.id }).from(items).where(eq(items.recordId, recordId))
+  const itemIds = owned.map((row) => row.id)
+  if (itemIds.length > 0) await db.delete(dispositions).where(inArray(dispositions.itemId, itemIds))
+
+  await db.update(records).set({ status: 'ready', updatedAt: new Date() }).where(eq(records.id, recordId))
+  return true
+}
+
+const EMPTY_COUNTS: VerdictCounts = {
+  clear: 0,
+  possible_key_error: 0,
+  possible_ambiguity: 0,
+  split_opinion: 0,
+  unverified: 0,
+  pending: 0
+}
+
+export async function readSample(): Promise<RecordDetail | null> {
+  const [record] = await db.select().from(records).where(eq(records.isSample, true)).limit(1)
+  if (!record) return null
+
+  const rows = await db.select().from(items).where(eq(items.recordId, record.id)).orderBy(items.position)
+  const itemIds = rows.map((row) => row.id)
+
+  const attemptRows = itemIds.length
+    ? await db.select().from(attempts).where(inArray(attempts.itemId, itemIds)).orderBy(attempts.startedAt)
+    : []
+  const dispositionRows = itemIds.length
+    ? await db.select().from(dispositions).where(inArray(dispositions.itemId, itemIds)).orderBy(dispositions.createdAt)
+    : []
+
+  const counts = { ...EMPTY_COUNTS }
+  const built: Item[] = rows.map((row) => {
+    counts[row.verdict] += 1
+
+    return {
+      id: row.id,
+      position: row.position,
+      stem: row.stem,
+      options: row.options,
+      key: row.key,
+      status: row.status,
+      verdict: row.verdict,
+      verdictReason: row.verdictReason,
+      attemptsUsed: row.attemptsUsed,
+      attempts: attemptRows
+        .filter((attemptRow) => attemptRow.itemId === row.id)
+        .map((attemptRow) => ({
+          id: attemptRow.id,
+          requestedModel: attemptRow.requestedModel,
+          servedModel: attemptRow.servedModel,
+          requestId: attemptRow.requestId,
+          devshardId: attemptRow.devshardId,
+          fallbackHeader: attemptRow.fallbackHeader,
+          httpStatus: attemptRow.httpStatus,
+          receiptStatus: attemptRow.receiptStatus,
+          reading: attemptRow.readingJson,
+          latencyMs: attemptRow.latencyMs,
+          startedAt: attemptRow.startedAt.toISOString(),
+          finishedAt: attemptRow.finishedAt?.toISOString() ?? null,
+          admitted: attemptRow.admitted,
+          rejectionReason: attemptRow.rejectionReason
+        })),
+      dispositions: dispositionRows
+        .filter((dispositionRow) => dispositionRow.itemId === row.id)
+        .map((dispositionRow) => ({
+          id: dispositionRow.id,
+          kind: dispositionRow.kind,
+          revisedKey: dispositionRow.revisedKey,
+          revisedText: dispositionRow.revisedText,
+          note: dispositionRow.note,
+          createdAt: dispositionRow.createdAt.toISOString()
+        }))
+    }
+  })
+
+  return {
+    id: record.id,
+    title: record.title,
+    subject: record.subject,
+    language: record.language,
+    context: record.context,
+    status: record.status,
+    isSample: record.isSample,
+    expiresAt: record.expiresAt?.toISOString() ?? null,
+    counts,
+    items: built
+  }
+}

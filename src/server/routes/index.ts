@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { type AppEnv, requireSession } from '../session'
 import { authRoutes } from './auth'
 import { healthRoutes } from './health'
+import { sampleRoutes } from './sample'
 
 // Routes from TRD section 15 mount here. An unmatched /api path gets a JSON 404 from
 // src/server/index.ts only once the caller has a session; without one the gate below answers 401
@@ -22,3 +23,4 @@ api.use('*', async (c, next) => {
 })
 
 api.route('/', healthRoutes)
+api.route('/', sampleRoutes)
