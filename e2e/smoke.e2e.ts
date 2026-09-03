@@ -131,3 +131,57 @@ test('one evidence panel shows two model names and two request ids', async ({ pa
     .evaluateAll((all) => all.map((a) => (a as HTMLAnchorElement).href))
   for (const id of requestIds) expect(links.some((href) => href.endsWith(id))).toBe(true)
 })
+
+// Reported by c3638: navigating away from a record blanked the whole app. Cause was a teardown
+// order at the pixi/Live2D boundary — Application.destroy() destroys its ticker before the stage
+// children, and Live2DModel.destroy() then calls ticker.remove() on a destroyed ticker. The throw
+// landed in React's effect cleanup, which unmounted everything.
+//
+// It only fires with the animated stage mounted, which needs a viewport of 1024 px or more and
+// MASCOT_ENABLED true. Desktop Chrome is 1280 wide, so CI reaches it. The canvas is asserted
+// first and the test skips with a reason otherwise, because a run where the stage never mounted
+// would pass this without exercising anything.
+test('navigating away from a record with the mascot mounted keeps the app rendered', async ({ page }) => {
+  await page.goto('/sign-in')
+  await page.getByRole('button', { name: 'Sign In as Guest' }).click()
+  await expect(page).toHaveURL(/\/records$/)
+
+  await page
+    .getByText(/practice set/i)
+    .first()
+    .click()
+  await expect(page).toHaveURL(/\/records\/[0-9a-f-]{36}$/)
+  await expect(page.getByRole('button', { name: EVIDENCE }).first()).toBeVisible()
+
+  // Getting this readiness signal right took three attempts, and the two that failed both passed
+  // against a deployment that still had the defect — worth recording, because a regression test
+  // that passes against the bug is worse than none. Waiting for the canvas element resolves while
+  // createStage() is still loading. Waiting for the textures resolves before motionPreload does.
+  // Screenshotting the canvas is useless because backgroundAlpha is 0, so a blank one samples the
+  // page behind it and never looks uniform.
+  //
+  // What actually gates createStage() is motionPreload: ALL, which fetches every motion file for
+  // both cats before Live2DModel.from resolves. So the signal is /live2d/ traffic going quiet.
+  const canvas = page.locator('canvas')
+  let lastAsset = Date.now()
+  page.on('response', (response) => {
+    if (response.url().includes('/live2d/')) lastAsset = Date.now()
+  })
+
+  try {
+    await canvas.waitFor({ state: 'attached', timeout: 20_000 })
+    await expect.poll(() => Date.now() - lastAsset > 2000, { timeout: 40_000, intervals: [500] }).toBe(true)
+  } catch {
+    test.skip(true, 'the animated stage never loaded, so this deployment cannot reproduce the defect')
+  }
+
+  const errors: string[] = []
+  page.on('pageerror', (error) => errors.push(String(error.message ?? error)))
+
+  await page.getByRole('link', { name: 'Dashboard' }).first().click()
+
+  // Rendered content, not #root: the point is that the tree survived, and a heading proves it.
+  await expect(page.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Records' })).toBeVisible()
+  expect(errors).toEqual([])
+})
