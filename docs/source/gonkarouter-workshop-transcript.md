@@ -146,12 +146,14 @@ So there is no application form for the unlimited tokens. Just register, and ema
 
 ### Event rulings from Richard
 
-| Question                                     | Ruling                                                                                                                                                                                              |
-| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Participant certificate if we don't win?** | Yes — but you must **submit on Devfolio and complete your pitching session**. Pitching is the criterion                                                                                             |
-| **Can we submit more than one project?**     | **No. One project per team.** One project _may_ target multiple tracks. He flagged he would confirm and revert                                                                                      |
-| **What if Devfolio has problems?**           | They will open a **Google Form** as a fallback submission route                                                                                                                                     |
-| **Is pitching mandatory for all members?**   | **At least one.** But _"if you are just one person, you are not really having any advantages, because you need to face the judges more and more"_ — bring at least two, because of the 5-minute Q&A |
+- **Participant certificate if we don't win?** Yes — but you must **submit on Devfolio and complete your pitching
+  session**. Pitching is the criterion
+- **Can we submit more than one project?** **No. One project per team.** One project _may_ target multiple tracks. He
+  flagged he would confirm and revert
+- **What if Devfolio has problems?** They will open a **Google Form** as a fallback submission route
+- **Is pitching mandatory for all members?** **At least one.** But _"if you are just one person, you are not really
+  having any advantages, because you need to face the judges more and more"_ — bring at least two, because of the
+  5-minute Q&A
 
 ### Closing reminders
 

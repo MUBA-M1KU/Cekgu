@@ -1,6 +1,6 @@
 # GonkaRouter track challenge brief
 
-The official track brief, reorganised from the organizers' Google Doc with nothing dropped.
+The official track brief, reorganized from the organizers' Google Doc with nothing dropped.
 
 > **Source** — [Google Doc: _Hackathon Challenge: AI for Society_ / 黑客松赛题：AI 与公共价值][doc]. Retrieved
 > 2026-08-26. The original is bilingual (EN/中文); this is the English content.

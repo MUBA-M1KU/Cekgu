@@ -226,14 +226,13 @@ Full text lives in the **`hackathon-rules` channel on Discord**. Richard read th
 
 ### Team formation
 
-| Rule                    | Detail                                                                                                |
-| ----------------------- | ----------------------------------------------------------------------------------------------------- |
-| **Team size**           | **2–4 members.** No solo registration allowed                                                         |
-| **Background**          | No restriction — _"no matter who you are, you're able to join"_                                       |
-| **Physical attendance** | **At least one member must attend the pitching day**; organizers strongly hope **all** members attend |
-|                         | _"If you're from another country, you need to be able to attend the pitching session"_                |
-|                         | Attend the **full day**, not just your slot                                                           |
-| **Team changes**        | Any issue, such as a member withdrawing — **notify organizers via Discord**                           |
+- **Team size** — **2–4 members.** No solo registration allowed
+- **Background** — no restriction, _"no matter who you are, you're able to join"_
+- **Physical attendance** — **at least one member must attend the pitching day**; organizers strongly hope **all**
+  members attend
+  - _"If you're from another country, you need to be able to attend the pitching session"_
+  - Attend the **full day**, not just your slot
+- **Team changes** — any issue, such as a member withdrawing: **notify organizers via Discord**
 
 ### The project
 
