@@ -208,3 +208,12 @@ for (const href of NOTICES) {
     await expect(page.getByRole('heading', { level: 1 })).not.toBeEmpty()
   })
 }
+
+test('the footer carries the notices on a page that is not the landing', async ({ page }) => {
+  await page.goto('/sample')
+
+  const footer = page.getByRole('navigation', { name: 'Footer' })
+  for (const href of NOTICES) {
+    await expect(footer.locator(`a[href="${href}"]`)).toBeVisible()
+  }
+})

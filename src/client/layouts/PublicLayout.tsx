@@ -14,7 +14,10 @@ const PUBLIC_NAV = [
 const FOOTER_LINKS = [
   { href: '/#how-it-works', label: 'How It Works' },
   { href: '/sample', label: 'Sample Report' },
-  { href: '/#trust', label: 'Trust and Privacy' }
+  { href: '/#trust', label: 'Trust and Privacy' },
+  { href: '/terms', label: 'Terms' },
+  { href: '/privacy', label: 'Privacy' },
+  { href: '/acceptable-use', label: 'Acceptable Use' }
 ]
 
 // The hero is full-bleed and the nav sits over it, so the bar is transparent until the page has
