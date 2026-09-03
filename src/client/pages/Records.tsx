@@ -159,8 +159,10 @@ export function Records() {
                 <th className="w-8 py-2 pr-3 font-medium">
                   <span className="sr-only">Select</span>
                 </th>
-                <th className="py-2 pr-4 font-medium">Title</th>
-                <th className="py-2 pr-4 font-medium">Subject</th>
+                {/* Title is what a person scans for and the longest cell in the row, so it gets
+                    the width. Auto-layout gave it the same weight as Subject and wrapped it. */}
+                <th className="w-[38%] py-2 pr-4 font-medium">Title</th>
+                <th className="w-[22%] py-2 pr-4 font-medium">Subject</th>
                 <th className="py-2 pr-4 text-right font-medium">Questions</th>
                 <th className="py-2 pr-4 font-medium">Status</th>
                 <th className="py-2 pr-4 text-right font-medium">Attention</th>
