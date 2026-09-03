@@ -5,6 +5,7 @@ import { getSample } from '../api'
 import { ItemRow } from '../components/ItemRow'
 import { Sheet } from '../components/Sheet'
 import { VerdictFilters } from '../components/VerdictFilters'
+import { count } from '../plural'
 
 // FR-SAMPLE-4: reachable signed out, read-only, with the evidence and request ids visible.
 // ItemRow in readOnly mode does not render the disposition group at all, rather than disabling it.
@@ -52,7 +53,7 @@ export function SampleReport() {
           <span className="status-chip type-label">Sample</span>
         </div>
         <p className="type-caption mt-2 text-ink-muted">
-          {record.subject} · {record.items.length} questions
+          {record.subject} · {count(record.items.length, 'question')}
         </p>
         <p className="type-body mt-3 max-w-[66ch]">
           This is a real review record, kept as it was produced. Open any item to see both readings, the model that

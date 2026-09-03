@@ -7,7 +7,12 @@ import { admitReading } from '../gateway/reading'
 // without the network, and so the semaphore lives at the worker rather than inside the logic.
 
 const ATTEMPTS_PER_FAMILY = 3
-const HEDGE_AFTER_MS = 25_000
+// Raised from 25 s on 3 September, measured. At 25 s the hedge fired on nearly every call — Kimi
+// answered an eight-token prompt in 24.8 s and a solver prompt in 52.7 s — so almost every reading
+// cost two gateway calls and two semaphore slots. That doubling is what produces the account-level
+// 429s in gotcha 10, and those failures are what marks a family unhealthy, which is what leaves a
+// round with one candidate and no verdict. 45 s still catches the 60-90 s tail from gotcha 9.
+const HEDGE_AFTER_MS = 45_000
 const SEATS = 2
 
 export type AttemptRow = {

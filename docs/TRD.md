@@ -750,10 +750,13 @@ holds, and a crashed claim is released with its transaction. On start the worker
 ### One round
 
 1. Take the **healthy set**: the three model ids ordered by rolling 15-minute success rate, then median latency, from
-   the in-memory health stats. A model with zero successes and at least three failures in the window is excluded
+   the in-memory health stats. A model with zero successes and at least three failures in the window is excluded —
+   unless fewer than two would remain, in which case the excluded families are demoted to the end of the order rather
+   than dropped. One candidate cannot produce two distinct readings, so dropping the second guarantees **Unverified**
+   without a call being attempted, and a struggling family is strictly better than a certain failure
 1. Request the top two families **in parallel**, each through the [gateway client](#14-consensus-rule) and each holding
    one slot of the global semaphore of **4**
-1. **Deferred hedge:** if a call has not returned after **25 s**, fire a duplicate of the same call to the same model,
+1. **Deferred hedge:** if a call has not returned after **45 s**, fire a duplicate of the same call to the same model,
    holding another slot. Whichever returns first is the candidate; the other is recorded and discarded
 1. **Hard cutoff** at **90 s** per call. A call past the cutoff is aborted and recorded as timed out with no request id
 1. If one family fails, after rejection, timeout or a non-200, try the **third family** for that seat
@@ -762,9 +765,16 @@ holds, and a crashed claim is released with its transaction. On start the worker
 1. Apply the [rule](#14-consensus-rule) to the admitted readings and write `items.verdict` and `items.verdict_reason`
 
 Every call, admitted or not, is one row in `attempts`. A `429` is recorded, counted against the budget, and retried
-after a 30-second backoff (FR-QUEUE-1). The hedge fires at 25 s rather than the tech lead's 1.5–2 s because our measured
+after a 30-second backoff (FR-QUEUE-1). The hedge fires at 45 s rather than the tech lead's 1.5–2 s because our measured
 floor is different: nothing completed under 30 s on 3 September, so a 2 s hedge would double every call for no gain, and
-25 s catches the 60–90 s tail that [gotcha 9](#5-verified-gotchas) describes.
+45 s still catches the 60–90 s tail that [gotcha 9](#5-verified-gotchas) describes.
+
+**Revised from 25 s to 45 s, measured 3 September.** At 25 s the hedge fired on nearly every call: Kimi answered an
+eight-token prompt in 24.8 s and a solver prompt in 52.7 s, and MiniMax's median moved between 12.6 s and 29 s across
+two runs an hour apart. Almost every reading therefore cost two gateway calls and two of the four semaphore slots, and
+that doubling is what produces the account-level `429`s in [gotcha 10](#5-verified-gotchas). Those failures are what
+marks a family unhealthy, and a round left with one healthy candidate cannot produce two distinct readings at all — so
+the hedge meant to rescue a slow call was manufacturing the outage it was hedging against.
 
 The budget is **three** attempts per family, matching the PRD's FR-QUEUE-3. The measured Kimi completion rate of 13 of
 24 makes a third attempt worth its cost, and three parallel attempts of at most 90 s each stay inside the PRD's

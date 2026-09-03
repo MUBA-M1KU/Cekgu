@@ -61,16 +61,29 @@ export function stats(now = Date.now()): ModelStats[] {
   })
 }
 
+// A round needs two distinct readers, so an order shorter than this guarantees Unverified.
+const MINIMUM_READERS = 2
+
 // The order the worker picks readers in: healthy first, best success rate, then fastest.
 // An unknown latency sorts last rather than first — a family nobody has called yet is not the
 // fastest one, and at equal success rate the reader we have measured is the better bet.
+//
+// A family that is down is demoted rather than removed. Removing it is right while two healthy
+// families remain, and wrong the moment fewer do: with one candidate the round cannot produce two
+// distinct readings, so every item returns Unverified without a single call being attempted. Trying
+// a struggling family is strictly better than a certain failure, and FR-QUEUE-3 asks the queue to
+// pair the remaining families rather than wait. Measured 3 September: MiniMax alone was healthy
+// while DeepSeek and Kimi both answered ordinary prompts in under 25 seconds.
 export function healthyOrder(now = Date.now()): string[] {
   const latency = (model: ModelStats) => model.medianLatencyMs ?? Number.POSITIVE_INFINITY
+  const byQuality = (a: ModelStats, b: ModelStats) => b.successRate - a.successRate || latency(a) - latency(b)
 
-  return stats(now)
-    .filter((model) => model.healthy)
-    .sort((a, b) => b.successRate - a.successRate || latency(a) - latency(b))
-    .map((model) => model.model)
+  const ranked = stats(now)
+  const healthy = ranked.filter((model) => model.healthy).sort(byQuality)
+  if (healthy.length >= MINIMUM_READERS) return healthy.map((model) => model.model)
+
+  const demoted = ranked.filter((model) => !model.healthy).sort(byQuality)
+  return [...healthy, ...demoted].map((model) => model.model)
 }
 
 export async function mirrorHealth(now = new Date()): Promise<void> {
