@@ -66,15 +66,28 @@ curl -s https://api.gonkarouter.io/v1/messages \
        "messages":[{"role":"user","content":"Reply with just: pong"}]}'
 ```
 
-| Command              | Does                               |
-| -------------------- | ---------------------------------- |
-| `bun run test:guard` | Merge and main-branch guard tests  |
-| `bun run lint`       | Biome check, then Prettier check   |
-| `bun run format`     | Both formatters, writing in place  |
-| `bun run typecheck`  | `tsc --noEmit`, once `src/` exists |
-| `bun test`           | Unit tests                         |
-| `bun run e2e`        | Playwright smoke against a deploy  |
-| `gh issue list`      | The TODO board                     |
+| Command               | Does                              |
+| --------------------- | --------------------------------- |
+| `bun run test:guard`  | Merge and main-branch guard tests |
+| `bun run lint`        | Biome check, then Prettier check  |
+| `bun run format`      | Both formatters, writing in place |
+| `bun run typecheck`   | `tsc --noEmit`                    |
+| `bun test`            | Unit tests                        |
+| `bun run db:generate` | Write a migration from the schema |
+| `bun run db:migrate`  | Apply pending migrations          |
+| `bun run e2e`         | Playwright smoke against a deploy |
+| `gh issue list`       | The TODO board                    |
+
+Some suites are opt-in because they need something the default run must not assume. The database tests take
+`TEST_DATABASE_URL` and refuse any host but localhost, because they truncate what they connect to. The full demo path
+takes `E2E_FLOW=1` and is skipped without it, because a round is two live model calls and takes minutes:
+
+```bash
+docker run -d --name cekgu-test -e POSTGRES_PASSWORD=x -e POSTGRES_DB=cekgu -p 55432:5432 postgres:18-alpine
+TEST_DATABASE_URL='postgres://postgres:x@127.0.0.1:55432/cekgu' bun test src/server
+
+E2E_FLOW=1 bunx playwright test e2e/flow.e2e.ts   # types a check, waits for the verdict
+```
 
 ### The smoke pass
 
@@ -99,8 +112,16 @@ the FR-AUTH-3 warning banner**, asserted word for word because that sentence is 
 being ordinary product copy.
 
 The three remaining demo-path steps from [TRD section 18](TRD.md#18-testing) — the sample record and its counts, the
-Possible Key Error filter and the two request ids in an evidence panel — genuinely need the seeded sample from #30 and
-are present as skipped tests naming it, so a green run never implies those are covered.
+Possible Key Error filter and the two request ids in an evidence panel — genuinely need the seeded sample record and are
+present as skipped tests naming it, so a green run never implies those are covered. A fourth skip is `flow.e2e.ts`
+above, which is opt-in rather than blocked.
+
+The flow test is the one that proves the track requirements hold in the product rather than in a fixture: it signs in as
+a guest, types a deliberately mis-keyed question, waits for the verdict, and then asserts off the **rendered page** that
+at least two Gonka request ids, two distinct served models and two links to the public receipts endpoint are visible.
+Asserting that a root element is attached would pass against a blank page; asserting the verdict _label_ passes
+instantly against the summary filters, which name all five verdicts at zero before any reading exists. It asserts the
+verdict **reason**, which only exists once the rule has run.
 
 Biome covers JS, TS, JSON, CSS and HTML; Prettier covers the Markdown and YAML it cannot, wrapping prose at 120 to match
 `biome.json`'s `lineWidth`. There is no `.prettierignore`, so every Markdown file is formatted, `docs/source/` and the
@@ -143,6 +164,45 @@ There is no other AI provider anywhere in the code, which a search for provider 
 The receipt is gateway metadata that makes the serving model publicly inspectable. It is not cryptographic or on-chain
 proof, and the product says so.
 
+### When a model is slow or unavailable
+
+This is most of the engineering, because the decentralised network is genuinely unreliable and a check that gives up is
+worthless. Measured on 3 September: Kimi answered an eight-token prompt in 24.8 s and a solver prompt in 52.7 s,
+DeepSeek returned `429` for twenty minutes without producing a single admitted reading, and no item obtained two
+verified readings inside 30 seconds.
+
+The queue is built around that rather than around a hoped-for latency:
+
+- **Two families in parallel**, chosen by a rolling fifteen-minute success rate and median latency, with at most four
+  gateway calls in flight — a measured safe point, not a published limit
+- **A deferred hedge at 45 seconds** sends a duplicate of the same call. Both are recorded; the one that lost the race
+  is marked not admitted, because two readings from one model are not two readers
+- **A hard cutoff at 90 seconds**, three attempts per family, and the third family taken when one fails
+- **A family that keeps failing is demoted, never dropped**, when dropping it would leave fewer than two candidates. One
+  candidate cannot produce two distinct readings, so dropping the second guarantees Unverified without a call
+
+The [benchmark pass](../src/server/fixtures/benchmark-pass.json) that seeds the sample record shows this working: every
+one of its twelve items obtained two receipt-verified readings, and **not one of them came from DeepSeek**, which was
+rate-limited throughout. Detail: [Queue and worker](TRD.md#13-queue-and-worker).
+
+## What Cekgu cannot do
+
+Stated here rather than discovered by a judge.
+
+- **It detects disagreement between readers and ambiguity a reader declares — never ambiguity directly.** Two confident
+  readers who agree are indistinguishable from an unambiguous question. In the seeded pass one of two deliberately
+  ambiguous items was flagged and the other was reported **Clear**, because both models committed to a single defensible
+  option. That is a property of the design, not a tuning problem
+- **Two models agreeing is a signal, not truth.** They may share training data or share a misconception. Cekgu never
+  certifies a question as correct
+- **The receipt proves which model served a request, not that the reasoning was sound.** It is gateway metadata, public
+  and inspectable, and it is not cryptographic or on-chain proof
+- **Unverified means the evidence threshold was not reached**, not that the question is bad. It is the honest outcome
+  when fewer than two distinct readings survive, and the product prefers it to a guess
+- **The Guest workspace is shared, not anonymous.** Anything typed there can be read or deleted by another guest, and
+  Guest records expire after 24 hours
+- **Learner data has no column anywhere.** Cekgu reviews the paper, never the cohort
+
 ## How work ships
 
 **`main` is PR-gated.** Branch as `<type>/<slug>`, open a PR with `gh pr create`, then merge the verified head with
@@ -178,14 +238,13 @@ public/                  static assets: brand/ and the Live2D mascot runtime fil
 drizzle/                 database migrations, committed
 .github/workflows/       CI on pull request with a preview URL, deploy on merge
 Dockerfile               the Cloud Run image
-.agents/skills/          36 skills, the committed source of truth
+.agents/skills/          37 skills, the committed source of truth
 .claude/skills/          symlinks into .agents/skills/, plus impeccable as a real dir
 .claude/agents/          pitch-smith
 .claude/hooks/           session brief, env drift, git guard, formatter
 ```
 
-`DESIGN.md`, `src/`, `drizzle/`, `.github/workflows/` and the `Dockerfile` are listed but **not written yet**; only
-`public/live2d/` exists. The layout is decided in [`TRD.md`](TRD.md#repository-layout).
+Everything above exists. The layout is decided in [`TRD.md`](TRD.md#repository-layout).
 
 The repo root deliberately has **no README**. It lives here.
 
