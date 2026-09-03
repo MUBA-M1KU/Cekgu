@@ -157,6 +157,12 @@ export async function getHealth(): Promise<Health> {
   return request<Health>('/api/health')
 }
 
+// Better Auth's own sign-out. It answers 403 without an Origin header, which a browser always
+// sends, so this works from the app and not from a bare curl.
+export async function signOut(): Promise<void> {
+  await request<{ success: boolean }>('/api/auth/sign-out', { method: 'POST', body: '{}' })
+}
+
 export async function getSample(): Promise<RecordDetail> {
   if (MOCK) {
     const { mockRecord } = await import('./mock-record')
