@@ -23,14 +23,29 @@ function seconds(ms: number | null): string {
   return ms === null ? '—' : `${(ms / 1000).toFixed(1)}s`
 }
 
-// A reader's column: model name, its own bubble row, its rationale, then the provenance block.
-// Model names and request ids are text so a judge can copy an id into the receipt URL during Q&A.
-function ReaderColumn({ item, attempt }: { item: Item; attempt: Attempt }) {
+// The cats are the two SEATS, never a particular model: which family serves a seat varies per
+// item, so a fixed cat-to-model mapping would be a lie. The seat is named above the served model
+// rather than instead of it, because the model name is what a judge reads out and copies.
+const SEATS = [
+  { label: 'Reader A', src: '/mascots/tororo.png' },
+  { label: 'Reader B', src: '/mascots/hijiki.png' }
+]
+
+// A reader's column: seat, model name, its own bubble row, its rationale, then the provenance
+// block. Model names and request ids are text so a judge can copy an id into the receipt URL.
+function ReaderColumn({ item, attempt, seat }: { item: Item; attempt: Attempt; seat: number }) {
   const reading = attempt.reading
   if (!reading) return null
+  const who = SEATS[seat]
 
   return (
     <div className="min-w-0 flex-1">
+      {who ? (
+        <p className="mb-3 flex items-center gap-2">
+          <img src={who.src} alt="" aria-hidden="true" className="h-8 w-8 shrink-0 object-contain" />
+          <span className="type-label">{who.label}</span>
+        </p>
+      ) : null}
       <p className="type-eyebrow text-ink-muted">Served Model</p>
       <p className="type-mono mt-1 break-words">{attempt.servedModel}</p>
 
@@ -89,10 +104,10 @@ export function EvidencePanel({ item }: { item: Item }) {
       <h3 className="type-eyebrow text-ink-muted">Evidence</h3>
 
       <div className="mt-4 flex flex-col gap-6 min-[720px]:flex-row">
-        {readers[0] ? <ReaderColumn item={item} attempt={readers[0]} /> : null}
+        {readers[0] ? <ReaderColumn item={item} attempt={readers[0]} seat={0} /> : null}
 
         {readers[1] ? (
-          <ReaderColumn item={item} attempt={readers[1]} />
+          <ReaderColumn item={item} attempt={readers[1]} seat={1} />
         ) : (
           <div className="min-w-0 flex-1">
             <p className="type-eyebrow text-ink-muted">No Second Reading</p>
