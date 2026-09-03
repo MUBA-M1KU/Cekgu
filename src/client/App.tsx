@@ -6,6 +6,7 @@ import { Home } from './pages/Home'
 import { HowItWorks } from './pages/HowItWorks'
 import { NewCheck } from './pages/NewCheck'
 import { Pricing } from './pages/Pricing'
+import { Receipt } from './pages/Receipt'
 import { Records } from './pages/Records'
 import { RecordWorkspace } from './pages/RecordWorkspace'
 import { SampleReport } from './pages/SampleReport'
@@ -25,6 +26,7 @@ export function App() {
           <Route path="sample" element={<SampleReport />} />
           <Route path="pricing" element={<Pricing />} />
           <Route path="trust" element={<Trust />} />
+          <Route path="receipt/:requestId" element={<Receipt />} />
           <Route path="sign-in" element={<SignIn />} />
         </Route>
         <Route element={<AppLayout />}>

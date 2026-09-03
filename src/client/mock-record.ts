@@ -1,5 +1,5 @@
 import type { DispositionInput } from '../shared/schemas'
-import type { Attempt, Item, Reading, RecordDetail, RecordSummary, VerdictCounts } from '../shared/types'
+import type { Attempt, Item, Reading, ReceiptLookup, RecordDetail, RecordSummary, VerdictCounts } from '../shared/types'
 import { verdict } from '../shared/verdict'
 
 // A stand-in for GET /api/records/:id until #29 lands, shaped exactly like TRD section 15.
@@ -340,4 +340,26 @@ export function mockDelete(ids: string[]) {
   const removable = new Set(ids.filter((id) => !skipped.some((entry) => entry.id === id)))
   library = library.filter((record) => !removable.has(record.id))
   return { deleted: [...removable], skipped, mode: 'immediate' as const }
+}
+
+// VITE_MOCK_API only. The receipt page needs a found lookup to render against before the gateway
+// is reachable from a development machine.
+export function mockReceipt(requestId: string): ReceiptLookup {
+  return {
+    requestId,
+    status: 'found',
+    sourceUrl: `https://api.gonkarouter.io/v1/receipts/${requestId}`,
+    receipt: {
+      x_request_id: requestId,
+      x_devshard_id: '70335',
+      model: 'moonshotai/Kimi-K2.6',
+      created_at: '2026-09-03T09:08:09Z',
+      outcome: 'success',
+      status_code: 200,
+      stream: false,
+      total_tokens: 768,
+      ttft_ms: 14640,
+      duration_ms: 14640
+    }
+  }
 }

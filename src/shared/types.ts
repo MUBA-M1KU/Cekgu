@@ -91,3 +91,28 @@ export type HealthModel = {
 export type Health = { models: HealthModel[]; windowMinutes: number; mascotEnabled: boolean }
 
 export type ApiError = { error: { code: string; message: string } }
+
+// The gateway's receipt, verbatim. Snake case because these are GonkaRouter's own field names and
+// the receipt page prints them beside the raw JSON a judge can open on api.gonkarouter.io; renaming
+// them would put our spelling between the reader and the proof.
+export type Receipt = {
+  x_request_id: string
+  x_devshard_id: string
+  model: string
+  created_at: string
+  outcome: string
+  status_code: number
+  stream: boolean
+  total_tokens: number
+  ttft_ms: number
+  duration_ms: number
+}
+
+// Gotcha 11: a receipt is written asynchronously, so "not there" is an ordinary answer rather than
+// an error, and the page says which of the three happened in a sentence.
+export type ReceiptLookup = {
+  requestId: string
+  status: 'found' | 'missing' | 'unreachable'
+  receipt: Receipt | null
+  sourceUrl: string
+}

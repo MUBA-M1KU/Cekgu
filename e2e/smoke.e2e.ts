@@ -114,7 +114,7 @@ test('one evidence panel shows two model names and two request ids', async ({ pa
   await page.getByRole('button', { name: /^Possible Key Error/ }).click()
   await page.getByRole('button', { name: EVIDENCE }).first().click()
 
-  await expect(page.locator('a[href*="/v1/receipts/"]').first()).toBeVisible()
+  await expect(page.locator('a[href*="/receipt/"]').first()).toBeVisible()
 
   const panel = await page.locator('body').innerText()
   const requestIds = [...new Set([...panel.matchAll(/req-\d+-\d+/g)].map((match) => match[0]))]
@@ -127,9 +127,29 @@ test('one evidence panel shows two model names and two request ids', async ({ pa
 
   // NFR-PROV-3: every id shown is checkable by the person reading it.
   const links = await page
-    .locator('a[href*="/v1/receipts/"]')
+    .locator('a[href*="/receipt/"]')
     .evaluateAll((all) => all.map((a) => (a as HTMLAnchorElement).href))
   for (const id of requestIds) expect(links.some((href) => href.endsWith(id))).toBe(true)
+})
+
+// The second half of NFR-PROV-3. The id links to Cekgu's own receipt page rather than to the
+// gateway's raw JSON, so the chain only holds if that page hands the reader back to GonkaRouter.
+test('the receipt page carries the reader on to the gateway', async ({ page }) => {
+  await page.goto('/sample')
+  await page.getByRole('button', { name: EVIDENCE }).first().click()
+
+  const link = page.locator('a[href*="/receipt/"]').first()
+  const href = await link.getAttribute('href')
+  const requestId = href?.split('/').pop() ?? ''
+  expect(requestId).toMatch(/^req-\d+-\d+$/)
+
+  await page.goto(`/receipt/${requestId}`)
+  await expect(page.getByRole('heading', { name: 'Gonka Receipt' })).toBeVisible()
+  await expect(page.getByText(requestId, { exact: true }).first()).toBeVisible()
+
+  const out = page.getByRole('link', { name: 'Open on GonkaRouter' })
+  await expect(out).toBeVisible()
+  expect(await out.getAttribute('href')).toBe(`https://api.gonkarouter.io/v1/receipts/${requestId}`)
 })
 
 // Reported by c3638: navigating away from a record blanked the whole app. Cause was a teardown

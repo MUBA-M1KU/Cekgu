@@ -1,4 +1,4 @@
-import type { ReceiptStatus } from '../../shared/types'
+import type { Receipt, ReceiptStatus } from '../../shared/types'
 import { env } from '../env'
 
 // The one code path that talks to GonkaRouter (NFR-SEC-1). Hand-rolled fetch rather than the OpenAI
@@ -9,19 +9,6 @@ const MAX_TOKENS = 1024
 const CALL_TIMEOUT_MS = 90_000
 const RECEIPT_BUDGET_MS = 5_000
 const RECEIPT_INTERVAL_MS = 250
-
-export type Receipt = {
-  x_request_id: string
-  x_devshard_id: string
-  model: string
-  created_at: string
-  outcome: string
-  status_code: number
-  stream: boolean
-  total_tokens: number
-  ttft_ms: number
-  duration_ms: number
-}
 
 // TRD section 14's Provenance, plus httpStatus and receipt: the attempts table has columns for both
 // and this is the only layer that sees them.

@@ -312,11 +312,33 @@ Two columns from 720 px, stacked below it. Each column is one reader, top to bot
 - The reader's own bubble row with its choice filled
 - The rationale in paper italic
 - A mono block with request id, requested model, served model and receipt status. The request id is selectable text and
-  is followed by a **View Receipt** text button
+  is followed by a **View Receipt** text button, which opens the [receipt page](#the-receipt-page) in a new tab
+
+From 720 px **the two columns share one row grid**. The model name, the bubble row, the rationale and every line of the
+mono block sit on the same baseline in both readers, however long either rationale runs. This is an invisible table:
+alignment is the only thing the grid contributes, and no rule, cell or divider is drawn. A reader with nothing to say in
+a row leaves that row empty rather than pulling the rest of its column up.
 
 Beneath both columns the attempt table lists every attempt (FR-EVIDENCE-2) as level-0 rows. If only one family answered,
 the second column holds that family's attempt history under the heading **No Second Reading**, never a duplicate of the
 first (FR-EVIDENCE-4).
+
+### The receipt page
+
+`/receipt/<request-id>`, public and reachable signed out, one sheet. A request id anywhere in the product links here
+rather than to the gateway's raw JSON, which is not a page a judge should be handed mid-pitch.
+
+- **The heading is `Gonka Receipt`** and the request id sits under it in mono, unbroken
+- **The gateway's fields** follow as the same invisible table the evidence panel uses: served model, outcome, status
+  code, devshard, created, time to first token, duration, total tokens and whether it streamed
+- **One paragraph** says what a receipt is and, per FR-PUBLIC-2, what it is not: gateway metadata, not cryptographic or
+  on-chain proof
+- **A plain button, `Open on GonkaRouter`,** goes to `https://api.gonkarouter.io/v1/receipts/<id>`, and the paragraph
+  links gonkarouter.io itself
+- **The raw JSON** is printed last in a `--well` block, so nothing rendered above has to be taken on trust
+
+A receipt the gateway has not written yet is not an error state. It says so in a sentence and still offers the outbound
+link, because the id is real and a receipt appears a moment after the call it belongs to finishes.
 
 ### The guest banner
 
@@ -375,13 +397,24 @@ verdict first. In the signed-out **Sample Report** the group is not rendered at 
 
 ### Attempt rows
 
-A level-0 table: Attempt number, Requested model, Served model, Status, Request id, Receipt. Models and ids in mono.
-Status is a plain chip: **Admitted**, **Rejected**, **Hedged**, **Timed Out**, **Retried**. A rejected row shows its
-reason as a sentence in `--ink-muted` beneath it.
+A level-0 table: Attempt number, Requested model, Served model, Status, Request id, Shard, Latency, Receipt. Models and
+ids in mono. The status words are **Admitted**, **Hedged**, **Rate Limited**, **Timed Out** and **Rejected**; **Hedged**
+is the copy of a hedged call that arrived second, which was admissible and simply lost the race.
 
-A row with no request id prints "No request id was returned" and the reason, in words, in that cell; the cell is never
-blank. Each present id is followed by **View Receipt**, which opens a level-2 popover with the served model and stream
-flag, or the fetch failure stated in a sentence.
+**Every cell is flush left with its header, status and receipt included.** They are text here rather than chips: a chip
+sets its word a pill's padding to the right of the header above it, which reads as an indent that means nothing, and on
+`--well` the chip's own `--well` ground is invisible anyway.
+
+**A row that produced no used reading shows why beneath its status, in `--ink-muted` and in at most five words.** Five
+is the column's budget beside seven others on a projector, not a style preference; the sentence the server wrote stays
+on the row as its title, so nothing is lost.
+
+A row with no request id prints "No request id was returned" in that cell; the cell is never blank. **A present id is
+itself the link** and opens the [receipt page](#the-receipt-page) in a new tab. It is never broken across lines: the id
+is the thing a judge copies.
+
+Eight columns of provenance do not fit the 880 px reading column, so the table scrolls inside its own container. The
+order puts the proof leftmost: what was asked, what served it, what happened, and the id.
 
 ### Buttons
 

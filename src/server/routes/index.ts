@@ -3,6 +3,7 @@ import { type AppEnv, requireSession } from '../session'
 import { accountRoutes } from './account'
 import { authRoutes } from './auth'
 import { healthRoutes } from './health'
+import { receiptRoutes } from './receipts'
 import { recordRoutes } from './records'
 import { sampleRoutes } from './sample'
 
@@ -19,12 +20,17 @@ api.route('/', authRoutes)
 // Protection is the default so a new route is guarded until it opts out here.
 const PUBLIC_PATHS = ['/api/sample', '/api/health']
 
+// A receipt lookup carries the id in the path, so it opts out by prefix rather than by exact path.
+const PUBLIC_PREFIXES = ['/api/receipts/']
+
 api.use('*', async (c, next) => {
   if (PUBLIC_PATHS.includes(c.req.path)) return next()
+  if (PUBLIC_PREFIXES.some((prefix) => c.req.path.startsWith(prefix))) return next()
   return requireSession(c, next)
 })
 
 api.route('/', accountRoutes)
 api.route('/', healthRoutes)
+api.route('/', receiptRoutes)
 api.route('/', recordRoutes)
 api.route('/', sampleRoutes)

@@ -1,5 +1,5 @@
 import type { CreateRecordInput, DispositionInput } from '../shared/schemas'
-import type { Health, RecordDetail, RecordSummary } from '../shared/types'
+import type { Health, ReceiptLookup, RecordDetail, RecordSummary } from '../shared/types'
 
 export type CreateRecordResponse = { id: string; status: string; itemCount: number; expiresAt: string | null }
 
@@ -176,4 +176,15 @@ export async function getSample(): Promise<RecordDetail> {
   }
 
   return request<RecordDetail>('/api/sample')
+}
+
+// The receipt page reads this rather than api.gonkarouter.io directly: the gateway sends no CORS
+// header, so the browser cannot read a receipt it fetches itself.
+export async function getReceipt(requestId: string): Promise<ReceiptLookup> {
+  if (MOCK) {
+    const { mockReceipt } = await import('./mock-record')
+    return mockReceipt(requestId)
+  }
+
+  return request<ReceiptLookup>(`/api/receipts/${encodeURIComponent(requestId)}`)
 }

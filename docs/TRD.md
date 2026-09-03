@@ -1184,13 +1184,57 @@ config route.
 }
 ```
 
+### `GET /api/receipts/:requestId`
+
+**Public**, by prefix rather than by exact path in `PUBLIC_PATHS`, because the id is in the path. It reads one receipt
+from the gateway on the caller's behalf so the [receipt page](DESIGN.md#the-receipt-page) can render it.
+
+The proxy exists because the browser cannot do this itself: GonkaRouter serves `GET /v1/receipts/<id>` unauthenticated,
+but sends no `access-control-allow-origin`, so a fetch from the app's own origin is blocked before the body is readable.
+No API key is sent, since the endpoint needs none.
+
+`:requestId` must match `/^req-\d+-\d+$/` and is tested before the fetch, so the path segment cannot address anything
+else on `api.gonkarouter.io`. A segment that does not match is `400` `invalid_request_id`; nothing is fetched.
+
+Every other outcome is `200`, because a receipt that is not there yet is an ordinary answer under
+[gotcha 11](#5-verified-gotchas) rather than an error:
+
+| `status`      | Means                                                   |
+| ------------- | ------------------------------------------------------- |
+| `found`       | The gateway answered `200`; `receipt` carries its body  |
+| `missing`     | The gateway answered anything else; `receipt` is `null` |
+| `unreachable` | The fetch threw or passed its 5 second budget           |
+
+```json
+{
+  "requestId": "req-1788426475140384999-410759",
+  "status": "found",
+  "sourceUrl": "https://api.gonkarouter.io/v1/receipts/req-1788426475140384999-410759",
+  "receipt": {
+    "x_request_id": "req-1788426475140384999-410759",
+    "x_devshard_id": "70335",
+    "model": "moonshotai/Kimi-K2.6",
+    "created_at": "2026-09-03T09:08:09Z",
+    "outcome": "success",
+    "status_code": 200,
+    "stream": false,
+    "total_tokens": 768,
+    "ttft_ms": 14640,
+    "duration_ms": 14640
+  }
+}
+```
+
+`receipt` is the gateway's body verbatim, snake case included. The page prints it beside its own rendering of the same
+fields, so a reader can see that nothing was renamed on the way through.
+
 ## 16. Provenance display
 
 The evidence view is the track's proof moment and is where FR-EVIDENCE-1 to FR-EVIDENCE-4, FR-VERDICT-4 and NFR-PROV-3
 are discharged on screen, not in a document.
 
 **In the item evidence view** every attempt is a row, newest first, showing: requested model, served model from the
-receipt, the request id as selectable text and a link to `https://api.gonkarouter.io/v1/receipts/<id>`, devshard id,
+receipt, the request id as selectable text linking to the [receipt page](DESIGN.md#the-receipt-page), devshard id,
 latency in seconds, a receipt status chip reading **Verified**, **Mismatch**, **Missing** or **Pending**, and whether it
 was admitted with the rejection reason if not. An attempt that returned no headers shows **No request id returned** and
 the reason in place of the link. The two admitted readings sit above the attempt list side by side with model name,
@@ -1204,8 +1248,9 @@ attention verdicts first and **Clear** last (FR-RECORD-3). Wherever **Unverified
 printed beside it.
 
 **The public sample page** renders the same components from `GET /api/sample` with every disposition control removed.
-Model names, request ids and receipt chips are text, so a judge can copy an id into the receipt URL during Q&A. The
-receipt is gateway metadata, not on-chain proof, and the trust copy says so (FR-PUBLIC-2).
+Model names, request ids and receipt statuses are text, so a judge can copy an id during Q&A, and every id links to
+`/receipt/<id>`, which renders the gateway's receipt and hands the reader on to `api.gonkarouter.io` for the raw one.
+The receipt is gateway metadata, not on-chain proof, and the trust copy says so (FR-PUBLIC-2).
 
 ## 17. Mascot runtime
 

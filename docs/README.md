@@ -157,8 +157,10 @@ There is no other AI provider anywhere in the code, which a search for provider 
 
 - **Where the request ids come from.** Each GonkaRouter response carries an `x-request-id` header. The client reads it
   off the raw response before parsing the body, stores it with the attempt, and the evidence view shows it beside the
-  reading it belongs to, as selectable text with a link to the public receipt. Detail:
-  [Request IDs and provenance](TRD.md#4-request-ids-and-provenance)
+  reading it belongs to, as selectable text linking to `/receipt/<id>`. That page renders the gateway's receipt, prints
+  its raw JSON underneath, and links on to `api.gonkarouter.io` so the reader can check it at the source. Detail:
+  [Request IDs and provenance](TRD.md#4-request-ids-and-provenance) and
+  [`GET /api/receipts/:requestId`](TRD.md#get-apireceiptsrequestid)
 - **How the receipt check works.** The client asks the gateway not to substitute models, rejects any response that says
   it did, then fetches `GET /v1/receipts/<id>` and requires the receipt's model to match the one requested. A reading
   that fails any step is kept, marked rejected with the reason, and never counts. Two readings count as independent only
@@ -424,7 +426,8 @@ E2E_FLOW=1 bunx playwright test e2e/flow.e2e.ts   # types a check, waits for the
 
 It is the test that proves the track requirements hold in the product rather than in a fixture: it signs in as a guest,
 types a deliberately mis-keyed question, waits for the verdict, and then asserts off the **rendered page** that at least
-two Gonka request ids, two distinct served models and two links to the public receipts endpoint are visible.
+two Gonka request ids, two distinct served models and two receipt links are visible. A second smoke test follows one of
+those links and asserts the receipt page carries the reader on to `api.gonkarouter.io` for the same id.
 
 It asserts the verdict **reason**, which only exists once the rule has run; asserting the verdict _label_ would pass
 instantly against the summary filters, which name all five verdicts at zero before any reading exists.
