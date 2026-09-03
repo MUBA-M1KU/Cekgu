@@ -1,4 +1,4 @@
-import { boolean, index, integer, jsonb, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { boolean, index, integer, jsonb, pgEnum, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core'
 import type { Option, Reading } from '../../shared/types'
 import { user } from './auth-schema'
 
@@ -58,7 +58,13 @@ export const items = pgTable(
     status: itemStatus('status').notNull().default('queued'),
     attemptsUsed: integer('attempts_used').notNull().default(0)
   },
-  (table) => [index('items_record_id_status_idx').on(table.recordId, table.status)]
+  (table) => [
+    index('items_record_id_status_idx').on(table.recordId, table.status),
+    // The queue claim in TRD section 13 selects across every record by status alone, which the
+    // composite above cannot serve because it leads with record_id.
+    index('items_status_idx').on(table.status),
+    unique('items_record_id_position_key').on(table.recordId, table.position)
+  ]
 )
 
 export const attempts = pgTable(

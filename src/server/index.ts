@@ -9,9 +9,9 @@ import { seedGuestUser } from './seed'
 
 const CLIENT_DIR = './dist/client'
 
-await migrate(db, { migrationsFolder: './drizzle' })
+if (env.migrateOnStart) await migrate(db, { migrationsFolder: './drizzle' })
 await seedGuestUser()
-startGuestSweep()
+if (env.workerEnabled) startGuestSweep()
 
 const app = new Hono()
 
