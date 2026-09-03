@@ -37,6 +37,39 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
   const latest = item.dispositions.at(-1)
   const needsDecision = item.verdict !== 'clear' && item.verdict !== 'pending'
 
+  // A clean item is the control, not the work. On the sample paper nine of twelve come back Clear,
+  // and giving each of them a stem, a reading row, a sentence and a button buries the three that
+  // are actually asking something behind nine hundred pixels of nothing-is-wrong. So a Clear item
+  // with no decision on it collapses to one line, and opening it gives back the whole row —
+  // including the evidence, which stays reachable on every item because the receipts are the
+  // product's claim and a judge must be able to open any of them.
+  const [open, setOpen] = useState(false)
+  const quiet = item.verdict === 'clear' && item.status === 'done' && !latest && !open
+
+  if (quiet) {
+    return (
+      <li className="border-t border-rule">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-expanded={false}
+          className="flex w-full items-center gap-3 py-3 text-left sm:gap-4"
+        >
+          <span className="type-mono w-7 shrink-0 text-ink-muted sm:w-10">{item.position}</span>
+          <ReadRow
+            options={item.options}
+            keyLetter={item.key}
+            readerA={admittedSeats(item)[0]?.reading?.answer ?? null}
+            readerB={admittedSeats(item)[1]?.reading?.answer ?? null}
+            condensed
+          />
+          <span className="type-body min-w-0 flex-1 truncate">{item.stem}</span>
+          <VerdictChip verdict={item.verdict} />
+        </button>
+      </li>
+    )
+  }
+
   async function record(input: DispositionInput) {
     setBusy(true)
     await onDisposition(item.id, input)

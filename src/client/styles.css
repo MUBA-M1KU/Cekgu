@@ -331,8 +331,8 @@ section[id] {
    so this is real glass rather than a tint pretending to be one. */
 .nav-sticky[data-glass="true"] {
   background: color-mix(in oklab, var(--sheet) 72%, transparent);
-  backdrop-filter: blur(14px) saturate(160%);
   -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
 }
 
 .nav-sticky[data-glass="true"][data-solid="true"] {
@@ -464,6 +464,10 @@ section[id] {
   border: 1px solid var(--rule);
   border-radius: var(--r-bubble);
   background: color-mix(in oklab, var(--sheet) 70%, transparent);
+  /* It sits on the hero clip, so there is something to blur. Without this it was a 70 per cent
+     tint over a moving image and read as a half-finished panel rather than as glass. */
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  backdrop-filter: blur(10px) saturate(150%);
   font-size: 0.75rem;
   letter-spacing: 0.04em;
   color: var(--ink-muted);
@@ -477,8 +481,8 @@ section[id] {
   border: 1px solid color-mix(in oklab, var(--sheet) 90%, transparent);
   border-radius: 1.5rem;
   background: color-mix(in oklab, var(--sheet) 90%, transparent);
-  backdrop-filter: blur(18px) saturate(170%);
   -webkit-backdrop-filter: blur(18px) saturate(170%);
+  backdrop-filter: blur(18px) saturate(170%);
   /* A contact shadow, not a diffuse glow. The 1 px light border is what separates the card from
      the photograph behind it; a wide blur on top of that is the generated-UI signature. */
   box-shadow: 0 8px 16px -10px rgb(20 24 31 / 0.45);
@@ -753,8 +757,8 @@ section[id] {
   opacity: 0;
   pointer-events: none;
   background: color-mix(in oklab, var(--ink) 22%, transparent);
-  backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
   transition: opacity var(--t-panel) var(--ease-out);
 }
 
@@ -1025,8 +1029,8 @@ section[id] {
   height: var(--app-foot-h);
   border-top: 1px solid var(--rule);
   background: color-mix(in oklab, var(--sheet) 70%, transparent);
-  backdrop-filter: blur(10px) saturate(1.18);
   -webkit-backdrop-filter: blur(10px) saturate(1.18);
+  backdrop-filter: blur(10px) saturate(1.18);
   box-shadow: inset 0 1px 0 color-mix(in oklab, var(--sheet) 60%, transparent);
 }
 
@@ -1126,13 +1130,13 @@ section[id] {
   .hero-badge,
   .app-footer {
     background: var(--sheet);
-    backdrop-filter: none;
     -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
   .app-rail-backdrop {
-    backdrop-filter: none;
     -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
 
