@@ -295,7 +295,7 @@ gh issue close <n>                     # done
 
 ## Skills, subagents and hooks
 
-**37 skills are committed** and all are optional: invoke one when the task matches, not as a checkpoint before every
+**36 skills are committed** and all are optional: invoke one when the task matches, not as a checkpoint before every
 action. Your tool already lists them with descriptions, so the inventory is not repeated here. Provenance, what was
 retargeted, what was deliberately not taken, and what each hook does:
 [`.agents/skills/VENDORED.md`](.agents/skills/VENDORED.md).

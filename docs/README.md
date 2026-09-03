@@ -181,9 +181,9 @@ The queue is built around that rather than around a hoped-for latency:
 - **A family that keeps failing is demoted, never dropped**, when dropping it would leave fewer than two candidates. One
   candidate cannot produce two distinct readings, so dropping the second guarantees Unverified without a call
 
-The [benchmark pass](../src/server/fixtures/benchmark-pass.json) that seeds the sample record shows this working: every
-one of its twelve items obtained two receipt-verified readings, and **not one of them came from DeepSeek**, which was
-rate-limited throughout. Detail: [Queue and worker](TRD.md#13-queue-and-worker).
+The [benchmark pass](../src/server/fixtures/benchmark-pass.json) the sample record is seeded from shows this working:
+every one of its twelve items obtained two receipt-verified readings, and **not one of them came from DeepSeek**, which
+was rate-limited throughout. Detail: [Queue and worker](TRD.md#13-queue-and-worker).
 
 ## What Cekgu cannot do
 
@@ -238,7 +238,7 @@ public/                  static assets: brand/ and the Live2D mascot runtime fil
 drizzle/                 database migrations, committed
 .github/workflows/       CI on pull request with a preview URL, deploy on merge
 Dockerfile               the Cloud Run image
-.agents/skills/          37 skills, the committed source of truth
+.agents/skills/          36 skills, the committed source of truth
 .claude/skills/          symlinks into .agents/skills/, plus impeccable as a real dir
 .claude/agents/          pitch-smith
 .claude/hooks/           session brief, env drift, git guard, formatter
