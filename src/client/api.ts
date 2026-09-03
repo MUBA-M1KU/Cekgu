@@ -1,5 +1,5 @@
 import type { CreateRecordInput, DispositionInput } from '../shared/schemas'
-import type { RecordDetail, RecordSummary } from '../shared/types'
+import type { Health, RecordDetail, RecordSummary } from '../shared/types'
 
 export type CreateRecordResponse = { id: string; status: string; itemCount: number; expiresAt: string | null }
 
@@ -149,6 +149,12 @@ export async function deleteRecords(ids: string[]): Promise<DeleteResult> {
   }
 
   return request<DeleteResult>('/api/records', { method: 'DELETE', body: JSON.stringify({ ids }) })
+}
+
+export async function getHealth(): Promise<Health> {
+  if (MOCK) return { models: [], windowMinutes: 15, mascotEnabled: true }
+
+  return request<Health>('/api/health')
 }
 
 export async function getSample(): Promise<RecordDetail> {

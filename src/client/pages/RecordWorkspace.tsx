@@ -7,6 +7,7 @@ import { ItemRow } from '../components/ItemRow'
 import { Sheet } from '../components/Sheet'
 import { StatusChip } from '../components/StatusChip'
 import { ATTENTION_VERDICTS, VerdictFilters } from '../components/VerdictFilters'
+import { Mascot } from '../mascot/Mascot'
 
 // Attention verdicts first and Clear last, so the filter row reads in the order the educator
 // should work through it. FR-RECORD-3, DESIGN.md Layout.
@@ -60,7 +61,8 @@ export function RecordWorkspace() {
   return (
     <Sheet>
       <header>
-        <div className="flex flex-wrap items-center gap-3">
+        {/* data-mascot-slot is where Mascot.tsx portals the compact badge. */}
+        <div data-mascot-slot className="flex flex-wrap items-center gap-3">
           <h1 className="min-w-0">{record.title}</h1>
           <StatusChip status={record.status} />
           {record.isSample ? <span className="status-chip type-label">Sample</span> : null}
@@ -107,6 +109,8 @@ export function RecordWorkspace() {
           ))}
         </ul>
       )}
+
+      <Mascot record={record} />
     </Sheet>
   )
 }
