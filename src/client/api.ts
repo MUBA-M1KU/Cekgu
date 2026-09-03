@@ -151,6 +151,12 @@ export async function deleteRecords(ids: string[]): Promise<DeleteResult> {
   return request<DeleteResult>('/api/records', { method: 'DELETE', body: JSON.stringify({ ids }) })
 }
 
+// FR-RECORD-8. Erasure of everything the account holds, Trash included. Distinct from
+// deleteRecords, which is per-record and soft for a private account.
+export async function deleteAllRecords(): Promise<DeleteResult> {
+  return request<DeleteResult>('/api/account/records', { method: 'DELETE' })
+}
+
 export async function getHealth(): Promise<Health> {
   if (MOCK) return { models: [], windowMinutes: 15, mascotEnabled: true }
 

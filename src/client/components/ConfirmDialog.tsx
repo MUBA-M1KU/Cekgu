@@ -41,7 +41,9 @@ export function ConfirmDialog({ open, title, body, onCancel, onConfirm }: Props)
       onKeyDown={(event) => {
         if (event.key === 'Escape') onCancel()
       }}
-      className="w-[440px] max-w-[calc(100vw-2rem)] rounded-sheet border border-rule-strong bg-sheet p-6 text-ink shadow-[var(--shadow-overlay)] backdrop:bg-[var(--shadow-overlay-tint)]"
+      // m-auto restores the centring a modal <dialog> gets from the UA sheet. Tailwind's reset
+      // zeroes margin on every element, which drops the dialog into the top-left corner.
+      className="m-auto w-[440px] max-w-[calc(100vw-2rem)] rounded-sheet border border-rule-strong bg-sheet p-6 text-ink shadow-[var(--shadow-overlay)] backdrop:bg-[var(--shadow-overlay-tint)]"
     >
       <h2 className="text-[1.25rem]/[1.25] font-semibold">{title}</h2>
       {body.map((sentence) => (

@@ -276,6 +276,18 @@ count and last updated time, and opening a row enters the record workspace.
 - A private deletion is a soft delete retained for 30 days; the restore surface is a paid-launch feature and is not
   required here
 - A Guest deletion is immediate and the confirmation says there is no recovery
+- A soft-deleted private record is destroyed once its 30 days are up, without anyone asking
+
+**FR-RECORD-8.** Settings carries a **Delete All Records** control and states how long the account keeps data. This is
+the erasure path a person exercising their PDPA rights reaches for, so it is deliberately not the same action as
+FR-RECORD-6.
+
+- The default retention is 3 months for a private account, counted from the last time a record was opened or changed,
+  and 24 hours for Guest. Settings states the one that applies to the account reading it
+- Given the control is confirmed, then every record the account holds is destroyed immediately, including anything
+  already in Trash, and nothing is recoverable
+- The protected sample is refused and the result says so, on Guest as on any other route (FR-SAMPLE-2)
+- On Guest the confirmation says the workspace is shared, so the deletion takes records other guests added
 
 ### Evidence
 
@@ -432,6 +444,7 @@ contract and where request ids are rendered without reading the code.
 | As an educator, I record Key Corrected and the original verdict stays in history                    | FR-RECORD-4, FR-RECORD-2                |
 | As an educator, I see an Unverified item, understand why, and retry it later                        | FR-VERDICT-2, FR-QUEUE-5, FR-EVIDENCE-2 |
 | As an educator, I select several old records and delete them with a clear warning                   | FR-RECORD-6, FR-RECORD-7                |
+| As an educator, I delete everything my account holds and see how long data is kept                  | FR-RECORD-8                             |
 | As a guest, I enter with one click and am told plainly that others can see and delete my records    | FR-AUTH-2, FR-AUTH-3                    |
 | As a guest, I try a real three-question check within the limits and it queues                       | FR-AUTH-5, FR-CHECK-3, FR-QUEUE-1       |
 | As a guest, I cannot delete the sample but I can reset my dispositions on it                        | FR-SAMPLE-2, FR-SAMPLE-3                |
@@ -496,7 +509,7 @@ Each [submission floor](PRODUCT.md#submission-floor) bullet maps to the requirem
 | The five machine verdicts, including ordinary Unverified handling             | FR-VERDICT-2, FR-VERDICT-3, FR-VERDICT-4, FR-QUEUE-5    |
 | A record review with summary counts, item filters and human dispositions      | FR-RECORD-2, FR-RECORD-3, FR-RECORD-4                   |
 | A model-evidence view with every Gonka Request ID visible                     | FR-EVIDENCE-1, FR-EVIDENCE-2, FR-EVIDENCE-3, NFR-PROV-3 |
-| Records that can be opened, selected and deleted                              | FR-RECORD-5, FR-RECORD-6, FR-RECORD-7                   |
+| Records that can be opened, selected and deleted                              | FR-RECORD-5, FR-RECORD-6, FR-RECORD-7, FR-RECORD-8      |
 | One protected sample record containing the real benchmark evidence            | FR-SAMPLE-1, FR-SAMPLE-2, FR-SAMPLE-3, FR-SAMPLE-4      |
 | A deployed URL that stays useful when one model is unavailable                | NFR-OPS-1, FR-QUEUE-2, FR-QUEUE-4                       |
 

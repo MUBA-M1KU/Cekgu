@@ -6,6 +6,7 @@ import { env } from './env'
 import { startGuestSweep } from './guest'
 import { startHealthMirror } from './queue/health'
 import { startWorker } from './queue/worker'
+import { startRetentionSweep } from './retention'
 import { api } from './routes'
 import { SAMPLE_PASS_PATH, seedSample } from './sample'
 import { seedGuestUser } from './seed'
@@ -17,6 +18,7 @@ await seedGuestUser()
 if (env.migrateOnStart) await seedSample(SAMPLE_PASS_PATH)
 if (env.workerEnabled) {
   startGuestSweep()
+  startRetentionSweep()
   startHealthMirror()
   await startWorker()
 }

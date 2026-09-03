@@ -363,8 +363,8 @@ curl -s https://api.gonkarouter.io/v1/messages \
 | `bun run check:anchors` | Resolve every Markdown anchor link |
 | `gh issue list`         | The TODO board                     |
 
-A default `bun test` needs nothing but the repo: on 3 September it read **194 pass, 59 skip, 0 fail** — 253 tests across
-22 files, 890 `expect()` calls. The 59 skips are the four database-backed suites, which take `TEST_DATABASE_URL` and
+A default `bun test` needs nothing but the repo: on 3 September it read **194 pass, 72 skip, 0 fail** — 266 tests across
+24 files, 890 `expect()` calls. The 72 skips are the six database-backed suites, which take `TEST_DATABASE_URL` and
 refuse any host but localhost, because they truncate what they connect to.
 
 Each of those suites **truncates** the database it connects to, so running them together in one process makes them clear
@@ -377,11 +377,13 @@ export TEST_DATABASE_URL='postgres://postgres:x@127.0.0.1:55432/cekgu'
 
 bun test src/server/sample.test.ts                    # 17 pass
 bun test src/server/guest.sweep.test.ts               # 5 pass
+bun test src/server/retention.sweep.test.ts           # 5 pass
 bun test src/server/queue/claim.concurrency.test.ts   # 8 pass
 bun test src/server/routes/records.test.ts            # 23 pass
+bun test src/server/routes/account.test.ts            # 6 pass
 ```
 
-Those four counts were produced by actually running the commands.
+Those six counts were produced by actually running the commands.
 
 ### The smoke pass
 
