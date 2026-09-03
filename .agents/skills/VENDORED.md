@@ -3,7 +3,7 @@
 `.agents/skills/` is the canonical, tool-agnostic skill directory; `.claude/skills/` symlinks into it. This file records
 where each skill came from, what was changed on the way in, and what was deliberately left out.
 
-**37 skills.** 36 in `.agents/skills/` — 7 hackathon, 8 business, 14 superpowers, 3 taste, 4 utility — plus
+**38 skills.** 37 in `.agents/skills/` — 7 hackathon, 8 business, 14 superpowers, 3 taste, 5 utility — plus
 `impeccable`. All are optional: invoke one when the task matches, not as a checkpoint before every action.
 
 **`impeccable` is the one exception** to the symlink layout. It lives in `.claude/skills/` as a real directory, because
@@ -22,7 +22,7 @@ Contents:
 
 ## Where the skills came from
 
-29 are tracked in `skills-lock.json`. The other 8 have no reachable source.
+30 are tracked in `skills-lock.json`. The other 8 have no reachable source.
 
 | Source                             | Skills                                                                                                               |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -33,6 +33,7 @@ Contents:
 | [owl-listener/designer-skills]     | `jobs-to-be-done`                                                                                                    |
 | [graphify-labs/graphify]           | `graphify`                                                                                                           |
 | [mattpocock/skills]                | `handoff`, `diagnosing-bugs`                                                                                         |
+| [humanlayer/skills]                | `show-me`                                                                                                            |
 | [pbakaus/impeccable]               | `impeccable`                                                                                                         |
 
 [obra/superpowers]: https://github.com/obra/superpowers
@@ -42,6 +43,7 @@ Contents:
 [owl-listener/designer-skills]: https://github.com/owl-listener/designer-skills
 [graphify-labs/graphify]: https://github.com/graphify-labs/graphify
 [mattpocock/skills]: https://github.com/mattpocock/skills
+[humanlayer/skills]: https://github.com/humanlayer/skills
 [pbakaus/impeccable]: https://github.com/pbakaus/impeccable
 
 Sources were identified by **content diff**, not by name: `jobs-to-be-done` had three same-named registry candidates at
@@ -90,6 +92,12 @@ Four things the CLI does that this layout does not want:
 **After any install**, confirm every `.claude/skills/*` entry resolves, `.claude/skills/impeccable/scripts/hook.mjs`
 still exists, and the seven `hackathon-*` skills still carry their `> ## This Event` block.
 
+**Copies here are Prettier-normalized, and that is expected.** `bun run format` and `bun run lint` cover every `.md` in
+the repo, `.agents/skills/` included, so a vendored `SKILL.md` is rewrapped to 120 columns on the way in and no longer
+matches its upstream byte for byte. Only line wrapping changes — verified word for word on `show-me`, where no word
+differs. So "do not reformat installed skills" means **do not edit their wording**, not keep them byte-identical, and a
+copy here will not hash-match its source. Global installs outside the repo see no formatter and stay byte-identical.
+
 ## Choosing between them
 
 | Skill                                                           | Use for                                                                    |
@@ -105,6 +113,10 @@ still exists, and the seven `hackathon-*` skills still carry their `> ## This Ev
 | `high-end-visual-design` / `image-to-code`                      | Polish on a working UI; a design image into markup                         |
 | `diagnosing-bugs` / `handoff` / `graphify`                      | A bug that resisted the first fix; context handoff; architecture questions |
 | `claude-in-chrome`                                              | The real browser. Read it before any browser tool call                     |
+| `show-me`                                                       | Explaining visually mid-answer: call trees, file trees, Mermaid, diffs     |
+
+`show-me` ends by opening a generated HTML file with `open`, which is macOS only. On Linux that is `xdg-open`. The skill
+is vendored unmodified, so make the substitution when following that step rather than editing it in place.
 
 The eight business skills, **not `brainstorming`**, are what concept selection runs on. `brainstorming` is an
 architecture skill whose output is a design doc: right once a concept is locked, wrong for deciding whether to build it.
