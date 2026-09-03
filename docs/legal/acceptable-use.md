@@ -1,0 +1,28 @@
+# Acceptable use
+
+> Draft demo notice. Not final. Re-review against the deployed product and obtain owner approval before publication.
+
+Use Cekgu to review practice or synthetic multiple-choice questions that you are permitted to share for processing
+through GonkaRouter's decentralised inference network. Cekgu supports an educator's review; the educator remains
+responsible for the final question and answer key.
+
+## Content you must not submit
+
+- Confidential final examination papers, unreleased exam content or material restricted by your institution.
+- Personal data, including learner names, identifiers, answers or marks linked to a person.
+- Passwords, access tokens or other secrets, including those embedded in example questions or notes.
+- Content you do not have permission to share with an external processing service.
+
+These restrictions apply to private accounts as well as Guest access. A private library does not make confidential
+content safe to upload.
+
+## Using the shared demo
+
+Other guests can view and delete anything you add to the shared Guest workspace. Use synthetic examples there.
+Guest-created records are scheduled to expire after 24 hours; keep any copy you need outside the demo. Read the
+[privacy notice](privacy.md) for cleanup timing and deletion limits.
+
+Respect the demo's submission limits and protected sample. Review model suggestions before using them in an assessment;
+agreement between models is not a guarantee that an answer is correct.
+
+See [terms](terms.md) for service boundaries and the attribution of the licensed Live2D sample characters.

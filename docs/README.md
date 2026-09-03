@@ -167,6 +167,7 @@ docs/
   DESIGN.md              the design system, once frontend work starts
   coding-guidelines.md   behavioural coding rules, referenced by AGENTS.md
   agent-tooling.md       rtk and graphify, both optional and per-machine
+  legal/                 draft demo terms, privacy and acceptable use; re-review before publication
   source/                organizer material
   superpowers/research/  RUBRIC.md and cited findings from concept exploration
   demo/                  pitch script, deck, assets
