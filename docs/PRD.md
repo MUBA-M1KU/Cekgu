@@ -113,7 +113,10 @@ inside the Guest workspace, word for word as [PRODUCT.md](PRODUCT.md#the-shared-
 
 - The text beside the button and in the banner both read: **Shared demo workspace. Anything you add can be viewed or
   deleted by other guests. Do not enter real, personal or confidential exam content.**
-- The banner is visible on every Guest page without scrolling at 375 px wide and cannot be dismissed for the session
+- The banner is visible on every Guest page without scrolling at 375 px wide. It carries a single dismiss control, and
+  dismissal is remembered in that browser. Dismissing hides the strip, not the disclosure: the same sentence stays
+  beside the **Sign In as Guest** button and in Settings under Account, so a returning guest can always read it. A
+  browser that refuses storage keeps showing the banner
 - No product copy uses the word "anonymous" to describe the Guest account
 
 **FR-AUTH-4.** Guest-created records expire 24 hours after creation and carry no recovery promise.
