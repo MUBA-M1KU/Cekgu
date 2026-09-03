@@ -69,6 +69,8 @@ const post = (path: string, payload?: unknown) =>
     body: payload === undefined ? undefined : JSON.stringify(payload)
   })
 
+// GET /api/sample and POST /api/sample/reset are covered by src/server/sample.test.ts, which owns
+// the seed path. The handler there calls the same recordDetail() these tests exercise.
 describeDb('the records API', () => {
   beforeEach(async () => {
     who = 'guest'
@@ -399,22 +401,6 @@ describeDb('the records API', () => {
 
       const response = await post(`/records/${id}/items/${item?.id}/retry`)
       expect(response.status).toBe(409)
-    })
-  })
-
-  describe('GET /sample', () => {
-    test('it answers 404 until a sample is loaded', async () => {
-      expect((await app.request('/sample')).status).toBe(404)
-    })
-
-    test('it returns the sample in the same shape as a record', async () => {
-      const { id } = await (await post('/records', body({ title: 'The sample' }))).json()
-      await db.update(records).set({ isSample: true }).where(eq(records.id, id))
-
-      const json = await (await app.request('/sample')).json()
-
-      expect(recordDetailSchema.safeParse(json).success).toBe(true)
-      expect(json.isSample).toBe(true)
       await pool.end()
     })
   })

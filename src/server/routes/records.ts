@@ -12,6 +12,11 @@ export const recordRoutes = new Hono<AppEnv>()
 
 const SSE_KEEPALIVE_MS = 20_000
 const SSE_POLL_MS = 1_500
+// A record that never reaches a terminal status would otherwise hold a connection and query every
+// 1.5 s forever. The client reconnects, so this bounds one stream rather than the watching; what it
+// really bounds is an instance kept alive by a stream that can never finish — on a preview, where
+// WORKER_ENABLED is false, nothing advances a record at all.
+const SSE_MAX_STREAM_MS = 4 * 60 * 1000
 
 function invalid(message: string, code = 'invalid_request') {
   return { error: { code, message } } as const
@@ -259,52 +264,42 @@ recordRoutes.get('/records/:id/events', async (c) => {
 
   return streamSSE(c, async (stream) => {
     let previous = ''
-    let sinceKeepalive = 0
+    let lastKeepalive = Date.now()
+    const deadline = Date.now() + SSE_MAX_STREAM_MS
 
-    while (!stream.closed) {
-      const detail = await recordDetail(owned.id)
-      if (!detail) return
+    // A client that disconnects mid-write is an ordinary end to a stream, not an error path.
+    try {
+      while (!stream.closed && Date.now() < deadline) {
+        const detail = await recordDetail(owned.id)
+        if (!detail) return
 
-      const snapshot = JSON.stringify(detail)
-      if (snapshot !== previous) {
-        previous = snapshot
-        for (const item of detail.items) {
-          await stream.writeSSE({ event: 'item', data: JSON.stringify(item) })
+        const snapshot = JSON.stringify(detail)
+        if (snapshot !== previous) {
+          previous = snapshot
+          for (const item of detail.items) {
+            await stream.writeSSE({ event: 'item', data: JSON.stringify(item) })
+          }
+          await stream.writeSSE({
+            event: 'record',
+            data: JSON.stringify({ id: detail.id, status: detail.status, counts: detail.counts })
+          })
         }
-        await stream.writeSSE({
-          event: 'record',
-          data: JSON.stringify({ id: detail.id, status: detail.status, counts: detail.counts })
-        })
-      }
 
-      // A comment line every 20 seconds keeps the connection alive through Cloud Run's idle cap.
-      sinceKeepalive += SSE_POLL_MS
-      if (sinceKeepalive >= SSE_KEEPALIVE_MS) {
-        sinceKeepalive = 0
-        await stream.write(': keepalive\n\n')
-      }
+        // Wall clock rather than a count of iterations. Each pass is the poll interval plus a full
+        // recordDetail round trip, so an accumulator under-counts and the keepalive meant to defeat
+        // an idle timeout fires late — and later the slower the database gets, which is when it matters.
+        if (Date.now() - lastKeepalive >= SSE_KEEPALIVE_MS) {
+          lastKeepalive = Date.now()
+          await stream.write(': keepalive\n\n')
+        }
 
-      if (detail.status === 'ready' || detail.status === 'resolved') return
-      await stream.sleep(SSE_POLL_MS)
+        if (detail.status === 'ready' || detail.status === 'resolved') return
+        await stream.sleep(SSE_POLL_MS)
+      }
+    } catch {
+      return
     }
   })
-})
-
-// Public. The one record with is_sample, in the same shape, so the signed-out Sample Report renders
-// the same evidence read-only (FR-SAMPLE-4).
-recordRoutes.get('/sample', async (c) => {
-  const [sample] = await db
-    .select({ id: records.id })
-    .from(records)
-    .where(and(eq(records.isSample, true), isNull(records.deletedAt)))
-    .limit(1)
-
-  if (!sample) return c.json(invalid('The sample report is not loaded yet.', 'not_found'), 404)
-
-  const detail = await recordDetail(sample.id)
-  if (!detail) return c.json(invalid('The sample report is not loaded yet.', 'not_found'), 404)
-
-  return c.json(detail)
 })
 
 async function ownedRecord(recordId: string, userId: string) {
