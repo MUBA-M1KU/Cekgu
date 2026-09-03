@@ -310,6 +310,15 @@ recorded readings and public request ids from a real pass; nothing in it is fabr
 - Every request id in the sample resolves to a public receipt whose model matches the displayed served model
 - Items that never obtained two verified readings in the loaded pass appear as **Unverified**, not filled in
 
+**How the loaded pass satisfies this, 3 September.** The twelve items are a subset of
+`src/server/fixtures/evaluation-set.json`, which is the benchmark's own paper — its `fifo-structure` and `dns-role`
+entries are the two mis-keys the write-up names, word for word. They include both of those, the first two items labelled
+ambiguous and the first eight labelled clean, and their stems, options and keys are byte-identical to that file, so the
+sample's questions can be diffed against the repository. **They are not provably the identical twelve pass 1 used**,
+because pass 1's per-item output no longer exists; they are drawn from the same committed set and include the two items
+it is known to have contained. All 32 request ids were confirmed to resolve with matching models. The second bullet is
+currently satisfied vacuously: every item obtained two verified readings, so there is no Unverified item in the sample.
+
 **FR-SAMPLE-2.** The sample record is protected: it cannot be deleted, its questions, readings and verdicts cannot be
 edited, and it is labelled as the sample.
 
@@ -493,9 +502,16 @@ The mascot (FR-MASCOT-1 to FR-MASCOT-5) is not a floor bullet. It ships behind i
 
 ## Open questions
 
-- **Which benchmark pass seeds the sample record.** Decided 3 September: pass 1, which gives ten verified verdicts
-  including both key errors, with the two ambiguous items shown as Unverified. The rehearsal must match that loaded
-  pass, and a rerun replaces it only if it verifies at least as many items
+- **Which benchmark pass seeds the sample record.** ~~Decided 3 September: pass 1~~ — **superseded 3 September.** Pass
+  1's per-item output does not exist in this repository; only two of its request ids survive, quoted in
+  [`three-day-rescore.md`](superpowers/research/three-day-rescore.md#the-mechanism-benchmark--failed-3-september). The
+  sample is seeded from `capture-2026-09-03`, a fresh pass over a twelve-item subset of the committed
+  `src/server/fixtures/evaluation-set.json`, run through the shipped queue. It verified **12 of 12** against the ten
+  this clause required, and both planted key errors were caught. **It contains no Unverified item**, where pass 1 had
+  two, so the acceptance test's step 6 has no Unverified verdict to demonstrate and step 2's "Unverified items present
+  where that pass had them" now passes vacuously; the rehearsal script is being rewritten around a rejected attempt
+  instead, of which the pass has plenty. One of the two ambiguous items was reported **Clear**, which is a false
+  negative rather than an abstention and is stated in the README's limitations
 - **Guest limit values.** The 12-question, 2,000-character and 20-record limits in FR-AUTH-5 are defaults chosen here
   because PRODUCT.md fixes none. They stand until the team changes them
 - **Private sign-in mechanism.** Resolved in [`TRD.md`](TRD.md): Better Auth with Google sign-in and email plus
