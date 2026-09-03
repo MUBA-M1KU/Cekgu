@@ -72,9 +72,6 @@ export function Hero({ record }: { record: RecordDetail | null }) {
             composed before a byte of video arrives and if it never does. */}
         {/* tabIndex -1 alongside aria-hidden: a media element counts as focusable, and hiding a
             focusable element from assistive technology is the defect the rule is about. */}
-        {/* The seamless loop is baked into the asset, not driven from here: the clip's last second
-            dissolves into its first, so plain `loop` never shows a cut. Re-cutting hero.mp4 without
-            that dissolve brings the hard cut back. See docs/redesign/README.md. */}
         <video autoPlay muted loop playsInline tabIndex={-1} poster="/hero/hero-poster.jpg" aria-hidden="true">
           <source src="/hero/hero.mp4" type="video/mp4" />
         </video>

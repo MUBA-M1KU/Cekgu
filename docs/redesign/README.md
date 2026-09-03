@@ -15,7 +15,6 @@ Contents:
 1. [What changed in C after it was chosen](#what-changed-in-c-after-it-was-chosen)
 1. [The second revision](#the-second-revision)
 1. [The third revision](#the-third-revision)
-1. [The fourth revision](#the-fourth-revision)
 1. [What the diagnosis rests on](#what-the-diagnosis-rests-on)
 1. [Quality checks run against these files](#quality-checks-run-against-these-files)
 1. [What is deliberately not here](#what-is-deliberately-not-here)
@@ -58,7 +57,7 @@ Six revisions, all from the owner's notes on 3 September.
   scroll, a full-viewport hero with background media behind a two-axis scrim, a marquee trust band, then sections
 - **Four routes became one page.** How It Works, Sample Report, Pricing and Trust and Privacy are sections with anchors,
   not separate screens
-- **The hero carries a generated video.** `hero.mp4` is 9 seconds, 1280 x 720, 488 KB, no audio track, with
+- **The hero carries a generated video.** `hero.mp4` is 10 seconds, 1280 x 720, 539 KB, no audio track, with
   `hero-poster.jpg` and a CSS gradient behind it so the hero is composed before a byte of video arrives. It was
   generated in Gemini and regenerated once: the first pass laid down **navy** ink, which contradicts the design system's
   rule that red is the human hand and nothing else is
@@ -146,33 +145,6 @@ ground and a pale square around the cat on a dark one.
 **The two cats are not drawn in one consistent fur language.** The busts and Tororo reading came back tufted; the
 remaining five came back smooth. Every pose that shares a screen with another shares its treatment, so nothing on screen
 is mismatched, but anyone extending the set should generate against the smooth renders and expect to redo the busts.
-
-## The fourth revision
-
-One note from the owner, on 4 September: the hero video should loop without the visible cut back to its first frame.
-
-**Ping-pong is the obvious answer and it is the wrong one for this clip.** Playing forward then backward does remove the
-cut. But the footage is a pen drawing a red mark into an answer bubble, and ink is on the page from frame 65 of 240
-onward, so 73% of the return leg is the mark retreating into the nib. That contradicts the rule the navy regeneration
-was about: red is the human hand. The hero would show the human's mark being erased.
-
-**The clip loops on a one-second dissolve instead.** Frames 24 to 215 run forward, then the last 24 frames cross-fade
-into the first 24, so the dissolve lands on the frame immediately before the body's own first frame. Playback is always
-forward, and the mark fades out as a transition rather than un-drawing.
-
-Measured in PSNR against the frame that follows it, the new seam is a smaller step than the clip's own motion:
-
-- **The old hard cut**, frame 239 to frame 0 — **28.7 dB**, the largest jump anywhere in the clip
-- **Ordinary motion** while the pen moves — **29.5 dB** at frame 100, **31.3 dB** at frame 60
-- **The new loop seam** — **38.6 dB**
-
-The construction was verified frame by frame rather than by eye: the same filter graph run over a synthetic clip of 240
-uniquely identifiable frames returns the exact sequence `24..215` then the dissolve, with `out[0]` and `out[191]`
-hashing identical to the source frames they claim to be.
-
-`hero.mp4` is now 9 seconds and 488 KB, down from 10 seconds and 539 KB at an unchanged 444 kbps. `hero-poster.jpg` is
-regenerated from the new first frame, which is the old frame 24. **The watermark is untouched** and still sits at 91%
-across and 83% down, so the sixty-viewport check above still holds.
 
 ## What the diagnosis rests on
 
