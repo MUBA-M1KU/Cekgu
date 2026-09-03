@@ -10,8 +10,11 @@ const RECEIPT_LABEL: Record<ReceiptStatus, string> = {
   pending: 'Pending'
 }
 
-function attemptStatus(attempt: Attempt): string {
+// A rate-limited call carries no x-request-id either, so the 429 has to be named before the
+// missing-id branch or it reads as a timeout next to its own "The gateway answered 429" reason.
+export function attemptStatus(attempt: Attempt): string {
   if (attempt.admitted) return 'Admitted'
+  if (attempt.httpStatus === 429) return 'Rate Limited'
   if (attempt.requestId === null) return 'Timed Out'
   return 'Rejected'
 }
