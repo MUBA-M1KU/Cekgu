@@ -350,17 +350,18 @@ curl -s https://api.gonkarouter.io/v1/messages \
        "messages":[{"role":"user","content":"Reply with just: pong"}]}'
 ```
 
-| Command               | Does                              |
-| --------------------- | --------------------------------- |
-| `bun run test:guard`  | Merge and main-branch guard tests |
-| `bun run lint`        | Biome check, then Prettier check  |
-| `bun run format`      | Both formatters, writing in place |
-| `bun run typecheck`   | `tsc --noEmit`                    |
-| `bun test`            | Unit tests                        |
-| `bun run db:generate` | Write a migration from the schema |
-| `bun run db:migrate`  | Apply pending migrations          |
-| `bun run e2e`         | Playwright smoke against a deploy |
-| `gh issue list`       | The TODO board                    |
+| Command                 | Does                               |
+| ----------------------- | ---------------------------------- |
+| `bun run test:guard`    | Merge and main-branch guard tests  |
+| `bun run lint`          | Biome check, then Prettier check   |
+| `bun run format`        | Both formatters, writing in place  |
+| `bun run typecheck`     | `tsc --noEmit`                     |
+| `bun test`              | Unit tests                         |
+| `bun run db:generate`   | Write a migration from the schema  |
+| `bun run db:migrate`    | Apply pending migrations           |
+| `bun run e2e`           | Playwright smoke against a deploy  |
+| `bun run check:anchors` | Resolve every Markdown anchor link |
+| `gh issue list`         | The TODO board                     |
 
 A default `bun test` needs nothing but the repo: on 3 September it read **194 pass, 59 skip, 0 fail** — 253 tests across
 22 files, 890 `expect()` calls. The 59 skips are the four database-backed suites, which take `TEST_DATABASE_URL` and
