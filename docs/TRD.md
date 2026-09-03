@@ -11,9 +11,11 @@ API, provenance display, mascot runtime and tests, and section 19 indexes the de
 The initial verified sections were measured against the live API on **2026-08-29** with our own key. Receipt and
 fallback behaviour was verified on **2026-08-31**; availability and account concurrency were measured again on
 **2026-09-03** and are dated where introduced. Where a measurement contradicts organizer material, the measurement is
-recorded and the contradiction is named. The application decisions were taken on **2026-09-03**. The application
-described in sections 9 to 19 shipped on 3 September 2026 and is deployed; where this half of the document describes
-gateway behaviour, it remains a measurement record rather than a description of our code.
+recorded and the contradiction is named.
+
+The application decisions were taken on **2026-09-03**, and the application described in sections 9 to 19 shipped that
+day and is deployed. Where this half of the document describes gateway behaviour, it remains a measurement record rather
+than a description of our code.
 
 Contents:
 
@@ -155,16 +157,20 @@ in [`superpowers/research/gateway-capabilities.md`](superpowers/research/gateway
 `deepseek-ai/DeepSeek-V4-Flash-0731` returned `429` on every call, sequential single requests included, with
 `X-Gonka-No-Fallback: true` set, body
 `{"error":{"message":"rate limit exceeded: too many concurrent requests","type":"upstream_error"}}`, while Kimi answered
-in about 50 s and MiniMax in 8–23 s. Single run. Interpretation, not yet shown to generalise: upstream availability
-rotates across the three models within a single evening, so treat the labs as interchangeable readers, run on whichever
-two are up, and prove distinctness by receipt rather than by which model was asked for. Detail in
+in about 50 s and MiniMax in 8–23 s. Single run.
+
+**Interpretation, not yet shown to generalise.** Upstream availability rotates across the three models within a single
+evening. Treat the labs as interchangeable readers, run on whichever two are up, and prove distinctness by receipt
+rather than by which model was asked for. Detail in
 [`superpowers/research/gateway-capabilities.md`](superpowers/research/gateway-capabilities.md#measured-2-september-2026).
 
 **Availability, measured 2026-09-03, 00:49–01:08 MYT.** In a controlled two-pass benchmark of 12 short CS questions,
 MiniMax completed **24 of 24** item calls, while Kimi completed **13 of 24** before a 90-second cutoff. Kimi had no
-completion inside 30 seconds. Separate short health probes returned an upstream `429` and then a 90-second timeout from
-DeepSeek. Of 24 item-runs, 13 obtained two receipt-verified model families and none obtained two within 30 seconds. Full
-method and request-id examples are in
+completion inside 30 seconds, and separate short health probes returned an upstream `429` and then a 90-second timeout
+from DeepSeek.
+
+Of 24 item-runs, 13 obtained two receipt-verified model families and none obtained two within 30 seconds. Full method
+and request-id examples are in
 [`three-day-rescore.md`](superpowers/research/three-day-rescore.md#the-mechanism-benchmark--failed-3-september).
 
 **Parallel fan-out works.** Three concurrent requests, one per model, completed in **16.2 s wall clock** — bounded by
@@ -278,8 +284,10 @@ hedge is mandatory.
 Kimi all returned `404` from `GET /v1/receipts/{x-request-id}` on the first fetch after the body was read, and `200`
 between 664 ms and 808 ms later. Path, auth and query-string variants were all `404` in that window, so this is
 propagation delay rather than a wrong URL — the endpoint is unauthenticated and takes the id exactly as the header gives
-it. **A client that verifies the receipt inline and fails closed on `404` produces `unverified` for every item and no
-verdict ever renders.** Poll with a short interval and a budget of a few seconds instead. The shipped client polls at
+it.
+
+**A client that verifies the receipt inline and fails closed on `404` produces `unverified` for every item and no
+verdict ever renders.** Poll with a short interval and a budget of a few seconds instead; the shipped client polls at
 250 ms intervals with a 5 s budget. The body is:
 
 ```json
@@ -300,20 +308,28 @@ verdict ever renders.** Poll with a short interval and a budget of a few seconds
 **The fallback substitution, reproduced 2026-09-03.** `deepseek-ai/DeepSeek-V4-Flash-0731` was saturated, which made the
 guard in [section 4](#cross-verification-validity-contract) demonstrable on one pair of calls:
 
-| Request                          | Result                                                                                  |
-| -------------------------------- | --------------------------------------------------------------------------------------- |
-| With `X-Gonka-No-Fallback: true` | `429`, `rate limit exceeded: too many concurrent requests`, no `x-request-id` at all    |
-| Without the header               | `200`, `X-Gonka-Fallback: deepseek-ai/DeepSeek-V4-Flash-0731 -> MiniMaxAI/MiniMax-M2.7` |
+- **With `X-Gonka-No-Fallback: true`:** `429`, `rate limit exceeded: too many concurrent requests`, no `x-request-id` at
+  all.
+- **Without the header:** `200`, `X-Gonka-Fallback: deepseek-ai/DeepSeek-V4-Flash-0731 -> MiniMaxAI/MiniMax-M2.7`.
 
 The body's own `model` field read `MiniMaxAI/MiniMax-M2.7`. So a DeepSeek and MiniMax pair requested without the header
 would have been MiniMax twice, and nothing in the response body would have said so. Note the header's format is
 `<requested> -> <served>`, and that the `429` carries no `x-request-id`, so a rejected call has no receipt to show.
 
-**Gotcha 10, measured 2026-09-03.** A 36-call item-level fan-out produced account-level `429` responses with
-`{"error":{"code":"rate_limited","message":"too many concurrent requests for this account; lower your parallelism and retry"}}`.
-A controlled wave of four concurrent calls was accepted. This is one account and one window, so four is a measured safe
-point, not a documented limit. Bound concurrency and retry `429`; do not launch one request per item across a paper at
-once.
+**Gotcha 10, measured 2026-09-03.** A 36-call item-level fan-out produced account-level `429` responses. A controlled
+wave of four concurrent calls was accepted.
+
+```json
+{
+  "error": {
+    "code": "rate_limited",
+    "message": "too many concurrent requests for this account; lower your parallelism and retry"
+  }
+}
+```
+
+This is one account and one window, so four is a measured safe point, not a documented limit. Bound concurrency and
+retry `429`; do not launch one request per item across a paper at once.
 
 ## 6. Rate limits and timeouts
 
@@ -377,10 +393,11 @@ the event, and the round's own rejection path records it as an attempt with its 
 `GET /v1/models` makes the process's ability to start depend on the gateway being reachable, and
 [gotcha 10](#5-verified-gotchas) is account-level rate limiting that reaches every endpoint. A window like the twenty
 minutes DeepSeek spent returning `429` on 3 September would then have meant no deploy succeeding and Cloud Run holding
-no healthy revision to route to: a total outage manufactured by the guard against a partial one. The queue's whole
-design treats the gateway as unreliable and degrades around it, and boot must not treat it as a precondition. The
-Anthropic surface is unused by the product; the base-URL rule in [section 1](#1-gateway-base-urls-and-auth) still stands
-for anyone pointing Claude Code at the gateway.
+no healthy revision to route to: a total outage manufactured by the guard against a partial one.
+
+The queue's whole design treats the gateway as unreliable and degrades around it, and boot must not treat it as a
+precondition. The Anthropic surface is unused by the product; the base-URL rule in
+[section 1](#1-gateway-base-urls-and-auth) still stands for anyone pointing Claude Code at the gateway.
 
 **`.env.example` carries exactly the names above**, with their comments and empty values, and is committed. The
 `env-drift` hook compares `.env` against it, so the two files change together. Two further variables exist in the
@@ -501,45 +518,57 @@ so the production URL always runs the head of `main`.
 
 **Traffic is routed explicitly, and the routing is asserted.** A preview deploy rewrites the service's traffic block
 from the implicit "latest revision" pointer to an explicit revision pin. Once pinned, a plain `gcloud run deploy`
-uploads a new revision and **does not move traffic to it**, while still reporting success. Production served the #19
-scaffold through four later deploys before anyone noticed, because `GET /` answers 200 on every revision; only
-`POST /api/auth/guest`, which exists in one revision and not the other, exposed it. So `deploy.yml` follows the deploy
-with `gcloud run services update-traffic cekgu --to-revisions <revision>=100`, naming the revision that run built rather
-than `--to-latest`, which a concurrent preview deploy could win. A final step re-reads the service and fails the run
-unless the revision serving 100% is **the one that run deployed** and `GET /` returns 200. It compares against that
-revision rather than against the service's newest, because a preview deploy for any open pull request creates newer
-revisions continuously; comparing against those failed a deploy whose traffic was in fact correct. Removing a tag with
-`update-traffic --remove-tags` and routing with `--to-revisions` both leave other tags intact, so preview URLs on open
-pull requests survive a production deploy.
+uploads a new revision and **does not move traffic to it**, while still reporting success.
+
+That failure is silent, and it happened: production served the #19 scaffold through four later deploys before anyone
+noticed. `GET /` answers 200 on every revision, so only `POST /api/auth/guest`, which exists in one revision and not the
+other, exposed it. Three steps in `deploy.yml` close it:
+
+1. Deploy the image.
+2. Route with `gcloud run services update-traffic cekgu --to-revisions <revision>=100`, naming the revision that run
+   built rather than `--to-latest`, which a concurrent preview deploy could win.
+3. Re-read the service and fail the run unless the revision serving 100% is **the one that run deployed** and `GET /`
+   returns 200.
+
+Step 3 compares against that revision rather than against the service's newest, because a preview deploy for any open
+pull request creates newer revisions continuously; comparing against those failed a deploy whose traffic was in fact
+correct. Removing a tag with `update-traffic --remove-tags` and routing with `--to-revisions` both leave other tags
+intact, so preview URLs on open pull requests survive a production deploy.
 
 ### Configuration at deploy time
 
 Every variable in [section 8](#8-configuration-contract) is a GitHub Actions secret of the same name and is passed on
-every deploy, preview and production alike, with `--env-vars-file` rather than `--set-env-vars`. **Do not "fix" that
-back.** `--set-env-vars` is comma-delimited and a Neon connection string can contain a comma; gcloud's custom-delimiter
-escape hatch does not save it either, because `@`, `|` and `:` all occur in connection strings and passwords. The file
-form is JSON, which gcloud's YAML parser accepts, so every value survives verbatim. The variable list lives once, in
-`.github/scripts/render-env-vars.sh`; a name with no repository secret is omitted rather than written empty, so the
-server sees it unset. **Secret Manager is explicitly not used.** It would add IAM bindings, a second console and a
-`--set-secrets` mapping to keep in step, for a key that already lives in GitHub's secret store and is rotated by pasting
-a new value. Cloud Run environment variables are visible to anyone with viewer access to the project; that is the whole
-team, which is the intended audience.
+every deploy, preview and production alike, with `--env-vars-file` rather than `--set-env-vars`.
+
+- **Do not "fix" that back.** `--set-env-vars` is comma-delimited and a Neon connection string can contain a comma.
+  gcloud's custom-delimiter escape hatch does not save it either, because `@`, `|` and `:` all occur in connection
+  strings and passwords. The file form is JSON, which gcloud's YAML parser accepts, so every value survives verbatim.
+- **The variable list lives once**, in `.github/scripts/render-env-vars.sh`. A name with no repository secret is omitted
+  rather than written empty, so the server sees it unset.
+- **Secret Manager is explicitly not used.** It would add IAM bindings, a second console and a `--set-secrets` mapping
+  to keep in step, for a key that already lives in GitHub's secret store and is rotated by pasting a new value.
+
+Cloud Run environment variables are visible to anyone with viewer access to the project; that is the whole team, which
+is the intended audience.
 
 Previews share production's values, including `DATABASE_URL`, so a preview writes to the production database. That is
-acceptable for a two-day window with one shared Guest workspace and is stated here so nobody is surprised. Two
-consequences: Google OAuth on a preview URL fails the redirect-URI check, because only the production origin is
-registered, so previews are tested through Guest and email sign-in; and `BETTER_AUTH_URL` is set to the production
-origin, so `POST /api/auth/guest` on a preview sets a cookie for the preview origin only because Better Auth derives the
-cookie domain from the request, not from that variable.
+acceptable for a two-day window with one shared Guest workspace, and is stated here so nobody is surprised. It has two
+consequences:
+
+- **Google OAuth on a preview URL fails the redirect-URI check**, because only the production origin is registered.
+  Previews are tested through Guest and email sign-in instead.
+- **`BETTER_AUTH_URL` is set to the production origin**, yet `POST /api/auth/guest` on a preview sets a cookie for the
+  preview origin only, because Better Auth derives the cookie domain from the request rather than from that variable.
 
 **Sharing the database is not the same as sharing the right to change it.** A preview revision additionally sets
 `MIGRATE_ON_START=false` and `WORKER_ENABLED=false`. Without them, opening a preview URL — which CI posts on the pull
 request so that people click it — boots an unreviewed revision that applies that branch's pending migrations to the
 production database and starts its own copy of every background timer against production rows. `--min-instances 0`
-narrows the window to "while a tab is open"; it does not close it. Both variables default to on when unset, so
-production, local development and a developer's own `.env` are unaffected and neither name belongs in
-[section 8](#8-configuration-contract). A preview still serves the full UI and API against production data, which is
-what this section wanted; it simply cannot alter the schema or delete rows on a timer.
+narrows the window to "while a tab is open"; it does not close it.
+
+Both variables default to on when unset, so production, local development and a developer's own `.env` are unaffected,
+and neither name belongs in [section 8](#8-configuration-contract). A preview still serves the full UI and API against
+production data, which is what this section wanted; it simply cannot alter the schema or delete rows on a timer.
 
 ## 11. Data model
 
@@ -752,8 +781,9 @@ limits, warning banner and deletion behaviour key off that one comparison.
 `GUEST_EMAIL` and `GUEST_PASSWORD` from the environment and forwards the resulting `Set-Cookie` to the browser. The
 password never leaves the server and is never shown to a visitor. Every guest therefore holds a session on the same user
 and shares one library, which is exactly what [PRODUCT.md](PRODUCT.md#the-shared-guest-account) asks for (FR-AUTH-2).
-Server-side limits on Guest requests: 12 items per record, 2,000 characters per item across stem and options, 20
-non-sample records at once (FR-AUTH-5).
+
+Server-side limits on Guest requests (FR-AUTH-5): **12 items** per record, **2,000 characters** per item across stem and
+options, **20 non-sample records** at once.
 
 The worker runs two sweeps. `sweepExpiredGuestRecords` runs every five minutes and hard-deletes Guest records whose
 `expires_at` has passed. `sweepRetiredRecords` runs hourly, hard-deletes any record whose `deleted_at` is more than
@@ -800,12 +830,14 @@ rolling back — a Cloud Run instance replaced mid-round leaves exactly that.
 
 1. Take the **healthy set**: the three model ids ordered by rolling 15-minute success rate, then median latency, from
    the in-memory health stats. A model with zero successes and at least three failures in the window is excluded —
-   unless fewer than two would remain, in which case the excluded families are demoted to the end of the order rather
-   than dropped. One candidate cannot produce two distinct readings, so dropping the second guarantees **Unverified**
-   without a call being attempted, and a struggling family is strictly better than a certain failure. **The trade is not
-   free:** when a family really is down, demoting it turns an instant **Unverified** into a slow one, because the seat
-   now spends up to three attempts of 90 s on it before moving. On a projector that is an item resolving in half a
-   minute against four
+   unless fewer than two would remain, in which case the excluded families are **demoted to the end of the order rather
+   than dropped**. One candidate cannot produce two distinct readings, so dropping the second guarantees **Unverified**
+   without a call being attempted, and a struggling family is strictly better than a certain failure.
+
+   **The trade is not free.** When a family really is down, demoting it turns an instant **Unverified** into a slow one:
+   the seat now spends up to three attempts of 90 s on it before moving. On a projector that is an item resolving in
+   half a minute against four and a half.
+
 1. Request the top two families **in parallel**, each through the [gateway client](#14-consensus-rule) and each holding
    one slot of the global semaphore of **4**
 1. **Deferred hedge:** if a call has not returned after **45 s**, fire a duplicate of the same call to the same model,
@@ -826,17 +858,20 @@ floor is different: nothing completed under 30 s on 3 September, so a 2 s hedge 
 
 **Revised from 25 s to 45 s, measured 3 September.** At 25 s the hedge fired on nearly every call: Kimi answered an
 eight-token prompt in 24.8 s and a solver prompt in 52.7 s, and MiniMax's median moved between 12.6 s and 29 s across
-two runs an hour apart. Almost every reading therefore cost two gateway calls and two of the four semaphore slots, and
-that doubling is what produces the account-level `429`s in [gotcha 10](#5-verified-gotchas). Those failures are what
-marks a family unhealthy, and a round left with one healthy candidate cannot produce two distinct readings at all — so
-the hedge meant to rescue a slow call was manufacturing the outage it was hedging against.
+two runs an hour apart.
+
+Almost every reading therefore cost two gateway calls and two of the four semaphore slots, and that doubling is what
+produces the account-level `429`s in [gotcha 10](#5-verified-gotchas). Those failures are what marks a family unhealthy,
+and a round left with one healthy candidate cannot produce two distinct readings at all — so the hedge meant to rescue a
+slow call was manufacturing the outage it was hedging against.
 
 **25 s was an arithmetic slip rather than a judgement call**, and it is worth naming so nobody reintroduces it. The
 paragraph above justifies rejecting a 2 s hedge because "nothing completed under 30 s on 3 September" — and 25 s is also
-below that floor. The sentence refutes 25 s exactly as it refutes 2 s, fifteen words apart. The hedge also duplicates
-**the same model**, not a third family, so firing it below the completion floor puts a second concurrent call into the
-model already struggling. 45 s is weakly dominant: when the gateway is fast the hedge never fires and the constant does
-not matter, and when it is slow 45 s is what stops the doubling.
+below that floor. The sentence refutes 25 s exactly as it refutes 2 s, fifteen words apart.
+
+The hedge also duplicates **the same model**, not a third family, so firing it below the completion floor puts a second
+concurrent call into the model already struggling. 45 s is weakly dominant: when the gateway is fast the hedge never
+fires and the constant does not matter, and when it is slow 45 s is what stops the doubling.
 
 **Deriving the threshold from the rolling median** the health ring already keeps is the principled version, and it is
 deliberately not done here. A behaviour change to the queue this close to the deadline is a bad trade, and a constant
@@ -1189,15 +1224,19 @@ config route.
 The evidence view is the track's proof moment and is where FR-EVIDENCE-1 to FR-EVIDENCE-4, FR-VERDICT-4 and NFR-PROV-3
 are discharged on screen, not in a document.
 
-**In the item evidence view** every attempt is a row, newest first, showing: requested model, served model from the
-receipt, the request id as selectable text and a link to `https://api.gonkarouter.io/v1/receipts/<id>`, devshard id,
-latency in seconds, a receipt status chip reading **Verified**, **Mismatch**, **Missing** or **Pending**, and whether it
-was admitted with the rejection reason if not. An attempt that returned no headers shows **No request id returned** and
-the reason in place of the link. The two admitted readings sit above the attempt list side by side with model name,
-chosen option, defensible options and reason, and beneath them the verdict with `verdict_reason` printed in full, for
-example "Both readers chose Queue. The supplied key is Stack. Rule: two verified readings agree on a non-key option, so
-Possible Key Error". When only one family answered, the second column shows that seat's attempt history, never a
-duplicate reading.
+**In the item evidence view** every attempt is a row, newest first, carrying:
+
+- Requested model, and served model from the receipt
+- The request id as selectable text, and a link to `https://api.gonkarouter.io/v1/receipts/<id>`
+- Devshard id, and latency in seconds
+- A receipt status chip reading **Verified**, **Mismatch**, **Missing** or **Pending**
+- Whether the attempt was admitted, with the rejection reason if not
+
+An attempt that returned no headers shows **No request id returned** and the reason in place of the link. The two
+admitted readings sit above the attempt list side by side with model name, chosen option, defensible options and reason.
+Beneath them is the verdict with `verdict_reason` printed in full, for example "Both readers chose Queue. The supplied
+key is Stack. Rule: two verified readings agree on a non-key option, so Possible Key Error". When only one family
+answered, the second column shows that seat's attempt history, never a duplicate reading.
 
 **In the record summary** the counts by verdict from `GET /api/records/:id` are the filter chips, each with its count,
 attention verdicts first and **Clear** last (FR-RECORD-3). Wherever **Unverified** appears the fail-closed sentence is
@@ -1310,7 +1349,10 @@ base URLs, the no-fallback contract, receipt verification, and the requirement t
 
 **What changed after this table was written.** Sections 9 to 18 were a plan when they were first committed and are now a
 description: the service is deployed, the sample record is seeded and public, and the figures in section 18 come from
-real runs. Two things in this half are still design rather than description, and are marked where they appear: the
-model-id list is not verified against the gateway at boot ([section 8](#8-configuration-contract)), and the hedge
-threshold is a constant rather than being derived from the rolling median ([section 13](#13-queue-and-worker)). Both are
-deliberate, and both are cheaper to state than to change two days before a submission.
+real runs. Two things in this half are still design rather than description, and are marked where they appear:
+
+- The model-id list is not verified against the gateway at boot ([section 8](#8-configuration-contract))
+- The hedge threshold is a constant rather than being derived from the rolling median
+  ([section 13](#13-queue-and-worker))
+
+Both are deliberate, and both are cheaper to state than to change two days before a submission.

@@ -1,14 +1,15 @@
-# Verification: Rejected Insurance Claims, Tested For Ambiguity
+# Verification: rejected insurance claims, tested for ambiguity
 
-**VIABLE, 84/100.** Not LOCK, for two reasons set out in [Why Not LOCK](#why-not-lock): the disagreement rate on real
+**VIABLE, 84/100.** Not LOCK, for two reasons set out in [Why not LOCK](#why-not-lock): the disagreement rate on real
 clauses is unmeasured, and "three LLMs disagree" is not the same thing as legal ambiguity in Malaysia.
 
 **One correction to the candidate before anything else.** The Ombudsman for Financial Services (OFS) was merged with the
 Securities Industry Dispute Resolution Center into the **Financial Markets Ombudsman Service (FMOS)** on 1 January 2025.
-Every reference to "OFS" in the product, pitch and complaint template must say FMOS. Sources: Bank Negara Malaysia,
-"Operationalisation of Financial Ombudsman Scheme",
-https://www.bnm.gov.my/-/operationalisation-of-financial-ombudsman-scheme; BIS, Jessica Chew Cheng Lian speech at the
-launch of FMOS, 21 Jan 2025, https://www.bis.org/review/r250121g.htm.
+Every reference to "OFS" in the product, pitch and complaint template must say FMOS. Sources:
+
+- Bank Negara Malaysia, "Operationalisation of Financial Ombudsman Scheme",
+  https://www.bnm.gov.my/-/operationalisation-of-financial-ombudsman-scheme
+- BIS, Jessica Chew Cheng Lian speech at the launch of FMOS, 21 Jan 2025, https://www.bis.org/review/r250121g.htm
 
 **Method.** Verified 2 September 2026 against [`RUBRIC.md`](RUBRIC.md). 15 search/fetch calls used (the budget). Three
 fetches failed (Lexology 403, Malay Mail 403, Counterforce Wikipedia 404); where a figure comes only from a search
@@ -18,15 +19,15 @@ carries the article title.
 
 Contents:
 
-1. [Phenomenon: A Live Public Issue In Malaysia, 2024-2026](#phenomenon-a-live-public-issue-in-malaysia-2024-2026)
-1. [Legal Doctrine And The Ombudsman Process](#legal-doctrine-and-the-ombudsman-process)
-1. [Ground Truth: FMOS Publishes Case Summaries With Outcomes](#ground-truth-fmos-publishes-case-summaries-with-outcomes)
+1. [Phenomenon: a live public issue in Malaysia, 2024-2026](#phenomenon-a-live-public-issue-in-malaysia-2024-2026)
+1. [Legal doctrine and the ombudsman process](#legal-doctrine-and-the-ombudsman-process)
+1. [Ground truth: FMOS publishes case summaries with outcomes](#ground-truth-fmos-publishes-case-summaries-with-outcomes)
 1. [Incumbents](#incumbents)
-1. [Predicted Competition](#predicted-competition)
-1. [Scores Against RUBRIC.md](#scores-against-rubricmd)
-1. [Why Not LOCK](#why-not-lock)
+1. [Predicted competition](#predicted-competition)
+1. [Scores against RUBRIC.md](#scores-against-rubricmd)
+1. [Why not LOCK](#why-not-lock)
 
-## Phenomenon: A Live Public Issue In Malaysia, 2024-2026
+## Phenomenon: a live public issue in Malaysia, 2024-2026
 
 Yes, strongly, and it is still running as of last month.
 
@@ -88,9 +89,9 @@ it.
   https://theedgemalaysia.com/article/most-disputes-involve-insurance-claims-%E2%80%94-ofs
   'Most disputes involve insurance claims — OFS (date not captured; reports 2015 figures)'
 
-## Legal Doctrine And The Ombudsman Process
+## Legal doctrine and the ombudsman process
 
-### Contra Proferentem In Malaysian Insurance Law
+### Contra proferentem in Malaysian insurance law
 
 **Yes, applied by the Federal Court.** _Malaysia Motor Insurance Pool v Teirumeniyar Sinagara Vella_ [2019], Federal
 Court, affirms that where a term is ambiguous it is construed against the party who prepared it. Malaysian courts
@@ -112,7 +113,7 @@ whether the exception applies; where the clause is clear the court gives effect 
   draft should lead with fairness and reasonableness for FMOS and cite contra proferentem as the court-law backstop, not
   the reverse.
 
-### FMOS Jurisdiction And Process
+### FMOS jurisdiction and process
 
 | Question       | Answer                                                                                                                                                                                                | Source                                    |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
@@ -134,7 +135,7 @@ whether the exception applies; where the clause is clear the court gives effect 
   https://bjak.my/blog/car-insurance/how-to-dispute-a-rejected-car-insurance-claim-your-rights
   'How to Dispute a Rejected Car Insurance Claim'
 
-## Ground Truth: FMOS Publishes Case Summaries With Outcomes
+## Ground truth: FMOS publishes case summaries with outcomes
 
 **Yes.** FMOS runs a public case-studies section with individual dispute pages, and both the OFS 2024 and FMOS 2025
 annual reports are public PDFs.
@@ -161,13 +162,13 @@ real policy wording. Insurers publish their policy PDFs, so this is a chore, not
 
 ## Incumbents
 
-### Malaysia, Consumer-Side
+### Malaysia, consumer-side
 
 **Negative result.** No Malaysian tool that contests claim rejections was found. What exists is guidance content and
 document storage:
 
 - BJAK (motor insurance aggregator) how-to blog, cited under
-  [FMOS Jurisdiction And Process](#fmos-jurisdiction-and-process)
+  [FMOS jurisdiction and process](#fmos-jurisdiction-and-process)
 - Bowtie Malaysia (insurer) blog, "Navigating Insurance Claim Denials in Malaysia",
   https://gobowtie.com/my/en/blog/insurance-claim-denials/
 - FEV3R, "Insurance Claim Rejection in Malaysia: What to Do",
@@ -176,7 +177,7 @@ document storage:
 
 Insurer-side chatbots were excluded per the brief.
 
-### Global AI Appeal Tools
+### Global AI appeal tools
 
 | Tool                                                | What it does                                                                                                                          | Price                   | Multi-model or ambiguity measure?                                                   | Source                                                                         |
 | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
@@ -204,7 +205,7 @@ they agree the exclusion applies.
   https://health.usnews.com/wellness/articles/use-ai-to-help-fight-a-health-insurance-denial
   'How AI Can Help Fight a Health Insurance Denial by Writing an Appeal'
 
-## Predicted Competition
+## Predicted competition
 
 **Convergence count: 1 (range 0-2) of roughly 30 teams.**
 
@@ -220,7 +221,7 @@ is a plausible one team, which is why the count is 1 and not 0.
 What makes ours unrecognisable from a generic "explain my policy" bot: the disagreement is the output, the complaint
 attaches each model's reading with its Gonka request id as evidence, and the tool stays silent when all three agree.
 
-## Scores Against RUBRIC.md
+## Scores against RUBRIC.md
 
 | Dimension              | Weight  | Score  | Reasoning                                                                                                                                                                          |
 | ---------------------- | ------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -231,9 +232,9 @@ attaches each model's reading with its Gonka request id as evidence, and the too
 | Buildability           | 20      | 17     | Inputs are pasted text, labelled set is public, no partner needed; risk in Bahasa Malaysia policy wordings and in tuning prompts so the split rate is honest                       |
 | **Total**              | **100** | **84** | Above 70; survives the novelty test                                                                                                                                                |
 
-### The Novelty Test
+### The novelty test
 
-1. **Convergence count:** 1 (0-2). Defended under [Predicted Competition](#predicted-competition).
+1. **Convergence count:** 1 (0-2). Defended under [Predicted competition](#predicted-competition).
 2. **Incumbent test:** Counterforce Health, Claimable, Fight Health Insurance in the US; nobody in Malaysia. What they
    structurally cannot do:
    - They are advocacy generators whose success metric is overturn rate, so they cannot credibly tell a user "your
@@ -248,7 +249,7 @@ attaches each model's reading with its Gonka request id as evidence, and the too
    hospital's insurance desk or a specialist's clinic manager, who sees GL denials weekly (CodeBlue survey, 855
    specialists, 67%). Name that person in `PRODUCT.md`.
 
-### Kill Criteria
+### Kill criteria
 
 | Criterion                                                   | Triggered? | Why                                                                      |
 | ----------------------------------------------------------- | ---------- | ------------------------------------------------------------------------ |
@@ -258,7 +259,7 @@ attaches each model's reading with its Gonka request id as evidence, and the too
 | Demo needs more than 90 seconds of setup                    | No         | One paste, one click                                                     |
 | Buildability depends on data, access or partnership we lack | No         | FMOS case studies and insurer policy PDFs are public                     |
 
-## Why Not LOCK
+## Why not LOCK
 
 Two reasons, both fixable within the nine days:
 

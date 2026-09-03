@@ -9,6 +9,16 @@ ensemble with better marketing.
 **Method.** Literature-grounded analysis by a delegated model, then applied against the Gonka model roster. Claims about
 what resampling cannot do are mechanical, not empirical. Interpretation is marked.
 
+Contents:
+
+1. [The baseline that kills most claims](#the-baseline-that-kills-most-claims)
+1. [The permutation test](#the-permutation-test)
+1. [What genuinely requires distinct machines](#what-genuinely-requires-distinct-machines)
+1. [The asymmetry in the Gonka roster](#the-asymmetry-in-the-gonka-roster)
+1. [The five defensible cores](#the-five-defensible-cores)
+1. [What we do not claim](#what-we-do-not-claim)
+1. [Sources](#sources)
+
 ## The baseline that kills most claims
 
 **One strong model sampled _N_ times at temperature is free, and it is strong.** Resampling varies the decoding. It

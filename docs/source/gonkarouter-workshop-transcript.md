@@ -8,6 +8,14 @@ What was said at the GonkaRouter developer workshop, and in particular the Q&A r
 > 2026-08-29. Companion: [`gonkarouter-workshop-slides.md`](gonkarouter-workshop-slides.md) — **the deck is the
 > authority on every technical detail.**
 
+Contents:
+
+1. [Read this before quoting anything here](#read-this-before-quoting-anything-here)
+1. [Run of show](#run-of-show)
+1. [Jack's framing, from 11:15](#jacks-framing-from-1115)
+1. [The Q&A, and what was actually ruled](#the-qa-and-what-was-actually-ruled)
+1. [Deltas against the brief](#deltas-against-the-brief)
+
 ## Read this before quoting anything here
 
 **Jack presented in Mandarin.** The recording is mixed-language: Richard hosts in English, Jack presents in Mandarin
