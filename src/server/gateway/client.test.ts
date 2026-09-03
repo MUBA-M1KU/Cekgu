@@ -36,6 +36,7 @@ type Stub = {
   receipt?: { model: string } | null
   receiptMissesFirst?: number
   throws?: Error
+  bodyRejects?: Error
 }
 
 const bodies: string[] = []
@@ -57,6 +58,21 @@ function stubGateway(stub: Stub) {
 
     if (stub.throws) throw stub.throws
     bodies.push(String(init?.body))
+
+    // Headers arrive, then the body fails: the abort signal covers the read, and a connection can
+    // drop after the response line. Both reach the caller as a rejection from response.text().
+    if (stub.bodyRejects) {
+      const rejects = stub.bodyRejects
+      return new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.error(rejects)
+          }
+        }),
+        { status: 200, headers: { 'x-request-id': REQUEST_ID, 'x-devshard-id': '70158' } }
+      )
+    }
+
     return new Response(stub.body ?? completion('{"answer":"B","defensible":["B"],"reason":"Because."}'), {
       status: stub.status ?? 200,
       headers: { 'x-request-id': REQUEST_ID, 'x-devshard-id': '70158', ...stub.headers }
@@ -252,4 +268,37 @@ test('latency is measured across the call', async () => {
   })
 
   expect(result.latencyMs).toBe(1400)
+})
+
+// Measured against the real client on 3 September: a gateway that sends headers and then stalls
+// made callGonka throw TimeoutError at 90,002 ms, and a socket closed mid-body made it throw
+// TypeError at 12,003 ms. Both escaped the function, so the round never got a provenance record
+// and the x-request-id the gateway had already issued was lost with the exception.
+describe('a body that fails after the headers arrived', () => {
+  test('an abort during the read returns provenance rather than throwing', async () => {
+    stubGateway({ bodyRejects: Object.assign(new Error('The operation timed out.'), { name: 'TimeoutError' }) })
+
+    const provenance = await callGonka(MODEL, 'prompt')
+
+    expect(provenance.error).toContain('evidence cutoff')
+    expect(provenance.receiptStatus).toBe('missing')
+  })
+
+  test('a dropped connection returns provenance rather than throwing', async () => {
+    stubGateway({ bodyRejects: new TypeError('The socket connection was closed unexpectedly.') })
+
+    const provenance = await callGonka(MODEL, 'prompt')
+
+    expect(provenance.error).toContain('The response body could not be read.')
+  })
+
+  test('the request id survives the failure, because the attempts row is what it is for', async () => {
+    stubGateway({ bodyRejects: new TypeError('The socket connection was closed unexpectedly.') })
+
+    const provenance = await callGonka(MODEL, 'prompt')
+
+    expect(provenance.requestId).toBe(REQUEST_ID)
+    expect(provenance.devshardId).toBe('70158')
+    expect(provenance.httpStatus).toBe(200)
+  })
 })
