@@ -377,9 +377,8 @@ require Google. `MASCOT_ENABLED` controls animated stages, not the static mascot
 | `gh issue list`         | The TODO board                     |
 
 A default `bun test` needs nothing but the repo: on 4 September at `d3a3134` it read **205 pass, 73 skip, 0 fail** — 278
-tests across 27 files, 902 `expect()` calls. The skips are the database-backed suites plus the opt-in live-flow test.
-The database suites take `TEST_DATABASE_URL` and refuse any host but localhost, because they truncate what they connect
-to.
+tests across 27 files, 902 `expect()` calls. The skips are the database-backed suites. They take `TEST_DATABASE_URL` and
+refuse any host but localhost, because they truncate what they connect to.
 
 Each of those suites **truncates** the database it connects to, so running them together in one process makes them clear
 each other's fixtures mid-run: `bun test src/server` with `TEST_DATABASE_URL` set gives **97 pass and 27 fail**. They
