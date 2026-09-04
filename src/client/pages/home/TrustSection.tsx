@@ -47,14 +47,18 @@ export function TrustSection() {
           </p>
         </div>
 
-        <dl className="mt-10 m-0 grid gap-5 lg:grid-cols-2">
+        {/* Disclosures rather than seven opened cards. The answers are long and only one is ever
+            the reader's question, so a wall of them buried the section's own lede — which is where
+            the facts that apply to everyone already are. Native details/summary: it works with the
+            keyboard, and without JavaScript. */}
+        <div className="faq-list">
           {FAQ.map((entry) => (
-            <div key={entry.q} className="card-soft p-6">
-              <dt className="type-label">{entry.q}</dt>
-              <dd className="type-body m-0 mt-2 max-w-[64ch] text-ink-muted">{entry.a}</dd>
-            </div>
+            <details key={entry.q} className="faq-item">
+              <summary className="faq-q type-label">{entry.q}</summary>
+              <p className="faq-a type-body">{entry.a}</p>
+            </details>
           ))}
-        </dl>
+        </div>
       </div>
     </section>
   )
