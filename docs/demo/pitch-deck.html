@@ -2225,28 +2225,46 @@
 
                 <!-- the rule, in the order it is actually checked -->
                 <text class="label f-muted" x="1056" y="20" font-size="20">CHECKED IN THIS ORDER</text>
-                <text class="mono f-muted" x="1056" y="86" font-size="24">1</text>
-                <text class="v-unver" x="1104" y="86" font-size="26">Unverified</text>
-                <text class="f-muted" x="1104" y="118" font-size="20">fewer than two verified readings</text>
-                <text class="mono f-muted" x="1056" y="180" font-size="24">2</text>
-                <text class="v-split" x="1104" y="180" font-size="26">Split Opinion</text>
-                <text class="f-muted" x="1104" y="212" font-size="20">the two answers differ</text>
-                <text class="mono f-muted" x="1056" y="274" font-size="24">3</text>
-                <text class="v-ambig" x="1104" y="274" font-size="26">Possible Ambiguity</text>
-                <text class="f-muted" x="1104" y="306" font-size="20">both list more than one option</text>
-                <text class="mono f-muted" x="1056" y="368" font-size="24">4</text>
-                <text class="v-clear" x="1104" y="368" font-size="26">Clear</text>
-                <text class="f-muted" x="1104" y="400" font-size="20">the shared answer is the key</text>
-                <!-- No reveal hook. This row rises with the body like the four
-                     above it; the tint and the 1px border already say which one
-                     fired, and a delayed pop here would be a second theatrical
-                     beat with no reader sequence in front of it to close. -->
                 <g>
-                  <rect x="1036" y="428" width="700" height="84" rx="4" class="v-key-bg" />
-                  <rect x="1036.5" y="428.5" width="699" height="83" rx="4" class="v-key-s" />
-                  <text class="mono v-key" x="1056" y="470" font-size="24">5</text>
-                  <text class="v-key" x="1104" y="470" font-size="26" font-weight="500">Possible Key Error</text>
-                  <text class="v-key" x="1104" y="500" font-size="20">the shared answer is not the key</text>
+                  <rect x="1036" y="44" width="700" height="92" rx="4" class="card-s" />
+                  <rect x="1036.5" y="44.5" width="699" height="91" rx="4" class="s-rule" fill="none" />
+                  <rect x="1037" y="45" width="6" height="90" class="v-unver" />
+                  <text class="mono f-muted" x="1064" y="84" font-size="22">1</text>
+                  <text class="v-unver" x="1102" y="84" font-size="26" font-weight="500">Unverified</text>
+                  <text class="f-muted" x="1102" y="116" font-size="20">fewer than two verified readings</text>
+                </g>
+                <g>
+                  <rect x="1036" y="148" width="700" height="92" rx="4" class="card-s" />
+                  <rect x="1036.5" y="148.5" width="699" height="91" rx="4" class="s-rule" fill="none" />
+                  <rect x="1037" y="149" width="6" height="90" class="v-split" />
+                  <text class="mono f-muted" x="1064" y="188" font-size="22">2</text>
+                  <text class="v-split" x="1102" y="188" font-size="26" font-weight="500">Split Opinion</text>
+                  <text class="f-muted" x="1102" y="220" font-size="20">the two answers differ</text>
+                </g>
+                <g>
+                  <rect x="1036" y="252" width="700" height="92" rx="4" class="card-s" />
+                  <rect x="1036.5" y="252.5" width="699" height="91" rx="4" class="s-rule" fill="none" />
+                  <rect x="1037" y="253" width="6" height="90" class="v-ambig" />
+                  <text class="mono f-muted" x="1064" y="292" font-size="22">3</text>
+                  <text class="v-ambig" x="1102" y="292" font-size="26" font-weight="500">Possible Ambiguity</text>
+                  <text class="f-muted" x="1102" y="324" font-size="20">both list more than one option</text>
+                </g>
+                <g>
+                  <rect x="1036" y="356" width="700" height="92" rx="4" class="card-s" />
+                  <rect x="1036.5" y="356.5" width="699" height="91" rx="4" class="s-rule" fill="none" />
+                  <rect x="1037" y="357" width="6" height="90" class="v-clear" />
+                  <text class="mono f-muted" x="1064" y="396" font-size="22">4</text>
+                  <text class="v-clear" x="1102" y="396" font-size="26" font-weight="500">Clear</text>
+                  <text class="f-muted" x="1102" y="428" font-size="20">the shared answer is the key</text>
+                </g>
+                <!-- The one that fired on this item: the verdict's tint and a 2px border, no reveal hook. -->
+                <g>
+                  <rect x="1036" y="460" width="700" height="92" rx="4" class="v-key-bg" />
+                  <rect x="1037.0" y="461.0" width="698" height="90" rx="4" class="v-key-s" />
+                  <rect x="1037" y="461" width="6" height="90" class="v-key" />
+                  <text class="mono v-key" x="1064" y="500" font-size="22">5</text>
+                  <text class="v-key" x="1102" y="500" font-size="26" font-weight="500">Possible Key Error</text>
+                  <text class="v-key" x="1102" y="532" font-size="20">the shared answer is not the key</text>
                 </g>
               </svg>
             </div>
