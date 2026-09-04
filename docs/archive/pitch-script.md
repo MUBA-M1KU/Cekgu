@@ -326,8 +326,8 @@ fit on a wall. If a judge asks, [the Q&A](#12-qa-session-5-minutes) carries it w
 `NOTE:` **The one green dot at the end of the defect row is a real miss.** It is question 6 of the sample record as
 well: "Which layer of the TCP/IP model does HTTP belong to?", written to be ambiguous, returned **Clear** in the first
 pass and **Unverified** in the second. No item caught in one pass ever came back **Clear** in the other. It is in
-[the README](../README.md#what-cekgu-cannot-do) as a characterised limitation. **DO NOT PRESENT IT AS FIXED OR AS A
-ONE-OFF.**
+[the README](../README.md#responsible-use-and-notices) as a characterised limitation. **DO NOT PRESENT IT AS FIXED OR AS
+A ONE-OFF.**
 
 ## 10. Business model (4:15-4:35 · 49 words · SPEAKER)
 
