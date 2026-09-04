@@ -1376,6 +1376,27 @@
       .slide.problem .head {
         border-bottom-color: rgb(255 255 255 / 0.16);
         width: 52%;
+        padding-bottom: 20px;
+      }
+      .slide.problem .title {
+        font-size: 56px;
+        line-height: 1.05;
+      }
+      .slide.problem .sub {
+        font-size: 24px;
+        margin-top: 14px;
+      }
+      .slide.problem .body {
+        padding-top: 28px;
+      }
+      .slide.problem .gap3 li {
+        padding: 10px 0;
+        font-size: 21px;
+      }
+      .slide.problem .stamp {
+        margin-top: 16px;
+        padding: 12px 20px;
+        font-size: 21px;
       }
       .slide.problem .pad {
         position: relative;
@@ -1717,6 +1738,40 @@
         font-size: 17px !important;
         letter-spacing: 0.06em;
         color: var(--ink-muted);
+      }
+      .delta {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-top: 22px;
+      }
+      .delta-cell {
+        background: var(--sheet);
+        border: 1px solid var(--rule);
+        border-radius: var(--r-sheet);
+        padding: 16px 22px 18px;
+      }
+      .delta .today {
+        margin: 0 0 8px;
+        font-size: 20px;
+        line-height: 1.35;
+        color: var(--ink-muted);
+        text-decoration: line-through;
+        text-decoration-color: rgb(179 32 47 / 0.55);
+        text-decoration-thickness: 2px;
+      }
+      .delta .after {
+        margin: 0;
+        display: flex;
+        gap: 10px;
+        font-size: 22px;
+        line-height: 1.35;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .delta .after span {
+        color: var(--pen);
+        flex-shrink: 0;
       }
       .links {
         margin-top: 56px;
@@ -2128,26 +2183,26 @@
 
           <div class="head">
             <p class="eyebrow">1. Problem statement</p>
-            <h2 class="title">One wrong key. <em>Every learner pays.</em></h2>
-            <p class="sub">The damaging defects are small, and every check that exists today either anchors on the author&rsquo;s own key or runs after the marks are out.</p>
+            <h2 class="title">A quiz goes out with the wrong answer marked. <em>Every student loses that mark.</em></h2>
+            <p class="sub" style="max-width: 76ch">Teachers set multiple-choice quizzes with an answer key. When the key is wrong, nobody finds out until the marks are in. Cekgu checks the key first.</p>
           </div>
 
           <div class="body">
             <div class="prob2">
               <div class="prob2-left" data-stagger>
-                <p class="kx on-ink">What exists today</p>
+                <p class="kx on-ink">How a wrong key gets caught today</p>
                 <ul class="gap3">
-                  <li><b>Self-review</b><span>Anchored to the author&rsquo;s own key.</span></li>
-                  <li><b>A colleague re-solves it</b><span>An expert&rsquo;s time, spent on every item.</span></li>
-                  <li><b>One AI chat</b><span>One opinion. No proof it was independent.</span></li>
+                  <li><b>The teacher re-reads it</b><span>Anchored to the key she already believes.</span></li>
+                  <li><b>A colleague re-solves it</b><span>An expert&rsquo;s hour, every single time.</span></li>
+                  <li><b>She asks a chatbot</b><span>One opinion, and no proof it did not just agree with her.</span></li>
                 </ul>
 
-                <p class="kx on-ink" style="margin-top: 30px">What slips through</p>
+                <p class="kx on-ink" style="margin-top: 30px">One from our sample quiz</p>
                 <div class="defect on-ink">
                   <p class="defect-stem">Which data structure removes elements in first in, first out order?</p>
                   <div class="defect-row">
                     <span><i>Supplied key</i>A &middot; Stack</span>
-                    <span><i>Both blind readers</i>B &middot; Queue</span>
+                    <span><i>Correct answer</i>B &middot; Queue</span>
                     <span class="defect-tag">Possible Key Error</span>
                   </div>
                 </div>
@@ -2155,7 +2210,7 @@
             </div>
 
             <div class="stamp on-ink">
-              Vetting committees exist because the risk is real. <b>Cekgu is the pass before the committee, not a replacement for it.</b>
+              Universities already vet exam papers by committee because this is real. <b>Cekgu is the check that runs before the committee, on every quiz, in minutes.</b>
               <span class="src">UiTM final-examination guidance</span>
             </div>
           </div>
@@ -2228,6 +2283,20 @@
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+            <div class="delta" data-stagger>
+              <div class="delta-cell">
+                <p class="today">She re-reads all twelve herself.</p>
+                <p class="after"><span>&rarr;</span>She reads the three that came back different.</p>
+              </div>
+              <div class="delta-cell">
+                <p class="today">A colleague re-solves the paper.</p>
+                <p class="after"><span>&rarr;</span>Two models re-solve it blind, with receipts.</p>
+              </div>
+              <div class="delta-cell">
+                <p class="today">She hears about a wrong key after the marks.</p>
+                <p class="after"><span>&rarr;</span>She hears before the quiz goes out.</p>
               </div>
             </div>
           </div>
@@ -2410,6 +2479,11 @@
 
                 <!-- two readers, then and only then the key -->
                 <text class="label f-muted" x="428" y="20" font-size="20">TWO MODEL FAMILIES, ANSWERING BLIND</text>
+                <rect x="412" y="44" width="516" height="262" rx="4" class="card-s" />
+                <rect x="412.5" y="44.5" width="515" height="261" rx="4" class="s-rule" fill="none" />
+                <rect x="412" y="404" width="516" height="96" rx="4" class="card-s" />
+                <rect x="412.5" y="404.5" width="515" height="95" rx="4" class="s-rule" fill="none" />
+                <rect x="413" y="405" width="6" height="94" class="f-pen" />
                 <text class="mono f-ink" x="428" y="90" font-size="24">MiniMax-M2.7</text>
                 <g>
                   <circle cx="716" cy="82" r="16" class="s-strong" />
@@ -2428,7 +2502,7 @@
                   <text x="776" y="282" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Queue</text>
                 </g>
 
-                <line x1="428" y1="332" x2="952" y2="332" class="s-rule" />
+                
                 <text x="776" y="392" font-size="30" text-anchor="middle" class="f-muted">&#8800;</text>
 
                 <text class="label f-muted" x="428" y="440" font-size="20">THE SUPPLIED KEY</text>
