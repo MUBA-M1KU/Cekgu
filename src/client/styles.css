@@ -975,6 +975,10 @@ section[id] {
   flex-direction: column;
   border-right: 1px solid var(--rule);
   background: var(--sheet);
+  /* Animating width is what the usual advice forbids, and the detector flags it. Declined on
+     purpose, twice over: a 3.75rem rail that becomes 15.5rem IS a width change, and faking it with
+     a transform would scale the icons it exists to leave still. It fires once, on a deliberate
+     click, never on hover or scroll. */
   transition: width var(--t-panel) var(--ease-out);
 }
 
@@ -1283,6 +1287,10 @@ section[id] {
   margin-left: var(--side-w);
   flex-direction: column;
   background: var(--paper);
+  /* Same decision, same reason. The sidebar is fixed, so the content's left margin is the only
+     thing that can follow it, and there is no transform that moves a column without also moving
+     what is inside it. 200 ms of layout on a click a person asked for; the alternative is content
+     snapping to its new position while the rail is still sliding, which reads as a broken toggle. */
   transition: margin-left var(--t-panel) var(--ease-out);
 }
 
