@@ -17,9 +17,14 @@ test.describe.configure({ mode: 'serial' })
 
 let page: Page
 
-// FR-SAMPLE-3, the script's own pre-flight. Clearing dispositions is all this does — readings,
-// verdicts and attempts are untouched — so it cannot disturb the smoke suite reading the same
-// record beside it.
+// FR-SAMPLE-3, the script's own pre-flight, so step 8 starts with no decision on the item.
+//
+// It DOES disturb anything reading the sample concurrently, which an earlier version of this
+// comment claimed it could not. Clearing dispositions is not all it does — it also returns the
+// record to ready — and every test here signs into the one shared Guest account besides. Run on
+// four workers the suite failed 6 of 14 and left 2 unrun against a healthy production (#158). Three
+// clean runs were not evidence of safety; they were three passes of a race. The suite now runs on
+// one worker, which is what makes this call safe rather than anything about the call itself.
 const resetSample = () =>
   page.evaluate(async () => (await (await fetch('/api/sample/reset', { method: 'POST' })).json()) as unknown)
 
