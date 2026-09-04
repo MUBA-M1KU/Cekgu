@@ -56,6 +56,11 @@ export function clearSession(): void {
   publish({ status: 'out' })
 }
 
+/** The current answer, outside React. The store's snapshot getter, and what a test can assert. */
+export function sessionSnapshot(): SessionState {
+  return state
+}
+
 function subscribe(listener: () => void): () => void {
   listeners.add(listener)
   // The first subscriber starts the read; the rest join the one already in flight.
@@ -66,9 +71,5 @@ function subscribe(listener: () => void): () => void {
 }
 
 export function useSession(): SessionState {
-  return useSyncExternalStore(
-    subscribe,
-    () => state,
-    () => state
-  )
+  return useSyncExternalStore(subscribe, sessionSnapshot, sessionSnapshot)
 }

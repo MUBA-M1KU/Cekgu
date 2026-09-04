@@ -20,7 +20,7 @@ export function attemptStatus(attempt: Attempt): string {
 }
 
 function seconds(ms: number | null): string {
-  return ms === null ? '—' : `${(ms / 1000).toFixed(1)}s`
+  return ms === null ? '-' : `${(ms / 1000).toFixed(1)}s`
 }
 
 // The cats are the two SEATS, never a particular model: which family serves a seat varies per
@@ -94,6 +94,19 @@ export function EvidencePanel({ item }: { item: Item }) {
 
   const unadmitted = item.attempts.filter((attempt) => !readers.includes(attempt))
 
+  // Distinct status-and-reason pairs, in the order the attempts happened. A Map keyed on the pair
+  // keeps the first occurrence and drops every repeat.
+  const reasons = [
+    ...new Map(
+      unadmitted
+        .filter((attempt) => attempt.rejectionReason !== null)
+        .map((attempt) => [
+          `${attemptStatus(attempt)}:${attempt.rejectionReason}`,
+          [attemptStatus(attempt), attempt.rejectionReason as string] as const
+        ])
+    ).values()
+  ]
+
   return (
     <div className="mt-4 bg-well p-4 sm:p-6">
       <h3 className="type-eyebrow text-ink-muted">Evidence</h3>
@@ -134,12 +147,9 @@ export function EvidencePanel({ item }: { item: Item }) {
               <tr key={attempt.id} className="border-b border-rule align-top">
                 <td className="type-mono py-2 pr-4">{index + 1}</td>
                 <td className="type-mono py-2 pr-4 whitespace-nowrap">{attempt.requestedModel}</td>
-                <td className="type-mono py-2 pr-4 whitespace-nowrap">{attempt.servedModel ?? '—'}</td>
+                <td className="type-mono py-2 pr-4 whitespace-nowrap">{attempt.servedModel ?? '-'}</td>
                 <td className="py-2 pr-4">
                   <span className="status-chip type-label">{attemptStatus(attempt)}</span>
-                  {attempt.rejectionReason ? (
-                    <p className="mt-1 max-w-[40ch] type-caption text-ink-muted">{attempt.rejectionReason}</p>
-                  ) : null}
                 </td>
                 <td className="type-mono py-2 pr-4 whitespace-nowrap">
                   {attempt.requestId ? (
@@ -153,7 +163,7 @@ export function EvidencePanel({ item }: { item: Item }) {
                     <span className="type-caption text-ink-muted">No request id was returned.</span>
                   )}
                 </td>
-                <td className="type-mono py-2 pr-4">{attempt.devshardId ?? '—'}</td>
+                <td className="type-mono py-2 pr-4">{attempt.devshardId ?? '-'}</td>
                 <td className="type-mono py-2 pr-4">{seconds(attempt.latencyMs)}</td>
                 <td className="py-2">
                   <span className="status-chip type-label">{RECEIPT_LABEL[attempt.receiptStatus]}</span>
@@ -165,10 +175,25 @@ export function EvidencePanel({ item }: { item: Item }) {
       </div>
 
       {unadmitted.length > 0 ? (
-        <p className="mt-3 type-caption text-ink-muted">
-          Rejected, hedged and timed-out attempts are listed because they are part of the record. Only readings that
-          passed receipt verification enter the verdict.
-        </p>
+        <div className="mt-4 border-t border-rule pt-3">
+          <p className="type-caption max-w-[76ch] text-ink-muted">
+            Every attempt is listed, admitted or not, because the ones that failed are part of the record. A reading
+            enters the verdict only when its receipt names the model that was requested.
+          </p>
+          {/* One line per reason rather than a paragraph under every Status chip. The reasons
+              repeat across rows far more often than they differ, so the table was printing the
+              same sentence three times and pushing the request ids off the screen to do it. */}
+          {reasons.length > 0 ? (
+            <dl className="mt-3 m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
+              {reasons.map(([status, reason]) => (
+                <div key={`${status}:${reason}`} className="contents">
+                  <dt className="type-label whitespace-nowrap">{status}</dt>
+                  <dd className="type-caption m-0 max-w-[70ch] text-ink-muted">{reason}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
+        </div>
       ) : null}
     </div>
   )

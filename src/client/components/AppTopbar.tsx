@@ -5,6 +5,7 @@ import { signOut } from '../api'
 import { count } from '../plural'
 import { clearSession, useSession } from '../session'
 import { setTheme, useTheme } from '../theme'
+import { GuestNotice } from './GuestBanner'
 import { BellIcon, MoonIcon, PlusIcon, SidebarIcon, SunIcon } from './icons'
 
 type Props = { records: RecordSummary[] | null; onToggleSidebar: () => void }
@@ -177,6 +178,9 @@ export function AppTopbar({ records, onToggleSidebar }: Props) {
         <div className="flex shrink-0 items-center gap-1">
           {/* The product's primary verb, reachable from every screen. It goes where the reference
             puts its command palette, and unlike a palette it does something this build has. */}
+          {/* The disclosure lives in the bar rather than in a strip under it, and opens itself
+              on arrival. FR-AUTH-3. */}
+          <GuestNotice />
           <Link to="/new-check" className="btn btn-primary btn-sm mr-2 max-sm:hidden">
             <PlusIcon size={15} />
             New Check

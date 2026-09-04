@@ -2206,4 +2206,55 @@ section[id] {
   :root[data-theme="dark"] .panel-art {
     filter: drop-shadow(0 0 14px color-mix(in oklab, var(--ink) 22%, transparent));
   }
+
+  /* The shared-workspace disclosure. An ink chip, because the strip this replaces was the one
+     place the product used ink as a ground and that inversion is what made it read as a stamp
+     rather than as another card. The chip keeps the inversion; the panel under it keeps the
+     readability a paragraph needs. */
+  /* The spacing sits on the wrapper, not the chip, so the dropover positioned against the wrapper
+     lines up with the chip's own right edge rather than 8px past it. */
+  .guest-notice {
+    margin-right: var(--s-2);
+  }
+
+  .guest-chip {
+    display: inline-flex;
+    height: 1.625rem;
+    align-items: center;
+    padding-inline: 0.625rem;
+    border-radius: var(--r-bubble);
+    background: var(--ink);
+    color: var(--on-ink);
+    white-space: nowrap;
+    transition: opacity var(--t-quick) var(--ease-out);
+  }
+
+  .guest-chip:hover {
+    opacity: 0.86;
+  }
+
+  /* Wider than the notification popover, because this one holds a paragraph rather than rows. */
+  .guest-pop {
+    width: min(24rem, calc(100vw - 2rem));
+    max-height: none;
+  }
+
+  .guest-pop-head {
+    padding: var(--s-3) var(--s-4);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .guest-pop-body {
+    display: grid;
+    gap: var(--s-2);
+    padding: var(--s-4);
+  }
+
+  .guest-pop-foot {
+    display: grid;
+    gap: var(--s-2);
+    padding: var(--s-4);
+    border-top: 1px solid var(--rule);
+    justify-items: start;
+  }
 }

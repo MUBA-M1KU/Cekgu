@@ -10,6 +10,7 @@ import { Mark } from '../components/Mark'
 import { ReadRow } from '../components/ReadRow'
 import { VerdictChip } from '../components/VerdictChip'
 import { count } from '../plural'
+import { refreshSession } from '../session'
 
 type Mode = 'sign-in' | 'sign-up'
 
@@ -131,6 +132,11 @@ export function SignIn() {
         body: JSON.stringify(body)
       })
       if (!response.ok) throw new Error('rejected')
+      // Before navigating, not after. AppLayout guards every workspace route on the session it
+      // already holds, and this page was loaded while there was none: without this the router
+      // moves to /records, the guard reads a cached "signed out" and sends the visitor straight
+      // back to the page they just signed in from.
+      await refreshSession()
       navigate(destination)
     } catch {
       setError(
@@ -148,6 +154,7 @@ export function SignIn() {
     try {
       const response = await fetch('/api/auth/guest', { method: 'POST', credentials: 'include' })
       if (!response.ok) throw new Error('guest sign-in failed')
+      await refreshSession()
       navigate(destination)
     } catch {
       setError('We could not open the Guest workspace, try again in a moment.')

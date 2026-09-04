@@ -4,7 +4,6 @@ import type { RecordSummary } from '../../shared/types'
 import { listRecords } from '../api'
 import { AppSidebar } from '../components/AppSidebar'
 import { AppTopbar } from '../components/AppTopbar'
-import { GuestBanner } from '../components/GuestBanner'
 import { useSession } from '../session'
 
 // Whether the sidebar is wide or narrow is a preference a person sets once and expects to find
@@ -99,9 +98,6 @@ export function AppLayout() {
 
       <div className="app-body">
         <AppTopbar records={records} onToggleSidebar={toggle} />
-
-        {/* Directly under the topbar, so it is above the fold at 375 px. */}
-        {session.status === 'in' && session.isGuest ? <GuestBanner /> : null}
 
         <main className="app-content">
           <Outlet />

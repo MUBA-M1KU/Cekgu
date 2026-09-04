@@ -59,9 +59,23 @@ export function ExternalLink({ href, children, className, 'aria-label': label }:
         tone="neutral"
         title="You Are Leaving Cekgu"
         confirmLabel="Open in a New Tab"
+        // The host and the path are set in mono, because they are the two strings a person reads
+        // character by character before deciding, and prose type is the wrong face for that. The
+        // path gets its own line: at this width a receipt id wrapped mid-token when it ran on from
+        // the sentence, which is the one place a break is unreadable.
         body={[
-          `This link opens ${host}, which is not run by us.`,
-          path ? `It goes to ${path}.` : 'Nothing you have typed into Cekgu is sent with it.'
+          <>
+            This link opens <code className="type-mono">{host}</code>, which is not run by us.
+          </>,
+          path ? (
+            <>
+              It goes to
+              <br />
+              <code className="type-mono break-all">{path}</code>
+            </>
+          ) : (
+            'Nothing you have typed into Cekgu is sent with it.'
+          )
         ]}
         onCancel={() => setAsking(false)}
         onConfirm={() => {

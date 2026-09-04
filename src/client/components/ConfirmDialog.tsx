@@ -1,11 +1,17 @@
-import { useEffect, useRef } from 'react'
+import { type ReactNode, useEffect, useRef } from 'react'
 
 type Props = {
   open: boolean
   /** The verb and the count, TitleCase: "Delete 3 Records". The confirm button repeats it. */
   title: string
-  /** Two sentences: what happens, then the recovery behaviour for this account (FR-RECORD-7). */
-  body: string[]
+  /**
+   * Two sentences: what happens, then the recovery behaviour for this account (FR-RECORD-7).
+   *
+   * A string is one paragraph. A node is a paragraph that needs a machine string set in it, which
+   * the leaving-site dialog needs: a host and a path are things a person reads character by
+   * character before deciding, and prose type is the wrong face for that.
+   */
+  body: (string | ReactNode)[]
   /**
    * The confirm button. Defaults to repeating the title, which is right for a destructive verb
    * and wrong for a statement: 'You Are Leaving Cekgu' is not something a button can say.
@@ -56,9 +62,10 @@ export function ConfirmDialog({ open, title, body, confirmLabel, tone = 'danger'
       className="m-auto w-[440px] max-w-[calc(100vw-2rem)] rounded-sheet border border-rule-strong bg-sheet p-6 text-ink shadow-[var(--shadow-overlay)] backdrop:bg-[var(--shadow-overlay-tint)]"
     >
       <h2 className="text-[1.25rem]/[1.25] font-semibold">{title}</h2>
-      {body.map((sentence) => (
-        <p key={sentence} className="type-ui mt-3">
-          {sentence}
+      {body.map((paragraph, index) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: the body is a fixed list rendered in order
+        <p key={index} className="type-ui mt-3">
+          {paragraph}
         </p>
       ))}
       <div className="mt-6 flex justify-end gap-3">
