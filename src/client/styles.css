@@ -1214,11 +1214,14 @@ section[id] {
   padding: var(--s-5) var(--s-4) var(--s-6);
 }
 
-/* The document keeps DESIGN.md's 880 px measure inside that container, unchanged from the layout
-   this replaces. margin-inline: auto is what centres it: without it the measure caps the width and
-   the page hangs off the left edge of a container up to 1600 px wide. */
+/* 71.5rem, a third wider than the 880 px measure the public side keeps. Widened at the owner's
+   request on 4 September: the workspace pages are working surfaces holding tables, filter rows and
+   evidence side by side, not prose, and 880 px was costing them columns. The public document
+   measure is unchanged, because that side is prose and 880 px is where prose wants to be.
+   margin-inline: auto is what centres it: without it the measure caps the width and the page hangs
+   off the left edge of a container up to 1600 px wide. */
 .app-doc {
-  max-width: 55rem;
+  max-width: 71.5rem;
   margin-inline: auto;
 }
 
