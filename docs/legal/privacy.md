@@ -1,7 +1,5 @@
 # Privacy
 
-> Draft demo notice. Not final. Re-review against the deployed product and obtain owner approval before publication.
-
 <!-- Review baseline: 5 September 2026, main 2a0be68. -->
 
 Cekgu processes assessment content so educators can inspect potential problems. Do not enter confidential final papers

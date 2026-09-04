@@ -125,8 +125,8 @@ mirrors every formatter setting `biome.json` states, so both wrap at 120 and nei
 `embeddedLanguageFormatting` is off, so fenced code samples are never rewritten.
 
 `rtk` and `graphify`, both optional and per-machine, are documented in [`docs/agent-tooling.md`](docs/agent-tooling.md).
-The layout tree lives in [`docs/README.md`](docs/README.md#repository-layout), because a reviewer must read it without
-opening this file. Source layout is not decided; add it there when it is.
+The repository layout is not written down anywhere: `docs/README.md` is judge-facing and carries architecture rather
+than a directory tree. Read it off the tree itself.
 
 ## CLI first, always
 
