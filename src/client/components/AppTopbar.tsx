@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router'
 import type { RecordSummary } from '../../shared/types'
 import { signOut } from '../api'
+import { count } from '../plural'
 import { useSession } from '../session'
 import { setTheme, useTheme } from '../theme'
 
@@ -39,11 +40,48 @@ function useDismiss(open: boolean, close: () => void) {
 // The bell reports work waiting on a person, which is the only thing this product has that is
 // worth interrupting for: items a check flagged, and checks still running. A bell that counted
 // nothing real would be a control that lies, which DESIGN.md forbids.
-function waiting(records: RecordSummary[] | null) {
-  const list = records ?? []
-  const flagged = list.filter((record) => record.attentionCount > 0)
-  const running = list.filter((record) => record.status === 'queued' || record.status === 'checking')
+function tally(records: RecordSummary[]) {
+  const flagged = records.filter((record) => record.attentionCount > 0)
+  const running = records.filter((record) => record.status === 'queued' || record.status === 'checking')
   return { flagged, running, total: flagged.reduce((sum, record) => sum + record.attentionCount, 0) + running.length }
+}
+
+// A notification here is derived from the record rather than stored as a row, so there is no read
+// state on the server to write to and no endpoint to clear: local is the only honest scope. The
+// signature is what keeps it honest. A record returns to the list the moment its status or its
+// attention count moves, so Clear silences the state of the work and never the work itself, and
+// the empty state below says so rather than implying the queue is done.
+const CLEARED_KEY = 'cekgu.notifications.cleared'
+
+type Cleared = Record<string, string>
+
+const signatureOf = (record: RecordSummary) => `${record.status}:${record.attentionCount}`
+
+function readCleared(): Cleared {
+  try {
+    const raw = localStorage.getItem(CLEARED_KEY)
+    if (!raw) return {}
+
+    const parsed: unknown = JSON.parse(raw)
+    if (typeof parsed !== 'object' || parsed === null) return {}
+
+    const cleared: Cleared = {}
+    for (const [id, signature] of Object.entries(parsed)) {
+      if (typeof signature === 'string') cleared[id] = signature
+    }
+    return cleared
+  } catch {
+    // A browser with storage blocked still gets its notifications; it just cannot silence them.
+    return {}
+  }
+}
+
+function writeCleared(cleared: Cleared): void {
+  try {
+    localStorage.setItem(CLEARED_KEY, JSON.stringify(cleared))
+  } catch {
+    // Silencing is a convenience, not state the product reads back.
+  }
 }
 
 export function AppTopbar({ records }: Props) {
@@ -52,13 +90,28 @@ export function AppTopbar({ records }: Props) {
   const theme = useTheme()
   const [open, setOpen] = useState<'bell' | 'user' | null>(null)
   const [leaving, setLeaving] = useState(false)
+  const [cleared, setCleared] = useState<Cleared>(readCleared)
 
   const bellRef = useDismiss(open === 'bell', () => setOpen(null))
   const userRef = useDismiss(open === 'user', () => setOpen(null))
 
   const segments = pathname.split('/').filter(Boolean)
   const first = segments[0] ?? 'dashboard'
-  const { flagged, running, total } = waiting(records)
+
+  const all = records ?? []
+  const { flagged, running, total } = tally(all.filter((record) => cleared[record.id] !== signatureOf(record)))
+  // Counted before the filter, so the empty state can tell a cleared bell from a quiet one.
+  const outstanding = tally(all).total
+  // Null until the read lands, so an unknown count is omitted rather than printed as zero. The
+  // sample is the product's own fixture rather than the account's work, so it is not held.
+  const held = records ? all.filter((record) => !record.isSample).length : null
+
+  function clearNotifications() {
+    const next = { ...cleared }
+    for (const record of [...flagged, ...running]) next[record.id] = signatureOf(record)
+    setCleared(next)
+    writeCleared(next)
+  }
 
   async function leave() {
     setLeaving(true)
@@ -157,8 +210,12 @@ export function AppTopbar({ records }: Props) {
           {open === 'bell' ? (
             <div className="app-pop">
               <div className="app-pop-head">
-                <p className="type-label">Waiting on You</p>
-                {total > 0 ? <span className="type-caption text-ink-muted">{total}</span> : null}
+                <p className="type-label">All Notifications</p>
+                {total > 0 ? (
+                  <button type="button" onClick={clearNotifications} className="app-pop-action type-label">
+                    Clear
+                  </button>
+                ) : null}
               </div>
               {total === 0 ? (
                 <div className="app-pop-empty">
@@ -171,7 +228,9 @@ export function AppTopbar({ records }: Props) {
                       opacity="0.4"
                     />
                   </svg>
-                  <p className="type-ui">Nothing is waiting on you.</p>
+                  <p className="type-ui">
+                    {outstanding === 0 ? 'Nothing is waiting on you.' : 'Cleared. Anything still open is in Records.'}
+                  </p>
                 </div>
               ) : (
                 <ul className="app-pop-list m-0 list-none p-0">
@@ -211,18 +270,29 @@ export function AppTopbar({ records }: Props) {
           {open === 'user' ? (
             <div className="app-pop">
               <div className="app-pop-head">
-                <p className="type-label">
-                  {session.status === 'in' ? (session.isGuest ? 'Guest' : 'Signed In') : 'Account'}
-                </p>
+                <p className="type-label">Account</p>
               </div>
               {session.status === 'in' ? (
-                <div className="px-4 py-3">
-                  <p className="type-caption truncate text-ink-muted">
-                    {/* Not the shared-workspace sentence: FR-AUTH-3 requires that one word for word
-                        and copy.test.ts holds it to a single home in GuestBanner. This is the fact a
-                        person actually needs in a menu, and it is not a second phrasing of it. */}
-                    {session.isGuest ? 'Records removed after 24 hours' : session.user.email}
-                  </p>
+                <div className="app-pop-account">
+                  {/* The identity is the content of this menu, so it is set at the same size as the
+                      controls below it rather than under them. The address is mono because Settings
+                      already sets an address in mono and an email is a machine string either way. */}
+                  {session.isGuest ? (
+                    <p className="type-ui">Guest</p>
+                  ) : (
+                    <p className="type-mono truncate">{session.user.email}</p>
+                  )}
+                  {session.isGuest ? (
+                    <p className="type-caption text-ink-muted">
+                      {/* Not the shared-workspace sentence: FR-AUTH-3 requires that one word for word
+                          and copy.test.ts holds it to a single home in GuestBanner. This is the fact a
+                          person actually needs in a menu, and it is not a second phrasing of it. */}
+                      Records removed after 24 hours
+                    </p>
+                  ) : null}
+                  {/* A count, never an allowance: nothing in the product caps it, so nothing here
+                      may imply a ceiling by printing one. */}
+                  {held === null ? null : <p className="type-caption text-ink-muted">{count(held, 'record')} held</p>}
                 </div>
               ) : null}
               <Link to="/settings" className="app-pop-row border-t border-rule" onClick={() => setOpen(null)}>
