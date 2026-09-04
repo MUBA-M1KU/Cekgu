@@ -120,6 +120,11 @@ The product is built for practice papers and synthetic examples, not for confide
    public Gonka receipt naming the same model that was requested. Anything else is written down as a refused attempt
    with the reason, and takes no part in the verdict.
 
+   <img src="assets/receipt.png" alt="The receipt viewer for one request id, showing the served model, outcome, devshard and timings, next to the public gateway URL to check them against" width="100%">
+
+   Every request id in the product opens this page, and the gateway URL on it is public and needs no key — so the claim
+   can be checked against the gateway rather than taken from us.
+
 1. **One rule decides.** The first two admitted readings from distinct served models go through a five-outcome rule in a
    fixed order. The order is the design: disagreement before ambiguity, ambiguity before the key.
 
