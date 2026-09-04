@@ -2124,7 +2124,7 @@
                 </div>
 
                 <div class="cover-chips">
-                  <span class="chip-proof"><span class="bead" style="background: var(--verdict-clear)"></span>Two models, read blind</span>
+                  <span class="chip-proof"><span class="bead" style="background: var(--verdict-clear)"></span>Two models, key withheld</span>
                   <span class="chip-proof"><span class="bead" style="background: var(--verdict-split)"></span>Every reading receipted</span>
                   <span class="chip-proof"><span class="bead" style="background: var(--verdict-ambiguity)"></span>Refuses on disagreement</span>
                 </div>
@@ -2292,7 +2292,7 @@
               </div>
               <div class="delta-cell">
                 <p class="today">A colleague re-solves the paper.</p>
-                <p class="after"><span>&rarr;</span>Two models re-solve it blind, with receipts.</p>
+                <p class="after"><span>&rarr;</span>Two models re-solve it without the key, with receipts.</p>
               </div>
               <div class="delta-cell">
                 <p class="today">She hears about a wrong key after the marks.</p>
@@ -2321,7 +2321,7 @@
           <div class="head">
             <p class="eyebrow">2. Project objective</p>
             <h2 class="title">Spend human attention <em>where it matters.</em></h2>
-            <p class="sub">Cekgu re-solves every item so the educator reads only the ones that came back different.</p>
+            <p class="sub" style="max-width: 80ch">Cekgu uses two separate AI models on GonkaRouter to audit every answer, so the educator only reads the ones that came back flagged instead of all of them.</p>
           </div>
 
           <div class="body">
@@ -2331,7 +2331,7 @@
                 role="img"
                 aria-label="Twelve items on the public sample record reduced to three that need a human decision, with nine clear"
               >
-                <text class="label f-muted" x="0" y="20" font-size="20">CEKGU RE-SOLVES EVERY ITEM, BLIND</text>
+                <text class="label f-muted" x="0" y="20" font-size="20">TWO MODELS RE-SOLVE EVERY ITEM, KEY WITHHELD</text>
                 <text class="figure f-muted" x="700" y="26" font-size="46" text-anchor="end">12</text>
                 <g>
                   <rect x="0" y="52" width="700" height="34" rx="4" class="card-s" />
@@ -2441,8 +2441,8 @@
 
           <div class="head">
             <p class="eyebrow">3. Overall concept</p>
-            <h2 class="title">Two readers, blind. <em>Then a fixed rule.</em></h2>
-            <p class="sub">Neither model sees the key or the other&rsquo;s answer. A fixed rule compares the two readings first, and the key only after.</p>
+            <h2 class="title">Two GonkaRouter models answer each question without seeing the key. <em>A fixed rule compares them.</em></h2>
+            <p class="sub" style="max-width: 80ch">Neither model is shown the teacher&rsquo;s answer or the other model&rsquo;s. The rule checks whether the two agree first, and only then whether they agree with the key.</p>
           </div>
 
           <div class="body">
@@ -2478,7 +2478,7 @@
                 <path class="conn" d="M386 261l12 10-12 10" />
 
                 <!-- two readers, then and only then the key -->
-                <text class="label f-muted" x="428" y="20" font-size="20">TWO MODEL FAMILIES, ANSWERING BLIND</text>
+                <text class="label f-muted" x="428" y="20" font-size="20">TWO GONKAROUTER MODELS, KEY WITHHELD</text>
                 <rect x="412" y="44" width="516" height="262" rx="4" class="card-s" />
                 <rect x="412.5" y="44.5" width="515" height="261" rx="4" class="s-rule" fill="none" />
                 <rect x="412" y="404" width="516" height="96" rx="4" class="card-s" />
@@ -2853,8 +2853,8 @@
 
           <div class="head">
             <p class="eyebrow">5. Motivation and challenges</p>
-            <h2 class="title">No item had two readings <em>in 30 seconds.</em></h2>
-            <p class="sub">The gateway is slow and sometimes absent, so the design queues, hedges, retries and refuses rather than guesses.</p>
+            <h2 class="title">Two independent models on every item. <em>Built to wait for both.</em></h2>
+            <p class="sub" style="max-width: 80ch">Two models on GonkaRouter give every verdict redundancy and a check against a single model&rsquo;s hallucination. A second reading takes time, so the queue does the waiting and the educator does not.</p>
           </div>
 
           <div class="body">
