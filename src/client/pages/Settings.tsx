@@ -10,6 +10,14 @@ import { Select } from '../components/Select'
 import { type MotionSetting, setMotionSetting, useMotionSetting } from '../mascot/preferences'
 import { count } from '../plural'
 import { clearSession, useSession } from '../session'
+import { setTheme, type Theme, useTheme } from '../theme'
+
+// Carried over from #191 on main: the theme was reachable only from the topbar toggle, which is a
+// control you find rather than a setting you set.
+const THEME_OPTIONS = [
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' }
+]
 
 const MOTION_OPTIONS = [
   { value: 'system', label: 'Follow System' },
@@ -27,6 +35,7 @@ const MOTION_OPTIONS = [
  */
 export function Settings() {
   const motion = useMotionSetting()
+  const theme = useTheme()
   const session = useSession()
   const [leaving, setLeaving] = useState(false)
   const [failed, setFailed] = useState(false)
@@ -187,24 +196,38 @@ export function Settings() {
 
       <section className="settings-row">
         <div>
-          <h2 className="settings-heading">Accessibility</h2>
+          <h2 className="settings-heading">Appearance</h2>
           <p className="type-caption settings-desc">
-            Three choices, not a checkbox. A checkbox could only ever ask for less motion, so a machine with animations
-            switched off had no way back.
+            How the product looks and how much it moves. Both are read on every screen and neither is stored on the
+            server.
           </p>
         </div>
         <div className="settings-body">
           <Card>
-            <div className="max-w-[22rem]">
-              <Field label="Animation" htmlFor="motion">
-                <Select
-                  id="motion"
-                  label="Animation"
-                  value={motion}
-                  options={MOTION_OPTIONS}
-                  onChange={(value) => setMotionSetting(value as MotionSetting)}
-                />
-              </Field>
+            <div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field label="Theme" htmlFor="theme">
+                  <Select
+                    id="theme"
+                    label="Theme"
+                    value={theme}
+                    options={THEME_OPTIONS}
+                    onChange={(value) => setTheme(value as Theme)}
+                  />
+                </Field>
+                {/* Three choices, not a checkbox. A checkbox could only ever ask for less motion, so
+                    a machine with animations switched off had no way back, and Windows reports that
+                    one toggle whether it was thrown for motion sensitivity or for a faster desktop. */}
+                <Field label="Animation" htmlFor="motion">
+                  <Select
+                    id="motion"
+                    label="Animation"
+                    value={motion}
+                    options={MOTION_OPTIONS}
+                    onChange={(value) => setMotionSetting(value as MotionSetting)}
+                  />
+                </Field>
+              </div>
               <p className="type-caption mt-3 max-w-[60ch] text-ink-muted">
                 {motion === 'system'
                   ? 'Following your system setting. Choose Always Animate if your machine has animations switched off but you want them here.'

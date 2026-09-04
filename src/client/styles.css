@@ -1347,10 +1347,13 @@ section[id] {
   color: var(--ink);
 }
 
+/* The wordmark has one treatment. Lockup.tsx and AppSidebar.tsx both set 1.25rem, 700 and
+   -0.02em inline; this was a third rendering of the same word disagreeing with them on all three.
+   Carried over from #190. */
 .app-footer-name {
-  font-size: 1.125rem;
-  font-weight: 600;
-  letter-spacing: -0.035em;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .app-footer-link {

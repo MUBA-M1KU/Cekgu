@@ -1,33 +1,37 @@
 // FR-PUBLIC-2. The claims here are deliberately smaller than the product feels, because prompts
 // traverse a decentralised network and a receipt is metadata rather than proof.
+//
+// Each answer has to read cold. A disclosure can be deep linked open and a reader can expand one
+// question without touching the others, so no answer may lean on the one above it for its subject
+// or its qualifier.
 const FAQ = [
   {
     q: 'Where do my questions go?',
-    a: 'Each question is sent to the GonkaRouter gateway, which routes it to a decentralised inference network. Your questions leave our server and are processed by machines we do not own. Do not enter confidential final examinations or any learner personal data.'
+    a: 'The GonkaRouter gateway routes each question to a decentralised inference network, so your questions leave our server and are processed by machines we do not own. Do not enter confidential final examinations or any learner personal data.'
   },
   {
     q: 'Does Cekgu store anything about my students?',
-    a: 'No. Cekgu reviews assessment content, not student performance. There is no field anywhere in the system for a learner name, answer, mark or identifier.'
+    a: 'No. Cekgu reviews assessment content, not student performance. The system has no field for a learner name, answer, mark or identifier.'
   },
   {
     q: 'What is a receipt, and is it proof?',
-    a: 'A receipt is public metadata the gateway publishes for a completed request. It makes the model that actually served a request inspectable by anyone with the request id. It is gateway metadata, not cryptographic proof and not an on-chain transaction.'
+    a: 'Public metadata the gateway publishes for a completed request. Anyone with the request id can see which model actually served it. It is gateway metadata, not cryptographic proof and not an on-chain transaction.'
   },
   {
     q: 'Does agreement between two models mean the answer is right?',
-    a: 'No. Two models agreeing is a signal worth your attention, not a proof of truth. They may share training data or share a misconception. Cekgu never certifies a question as correct.'
+    a: 'No. Two models agreeing is a signal worth your attention, not proof. They may share training data, or share a misconception. Cekgu never certifies a question as correct.'
   },
   {
     q: 'Why does an item sometimes say Unverified?',
-    a: 'Because fewer than two distinct, receipt-verified readings survived. Models time out and rate limits happen. Cekgu refuses to give a verdict on one reading rather than pretending there was a consensus.'
+    a: 'Because fewer than two distinct, receipt-verified readings survived: models time out, rate limits happen. Cekgu will not rule on one reading and call it a consensus.'
   },
   {
     q: 'Who can see what I add in the Guest workspace?',
-    a: 'Everyone. The Guest account is one shared account, not a private session of your own. Every guest can open and delete every other guest record. Guest records are removed 24 hours after they are created.'
+    a: 'Everyone. Guest is one shared account, not a private session. Every guest can open and delete every other guest record, and guest records are removed 24 hours after they are created.'
   },
   {
     q: 'Can Cekgu change my paper?',
-    a: 'No. Cekgu suggests where to look. Only you change a key, the wording, or the disposition on a flagged item.'
+    a: "No. Cekgu suggests where to look. Only you change a key, the wording, or a flagged item's disposition."
   }
 ]
 
@@ -40,10 +44,9 @@ export function TrustSection() {
             Your questions leave our server. Here is what that means.
           </h2>
           <p className="type-ui mt-5 text-[1.0625rem]/[1.6] text-ink-muted">
-            Cekgu asks you to send your questions to a network of machines that we do not control, so it is worth being
-            plain about what that means and what it does not. Your records belong to your account. A private account's
-            library is visible only to that account. The Guest workspace is shared by everyone who uses it and is not
-            private in any sense.
+            Cekgu sends your questions to a network of machines we do not control, so it is worth being plain about
+            that. Your records belong to your account, and a private library is visible only to that account. The Guest
+            workspace is shared by everyone who uses it, and is not private.
           </p>
         </div>
 

@@ -84,7 +84,7 @@ export function SampleSection({ record }: { record: RecordDetail | null }) {
         {item ? (
           <div className="card-soft mt-10 p-6 sm:p-8">
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <h3 className="max-w-[42ch] text-[1.375rem]">{item.stem}</h3>
+              <h3 className="max-w-[42ch]">{item.stem}</h3>
               <VerdictChip verdict={item.verdict} />
             </div>
 

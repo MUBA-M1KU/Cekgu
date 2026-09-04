@@ -67,3 +67,8 @@ describe('glass surfaces', () => {
     expect(bare).toEqual([])
   })
 })
+
+// #195 asserted that the three rules opening the hover rail agreed on one condition. There is no
+// hover rail any more: the sidebar holds a width a person sets and does not react to the pointer,
+// so the bug class those tests guarded cannot occur and there are no .app-rail selectors left for
+// them to count. The sidebar has no equivalent to guard, which is the point of the change.
