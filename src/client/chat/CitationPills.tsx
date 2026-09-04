@@ -3,6 +3,9 @@ import type { ChatProvenance, Citation } from '../../shared/chat'
 import { SEAT_LABEL } from '../../shared/chat'
 import { receiptPath } from '../pages/ReceiptView'
 
+/** Wired by the record page: an item pill jumps to its item, a reading pill opens its evidence. */
+export type CiteAction = ((citation: Citation) => void) | undefined
+
 /** Head and tail, so a pill stays a pill. The whole id is on the receipt page it opens. */
 function shortId(requestId: string): string {
   return requestId.length > 18 ? `${requestId.slice(0, 8)}…${requestId.slice(-6)}` : requestId
@@ -24,15 +27,30 @@ function citationKey(citation: Citation): string {
 // what lets the one pill that is NOT a Gonka fact swap in a dashed edge without changing size.
 const PILL = 'status-chip type-label border border-transparent'
 
-function ItemPill({ position }: { position: number }) {
-  return <span className={PILL}>Item {position}</span>
-}
+// The whole affordance an actionable pill gets: its transparent edge takes the rule colour, the
+// same move a verdict chip makes when it is the active filter.
+const ACTION = `${PILL} transition-colors hover:border-rule-strong`
 
-function ReadingPill({ citation }: { citation: Extract<Citation, { kind: 'reading' }> }) {
-  const model = citation.model.length > 0 ? shortModel(citation.model) : null
+function ItemPill({ citation, onCite }: { citation: Extract<Citation, { kind: 'item' }>; onCite: CiteAction }) {
+  const label = `Item ${citation.position}`
+  if (!onCite) return <span className={PILL}>{label}</span>
 
   return (
-    <span className={PILL} title={citation.model.length > 0 ? citation.model : undefined}>
+    <button
+      type="button"
+      className={ACTION}
+      title={`Go to item ${citation.position} in this record.`}
+      onClick={() => onCite(citation)}
+    >
+      {label}
+    </button>
+  )
+}
+
+function ReadingPill({ citation, onCite }: { citation: Extract<Citation, { kind: 'reading' }>; onCite: CiteAction }) {
+  const model = citation.model.length > 0 ? shortModel(citation.model) : null
+  const body = (
+    <>
       {SEAT_LABEL[citation.seat]}
       {model ? (
         <>
@@ -42,17 +60,36 @@ function ReadingPill({ citation }: { citation: Extract<Citation, { kind: 'readin
           <span className="type-mono">{model}</span>
         </>
       ) : null}
-    </span>
+    </>
+  )
+
+  if (!onCite) {
+    return (
+      <span className={PILL} title={citation.model.length > 0 ? citation.model : undefined}>
+        {body}
+      </span>
+    )
+  }
+
+  return (
+    <button
+      type="button"
+      className={ACTION}
+      title={`Open the evidence for item ${citation.position}${citation.model.length > 0 ? `, read by ${citation.model}` : ''}.`}
+      onClick={() => onCite(citation)}
+    >
+      {body}
+    </button>
   )
 }
 
-// The only pill a person can follow, because it is the only one with something to verify behind
-// it. Everything else on this row is a label; this is the public receipt.
+// The pill that leaves the product, because it is the one with something to check behind it: the
+// public receipt for that request id. It is a Link whether or not onCite is wired.
 function ReceiptPill({ requestId, model }: { requestId: string; model?: string | null }) {
   return (
     <Link
       to={receiptPath(requestId)}
-      className={`${PILL} type-mono transition-colors hover:border-rule-strong`}
+      className={`${ACTION} type-mono`}
       title={model ? `Gonka receipt for ${requestId}, served by ${model}.` : `Gonka receipt for ${requestId}.`}
     >
       <span className="sr-only">Receipt </span>
@@ -67,15 +104,15 @@ function ReceiptPill({ requestId, model }: { requestId: string; model?: string |
  * A sentence with no pill beneath it is visibly ungrounded, which is the point: the row is never
  * padded out, and an agent turn that cites nothing shows nothing.
  */
-export function CitationPills({ citations }: { citations: Citation[] }) {
+export function CitationPills({ citations, onCite }: { citations: Citation[]; onCite?: CiteAction }) {
   if (citations.length === 0) return null
 
   return (
     <ul className="m-0 mt-2 flex list-none flex-wrap items-center gap-2 p-0">
       {citations.map((citation) => (
         <li key={citationKey(citation)}>
-          {citation.kind === 'item' ? <ItemPill position={citation.position} /> : null}
-          {citation.kind === 'reading' ? <ReadingPill citation={citation} /> : null}
+          {citation.kind === 'item' ? <ItemPill citation={citation} onCite={onCite} /> : null}
+          {citation.kind === 'reading' ? <ReadingPill citation={citation} onCite={onCite} /> : null}
           {citation.kind === 'receipt' ? <ReceiptPill requestId={citation.requestId} model={citation.model} /> : null}
         </li>
       ))}
