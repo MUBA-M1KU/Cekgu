@@ -1496,16 +1496,43 @@ End to end through the route with a session and a real three-question paper:
 **The file type is almost none of the cost.** Transcription alone was 6.1 s for the PNG and 8.0 s for the PDF; the
 spread above is the gateway's. Structuring the same text, one family each:
 
-| Family                               | Time   | Outcome                              |
-| ------------------------------------ | ------ | ------------------------------------ |
-| `MiniMaxAI/MiniMax-M2.7`             | 31.2 s | Correct, verified receipt            |
-| `deepseek-ai/DeepSeek-V4-Flash-0731` | 0.5 s  | `429`, no request id, so unusable    |
-| `moonshotai/Kimi-K2.6`               | 90.0 s | Cut off at `callGonka`'s own timeout |
+| Family                               | 14:0x                       | 15:5x               |
+| ------------------------------------ | --------------------------- | ------------------- |
+| `deepseek-ai/DeepSeek-V4-Flash-0731` | 0.5 s, `429`, no request id | **10.3 s, correct** |
+| `MiniMaxAI/MiniMax-M2.7`             | 31.2 s, correct             | 77.0 s, correct     |
+| `moonshotai/Kimi-K2.6`               | 90.0 s, cut off             | 87.6 s, cut off     |
 
-`healthyOrder()` puts MiniMax first once the health ring has seen a window; on a cold instance the static order costs
-half a second on DeepSeek before reaching it. **The route caps the structuring step at 100 s**, which sits just above
-one complete attempt — 90 s for the call plus 5 s for its receipt. A lower ceiling can cut off a call that was about to
-succeed, which is the worst outcome available: the reader waits the whole time and gets nothing.
+**Read the two columns, not either one.** Same prompt, same paper, two hours apart: DeepSeek went from refusing
+instantly to being the fastest of the three, and MiniMax's time more than doubled. Any single measurement of this
+gateway is a snapshot, and a design that assumes one family is reliably fastest will be wrong within the afternoon. Only
+Kimi is consistent, and consistently unusable for this prompt.
+
+`healthyOrder()` ranks on the health ring, which is empty on a cold instance — so the first upload after a deploy takes
+the static order and pays whatever the first family costs that minute. **The route caps the structuring step at 100 s**,
+just above one complete attempt: 90 s for the call plus 5 s for its receipt. A lower ceiling can cut off a call that was
+about to succeed, which is the worst outcome available: the reader waits the whole time and gets nothing.
+
+**Rate limits punish repetition, not use.** Seven runs against the deployed preview with the same paper:
+
+| How it was called                    | Result                                                                                      |
+| ------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Five back to back inside ten minutes | Two succeeded. Three failed: two on the ceiling, one on a `429` from the transcription step |
+| Two, each after a five-minute pause  | **Both succeeded: 200 in 10.6 s as PNG, 200 in 67.0 s as PDF**                              |
+
+The back-to-back column is self-inflicted: Gemini's per-minute limits and the account-level Gonka `429`s of
+[gotcha 10](#5-verified-gotchas) both punish exactly that pattern, and no educator uploads five papers in ten minutes.
+It is recorded because a load test that measures the tester is worth knowing about, and because a demo rehearsal is the
+one time a human does behave like that. **Leave a minute between rehearsal uploads.**
+
+**What the spaced runs establish is that the wait is unpredictable, not that it is short.** 10.6 s and 67.0 s are both
+correct answers to the same three-question paper minutes apart, and the second is two thirds of the way to the ceiling.
+The interface promises "a minute or two" and locks the form while it waits, which is the honest shape for a step whose
+duration nobody can predict.
+
+**The real fix, when there is time for it, is to race two families rather than try them in sequence.** The semaphore
+admits four concurrent calls and this step uses one; taking the first valid reply of two would make the wait the fastest
+family's rather than the sum of a slow refusal and a slow answer. That is a change to the inference path and not one to
+make the day before a submission.
 
 ### Configuration
 
