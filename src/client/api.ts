@@ -40,6 +40,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export type ExtractResponse = {
   draft: CreateRecordInput
   provenance: { requestId: string; servedModel: string; receiptStatus: ReceiptStatus }
+  // The non-Gonka step's own receipt, kept as a separate field rather than merged into provenance:
+  // a reader has to be able to see which step ran where. Gemini promises neither value.
+  transcription: { provider: string; responseId: string | null; model: string | null }
   warnings: string[]
 }
 

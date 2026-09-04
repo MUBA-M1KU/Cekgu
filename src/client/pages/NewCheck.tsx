@@ -18,7 +18,13 @@ const LANGUAGES = [
 const UPLOAD_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'application/pdf']
 const UPLOAD_MAX_BYTES = 10 * 1024 * 1024
 
-type Extraction = { requestId: string; servedModel: string; warnings: string[] }
+type Extraction = {
+  requestId: string
+  servedModel: string
+  receiptStatus: string
+  transcription: { provider: string; responseId: string | null; model: string | null } | null
+  warnings: string[]
+}
 
 type DraftItem = { id: string; stem: string; options: { letter: string; text: string }[]; key: string }
 
@@ -41,6 +47,13 @@ function demoItems(): DraftItem[] {
     options: item.options.map((option) => ({ ...option })),
     key: item.key
   }))
+}
+
+// Gemini promises neither the response id nor the model, so the row is built from what came back
+// rather than from a fixed shape. Nothing means no row at all, never the word null on screen.
+function transcriptionLine(transcription: Extraction['transcription']): string {
+  if (!transcription) return ''
+  return [transcription.model ?? transcription.provider, transcription.responseId].filter(Boolean).join(' · ')
 }
 
 // Letters are positional, so removing option B has to renumber everything after it.
@@ -121,6 +134,8 @@ export function NewCheck() {
       setExtraction({
         requestId: response.provenance.requestId,
         servedModel: response.provenance.servedModel,
+        receiptStatus: response.provenance.receiptStatus,
+        transcription: response.transcription ?? null,
         warnings: response.warnings
       })
     } catch (error) {
@@ -213,8 +228,8 @@ export function NewCheck() {
             Gonka, and reading pixels into text decides nothing, but a judge who works that out for
             themselves reads silence as concealment. */}
         <p className="mt-1 max-w-[62ch] type-caption text-ink-muted">
-          The file is read by a vision model. Every judgement about what it says is made by two Gonka models, and the
-          request id below is that step's receipt.
+          The file is read by a vision model. Every judgement about what it says is made by two Gonka models. Both steps
+          are receipted below, and the receipts say which is which.
         </p>
 
         <label className="mt-3 inline-flex h-9 cursor-pointer items-center rounded-control border border-rule-strong px-4 font-medium focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink has-disabled:cursor-default has-disabled:opacity-60">
@@ -246,11 +261,27 @@ export function NewCheck() {
 
         {extraction ? (
           <>
-            <dl className="type-mono mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
-              <dt className="text-ink-muted">Request Id</dt>
-              <dd className="m-0 break-words">{extraction.requestId}</dd>
-              <dt className="text-ink-muted">Served</dt>
-              <dd className="m-0 break-words">{extraction.servedModel}</dd>
+            {/* Two rows, never merged. Each names where its step ran, on the row rather than only in
+                the helper text above, so the panel is unambiguous in a photograph taken without it. */}
+            <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-2">
+              {transcriptionLine(extraction.transcription) ? (
+                <>
+                  <dt className="type-mono text-ink-muted">Read by</dt>
+                  <dd className="m-0">
+                    <span className="type-mono break-words">{transcriptionLine(extraction.transcription)}</span>
+                    <span className="type-caption block text-ink-muted">Outside the Gonka network</span>
+                  </dd>
+                </>
+              ) : null}
+              <dt className="type-mono text-ink-muted">Structured by</dt>
+              <dd className="m-0">
+                <span className="type-mono break-words">
+                  {extraction.servedModel} · {extraction.requestId}
+                </span>
+                <span className="type-caption block text-ink-muted">
+                  Gonka request id, receipt {extraction.receiptStatus}
+                </span>
+              </dd>
             </dl>
             {extraction.warnings.length > 0 ? (
               <div className="mt-3">
