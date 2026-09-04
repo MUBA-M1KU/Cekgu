@@ -67,6 +67,8 @@ describe('structuringPrompt', () => {
   })
 })
 
+const flush = () => new Promise((resolve) => setTimeout(resolve, 0))
+
 describe('structurePaper', () => {
   test('returns a schema-valid draft with its verified Gonka provenance', async () => {
     const model = MODELS[0]
@@ -161,34 +163,61 @@ describe('structurePaper', () => {
     expect(result.ok && result.provenance.servedModel).toBe(second)
   })
 
-  test('waits for one model to settle before starting the next', async () => {
-    const first = MODELS[0]
-    const second = MODELS[1]
+  test('starts two models at once and leaves the third until that wave settles', async () => {
+    const [first, second, third] = MODELS
     const calls: string[] = []
-    const deferred: { resolve?: (provenance: Provenance) => void } = {}
-    const firstResponse = new Promise<Provenance>((resolve) => {
-      deferred.resolve = resolve
-    })
+    const settle: Record<string, (provenance: Provenance) => void> = {}
     const pending = structurePaper('paper', {
       call: (model) => {
         calls.push(model)
-        return model === first
-          ? firstResponse
-          : Promise.resolve(verified(model, JSON.stringify({ draft: DRAFT, warnings: [] })))
+        return new Promise<Provenance>((resolve) => {
+          settle[model] = resolve
+        })
       },
-      order: () => [first, second]
+      order: () => [first, second, third]
     })
 
-    expect(calls).toEqual([first])
-    if (!deferred.resolve) throw new Error('The first call did not start.')
-    deferred.resolve({
-      ...verified(first, JSON.stringify({ draft: DRAFT, warnings: [] })),
-      error: 'The gateway answered 503.'
-    })
-    const result = await pending
-
+    await flush()
     expect(calls).toEqual([first, second])
-    expect(result.ok && result.provenance.servedModel).toBe(second)
+
+    const refuse = (model: string) => {
+      const resolve = settle[model]
+      if (!resolve) throw new Error(`The call to ${model} did not start.`)
+      resolve({
+        ...verified(model, JSON.stringify({ draft: DRAFT, warnings: [] })),
+        error: 'The gateway answered 503.'
+      })
+    }
+    refuse(first)
+    refuse(second)
+    await flush()
+
+    expect(calls).toEqual([first, second, third])
+    settle[third]?.(verified(third, JSON.stringify({ draft: DRAFT, warnings: [] })))
+    const result = await pending
+    expect(result.ok && result.provenance.servedModel).toBe(third)
+  })
+
+  // The reason the wave exists. healthyOrder cannot know which family will be fast on a structuring
+  // prompt, so a first name that takes 74 s used to spend the route's whole 100 s ceiling alone.
+  test('answers on the first verified draft rather than the first family in the order', async () => {
+    const [slow, quick] = MODELS
+    let slowSettled = false
+    const result = await structurePaper('paper', {
+      call: (model) =>
+        model === slow
+          ? new Promise<Provenance>((resolve) =>
+              setTimeout(() => {
+                slowSettled = true
+                resolve(verified(slow, JSON.stringify({ draft: DRAFT, warnings: [] })))
+              }, 50)
+            )
+          : Promise.resolve(verified(quick, JSON.stringify({ draft: DRAFT, warnings: [] }))),
+      order: () => [slow, quick]
+    })
+
+    expect(result.ok && result.provenance.servedModel).toBe(quick)
+    expect(slowSettled).toBe(false)
   })
 
   test('tries the next model after malformed JSON', async () => {
