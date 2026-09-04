@@ -33,8 +33,12 @@ source material is in [`docs/source/`](docs/source/).
 
 Non-negotiable, from [`docs/source/gonkarouter-challenge.md`](docs/source/gonkarouter-challenge.md):
 
-1. **All AI reasoning runs through GonkaRouter** (`https://api.gonkarouter.io`). A direct OpenAI, Anthropic or Gemini
-   call anywhere in the product path disqualifies the entry
+1. **All AI reasoning and verification runs through GonkaRouter** (`https://api.gonkarouter.io`). Reasoning and
+   verification, which is the organizers' own wording — see [`docs/brief.md`](docs/brief.md). One non-reasoning
+   exception is permitted and it is exactly one: `src/server/transcribe/` turns an uploaded image or PDF into the text
+   printed on it, because only Kimi has vision and a single reader cannot cross-verify anything.
+   [`docs/TRD.md` section 20](docs/TRD.md#20-reading-a-paper-from-an-upload) holds the decision;
+   `src/server/gateway/only-gonkarouter.test.ts` fails the build if a provider host appears anywhere else
 1. **At least two models cross-verify.** Multi-model consensus
 1. **Gonka Request IDs are surfaced in the UI** for every inference step. This is the on-chain proof: wire it through
    from the first commit, not at the end
@@ -276,7 +280,9 @@ gh issue close <n>                     # done
 
 ## Critical do-nots
 
-- **Do not** call an AI provider directly. Everything goes through GonkaRouter
+- **Do not** call an AI provider directly. Everything goes through GonkaRouter, with the single documented transcription
+  exception in `src/server/transcribe/`. Widening that directory, or adding a second one, is a track requirement
+  decision and not a refactor
 - **Do not** import or adapt code written before 26 Aug 2026
 - **Do not** commit `.env` or any `sk-…` key. `.env.example` carries key names, never values
 - **Do not** commit directly to `main`, force-push, rewrite published history, or delete a branch other than a merged

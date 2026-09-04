@@ -2,11 +2,12 @@
 
 > Draft demo notice. Not final. Re-review against the deployed product and obtain owner approval before publication.
 
-<!-- Review baseline: 5 September 2026, main c59daaf. -->
+<!-- Review baseline: 5 September 2026, main 42a16f5. -->
 
 Use Cekgu to review practice or synthetic multiple-choice questions that you are permitted to share for processing
-through GonkaRouter's decentralised inference network. Cekgu supports an educator's review; the educator remains
-responsible for the final question and answer key.
+through GonkaRouter's decentralised inference network. If you use the upload option, the image or PDF also goes to
+Google's Gemini API for transcription before GonkaRouter structures the draft. Cekgu supports an educator's review; the
+educator remains responsible for the final question and answer key.
 
 ## Content you must not submit
 

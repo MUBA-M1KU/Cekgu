@@ -108,7 +108,7 @@ export function EvidencePanel({ item }: { item: Item }) {
   ]
 
   return (
-    <div className="mt-4 bg-well p-4 sm:p-6">
+    <div className="mt-4 rounded-control bg-well p-4 sm:p-6">
       <h3 className="type-eyebrow text-ink-muted">Evidence</h3>
 
       <div className="mt-4 flex flex-col gap-6 min-[720px]:flex-row">

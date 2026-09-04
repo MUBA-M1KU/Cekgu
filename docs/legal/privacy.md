@@ -2,7 +2,7 @@
 
 > Draft demo notice. Not final. Re-review against the deployed product and obtain owner approval before publication.
 
-<!-- Review baseline: 5 September 2026, main c59daaf. -->
+<!-- Review baseline: 5 September 2026, main 42a16f5. -->
 
 Cekgu processes assessment content so educators can inspect potential problems. Do not enter confidential final papers
 or personal data in questions or notes. A private account does not make that content suitable for external processing.
@@ -16,13 +16,18 @@ Review records store assessment metadata alongside the questions and supplied ke
 your review decisions. They are associated with the account that created them. Free-text fields can contain personal
 information if entered; the absence of a dedicated learner field does not prevent it from being stored.
 
+An optional image or PDF upload is sent to Google's Gemini API to transcribe the printed words. Cekgu then sends that
+transcription to GonkaRouter to structure a draft. Uploading does not create a record or a check; you must review and
+submit the draft separately.
+
 The Reduce Motion and theme preferences are stored locally in your browser.
 
 ## Where processing happens
 
-Our hosting and database infrastructure process account and record data. Questions are sent through GonkaRouter to a
-decentralised inference network, outside machines operated by the Cekgu team. Private sign-in does not keep questions
-within Cekgu's infrastructure.
+Our hosting and database infrastructure process account and record data. Typed questions and upload transcriptions are
+sent through GonkaRouter to a decentralised inference network, outside machines operated by the Cekgu team. An uploaded
+photograph or PDF is also sent to Google's Gemini API before that structuring step. Private sign-in does not keep this
+content within Cekgu's infrastructure.
 
 Your browser requests fonts from Google Fonts when pages load, including before sign-in. When animated characters load,
 it also downloads the Cubism runtime from Live2D's CDN.
@@ -31,6 +36,10 @@ it also downloads the Cubism runtime from Live2D's CDN.
 debugging, service improvement and security monitoring, without stating a fixed retention period. Its providers may
 process data under their own policies, including outside your country. Cekgu does not promise zero third-party
 retention.
+
+[Gemini API terms](https://ai.google.dev/gemini-api/terms) describe different handling for paid and unpaid services,
+including use of content on unpaid services. The Cekgu team must confirm which service applies before release. Until
+then, Cekgu makes no promise that an uploaded file is excluded from provider retention or product improvement.
 
 ## Who can see records
 

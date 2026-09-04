@@ -2,7 +2,7 @@
 
 > Draft demo notice. Not final. Re-review against the deployed product and obtain owner approval before publication.
 
-<!-- Review baseline: 5 September 2026, main c59daaf. -->
+<!-- Review baseline: 5 September 2026, main 42a16f5. -->
 
 Cekgu is a demo for educators checking multiple-choice practice questions before publication. It highlights possible
 problems for a human to review. It does not certify a paper as correct or replace subject expertise or institutional
@@ -21,9 +21,14 @@ retention, cleanup timing and deletion limits before adding content.
 
 ## Checking and human decisions
 
-Questions pass through GonkaRouter to a decentralised inference network. Do not submit confidential final papers or
-personal data, including learner information, even from a private account. Submit only content you are permitted to
-share for this processing, as described in [acceptable use](acceptable-use.md).
+Typed questions pass through GonkaRouter to a decentralised inference network. If you choose to upload a photograph or
+PDF, Cekgu first sends that file to Google's Gemini API to transcribe what is printed; GonkaRouter then structures the
+transcription into a draft. The upload never creates a record or a check by itself: review and correct the draft before
+you submit it.
+
+Do not submit confidential final papers or personal data, including learner information, even from a private account.
+This includes uploads. Submit only content you are permitted to share with these processors, as described in
+[acceptable use](acceptable-use.md).
 
 Models can agree and still be wrong. You decide whether to change a question or answer key. A receipt is gateway
 metadata, not cryptographic or on-chain proof. Checks can be delayed or remain Unverified when enough valid readings are

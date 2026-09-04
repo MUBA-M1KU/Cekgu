@@ -103,9 +103,34 @@ id into the receipts endpoint during Q&amp;A.</sub>
 
 ## The two rules that govern everything
 
-**One, every Cekgu inference call goes through GonkaRouter.** The project deliberately uses one server-side client for
-all inference at `https://api.gonkarouter.io`. The organizer requires the core reasoning there but allows supplementary
-AI tooling; our narrower implementation avoids a second inference path. See the current ruling in [the brief](brief.md).
+**One, every call that reasons goes through GonkaRouter.** This is the track's hard requirement, in the organizers' own
+words:
+
+> All AI **reasoning and verification logic** MUST run on the Gonka Network via the official inference gateway
+> (gonkarouter.io).
+
+Reasoning and verification, which is narrower than every call a model ever serves, and the difference matters exactly
+once in this product. **Uploading a paper instead of typing it puts one non-reasoning call outside the gateway:** a
+vision model turns the photograph or PDF into the words printed on it. Its instructions are the claim, not our adjective
+— it is told to "copy the words that are there", to "never answer a question, never mark an option correct, and never
+supply a key that is not printed", and to write `[unreadable]` rather than guess. Everything that then decides what
+those words mean — which passage is a question, which strings are its options, which option the key names — runs on
+GonkaRouter and carries a request id, like every other inference here.
+
+The organizers' own reference architecture draws the same line: their mandatory list separates **Claim Extraction**,
+"accept a URL, tweet, or text snippet as input", from **Decentralised Verification**, where "Gonka-hosted models analyse
+the claim". Input acquisition sits before and outside the reasoning step. Our transcription step is that first item
+generalised from text to pixels — **and the generalisation is a real extension, not a like-for-like mapping.** Accepting
+a tweet needs no model at all; reading a photograph does. That gap is the whole of the extension, and it is why the
+step's instructions and the test below carry the argument rather than the analogy alone.
+
+**The fence is a test, not a promise.** `src/server/gateway/only-gonkarouter.test.ts` fails the build if a provider
+hostname appears anywhere outside `src/server/transcribe/`, if that directory imports the verdict rule or the record
+schema, or if the reasoning path names a provider host at all. No provider SDK is installed.
+
+**Grep the repository, which is the check this section exists to survive.** You will find one directory holding one
+hostname, and the reason it is there. The decision and its measurements are in
+[`TRD.md` section 20](TRD.md#20-reading-a-paper-from-an-upload).
 
 **Two, fewer than two receipt-verified readings from distinct models gives Unverified, never a guess.** A reading is
 admitted only if the response was a 200, carried no fallback header, parsed, chose a real option, and its public receipt
@@ -152,9 +177,10 @@ additional interface locales remain future work.
 
 ## GonkaRouter integration
 
-Every product inference call goes to `https://api.gonkarouter.io` from one server-side client,
-`src/server/gateway/client.ts`. Product source under `src/` and runtime dependencies contain no direct provider client;
-vendored development-agent skills are outside the product path. The guard test enforces that boundary.
+Every product call that reasons or verifies goes to `https://api.gonkarouter.io` from one server-side client,
+`src/server/gateway/client.ts`. The one bounded exception is `src/server/transcribe/`: Gemini transcribes an uploaded
+image or PDF before GonkaRouter structures a draft. It is prohibited from answering questions or supplying a key, and
+the guard test fails if another provider host enters the reasoning path.
 
 - **Where the request ids come from.** When a GonkaRouter response supplies an `x-request-id` header, the client reads
   it off the raw response before parsing the body, stores it with the attempt, and the evidence view shows it beside the
@@ -396,8 +422,8 @@ require Google. `MASCOT_ENABLED` controls animated stages, not the static mascot
 | `bun run check:anchors` | Resolve every Markdown anchor link |
 | `gh issue list`         | The TODO board                     |
 
-A default `bun test` needs nothing but the repo: on 4 September it read **205 pass, 73 skip, 0 fail** — 278 tests across
-27 files, 902 `expect()` calls. The 73 skips are the six database-backed suites, which take `TEST_DATABASE_URL` and
+A default `bun test` needs nothing but the repo: on 5 September it read **226 pass, 73 skip, 0 fail** — 299 tests across
+32 files, 952 `expect()` calls. The 73 skips are the six database-backed suites, which take `TEST_DATABASE_URL` and
 refuse any host but localhost, because they truncate what they connect to.
 
 Each of those suites **truncates** the database it connects to, so running them together in one process makes them clear
