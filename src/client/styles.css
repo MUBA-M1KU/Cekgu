@@ -1658,10 +1658,13 @@ section[id] {
   color: var(--ink-muted);
 }
 
+/* A card now, so it needs the padding a card has. The list's own hairlines stop short of the
+   edges rather than running into them. */
 .dash-rail {
   display: grid;
   gap: var(--s-4);
   align-content: start;
+  padding: var(--s-5);
 }
 
 .dash-rail-heading {

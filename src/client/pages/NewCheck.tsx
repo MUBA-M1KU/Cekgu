@@ -1,6 +1,6 @@
 import { type FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { createRecordSchema, GUEST_MAX_ITEM_CHARS, GUEST_MAX_ITEMS, itemCharCount } from '../../shared/schemas'
+import { createRecordSchema, GUEST_MAX_ITEM_CHARS, itemCharCount } from '../../shared/schemas'
 import { ApiError, createRecord } from '../api'
 import { BubbleRow } from '../components/BubbleRow'
 import { Field, inputClass } from '../components/Field'
@@ -57,8 +57,6 @@ export function NewCheck() {
   const [submitting, setSubmitting] = useState(false)
   const [prefilled, setPrefilled] = useState(false)
 
-  const maxItems = isGuest ? GUEST_MAX_ITEMS : Number.POSITIVE_INFINITY
-
   function fillWithDemo() {
     setTitle(DEMO_PAPER.title)
     setSubject(DEMO_PAPER.subject)
@@ -109,9 +107,6 @@ export function NewCheck() {
     }
 
     if (isGuest) {
-      if (items.length > GUEST_MAX_ITEMS) {
-        found.items = `The Guest workspace takes up to ${GUEST_MAX_ITEMS} questions in one check.`
-      }
       items.forEach((item, index) => {
         if (itemCharCount(item) > GUEST_MAX_ITEM_CHARS) {
           found[`items.${index}.stem`] =
@@ -296,7 +291,6 @@ export function NewCheck() {
       <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-rule pt-6">
         <button
           type="button"
-          disabled={items.length >= maxItems}
           className="inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium disabled:opacity-60"
           onClick={() => setItems((current) => [...current, emptyItem()])}
         >
@@ -309,11 +303,6 @@ export function NewCheck() {
         >
           Submit Check
         </button>
-        {isGuest ? (
-          <p className="type-caption text-ink-muted">
-            {items.length} of {GUEST_MAX_ITEMS} questions used in the Guest workspace.
-          </p>
-        ) : null}
       </div>
 
       {errorFor('form') ? (

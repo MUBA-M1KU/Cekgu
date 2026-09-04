@@ -1,8 +1,10 @@
 import { z } from 'zod'
 
-export const GUEST_MAX_ITEMS = 12
+// The Guest workspace is uncapped on counts, at the owner's request on 4 September: a demo that
+// hits a wall on stage is worse than a demo somebody could flood. What is left is a per-question
+// size guard, which is a payload limit rather than a quota — it stops one enormous request, not a
+// twenty-first record. The 24-hour sweep in guest.ts is what actually bounds the shared workspace.
 export const GUEST_MAX_ITEM_CHARS = 2000
-export const GUEST_MAX_RECORDS = 20
 
 // Both windows are printed in Settings and enforced by the sweep in src/server/retention.ts, so
 // they live here rather than on either side of that pair. RETENTION_DAYS is the default keep
