@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router'
 import type { RecordSummary } from '../../shared/types'
 import { signOut } from '../api'
 import { count } from '../plural'
-import { useSession } from '../session'
+import { clearSession, useSession } from '../session'
 import { setTheme, useTheme } from '../theme'
 import { BellIcon, MoonIcon, PlusIcon, SidebarIcon, SunIcon } from './icons'
 
@@ -91,6 +91,7 @@ export function AppTopbar({ records, onToggleSidebar }: Props) {
   const theme = useTheme()
   const [open, setOpen] = useState<'bell' | 'user' | null>(null)
   const [leaving, setLeaving] = useState(false)
+  const [leaveFailed, setLeaveFailed] = useState(false)
   const [cleared, setCleared] = useState<Cleared>(readCleared)
 
   const bellRef = useDismiss(open === 'bell', () => setOpen(null))
@@ -116,11 +117,16 @@ export function AppTopbar({ records, onToggleSidebar }: Props) {
 
   async function leave() {
     setLeaving(true)
+    setLeaveFailed(false)
     try {
       await signOut()
+      // Locally first, so the shell stops showing an account nobody is signed into even if the
+      // navigation below is slow or never happens.
+      clearSession()
       // A full load rather than a client route, so every cached record goes with the session.
       window.location.assign('/')
     } catch {
+      setLeaveFailed(true)
       setLeaving(false)
     }
   }
@@ -287,6 +293,15 @@ export function AppTopbar({ records, onToggleSidebar }: Props) {
                 <button type="button" onClick={leave} disabled={leaving} className="app-pop-row w-full text-left">
                   <span className="type-ui text-pen">{leaving ? 'Signing Out' : 'Sign Out'}</span>
                 </button>
+                {/* This used to fail in silence: the button went back to reading "Sign Out" and
+                    nothing said why, which is indistinguishable from a control that does nothing.
+                    Settings has said this sentence all along; the menu a person actually reaches
+                    for had not. */}
+                {leaveFailed ? (
+                  <p role="alert" className="type-caption border-t border-rule px-4 py-3 text-pen">
+                    We could not sign you out, try again in a moment.
+                  </p>
+                ) : null}
               </div>
             ) : null}
           </div>

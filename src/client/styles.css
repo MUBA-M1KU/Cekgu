@@ -1613,7 +1613,11 @@ section[id] {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: var(--s-4);
-    align-items: start;
+    /* Stretch, not start. A row of cards that each stop at their own content leaves a ragged
+       bottom edge across the page, and the eye reads the ragged edge as the layout rather than as
+       the content. The footer inside each card is pushed to the bottom below, so the extra height
+       goes into one gap rather than being spread through the card. */
+    align-items: stretch;
   }
 
   .card {
@@ -1636,6 +1640,12 @@ section[id] {
 
   .card > :last-child {
     padding-bottom: var(--s-5);
+  }
+
+  /* Only a card that is itself a grid cell fills its row. A card nested inside a column, like the
+     sticky rail on New Check, keeps its own height. */
+  .page-grid > .card {
+    height: 100%;
   }
 
   /* A card whose content runs to its own edges: a table, a list of rows. The rows supply the
@@ -1675,8 +1685,11 @@ section[id] {
     flex-wrap: wrap;
     align-items: center;
     gap: var(--s-3);
-    margin-top: var(--s-5);
-    padding-top: var(--s-4);
+    /* auto rather than a fixed step, so a card that was stretched to match its neighbour puts the
+       extra height above the rule instead of below its own content. padding-top carries the gap
+       the margin used to. */
+    margin-top: auto;
+    padding-top: var(--s-5);
     border-top: 1px solid var(--rule);
   }
 
@@ -2130,11 +2143,31 @@ section[id] {
     background: var(--ink);
   }
 
-  /* The panel the admin reference calls an illustrated stat: a title, a period chip, one large
-     figure and a second one under it. The graphic in the corner there is a stock illustration;
-     here the space carries the meter, because a figure about proportion has a proportion to draw
-     and a drawing of a person does not. */
+  /* The admin reference calls this an illustrated stat: a title, a period chip, one large figure
+     with a second beside it, and an illustration bleeding out of the bottom-right corner. The
+     structure is copied; the content is not.
+
+     The illustration is Hijiki, one of the product's two readers, already licensed and credited
+     and already standing for Reader B on the landing page. The figure counts readings those two
+     produced, so the cat in the corner is the thing being counted rather than a stock person
+     dropped in to fill the corner. */
+  .panel {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .panel-body {
+    position: relative;
+    z-index: 1;
+    /* Clear of the cat at every width the card is used at. */
+    max-width: 22ch;
+  }
+
   .panel-figure {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-3);
+    margin-top: var(--s-5);
     font-family: var(--font-mono);
     font-size: 2.5rem;
     line-height: 1;
@@ -2145,9 +2178,32 @@ section[id] {
   .panel-chip {
     display: inline-flex;
     align-items: center;
+    margin-top: var(--s-3);
     padding: 0.125rem var(--s-3);
     border-radius: var(--r-bubble);
     background: var(--well);
     color: var(--ink-muted);
+  }
+
+  /* Anchored to the card's corner and allowed to run off two of its edges, which is what makes it
+     read as part of the card rather than as a picture placed inside one. */
+  .panel-art {
+    position: absolute;
+    /* The asset carries about 18% transparent margin on its left and almost none on its right, so
+       these offsets are measured against the cat rather than against the file: it hangs over the
+       card the way the same asset hangs over the ticker on the landing page. */
+    right: -1.5rem;
+    bottom: -2rem;
+    z-index: 0;
+    width: 13.5rem;
+    max-width: 46%;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* On the dark ground the cat is black on near-black. A soft halo behind it separates the two
+     without recolouring an asset that is licensed as it is. */
+  :root[data-theme="dark"] .panel-art {
+    filter: drop-shadow(0 0 14px color-mix(in oklab, var(--ink) 22%, transparent));
   }
 }

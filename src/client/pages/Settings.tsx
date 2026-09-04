@@ -9,7 +9,7 @@ import { TrashIcon } from '../components/icons'
 import { Select } from '../components/Select'
 import { type MotionSetting, setMotionSetting, useMotionSetting } from '../mascot/preferences'
 import { count } from '../plural'
-import { useSession } from '../session'
+import { clearSession, useSession } from '../session'
 
 const MOTION_OPTIONS = [
   { value: 'system', label: 'Follow System' },
@@ -41,6 +41,9 @@ export function Settings() {
     setFailed(false)
     try {
       await signOut()
+      // Locally first, so nothing on screen goes on naming an account nobody is signed into if
+      // the navigation below is slow or never happens.
+      clearSession()
       // A full load rather than a client route, so every cached record in memory goes with
       // the session. On the shared Guest account that matters more than the extra request.
       window.location.assign('/')

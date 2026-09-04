@@ -170,34 +170,43 @@ export function Dashboard() {
           </>
         )}
 
-        {/* The admin reference's illustrated stat, with the illustration replaced by the thing the
-            figure is about. A ratio against a limit is a meter; a two-slice donut is this number
-            drawn worse. */}
-        <Card className="col-span-12 xl:col-span-4">
-          <CardHead title="Receipt-Verified Readings" />
-          <CardBody>
-            {stats === null ? (
-              <>
-                <div className="skeleton h-10 w-28" />
-                <div className="skeleton h-3 w-40" />
-              </>
-            ) : (
-              <>
-                <span className="type-caption panel-chip">Every record this account holds</span>
-                <p className="panel-figure">{stats.verifiedReadings}</p>
-                <p className="type-ui text-ink-muted">
-                  of {stats.readings} readings carry a receipt naming the model that served them.
-                </p>
-                <Meter value={stats.verifiedReadings} total={stats.readings} label="Receipt-verified readings" />
-              </>
-            )}
-          </CardBody>
-          <div className="card-foot">
-            <p className="type-caption max-w-[46ch] text-ink-muted">
-              A reading is admitted only once its receipt names the model that was asked for. Open any record to follow
-              one to the gateway.
-            </p>
+        {/* The admin reference's illustrated stat, structure for structure: title, period chip,
+            one large figure with a second beside it, and an illustration bleeding out of the
+            bottom-right corner. The content is this product's, and so is the cat: Hijiki is one of
+            the two readers whose work the figure counts, not a stock person filling a corner. */}
+        <Card className="panel col-span-12 xl:col-span-4">
+          <div>
+            <div className="panel-body">
+              <h2 className="card-title">Receipt-Verified Readings</h2>
+              {stats === null ? (
+                <>
+                  <div className="skeleton mt-3 h-5 w-44" />
+                  <div className="skeleton mt-6 h-10 w-28" />
+                  <div className="skeleton mt-4 h-3 w-40" />
+                </>
+              ) : (
+                <>
+                  <span className="type-caption panel-chip">Every record you hold</span>
+                  <p className="panel-figure">
+                    {stats.verifiedReadings}
+                    <span className="type-ui text-ink-muted">of {stats.readings}</span>
+                  </p>
+                  <p className="type-caption mt-3 text-ink-muted">
+                    readings carry a receipt naming the model that served them
+                  </p>
+                  <div className="mt-4">
+                    <Meter value={stats.verifiedReadings} total={stats.readings} label="Receipt-verified readings" />
+                  </div>
+                  <p className="type-caption mt-4 text-ink-muted">
+                    A reading is admitted only once its receipt names the model that was asked for.
+                  </p>
+                </>
+              )}
+            </div>
           </div>
+          {/* No footer on this card. The reference has none either, and a rule across the bottom
+              would cut the cat in half. */}
+          <img className="panel-art" src="/mascots/hijiki-ledge.png" alt="" aria-hidden="true" />
         </Card>
 
         {/* One row per verdict rather than one stacked bar. Two of these five colours are close
@@ -291,7 +300,7 @@ export function Dashboard() {
                         <p className="type-label">{family(model.model)}</p>
                         <p className="type-mono mt-1 truncate text-ink-muted">{model.model}</p>
                       </div>
-                      <div className="text-right">
+                      <div className="sm:text-right">
                         {/* Degraded is not red. Red is the human hand everywhere in this product, and
                           a gateway having a slow afternoon is not a decision anyone made. */}
                         <p className="type-label">

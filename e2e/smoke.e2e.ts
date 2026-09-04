@@ -68,6 +68,43 @@ test('sign in as guest lands in the guest workspace with the warning banner', as
   await expect(page.getByText(GUEST_WARNING)).toBeVisible()
 })
 
+// The public bar offered Sign In to people who were already signed in, which is a link back to a
+// decision they had made and the only way back into the app from the landing page. Guest counts as
+// signed in: the shared workspace is a session like any other.
+test('the public bar offers the app to a signed-in visitor and sign-in to everyone else', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByRole('link', { name: 'Sign In' })).toBeVisible()
+
+  await page.goto('/sign-in')
+  await page.getByRole('button', { name: 'Sign In as Guest' }).click()
+  await expect(page).toHaveURL(/\/records$/)
+
+  await page.goto('/')
+  const openApp = page.getByRole('link', { name: 'Open App' })
+  await expect(openApp).toBeVisible()
+  await expect(openApp).toHaveAttribute('href', '/dashboard')
+  await expect(page.getByRole('link', { name: 'Sign In' })).toHaveCount(0)
+})
+
+// Sign out failed in silence from the account menu: the button went back to reading "Sign Out" and
+// nothing said why, which is indistinguishable from a control that does nothing. This asserts the
+// path a person actually takes to leave, and that leaving is what happens.
+test('signing out from the account menu returns the visitor to the signed-out site', async ({ page }) => {
+  await page.goto('/sign-in')
+  await page.getByRole('button', { name: 'Sign In as Guest' }).click()
+  await expect(page).toHaveURL(/\/records$/)
+
+  await page.locator('.app-avatar').click()
+  await page.getByRole('button', { name: /^Sign Out/ }).click()
+
+  await expect(page).toHaveURL(/\/$/, { timeout: 20000 })
+  await expect(page.getByRole('link', { name: 'Sign In' })).toBeVisible()
+
+  // And the session is really gone, not just the chrome.
+  await page.goto('/dashboard')
+  await expect(page).toHaveURL(/\/sign-in$/)
+})
+
 // The last three steps of the demo acceptance test, run signed out because that is the state a
 // judge arrives in (FR-SAMPLE-4). Each asserts rendered content rather than chrome: the summary
 // filters name all five verdicts from page load, so matching a verdict label proves nothing.
