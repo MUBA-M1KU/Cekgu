@@ -7,6 +7,10 @@ import { useEffect, useRef, useState } from 'react'
 // one discarded — so the letter alone does not identify a slot.
 type Slot = { id: string; letter: string; key?: true; a?: true; b?: true; void?: true; pen?: true }
 
+// Every detail below has to read cold. The rail links are jump targets into a single panel, so a
+// reader can arrive at step four without having read step three, and a sentence whose subject sits
+// in the previous step is broken for them. Trim these for length, never by leaning on the panel
+// above: #185 tried "Compared with each other first" here and it stranded exactly that way.
 const STEPS: { title: string; detail: string; figure: Slot[] }[] = [
   {
     title: 'You Type the Questions',
@@ -149,7 +153,7 @@ export function HowItWorksSection() {
 
       <div className="mt-14 grid gap-8 lg:grid-cols-2">
         <div>
-          <h3 className="text-[1.125rem]">You Decide, Not the Model</h3>
+          <h3>You Decide, Not the Model</h3>
           <p className="type-ui mt-3 max-w-[64ch] text-ink-muted">
             A verdict is a place to look. You record what you did: corrected the key, revised the wording, confirmed it
             was right, dismissed the flag, or asked for another attempt. Your decision is stored beside the machine
@@ -157,7 +161,7 @@ export function HowItWorksSection() {
           </p>
         </div>
         <div>
-          <h3 className="text-[1.125rem]">Receipts</h3>
+          <h3>Receipts</h3>
           <p className="type-ui mt-3 max-w-[64ch] text-ink-muted">
             Every reading carries the Gonka request id of the call that produced it, and every id links to the gateway's
             public receipt. The receipt names the model that actually served the request, which is how Cekgu proves two

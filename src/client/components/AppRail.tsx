@@ -57,7 +57,7 @@ export function AppRail() {
       <nav className="app-rail" aria-label="Workspace">
         <NavLink to="/dashboard" className="app-rail-logo" aria-label="Cekgu, dashboard">
           <Mark className="h-7 w-7 shrink-0" />
-          <span className="app-rail-text font-ui text-[1.125rem] font-bold tracking-[-0.02em]">Cekgu</span>
+          <span className="app-rail-text font-ui text-[1.25rem] font-bold tracking-[-0.02em]">Cekgu</span>
         </NavLink>
 
         {GROUPS.map((group) => (
