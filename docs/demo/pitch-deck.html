@@ -504,7 +504,7 @@
       .duo {
         display: grid;
         gap: 76px;
-        align-items: center;
+        align-items: start;
         height: 100%;
       }
       .duo.fig-right {
@@ -537,7 +537,7 @@
         min-height: 0;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
       }
       .full > svg {
         width: 100%;
@@ -1046,6 +1046,41 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
       }
+      .proof {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+        align-items: stretch;
+        margin-top: 26px;
+      }
+      .proof .urlbar {
+        margin: 0;
+      }
+      .u-note {
+        margin: 18px 0 0;
+        font-size: 21px;
+        line-height: 1.4;
+        color: var(--ink-muted);
+      }
+      .receipt {
+        margin: 0;
+        padding: 26px 30px;
+        border-radius: var(--r-sheet);
+        border: 1px solid var(--rule);
+        background: var(--well);
+        font-family: var(--font-mono);
+        font-size: 21px;
+        line-height: 1.6;
+        color: var(--ink-muted);
+        white-space: pre;
+        overflow: hidden;
+      }
+      .receipt .k {
+        color: var(--ink-muted);
+      }
+      .receipt .v {
+        color: var(--ink);
+      }
       .links {
         margin-top: 56px;
         border-collapse: collapse;
@@ -1429,7 +1464,7 @@
 
           <div class="body">
             <div class="duo fig-right top" style="align-items: start">
-              <div data-stagger style="padding-top: 168px">
+              <div data-stagger style="padding-top: 8px">
                 <p class="lead" style="margin-bottom: 40px">Three ways a published item is already wrong.</p>
                 <ul class="deflist" data-stagger>
                   <li><b>A wrong key.</b> The marked answer is not the right one.</li>
@@ -1517,7 +1552,7 @@
 
           <div class="body">
             <div class="full">
-              <svg
+              <svg preserveAspectRatio="xMidYMin meet"
                 viewBox="0 -18 1736 598"
                 role="img"
                 aria-label="Twelve items on the public sample record reduced to three that need a human decision, with nine clear"
@@ -1526,29 +1561,29 @@
                 <text class="figure f-muted" x="700" y="26" font-size="46" text-anchor="end">12</text>
                 <g>
                   <rect x="0" y="52" width="700" height="34" rx="4" class="card-s" />
-                  <rect x="24" y="65" width="380" height="8" rx="4" class="f-rule" />
+                  <text x="24" y="74" font-size="18" class="f-ink"><tspan class="mono f-muted"> 1</tspan>&#160;&#160;What is the time complexity of reading the element at a known ind…</text>
                   <rect x="0" y="94" width="700" height="34" rx="4" class="card-s" />
-                  <rect x="24" y="107" width="470" height="8" rx="4" class="f-rule" />
+                  <text x="24" y="116" font-size="18" class="f-ink"><tspan class="mono f-muted"> 2</tspan>&#160;&#160;Which transport protocol retransmits lost segments so that data a…</text>
                   <rect x="0" y="136" width="700" height="34" rx="4" class="card-s" />
-                  <rect x="24" y="149" width="330" height="8" rx="4" class="f-rule" />
+                  <text x="24" y="158" font-size="18" class="f-ink"><tspan class="mono f-muted"> 3</tspan>&#160;&#160;Which data structure removes elements in first in, first out orde…</text>
                   <rect x="0" y="178" width="700" height="34" rx="4" class="card-s" />
-                  <rect x="24" y="191" width="520" height="8" rx="4" class="f-rule" />
+                  <text x="24" y="200" font-size="18" class="f-ink"><tspan class="mono f-muted"> 4</tspan>&#160;&#160;In big-O notation, what does O(n) say about an algorithm?</text>
                   <rect x="0" y="220" width="700" height="34" rx="4" class="card-s" />
-                  <rect x="24" y="233" width="410" height="8" rx="4" class="f-rule" />
+                  <text x="24" y="242" font-size="18" class="f-ink"><tspan class="mono f-muted"> 5</tspan>&#160;&#160;Mutual exclusion, hold and wait, and no preemption are three of t…</text>
                   <rect x="0" y="262" width="700" height="34" rx="4" class="card-s" />
-                  <rect x="24" y="275" width="480" height="8" rx="4" class="f-rule" />
+                  <text x="24" y="284" font-size="18" class="f-ink"><tspan class="mono f-muted"> 6</tspan>&#160;&#160;Which layer of the TCP/IP model does HTTP belong to?</text>
                   <rect x="0" y="304" width="700" height="34" rx="4" class="card-s" />
-                  <rect x="24" y="317" width="360" height="8" rx="4" class="f-rule" />
+                  <text x="24" y="326" font-size="18" class="f-ink"><tspan class="mono f-muted"> 7</tspan>&#160;&#160;What does a primary key guarantee about a relational table?</text>
                   <rect x="0" y="346" width="700" height="34" rx="4" class="card-s" />
-                  <rect x="24" y="359" width="500" height="8" rx="4" class="f-rule" />
+                  <text x="24" y="368" font-size="18" class="f-ink"><tspan class="mono f-muted"> 8</tspan>&#160;&#160;What does a compiler do with a source program?</text>
                   <rect x="0" y="388" width="700" height="34" rx="4" class="card-s" />
-                  <rect x="24" y="401" width="420" height="8" rx="4" class="f-rule" />
+                  <text x="24" y="410" font-size="18" class="f-ink"><tspan class="mono f-muted"> 9</tspan>&#160;&#160;What is the main job of the Domain Name System?</text>
                   <rect x="0" y="430" width="700" height="34" rx="4" class="card-s" />
-                  <rect x="24" y="443" width="390" height="8" rx="4" class="f-rule" />
+                  <text x="24" y="452" font-size="18" class="f-ink"><tspan class="mono f-muted">10</tspan>&#160;&#160;Why does a processor have a cache?</text>
                   <rect x="0" y="472" width="700" height="34" rx="4" class="card-s" />
-                  <rect x="24" y="485" width="450" height="8" rx="4" class="f-rule" />
+                  <text x="24" y="494" font-size="18" class="f-ink"><tspan class="mono f-muted">11</tspan>&#160;&#160;How many bytes are there in one kilobyte?</text>
                   <rect x="0" y="514" width="700" height="34" rx="4" class="card-s" />
-                  <rect x="24" y="527" width="340" height="8" rx="4" class="f-rule" />
+                  <text x="24" y="536" font-size="18" class="f-ink"><tspan class="mono f-muted">12</tspan>&#160;&#160;What does creating a branch in Git let a developer do?</text>
                 </g>
 
                 <path class="conn" d="M776 288h74" />
@@ -1563,7 +1598,7 @@
                 <g data-stagger>
                   <g>
                     <rect x="928" y="52" width="808" height="82" rx="4" class="card-s" />
-                    <rect x="956" y="82" width="300" height="8" rx="4" class="f-rule" />
+                    <text x="956" y="91" font-size="20" class="f-ink"><tspan class="mono f-muted">3</tspan>&#160;&#160;Which data structure removes elements in firs…</text>
                     <g transform="translate(1456 74)">
                       <rect width="252" height="38" rx="19" class="v-key-bg" />
                       <circle cx="24" cy="19" r="7" class="v-key" />
@@ -1574,7 +1609,7 @@
 
                   <g>
                     <rect x="928" y="156" width="808" height="82" rx="4" class="card-s" />
-                    <rect x="956" y="186" width="380" height="8" rx="4" class="f-rule" />
+                    <text x="956" y="195" font-size="20" class="f-ink"><tspan class="mono f-muted">9</tspan>&#160;&#160;What is the main job of the Domain Name Syste…</text>
                     <g transform="translate(1456 178)">
                       <rect width="252" height="38" rx="19" class="v-key-bg" />
                       <circle cx="24" cy="19" r="7" class="v-key" />
@@ -1587,7 +1622,7 @@
                        DESIGN.md and in src/client/components/VerdictChip.tsx. -->
                   <g>
                     <rect x="928" y="260" width="808" height="82" rx="4" class="card-s" />
-                    <rect x="956" y="290" width="340" height="8" rx="4" class="f-rule" />
+                    <text x="956" y="299" font-size="20" class="f-ink"><tspan class="mono f-muted">11</tspan>&#160;&#160;How many bytes are there in one kilobyte?</text>
                     <g transform="translate(1446 282)">
                       <rect width="262" height="38" rx="19" class="v-ambig-bg" />
                       <circle cx="24" cy="19" r="7" class="v-ambig-s" />
@@ -1637,7 +1672,7 @@
 
           <div class="body">
             <div class="full">
-              <svg
+              <svg preserveAspectRatio="xMidYMin meet"
                 viewBox="0 0 1736 560"
                 role="img"
                 aria-label="How a Cekgu check runs: the item with its key withheld, two model families answering blind, and the five-verdict rule checked in a fixed order"
@@ -1910,9 +1945,18 @@
               </div>
             </div>
 
-            <div class="urlbar">
-              <p class="kx" style="margin: 0 0 16px">ASK THE GATEWAY YOURSELF</p>
-              <p class="u" style="margin: 0">api.gonkarouter.io/v1/receipts/req-1788427238422211326-414866</p>
+            <div class="proof" data-stagger>
+              <div class="urlbar">
+                <p class="kx" style="margin: 0 0 16px">ASK THE GATEWAY YOURSELF</p>
+                <p class="u" style="margin: 0">api.gonkarouter.io/v1/receipts/<br />req-1788427238422211326-414866</p>
+                <p class="u-note">No key, no login. Anyone in this room can open it now.</p>
+              </div>
+              <pre class="receipt"><span class="k">"model"</span>: <span class="v">"MiniMaxAI/MiniMax-M2.7"</span>,
+<span class="k">"outcome"</span>: <span class="v">"success"</span>,
+<span class="k">"status_code"</span>: <span class="v">200</span>,
+<span class="k">"duration_ms"</span>: <span class="v">30867</span>,
+<span class="k">"created_at"</span>: <span class="v">"2026-09-03T09:21:09Z"</span>,
+<span class="k">"x_devshard_id"</span>: <span class="v">"70340"</span></pre>
             </div>
           </div>
 
@@ -2208,7 +2252,7 @@
           <div class="head"></div>
 
           <div class="body" style="padding-top: 0">
-            <div class="duo fig-left" style="gap: 96px">
+            <div class="duo fig-left" style="gap: 96px; align-items: center">
               <div>
                 <h2 class="title">Check the exam <em>before the exam checks us.</em></h2>
                 <table class="links">
