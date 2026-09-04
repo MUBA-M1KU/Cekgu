@@ -186,6 +186,38 @@ describeDb('the records API', () => {
       expect(after.records[0].attentionCount).toBe(1)
     })
 
+    // Step 8 of the live demo turns on this: the driver records a decision and says the attention
+    // count drops while the machine verdict chip stays put. It did not drop, because the count was
+    // a verdict tally and nothing else. A flagged item with a decision on it is work that is done.
+    test('recording a decision takes an item out of the attention count', async () => {
+      const { id } = await (await post('/records', body())).json()
+      const [item] = await db.select().from(items).where(eq(items.recordId, id))
+      await db
+        .update(items)
+        .set({ verdict: 'possible_key_error' })
+        .where(eq(items.id, item?.id ?? ''))
+
+      const flagged = await (await app.request('/records')).json()
+      expect(flagged.records[0].attentionCount).toBe(1)
+
+      await db.insert(dispositions).values({ itemId: item?.id ?? '', kind: 'key_corrected', revisedKey: 'B' })
+
+      const decided = await (await app.request('/records')).json()
+      expect(decided.records[0].attentionCount).toBe(0)
+
+      // The finding itself is untouched: a decision records what the educator did, it does not
+      // retract what the two readers said.
+      const [after] = await db
+        .select()
+        .from(items)
+        .where(eq(items.id, item?.id ?? ''))
+      expect(after?.verdict).toBe('possible_key_error')
+
+      // And it leaves the attention filter, which is the same question asked of the whole list.
+      const filtered = await (await app.request('/records?attention=true')).json()
+      expect(filtered.records).toHaveLength(0)
+    })
+
     test('a soft-deleted record leaves the list', async () => {
       const { id } = await (await post('/records', body())).json()
       await db.update(records).set({ deletedAt: new Date() }).where(eq(records.id, id))

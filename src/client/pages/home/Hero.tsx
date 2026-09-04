@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
-import type { Item, RecordDetail } from '../../../shared/types'
+import type { Attempt, Item, RecordDetail } from '../../../shared/types'
+import { ReadRow } from '../../components/ReadRow'
 import { verdictLabel } from '../../components/VerdictChip'
 
 const META = ['No sign-up to try', 'Every reading carries a receipt', 'Your key is never shown to a model']
@@ -10,6 +11,20 @@ const ROWS = 3
 
 function firstRequestId(item: Item): string | null {
   return item.attempts.find((attempt) => attempt.requestId !== null)?.requestId ?? null
+}
+
+// The two seats, chosen on served model rather than requested, because distinctness is proven by
+// the receipt. The same rule EvidencePanel applies, kept short here since the card shows no more
+// than what each seat answered.
+function seats(item: Item): [string | null, string | null] {
+  const admitted: Attempt[] = []
+  for (const attempt of item.attempts) {
+    if (!attempt.admitted || !attempt.reading) continue
+    if (admitted.some((chosen) => chosen.servedModel === attempt.servedModel)) continue
+    admitted.push(attempt)
+    if (admitted.length === 2) break
+  }
+  return [admitted[0]?.reading?.answer ?? null, admitted[1]?.reading?.answer ?? null]
 }
 
 function VerdictDot({ verdict }: { verdict: Item['verdict'] }) {
@@ -47,13 +62,20 @@ function LiveCard({ record }: { record: RecordDetail | null }) {
       </div>
 
       <div className="min-h-[9.75rem]">
-        {rows.map((item) => (
-          <div key={item.id} className="flex items-center gap-3 border-t border-rule py-[0.6rem]">
-            <VerdictDot verdict={item.verdict} />
-            <p className="type-body min-w-0 flex-1 truncate">{item.stem}</p>
-            <span className="sr-only">{verdictLabel(item.verdict)}</span>
-          </div>
-        ))}
+        {rows.map((item) => {
+          const [a, b] = seats(item)
+          return (
+            <div key={item.id} className="flex items-center gap-3 border-t border-rule py-[0.45rem]">
+              {/* The whole product in one glyph: the key you typed, filled, beside what each
+                  reader actually chose. A key error is two rings landing on a letter the fill
+                  is not on. */}
+              <ReadRow options={item.options} keyLetter={item.key} readerA={a} readerB={b} condensed />
+              <p className="type-body min-w-0 flex-1 truncate">{item.stem}</p>
+              <VerdictDot verdict={item.verdict} />
+              <span className="sr-only">{verdictLabel(item.verdict)}</span>
+            </div>
+          )
+        })}
       </div>
 
       <div className="flex items-center justify-between gap-4 border-t border-rule pt-3">
@@ -78,18 +100,18 @@ export function Hero({ record }: { record: RecordDetail | null }) {
       </div>
       <div className="hero-scrim" />
 
-      <div className="hero-body wrap grid w-full grid-cols-1 items-center gap-12 pt-12 pb-[11rem] lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:pb-20">
+      <div className="hero-body wrap grid w-full grid-cols-1 items-center gap-8 pt-8 pb-[clamp(5rem,14vh,11rem)] lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-12 lg:pt-12 lg:pb-20">
         <div>
           <span className="hero-badge type-mono">Two readers · every question · before publication</span>
-          <h1 className="mt-6 max-w-[15ch] text-[clamp(2.75rem,5.6vw,4.75rem)]/[1.05] tracking-[-0.03em]">
+          <h1 className="mt-6 max-w-[15ch] text-[clamp(2.25rem,min(5.6vw,8.5vh),4.75rem)]/[1.05] tracking-[-0.03em]">
             Two readers see your paper before your learners do.
           </h1>
-          <p className="type-lead mt-6 max-w-[38ch] text-[clamp(1.0625rem,1.35vw,1.25rem)]/[1.58] text-ink-muted">
+          <p className="type-lead mt-4 max-w-[38ch] text-[clamp(1rem,1.35vw,1.25rem)]/[1.55] text-ink-muted lg:mt-6">
             Cekgu withholds your answer key and asks two independent models to sit every question blind. Where they
             agree with each other and disagree with you, that is worth a second look.
           </p>
 
-          <div className="mt-9 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-wrap gap-3 lg:mt-9">
             <Link
               to="/sign-in"
               className="inline-flex h-[2.875rem] items-center rounded-bubble bg-ink px-6 font-medium text-on-ink"
@@ -104,7 +126,7 @@ export function Hero({ record }: { record: RecordDetail | null }) {
             </a>
           </div>
 
-          <ul className="type-mono mt-9 m-0 flex flex-wrap gap-x-7 gap-y-3 p-0 list-none text-[0.75rem] text-ink-muted">
+          <ul className="type-mono mt-6 m-0 hidden flex-wrap gap-x-7 gap-y-3 p-0 list-none text-[0.75rem] text-ink-muted sm:flex lg:mt-9">
             {META.map((line) => (
               <li key={line} className="flex items-center gap-2">
                 <span aria-hidden="true" className="h-[0.4375rem] w-[0.4375rem] rounded-bubble bg-ink-muted" />
@@ -114,7 +136,12 @@ export function Hero({ record }: { record: RecordDetail | null }) {
           </ul>
         </div>
 
-        <LiveCard record={record} />
+        {/* Two columns only. Stacked, the copy alone fills a demo-scale window and the card would
+            push the pair past the one viewport this section is now held to. The same record is
+            below in full under Sample Report. */}
+        <div className="hidden lg:block">
+          <LiveCard record={record} />
+        </div>
       </div>
 
       <img className="hero-cat" src="/mascots/hijiki-ledge.png" alt="" aria-hidden="true" />

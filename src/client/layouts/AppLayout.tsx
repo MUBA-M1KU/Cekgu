@@ -1,26 +1,41 @@
 import { useEffect, useState } from 'react'
-import { Link, Outlet } from 'react-router'
+import { Link, Navigate, Outlet, useLocation } from 'react-router'
 import type { RecordSummary } from '../../shared/types'
 import { listRecords } from '../api'
 import { AppRail } from '../components/AppRail'
 import { AppTopbar } from '../components/AppTopbar'
 import { GuestBanner } from '../components/GuestBanner'
+import { Mark } from '../components/Mark'
 import { useSession } from '../session'
 
 export function AppLayout() {
   const session = useSession()
+  const { pathname, search } = useLocation()
   const [records, setRecords] = useState<RecordSummary[] | null>(null)
 
   // Read once for the shell, so the topbar's bell counts real work rather than decorating the
-  // corner. A failure leaves the bell empty rather than breaking the page around it.
+  // corner. A failure leaves the bell empty rather than breaking the page around it. Not asked
+  // for at all without a session: the answer would be a 401 in the console and nothing else.
   useEffect(() => {
+    if (session.status !== 'in') return
     listRecords()
       .then(setRecords)
       .catch(() => setRecords(null))
-  }, [])
+  }, [session.status])
+
+  // Decide nothing until the session is known. Redirecting while it loads would throw a signed-in
+  // visitor off their own deep link on every cold load.
+  if (session.status === 'loading') return null
+
+  // An unauthenticated visitor gets sign-in, not a furnished workspace that cannot load and an
+  // account menu claiming they are signed in. The path travels with them, so a shared record link
+  // survives the detour. Issue #161.
+  if (session.status === 'out') {
+    return <Navigate to="/sign-in" replace state={{ from: `${pathname}${search}` }} />
+  }
 
   return (
-    <div className="min-h-dvh bg-paper">
+    <div className="app-shell min-h-dvh bg-paper">
       <AppRail />
       <AppTopbar records={records} />
 
@@ -35,16 +50,23 @@ export function AppLayout() {
             <Outlet />
           </div>
         </main>
-
-        <footer className="app-footer" role="contentinfo">
-          <div className="app-footer-inner">
-            <p className="type-caption text-ink-muted">Two readers, and the receipts to prove it.</p>
-            <Link to="/" className="type-caption text-ink-muted underline">
-              Cekgu
-            </Link>
-          </div>
-        </footer>
       </div>
+
+      {/* A sibling of the scrolling body, not a child of it: the page is painted over this and
+          uncovers it at the end. MakanLah's pattern, and the reason its blur has anything to act
+          on. Right aligned and stacked: mark, name, one line, one link. */}
+      <footer className="app-footer" role="contentinfo">
+        <div className="app-footer-inner">
+          <Link to="/" className="app-footer-brand" aria-label="Cekgu home">
+            <Mark className="h-7 w-7 shrink-0" />
+            <span className="app-footer-name">Cekgu</span>
+          </Link>
+          <p className="type-ui text-ink-muted">Two readers, and the receipts to prove it.</p>
+          <Link to="/#trust" className="app-footer-link type-caption">
+            Trust and Privacy
+          </Link>
+        </div>
+      </footer>
     </div>
   )
 }

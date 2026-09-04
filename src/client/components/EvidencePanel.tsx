@@ -111,7 +111,7 @@ export function EvidencePanel({ item }: { item: Item }) {
         ) : (
           <div className="min-w-0 flex-1">
             <p className="type-eyebrow text-ink-muted">No Second Reading</p>
-            <p className="mt-2 max-w-[46ch] type-body">
+            <p className="mt-2 max-w-[46ch] type-ui">
               Only one model family produced a reading Cekgu could admit, so no verdict is given. The attempts below
               show what the other family did.
             </p>

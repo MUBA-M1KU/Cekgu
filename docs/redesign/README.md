@@ -8,6 +8,17 @@ change to `src/client/` and to [`../DESIGN.md`](../DESIGN.md).
 Raised by [issue #44](https://github.com/MUBA-M1KU/Cekgu/issues/44). The design system these argue with is
 [`../DESIGN.md`](../DESIGN.md), which stays canonical until a direction is adopted and folded into it.
 
+Contents:
+
+1. [How to look at them](#how-to-look-at-them)
+1. [The three directions](#the-three-directions)
+1. [What changed in C after it was chosen](#what-changed-in-c-after-it-was-chosen)
+1. [The second revision](#the-second-revision)
+1. [The third revision](#the-third-revision)
+1. [What the diagnosis rests on](#what-the-diagnosis-rests-on)
+1. [Quality checks run against these files](#quality-checks-run-against-these-files)
+1. [What is deliberately not here](#what-is-deliberately-not-here)
+
 ## How to look at them
 
 Open [`index.html`](index.html) in a browser. It carries the diagnosis, the three directions side by side and a
@@ -46,10 +57,14 @@ Six revisions, all from the owner's notes on 3 September.
   scroll, a full-viewport hero with background media behind a two-axis scrim, a marquee trust band, then sections
 - **Four routes became one page.** How It Works, Sample Report, Pricing and Trust and Privacy are sections with anchors,
   not separate screens
-- **The hero carries a generated video.** `hero.mp4` is 10 seconds, 1280 x 720, 539 KB, no audio track, with
+- **The hero carries a generated video.** `hero.mp4` is 9 seconds, 1280 x 720, 651 KB, no audio track, with
   `hero-poster.jpg` and a CSS gradient behind it so the hero is composed before a byte of video arrives. It was
-  generated in Gemini and regenerated once: the first pass laid down **navy** ink, which contradicts the design system's
-  rule that red is the human hand and nothing else is
+  generated in Gemini and regenerated twice: the first pass laid down **navy** ink, which contradicts the design
+  system's rule that red is the human hand and nothing else is, and the second cut the pen in mid-air with the mark
+  still on the page at the last frame. **The loop is baked into the asset.** The clip is the generated ten seconds minus
+  its first second, and that first second is cross-dissolved back in over the tail, so the file's own first and last
+  frames are consecutive frames of the source and plain `loop` shows no cut. Re-cutting `hero.mp4` without that dissolve
+  brings the cut back
 - **Sign-in loses the shared-workspace note** and both cards centre their content
 - **The record workspace gets a topbar and a drawer.** The drawer is MakanLah's pattern, from the same owner rather than
   SolarSim's hover rail: a modal dialog with a blurred scrim, a sliding panel, and a hamburger at the topbar's leading
@@ -153,9 +168,15 @@ runs at. The findings that drove the work:
 `impeccable`'s slop detector was run over this directory. The first pass returned **122 findings**. Sixty-nine were
 genuine WCAG AA contrast failures introduced by darkening the grounds without re-solving the muted text on them, and
 those are fixed: every text token in all four files now clears 4.5:1 on every ground it sits on, solved numerically
-rather than by eye. Also fixed, and worth naming because they were reached for by reflex: a tracked-caps eyebrow above
-the headline on **all four** pages, text below the system's own 12 px floor, skipped heading levels, a pulsing dot
-announcing liveness on a static page, and a decorative repeating-gradient texture.
+rather than by eye.
+
+Five more are fixed and worth naming, because each was reached for by reflex:
+
+- A tracked-caps eyebrow above the headline, on **all four** pages
+- Text below the system's own 12 px floor
+- Skipped heading levels
+- A pulsing dot announcing liveness on a static page
+- A decorative repeating-gradient texture
 
 **Twenty-five findings are declined**, with reasons, so they are not re-litigated:
 

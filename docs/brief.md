@@ -99,8 +99,13 @@ Devfolio itself has problems, the organizers will open a **Google Form** as a fa
 | 4   | Deployed app link    | If applicable, and for our track it is  |
 | 5   | MVP video            | Focus on the system demo, not slideware |
 
-**The deck must cover** the problem statement and project objective, motivation and challenges, commercialisation and
-business model, technology stack and track chosen, and the overall concept.
+**The deck must cover** five things:
+
+1. Problem statement and project objective
+1. Motivation and challenges
+1. Commercialisation and business model
+1. Technology stack and track chosen
+1. The overall concept
 
 **Our track adds** a live demo URL, a GitHub repo with clear documentation on the GonkaRouter integration, and a
 2-minute video pitch showing the product in action.

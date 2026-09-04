@@ -119,7 +119,7 @@ that".
 **Chosen.** It is specific to this audience, it takes eight seconds, and the differentiator arrives before the product
 does.
 
-### Finalized script
+### Finalized opening
 
 > "We're Team M1KU, and we built Cekgu. Every university in this room already vets its exam papers by committee. The
 > committee reads the paper. Cekgu re-solves it, before a single student does."
@@ -298,12 +298,17 @@ into "we faced some challenges". The sponsors asked for
 `NOTE:` **Land on "Not one."** The zero is the one figure on this deck the sample record cannot support, and it is the
 failure direction a lecturer actually cares about. Beat, then take slide 09.
 
-`NOTE:` **Three measurements share this slide and the deck keeps them apart.** The chart is the benchmark that
-[recorded a verdict of "failed"](../superpowers/research/three-day-rescore.md#the-mechanism-benchmark--failed-3-september);
-it judged a synchronous design nobody shipped. The `12 of 12` in the left column is the public sample record, on twelve
-items drawn from the same committed evaluation set — **they are not provably the identical twelve**
-([PRD](../PRD.md#the-sample-record)), so never say "the same twelve". The dot rows are a third run entirely:
-[the 30-item set, twice through the deployed queue](../superpowers/research/three-day-rescore.md#the-30-item-evaluation-set--4-september).
+`NOTE:` **Three measurements share this slide and the deck keeps them apart.**
+
+- The chart is the benchmark that
+  [recorded a verdict of "failed"](../superpowers/research/three-day-rescore.md#the-mechanism-benchmark--failed-3-september);
+  it judged a synchronous design nobody shipped.
+- The `12 of 12` in the left column is the public sample record, on twelve items drawn from the same committed
+  evaluation set — **they are not provably the identical twelve** ([PRD](../PRD.md#the-sample-record)), so never say
+  "the same twelve".
+- The dot rows are a third run entirely:
+  [the 30-item set, twice through the deployed queue](../superpowers/research/three-day-rescore.md#the-30-item-evaluation-set--4-september).
+
 Never blur them, and never quote the benchmark's "thirteen of thirteen" as if it described the record on screen.
 
 `NOTE:` **The 30-item run's own Unverified rate, 19 of 60, is deliberately off the slide.** It is a load effect, not a
@@ -340,7 +345,7 @@ tight, cut the plan list, not the last sentence.
 | "The paper gets marked before the students do."       | Good rhythm, wrong verb. Cekgu never marks anything                           |
 | "Check the exam before the exam checks us."           | **Chosen.** The concept's own line, and it puts the student back in it        |
 
-### Finalized
+### Finalized close
 
 > "We accept losing marks when we're wrong. Not when the paper is.
 >

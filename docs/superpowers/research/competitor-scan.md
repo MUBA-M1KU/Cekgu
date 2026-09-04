@@ -8,6 +8,15 @@ commercially** for each concept we considered. The second is the Incumbent Test 
 every product named below was returned by a search, not recalled. Where a search found nothing, that is stated as a
 negative result, not as proof of absence.
 
+Contents:
+
+1. [Prior art for our own candidates](#prior-art-for-our-own-candidates)
+1. [Predicted competition in this track](#predicted-competition-in-this-track)
+1. [Commercial landscape: AI output verification](#commercial-landscape-ai-output-verification)
+1. [Regulatory pressure](#regulatory-pressure)
+1. [Sources](#sources)
+1. [Round 2 prior art](#round-2-prior-art)
+
 ## Prior art for our own candidates
 
 **This section killed more candidates than the rubric did.** Read it before reviving anything.
@@ -164,18 +173,21 @@ human review** for context — explicitly including _whether alt text is meaning
 no alt text, and a further **10.8%** carry junk values.
 
 **Algorithmic deactivation.** Platforms overturn **80%** of deactivation decisions on appeal. Malaysia's **Gig Workers
-Act 2025 (Act 872) came into force 31 March 2026**, covering over **1.6 million workers**: it creates a Gig Workers
+Act 2025 (Act 872) came into force 31 March 2026**, covering over **1.6 million workers**. It creates a Gig Workers
 Tribunal, caps deactivation at **14 days** without an inquiry, requires notice and an opportunity to be heard, and
 awards reactivation plus **50% of expected earnings** where a worker is cleared. Failing to provide human review can
-draw compensation orders. Recorded because the _problem_ remains excellent even though the concept was killed on
-mechanism.
+draw compensation orders.
+
+Recorded because the _problem_ remains excellent even though the concept was killed on mechanism.
 
 **AI-text detection.** Detectors disagree wildly on identical text — human passages score **5.9%–36.9%** AI-likelihood
 depending on tool, and outcomes track _"detector design and thresholds rather than consistent evidence of authorship"_.
 False positives run **5–20%** on native English and up to **61%** on non-native writing; Stanford found **61%** of TOEFL
-essays misclassified. In early 2026 an Adelphi University student flagged "100% AI" won a ruling calling the finding
-_"without valid basis"_. Vanderbilt, Yale, MIT and Stanford have disabled or restricted detection. OpenAI discontinued
-its own detector.
+essays misclassified.
+
+The institutions have moved accordingly. In early 2026 an Adelphi University student flagged "100% AI" won a ruling
+calling the finding _"without valid basis"_. Vanderbilt, Yale, MIT and Stanford have disabled or restricted detection,
+and OpenAI discontinued its own detector.
 
 ### Malaysian accessibility law — a soft hook
 

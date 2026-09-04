@@ -4,6 +4,7 @@ import { createRecordSchema, GUEST_MAX_ITEM_CHARS, GUEST_MAX_ITEMS, itemCharCoun
 import { ApiError, createRecord } from '../api'
 import { BubbleRow } from '../components/BubbleRow'
 import { Field, inputClass } from '../components/Field'
+import { Select } from '../components/Select'
 import { Sheet } from '../components/Sheet'
 import { DEMO_PAPER } from '../demo-paper'
 import { useSession } from '../session'
@@ -137,7 +138,7 @@ export function NewCheck() {
   return (
     <Sheet as="form" onSubmit={submit}>
       <h1>New Check</h1>
-      <p className="mt-3 max-w-[62ch] type-body text-ink-muted">
+      <p className="mt-3 max-w-[62ch] type-ui text-ink-muted">
         Type the questions you are about to publish. Two independent models answer each one without seeing your key.
       </p>
 
@@ -175,13 +176,7 @@ export function NewCheck() {
             <input id="subject" className={inputClass} value={subject} onChange={(e) => setSubject(e.target.value)} />
           </Field>
           <Field label="Language" htmlFor="language" error={errorFor('language')}>
-            <select id="language" className={inputClass} value={language} onChange={(e) => setLanguage(e.target.value)}>
-              {LANGUAGES.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+            <Select id="language" label="Language" value={language} options={LANGUAGES} onChange={setLanguage} />
           </Field>
         </div>
 
@@ -322,7 +317,7 @@ export function NewCheck() {
       </div>
 
       {errorFor('form') ? (
-        <p role="alert" className="mt-4 type-body text-pen">
+        <p role="alert" className="mt-4 type-ui text-pen">
           {errorFor('form')}
         </p>
       ) : null}

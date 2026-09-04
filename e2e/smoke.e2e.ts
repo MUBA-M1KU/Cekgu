@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, type Page, test } from '@playwright/test'
 
 // TRD section 18: the first three steps of the demo acceptance test, run against a real
 // deployment. The steps that need screens which do not exist yet are marked below with the
@@ -76,10 +76,25 @@ test('sign in as guest lands in the guest workspace with the warning banner', as
 // list is showing without depending on a wrapper element's shape.
 const EVIDENCE = 'Show Evidence'
 
+// A Clear item with no decision on it collapses to one line, so that the items actually asking
+// something are not buried under nine that are not. Its evidence is still reachable — that is the
+// product's whole provenance claim — but it is one click further in, so a count of the evidence
+// buttons has to open the quiet rows first. Opening them is itself the assertion that every item
+// can still be reached.
+async function openEveryItem(page: Page): Promise<void> {
+  // Wait for the list before counting: called straight after a goto, an empty count means the
+  // items have not arrived yet rather than that they are all open, and the loop would exit having
+  // opened nothing.
+  await expect(page.getByRole('button', { name: /^Possible Key Error/ })).toBeVisible()
+  const quiet = page.getByRole('button', { expanded: false }).filter({ hasText: /Clear/ })
+  for (let n = await quiet.count(); n > 0; n = await quiet.count()) await quiet.first().click()
+}
+
 test('the sample record opens with its counts', async ({ page }) => {
   await page.goto('/sample')
 
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/practice set/i)
+  await openEveryItem(page)
   await expect(page.getByRole('button', { name: EVIDENCE })).toHaveCount(12)
 
   // The counts come from the seeded pass, so they are asserted as a set rather than as one number:
@@ -96,6 +111,7 @@ test('the sample record opens with its counts', async ({ page }) => {
 
 test('filtering to Possible Key Error narrows the item list', async ({ page }) => {
   await page.goto('/sample')
+  await openEveryItem(page)
   await expect(page.getByRole('button', { name: EVIDENCE })).toHaveCount(12)
 
   const filter = page.getByRole('button', { name: /^Possible Key Error/ })
@@ -184,6 +200,56 @@ test('navigating away from a record with the mascot mounted keeps the app render
   await expect(page.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Records' })).toBeVisible()
   expect(errors).toEqual([])
+})
+
+// Third instance of one bug: #143 was two Sample Report links, and the breadcrumb read "Records"
+// while navigating to /dashboard. A link whose name does not say where it goes is a defect whether
+// or not anyone clicks it, and it makes getByRole ambiguous for whoever writes the next test. This
+// asserts the class rather than either instance.
+test('no two links in the workspace share a name and lead somewhere different', async ({ page }) => {
+  await page.goto('/sign-in')
+  await page.getByRole('button', { name: 'Sign In as Guest' }).click()
+  await expect(page).toHaveURL(/\/records$/)
+
+  const collisions = await page.$$eval('a', (links) => {
+    const byName = new Map()
+    for (const el of links) {
+      const name = (el.getAttribute('aria-label') ?? el.textContent ?? '').trim().toLowerCase()
+      if (!name) continue
+      const seen = byName.get(name) ?? new Set()
+      seen.add(el.getAttribute('href') ?? '')
+      byName.set(name, seen)
+    }
+    return [...byName.entries()]
+      .filter(([, hrefs]) => hrefs.size > 1)
+      .map(([name, hrefs]) => `${name} -> ${[...hrefs].join(' | ')}`)
+  })
+
+  expect(collisions).toEqual([])
+})
+
+// Issue #161 and c3638's report: an unauthenticated visitor was served the whole authenticated
+// shell — rail, topbar and an account menu reading "Signed In" over an em dash — on a URL whose
+// data could only ever 401. These assert the redirect and the absence of that chrome.
+const APP_ROUTES = ['/dashboard', '/records', '/new-check', '/settings']
+
+for (const route of APP_ROUTES) {
+  test(`an unauthenticated visitor to ${route} is sent to sign in`, async ({ page }) => {
+    await page.goto(route)
+
+    await expect(page).toHaveURL(/\/sign-in$/)
+    // The account menu is the specific thing that lied, so assert it is not on the page at all.
+    await expect(page.locator('.app-avatar')).toHaveCount(0)
+  })
+}
+
+test('signing in returns the visitor to the page they were refused', async ({ page }) => {
+  await page.goto('/settings')
+  await expect(page).toHaveURL(/\/sign-in$/)
+
+  await page.getByRole('button', { name: /guest/i }).first().click()
+
+  await expect(page).toHaveURL(/\/settings$/, { timeout: 20000 })
 })
 
 // PRODUCT.md lists Terms, Privacy and Acceptable Use as a launch requirement. The contract worth

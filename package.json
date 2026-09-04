@@ -10,6 +10,7 @@
     "start": "bun src/server/index.ts",
     "test": "bun test",
     "e2e": "playwright test",
+    "e2e:local": "E2E_BASE_URL=http://localhost:8080 playwright test",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "lint": "biome check . && prettier --check \"**/*.{md,markdown,yaml,yml}\"",

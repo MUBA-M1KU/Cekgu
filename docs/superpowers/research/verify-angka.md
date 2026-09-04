@@ -1,9 +1,9 @@
-# Verification: Angka, Tested For Agreement
+# Verification: Angka, tested for agreement
 
 **VIABLE, 78/100.** Above the 70 bar, not LOCK. The mechanism is honest track fit and the corpus is public, but the
 user-pain evidence is indirect: the one documented 2025 misreporting case is a semantic error (cost read as loss), not a
 dropped digit, and no Malaysian journalist was found stating the retyping pain in their own words. The ranked risks are
-under [Risks Ranked](#risks-ranked).
+under [Risks ranked](#risks-ranked).
 
 **The candidate.** Agreement-gated extraction of figures from Malaysian official PDFs (LKAN, Hansard written replies,
 budget documents) by three models from three labs via GonkaRouter, published only on two-of-three agreement, splits
@@ -16,20 +16,20 @@ in more than one section sit at the end of the file.
 
 Contents:
 
-1. [Phenomenon And Data](#phenomenon-and-data)
+1. [Phenomenon and data](#phenomenon-and-data)
 1. [Incumbents](#incumbents)
 1. [Users](#users)
-1. [Track Fit](#track-fit)
-1. [Predicted Competition](#predicted-competition)
+1. [Track fit](#track-fit)
+1. [Predicted competition](#predicted-competition)
 1. [Scores](#scores)
-1. [Novelty Test](#novelty-test)
-1. [Kill Criteria](#kill-criteria)
-1. [Risks Ranked](#risks-ranked)
-1. [Negative Results Recorded](#negative-results-recorded)
+1. [Novelty test](#novelty-test)
+1. [Kill criteria](#kill-criteria)
+1. [Risks ranked](#risks-ranked)
+1. [Negative results recorded](#negative-results-recorded)
 
-## Phenomenon And Data
+## Phenomenon and data
 
-### LKAN Cadence And Format 2024-26
+### LKAN cadence and format 2024-26
 
 Three series a year, tabled in the February, July and October sittings. Confirmed dates:
 
@@ -77,7 +77,7 @@ Format facts:
   https://www.businesstoday.com.my/2025/10/06/federal-accounts-for-2024-found-in-good-order-says-auditor-general/
   'Federal Accounts For 2024 Found In Good Order, Says Auditor-General'
 
-### Hansard And Written Replies
+### Hansard and written replies
 
 - Digital Hansard covers Dewan Negara, Dewan Rakyat and Kamar Khas with keyword and phrase search and per-sitting pages
   such as /hansard/dewan-rakyat/2026-02-12: Parlimen Malaysia, "Hansard Digital | Digital Hansard", fetched 2 Sep 2026,
@@ -93,7 +93,7 @@ Format facts:
   the note calls for community contributions to extract and standardise the tables, which is hand transcription by
   another name. It is eight years old; **no 2023-26 statement of the same pain was found: negative result**
 
-### Documented Misreporting 2023-26
+### Documented misreporting 2023-26
 
 - **The strongest case.** Within 24 hours of LKAN 2/2025 being tabled, the Auditor-General stated that RM48.873bn was
   the total cost of the audited programmes "and this amount does not represent any leakages or losses, as reported by
@@ -130,7 +130,7 @@ Format facts:
 | Sinar Project pardocs | 5,000+ scanned written replies, full-text searchable; CKAN at data.sinarproject.org; Open Parliament sub-projects | Volunteer-run with no inference budget; the 2018 note asks the community to extract tables by hand   | [Sinar pardocs about]; [Sinar open parliament]; [Sinar GitHub]                               |
 | Digital Hansard       | Searchable sitting transcripts, three chambers                                                                    | Search returns speeches, not a figure table with provenance; written replies not on the landing page | [Digital Hansard]                                                                            |
 | AG Dashboard v3.0     | Follow-up status of raised issues                                                                                 | Tracks issues the AG chose to raise, not every figure in the report                                  | [AG Dashboard]                                                                               |
-| data.gov.my           | One archived 2018 LKAN dataset, issue categories, one ministry                                                    | Nothing at figure level; nothing after 2018 found                                                    | MAMPU archive link under [LKAN Cadence And Format 2024-26](#lkan-cadence-and-format-2024-26) |
+| data.gov.my           | One archived 2018 LKAN dataset, issue categories, one ministry                                                    | Nothing at figure level; nothing after 2018 found                                                    | MAMPU archive link under [LKAN cadence and format 2024-26](#lkan-cadence-and-format-2024-26) |
 | TI-M, CAP, C4         | Press analysis of each LKAN series                                                                                | They read and comment; they do not publish a verified table                                          | [TI-M]; [CAP]                                                                                |
 
 [Sinar open parliament]: https://sinarproject.org/open-parliament 'Open Parliament'
@@ -144,7 +144,7 @@ Format facts:
   https://consumer.org.my/strengthening-public-accountability-after-the-2025-auditor-generals-report/
   "Strengthening Public Accountability After the 2025 Auditor General's Report"
 
-### Global Extraction Products
+### Global extraction products
 
 - **Extend** ships a Review Agent that makes "a critical second pass over every extraction" and human-in-the-loop on
   every tier: Extend, "Extend vs. Reducto: Document AI Comparison (2026)",
@@ -163,7 +163,7 @@ cannot hand a journalist a receipt from three independent labs that a reader can
 GonkaRouter's request id per reading is the moat, and it is exactly the thing a well-resourced vendor would not add
 because it makes their own model replaceable.
 
-### The Mechanism Is Published Research
+### The mechanism is published research
 
 Agreement-gated extraction is not novel as a mechanism. Judges who know the space can cite:
 
@@ -184,7 +184,7 @@ Agreement-gated extraction is not novel as a mechanism. Judges who know the spac
 The novelty claim must therefore be: this mechanism applied to this corpus, for this user, with a public per-reading
 receipt. Not "we invented consensus extraction". Say that out loud before a judge does.
 
-### Journalism Tools
+### Journalism tools
 
 - Aleph extracts names, addresses, phone numbers, registration numbers and emails with spaCy NER; Aleph Pro launched
   December 2025: OCCRP, "Named Entity and Pattern Extraction",
@@ -224,7 +224,7 @@ budget. The team should get one sentence from one named reporter before Demo Day
   https://en.wikipedia.org/wiki/Public_Accounts_Committee_(Malaysia)
   'Public Accounts Committee (Malaysia)'
 
-## Track Fit
+## Track fit
 
 **Does agreement-gated extraction honestly satisfy the requirements?** Yes, and better than the worked example does.
 
@@ -258,7 +258,7 @@ track structurally rewards.
 The one place it touches the Fact Checker cluster is v2, the draft checker. Keep v2 as the last 30 seconds of the demo,
 not the headline, or a judge will file the whole thing under the worked example.
 
-## Predicted Competition
+## Predicted competition
 
 **Convergence count: 2 recognisably similar, 0 to 1 structurally the same.** Defended:
 
@@ -283,10 +283,10 @@ not the headline, or a judge will file the whole thing under the worked example.
 | Buildability           | 20      |     16 | PDFs public, pdf.js plus three chat calls per paragraph; token cost and Malay accuracy unverified                       |
 | **Total**              | **100** | **78** | Above the 70 bar                                                                                                        |
 
-## Novelty Test
+## Novelty test
 
 1. **Convergence count:** 2 recognisably similar (Hansard or budget chatbots), 0 to 1 identical, see
-   [Predicted Competition](#predicted-competition). Unrecognisable because there is no question, no generated prose, and
+   [Predicted competition](#predicted-competition). Unrecognisable because there is no question, no generated prose, and
    the disagreement queue is the home screen. Passes.
 2. **Incumbent test:** Sinar pardocs (full text, hand-extracted tables, volunteer), Extend Review Agent (single-vendor
    second pass), MADP and bioRxiv 2026 (research, no product). Structurally cannot: a closed vendor cannot issue a
@@ -295,7 +295,7 @@ not the headline, or a judge will file the whole thing under the worked example.
    3/2026 is tabled; and again in February 2027 for 1/2027. What changed: a new 14-document series and a table that
    already exists for the previous two. Passes.
 
-## Kill Criteria
+## Kill criteria
 
 | Criterion                                                       | Triggered? | Why                                                                                                                                            |
 | --------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -305,7 +305,7 @@ not the headline, or a judge will file the whole thing under the worked example.
 | Demo needs more than 90 seconds of setup                        | Borderline | A full series cannot be extracted live in five minutes. Pre-run the report, extract one page live, open one real split. Passes only if pre-run |
 | Buildability depends on data or access we do not have           | No         | CMD.4.2025 confirmed as a public PDF on parlimen.gov.my; lkan.audit.gov.my lists every series                                                  |
 
-## Risks Ranked
+## Risks ranked
 
 1. **The demo split may not appear on clean text.** LKAN command papers are text-native PDFs; digit drops between three
    models reading the same clean paragraph will be rare. Expect splits on agency attribution, unit ("juta" vs "bilion"),
@@ -326,7 +326,7 @@ the report is the job.
 digit, and no Malaysian journalist was found stating the retyping pain in their own words; on the build side, clean
 text-native LKAN pages may give three readers nothing to split on, so the demo page must be chosen in advance.
 
-## Negative Results Recorded
+## Negative results recorded
 
 - LKAN page counts and file sizes on lkan.audit.gov.my
 - Written replies on the Digital Hansard landing page
