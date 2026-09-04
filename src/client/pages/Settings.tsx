@@ -8,8 +8,6 @@ import { setReduceMotion, useReduceMotionSetting } from '../mascot/preferences'
 import { count } from '../plural'
 import { useSession } from '../session'
 
-const RETENTION_MONTHS = Math.round(RETENTION_DAYS / 30)
-
 export function Settings() {
   const reduceMotion = useReduceMotionSetting()
   const session = useSession()
@@ -95,12 +93,12 @@ export function Settings() {
           <p className="type-ui mt-3 max-w-[64ch] text-ink-muted">
             {isGuest
               ? 'This is the shared Guest workspace. Records here are removed 24 hours after they are created, and anyone signed in as Guest can read or delete them before that happens.'
-              : `Records are kept for ${RETENTION_MONTHS} months by default, counted from the last time you opened or changed one. A record you delete goes to Trash and is destroyed ${TRASH_DAYS} days after that.`}
+              : `A record is deleted permanently ${RETENTION_DAYS} days after the last change to it, and opening a record does not count as a change. A record you delete yourself goes to Trash and is deleted permanently ${TRASH_DAYS} days after that. Both deletions run automatically and neither can be undone.`}
           </p>
           <p className="type-ui mt-3 max-w-[64ch] text-ink-muted">
             {isGuest
               ? 'Deleting everything clears the whole shared workspace straight away, including records other guests added. The protected sample is left alone.'
-              : 'Deleting everything removes every record this account holds, Trash included, straight away. Nothing is kept and nothing can be recovered.'}
+              : `Delete All Records does not use Trash. It deletes every record this account holds immediately, including anything already in Trash, without waiting out the ${TRASH_DAYS} days.`}
           </p>
 
           <button
