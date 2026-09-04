@@ -2172,7 +2172,7 @@
         class="slide ink problem"
         data-section="Problem"
         data-budget="25"
-        data-speaker-notes="Here is one item on a twelve-question quiz. Which data structure removes elements first in, first out? The supplied key says Stack. The answer is Queue. Pause there for a second and let the room solve it, because most of them will. Then: that paper was vetted. Signed off. Published with the defect still in it. Not big questions. One wrong key, two defensible answers, a missing word. Small enough to survive a careful human read. The item on this slide is question three of the public sample record, verbatim, down to the four option texts, so a judge can open the Sample Report signed out and find it. The red pen at the bottom right is the committee's own sign-off; point at it on signed off if a hand is free, and do not explain the joke. Fifty-eight words in twenty-five seconds is about two seconds long, so if the rehearsal runs over, Not big questions is the line to cut."
+        data-speaker-notes="Here is one item on a twelve-question quiz. Which data structure removes elements first in, first out? The answer key says Stack. The answer is Queue. Pause there for a second and let the room solve it, because most of them will. Then: that paper was vetted. Signed off. Published with the defect still in it. Not big questions. One wrong key, two defensible answers, a missing word. Small enough to survive a careful human read. The item on this slide is question three of the public sample record, verbatim, down to the four option texts, so a judge can open the Sample Report signed out and find it. The red pen at the bottom right is the committee's own sign-off; point at it on signed off if a hand is free, and do not explain the joke. Fifty-eight words in twenty-five seconds is about two seconds long, so if the rehearsal runs over, Not big questions is the line to cut."
       >
         <img class="hero-bg" src="assets/hero-problem.jpg" alt="" onerror="this.remove()" />
         <span class="hero-shade" aria-hidden="true"></span>
@@ -2187,15 +2187,15 @@
           <div class="head">
             <p class="eyebrow">1. Problem statement</p>
             <h2 class="title">A quiz goes out with the wrong answer marked. <em>Every student loses that mark.</em></h2>
-            <p class="sub" style="max-width: 76ch">Teachers set multiple-choice quizzes with an answer key. When the key is wrong, nobody finds out until the marks are in. Cekgu checks the key first.</p>
+            <p class="sub" style="max-width: 76ch">Teachers set multiple-choice quizzes with an answer key. When it is wrong, nobody finds out until the marks are in. Cekgu checks it first.</p>
           </div>
 
           <div class="body">
             <div class="prob2">
               <div class="prob2-left" data-stagger>
-                <p class="kx on-ink">How a wrong key gets caught today</p>
+                <p class="kx on-ink">How a wrong answer key gets caught today</p>
                 <ul class="gap3">
-                  <li><b>The teacher re-reads it</b><span>She already believes her key, so she reads straight past the mistake.</span></li>
+                  <li><b>The teacher re-reads it</b><span>She already believes her answer key, so she reads straight past the mistake.</span></li>
                   <li><b>A colleague re-solves it</b><span>That costs a colleague an hour, every time.</span></li>
                   <li><b>She asks a chatbot</b><span>One answer, and no way to tell whether it just agreed with her.</span></li>
                 </ul>
@@ -2204,7 +2204,7 @@
                 <div class="defect on-ink">
                   <p class="defect-stem">Which data structure removes elements in first in, first out order?</p>
                   <div class="defect-row">
-                    <span><i>Supplied key</i>A &middot; Stack</span>
+                    <span><i>Answer key</i>A &middot; Stack</span>
                     <span><i>Correct answer</i>B &middot; Queue</span>
                     <span class="defect-tag">Possible Key Error</span>
                   </div>
@@ -2269,7 +2269,7 @@
                     <span class="io-tag">In &rarr;</span>
                     <div>
                       <p>She types each question in, one at a time: the question, the answer options, and which one she thinks is right. <b>That is all. Nothing to upload.</b></p>
-                      <p class="io-note">Cekgu checks she has not missed an option or a key before it does anything else. Pasting in a whole paper comes later.</p>
+                      <p class="io-note">Cekgu checks she has not missed an option or an answer before it does anything else. Pasting in a whole paper comes later.</p>
                     </div>
                   </div>
                   <div class="io-row">
@@ -2298,7 +2298,7 @@
                 <p class="after"><span>&rarr;</span>Two models answer it without the answer key, and each answer comes with a receipt.</p>
               </div>
               <div class="delta-cell">
-                <p class="today">She hears about a wrong key after the marks.</p>
+                <p class="today">She hears about a wrong answer key after the marks.</p>
                 <p class="after"><span>&rarr;</span>She hears before the quiz goes out.</p>
               </div>
             </div>
@@ -2334,7 +2334,7 @@
                 role="img"
                 aria-label="Twelve items on the public sample record reduced to three that need a human decision, with nine clear"
               >
-                <text class="label f-muted" x="0" y="20" font-size="20">ALL 12 QUESTIONS, ANSWERED WITHOUT THE KEY</text>
+                <text class="label f-muted" x="0" y="20" font-size="20">ALL 12 QUESTIONS, ANSWERED WITHOUT THE ANSWER KEY</text>
                 <text class="figure f-muted" x="700" y="26" font-size="46" text-anchor="end">12</text>
                 <g>
                   <rect x="0" y="52" width="700" height="34" rx="4" class="card-s" />
@@ -2444,8 +2444,8 @@
 
           <div class="head">
             <p class="eyebrow">3. Overall concept</p>
-            <h2 class="title">Two GonkaRouter models answer each question without seeing the key. <em>A fixed rule compares them.</em></h2>
-            <p class="sub" style="max-width: 80ch">Neither model is shown the teacher&rsquo;s answer or the other model&rsquo;s. The rule checks whether the two agree first, and only then whether they agree with the key.</p>
+            <h2 class="title">Two GonkaRouter models answer without seeing the answer key. <em>A fixed rule compares them.</em></h2>
+            <p class="sub" style="max-width: 80ch">Neither model is shown the teacher&rsquo;s answer or the other model&rsquo;s. The rule checks whether the two agree first, and only then whether they agree with the answer key.</p>
           </div>
 
           <div class="body">
@@ -2475,13 +2475,13 @@
                      that says this. It says it in words, on the home page's
                      second step, so those are the words used here verbatim:
                      src/client/pages/home/HowItWorksSection.tsx. -->
-                <text class="f-muted" x="28" y="382" font-size="21">Your key is withheld.</text>
+                <text class="f-muted" x="28" y="382" font-size="21">The answer key is withheld.</text>
 
                 <path class="conn" d="M336 271h60" />
                 <path class="conn" d="M386 261l12 10-12 10" />
 
                 <!-- two readers, then and only then the key -->
-                <text class="label f-muted" x="428" y="20" font-size="20">TWO GONKAROUTER MODELS, KEY WITHHELD</text>
+                <text class="label f-muted" x="428" y="20" font-size="20">BOTH MODELS, NO ANSWER KEY</text>
                 <rect x="412" y="44" width="516" height="262" rx="4" class="card-s" />
                 <rect x="412.5" y="44.5" width="515" height="261" rx="4" class="s-rule" fill="none" />
                 <rect x="412" y="404" width="516" height="96" rx="4" class="card-s" />
@@ -2508,7 +2508,7 @@
                 
                 <text x="776" y="392" font-size="30" text-anchor="middle" class="f-muted">&#8800;</text>
 
-                <text class="label f-muted" x="428" y="440" font-size="20">THE SUPPLIED KEY</text>
+                <text class="label f-muted" x="428" y="440" font-size="20">ANSWER KEY</text>
                 <g>
                   <circle cx="716" cy="432" r="16" class="f-ink" />
                   <circle cx="776" cy="432" r="16" class="s-strong" />
@@ -2552,7 +2552,7 @@
                   <rect x="1037" y="357" width="6" height="90" class="v-clear" />
                   <text class="mono f-muted" x="1064" y="396" font-size="22">4</text>
                   <text class="v-clear" x="1102" y="396" font-size="26" font-weight="500">Clear</text>
-                  <text class="f-muted" x="1102" y="428" font-size="20">the shared answer is the key</text>
+                  <text class="f-muted" x="1102" y="428" font-size="20">both answers match the answer key</text>
                 </g>
                 <!-- The one that fired on this item: the verdict's tint and a 2px border, no reveal hook. -->
                 <g>
@@ -2561,7 +2561,7 @@
                   <rect x="1037" y="461" width="6" height="90" class="v-key" />
                   <text class="mono v-key" x="1064" y="500" font-size="22">5</text>
                   <text class="v-key" x="1102" y="500" font-size="26" font-weight="500">Possible Key Error</text>
-                  <text class="v-key" x="1102" y="532" font-size="20">the shared answer is not the key</text>
+                  <text class="v-key" x="1102" y="532" font-size="20">both answers match, and the answer key is different</text>
                 </g>
               </svg>
             </div>
@@ -2586,7 +2586,7 @@
 
           <div class="head">
             <p class="eyebrow">3. Overall concept &middot; the moment</p>
-            <h2 class="title">Nobody told them the key. <em>Both chose Queue.</em></h2>
+            <h2 class="title">Nobody told them the answer key. <em>Both chose Queue.</em></h2>
             <p class="sub">Question 3 of the public sample record, unedited.</p>
           </div>
 
@@ -2684,10 +2684,10 @@
               </svg>
 
               <div data-stagger>
-                <p class="lead">The supplied key says Stack.</p>
-                <p class="lead"><strong>Cekgu flags it for a person to check.</strong> It does not touch her key.</p>
+                <p class="lead">The answer key says Stack.</p>
+                <p class="lead"><strong>Cekgu flags it for a person to check.</strong> It does not touch her answer key.</p>
                 <p class="rulefired">
-                  <span>Why</span>Both verified answers agree, and neither is the key.
+                  <span>Why</span>Both verified answers agree, and neither matches the answer key.
                 </p>
               </div>
             </div>
@@ -2792,7 +2792,7 @@
             <ol class="flow" data-stagger>
               <li><span class="ico"><svg aria-hidden="true"><use href="#i-submit" /></svg></span><span class="n">1</span><b>Submit</b><p>Validated locally. The record exists in under a second, before any model runs.</p></li>
               <li><span class="ico"><svg aria-hidden="true"><use href="#i-queue" /></svg></span><span class="n">2</span><b>Queue</b><p>Postgres. One item claimed at a time with <code>SKIP LOCKED</code>. Four gateway calls in flight.</p></li>
-              <li><span class="ico"><svg aria-hidden="true"><use href="#i-blind" /></svg></span><span class="n">3</span><b>Two models, no key</b><p>Two model families through GonkaRouter. Key withheld. <code>X-Gonka-No-Fallback</code> on every call.</p></li>
+              <li><span class="ico"><svg aria-hidden="true"><use href="#i-blind" /></svg></span><span class="n">3</span><b>Two models, no answer key</b><p>Two model families through GonkaRouter. Answer key withheld. <code>X-Gonka-No-Fallback</code> on every call.</p></li>
               <li><span class="ico"><svg aria-hidden="true"><use href="#i-receipt" /></svg></span><span class="n">4</span><b>Receipt check</b><p><code>GET /v1/receipts/{id}</code>. The served model must equal the one asked for, within 5 s.</p></li>
               <li><span class="ico"><svg aria-hidden="true"><use href="#i-rule" /></svg></span><span class="n">5</span><b>Fixed rule</b><p>Five verdicts, checked in order. Fewer than two verified answers from different models means Unverified.</p></li>
               <li><span class="ico"><svg aria-hidden="true"><use href="#i-record" /></svg></span><span class="n">6</span><b>Record</b><p>Verdict, every attempt, every request id. The teacher&rsquo;s decision is saved alongside and does not overwrite the verdict.</p></li>
