@@ -1914,32 +1914,62 @@ section[id] {
     margin-top: var(--s-4);
   }
 
-  /* A labelled fact in a card: the label on the left, the value on the right, one hairline
-     between rows. Used for the account block and the retention windows. */
+  /* One recent record. A tile on the well, per the rule above.
+
+     The status chip inside it takes the sheet instead of the well it normally uses: chip and tile
+     are the same ground otherwise, and the chip stops reading as a chip at all. It is the only
+     place in the product where a level-0 chip sits on a level-0 ground. */
+  .record-tile {
+    display: flex;
+    /* A grid item defaults to min-width: auto, so without this the tile refuses to shrink below
+       its title and the dashboard scrolls sideways at 375 px. */
+    min-width: 0;
+    align-items: center;
+    gap: var(--s-4);
+    padding: 0.75rem var(--s-4);
+    border-radius: var(--r-control);
+    background: var(--well);
+    transition: background-color var(--t-quick) var(--ease-out);
+  }
+
+  .record-tile:hover {
+    background: color-mix(in oklab, var(--well) 84%, var(--ink));
+  }
+
+  .record-tile .status-chip {
+    background: var(--sheet);
+  }
+
+  /* A labelled fact in a card: the label on the left, the value on the right.
+
+     Tiles on the well, not rows separated by hairlines. A hairline inside a bordered card draws the
+     same boundary twice: level 0 assumes rows sitting directly on the sheet, where the rule is the
+     only separation available. DESIGN.md names this list as one of the three that must be tiles. */
   .fact-list {
     margin: 0;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(0, 1fr);
-    gap: 0;
+    gap: var(--s-1) 0;
   }
 
   .fact-list dt,
   .fact-list dd {
     margin: 0;
-    padding-block: 0.6875rem;
-    border-top: 1px solid var(--rule);
+    padding-block: 0.625rem;
+    background: var(--well);
   }
 
   .fact-list dt {
+    padding-left: var(--s-4);
     padding-right: var(--s-5);
+    border-radius: var(--r-control) 0 0 var(--r-control);
     color: var(--ink-muted);
     white-space: nowrap;
   }
 
-  .fact-list dt:first-of-type,
-  .fact-list dt:first-of-type + dd {
-    border-top: 0;
-    padding-top: 0;
+  .fact-list dd {
+    padding-right: var(--s-4);
+    border-radius: 0 var(--r-control) var(--r-control) 0;
   }
 
   /* ---------------------------------------------------------------------------------------------

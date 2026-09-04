@@ -290,11 +290,11 @@ export function Dashboard() {
             ) : (
               <div>
                 <p className="type-eyebrow mb-1 text-ink-muted">Answering Now</p>
-                <ul className="m-0 list-none p-0">
+                <ul className="m-0 grid list-none grid-cols-[minmax(0,1fr)] gap-2 p-0">
                   {health.models.map((model) => (
                     <li
                       key={model.model}
-                      className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-t border-rule py-3"
+                      className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 rounded-control bg-well px-4 py-3"
                     >
                       <div className="min-w-0">
                         <p className="type-label">{family(model.model)}</p>
@@ -338,9 +338,9 @@ export function Dashboard() {
               </button>
             </div>
           ) : records === null ? (
-            <ul className="m-0 list-none p-0">
+            <ul className="m-0 grid list-none grid-cols-[minmax(0,1fr)] gap-2 px-6 pb-6 p-0">
               {[0, 1, 2].map((row) => (
-                <li key={row} className="border-t border-rule px-6 py-3">
+                <li key={row} className="rounded-control bg-well px-4 py-3">
                   <div className="skeleton h-4 w-2/3" />
                   <div className="skeleton mt-2 h-3 w-1/3" />
                 </li>
@@ -354,13 +354,12 @@ export function Dashboard() {
               </Link>
             </div>
           ) : (
-            <ul className="m-0 list-none p-0">
+            // Tiles on the well, not rows ruled off from each other: a hairline inside a bordered
+            // card draws the same boundary twice, and DESIGN.md names this list by name.
+            <ul className="m-0 grid list-none grid-cols-[minmax(0,1fr)] gap-2 px-6 pb-6 p-0">
               {recent.map((record) => (
-                <li key={record.id} className="border-t border-rule">
-                  <Link
-                    to={`/records/${record.id}`}
-                    className="flex items-center gap-4 px-6 py-3 transition-colors hover:bg-well"
-                  >
+                <li key={record.id}>
+                  <Link to={`/records/${record.id}`} className="record-tile">
                     <span className="min-w-0 flex-1">
                       <span className="type-label block truncate">{record.title}</span>
                       <span className="type-caption mt-1 block text-ink-muted">{updatedLabel(record.updatedAt)}</span>
