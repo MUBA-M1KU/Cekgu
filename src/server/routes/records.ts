@@ -4,7 +4,7 @@ import { streamSSE } from 'hono/streaming'
 import { createRecordSchema, deleteRecordsSchema, dispositionSchema } from '../../shared/schemas'
 import { db } from '../db'
 import { dispositions, items, records } from '../db/schema'
-import { guestExpiresAt, guestLimitRejection, guestRecordsHeld } from '../guest'
+import { guestExpiresAt, guestLimitRejection } from '../guest'
 import { itemDetail, listRecords, recordDetail } from '../records/queries'
 import { type AppEnv, isGuest, sessionOf } from '../session'
 
@@ -43,7 +43,7 @@ recordRoutes.post('/records', async (c) => {
   const guest = isGuest(session)
 
   if (guest) {
-    const rejection = guestLimitRejection(input, await guestRecordsHeld(session.user.id))
+    const rejection = guestLimitRejection(input)
     if (rejection) return c.json({ error: rejection }, 422)
   }
 
@@ -152,7 +152,7 @@ recordRoutes.post('/records/:id/duplicate', async (c) => {
       context: source.context,
       items: source.items.map((item) => ({ stem: item.stem, options: item.options, key: item.key }))
     }
-    const rejection = guestLimitRejection(asInput, await guestRecordsHeld(session.user.id))
+    const rejection = guestLimitRejection(asInput)
     if (rejection) return c.json({ error: rejection }, 422)
   }
 

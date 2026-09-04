@@ -90,16 +90,35 @@ export function Settings() {
       {session.status === 'in' ? (
         <>
           <h2 className="mt-10">Your Data</h2>
-          <p className="type-ui mt-3 max-w-[64ch] text-ink-muted">
-            {isGuest
-              ? 'This is the shared Guest workspace. Records here are removed 24 hours after they are created, and anyone signed in as Guest can read or delete them before that happens.'
-              : `A record is deleted permanently ${RETENTION_DAYS} days after the last change to it, and opening a record does not count as a change. A record you delete yourself goes to Trash and is deleted permanently ${TRASH_DAYS} days after that. Both deletions run automatically and neither can be undone.`}
-          </p>
-          <p className="type-ui mt-3 max-w-[64ch] text-ink-muted">
-            {isGuest
-              ? 'Deleting everything clears the whole shared workspace straight away, including records other guests added. The protected sample is left alone.'
-              : `Delete All Records does not use Trash. It deletes every record this account holds immediately, including anything already in Trash, without waiting out the ${TRASH_DAYS} days.`}
-          </p>
+          {/* Three deadlines as pairs rather than three paragraphs. The facts are the ones the
+              retention sweep and the account route actually enforce; what changed here is that a
+              reader can find the one they came for without reading the other two. */}
+          {isGuest ? (
+            <p className="type-ui mt-3 max-w-[64ch] text-ink-muted">
+              This is the shared Guest workspace. Records are removed 24 hours after they are created, and any guest can
+              read or delete them. Deleting everything clears the whole workspace; the protected sample is left alone.
+            </p>
+          ) : (
+            <>
+              <dl className="mt-3 m-0 grid max-w-[64ch] grid-cols-[auto_1fr] gap-x-6 gap-y-2">
+                <dt className="type-label">Trash</dt>
+                <dd className="type-ui m-0 text-ink-muted">
+                  Deleted permanently {TRASH_DAYS} days after you delete a record
+                </dd>
+                <dt className="type-label">Inactivity</dt>
+                <dd className="type-ui m-0 text-ink-muted">
+                  Deleted permanently {RETENTION_DAYS} days after the last change. Opening a record is not a change
+                </dd>
+                <dt className="type-label">Delete All</dt>
+                <dd className="type-ui m-0 text-ink-muted">
+                  Immediate, including anything already in Trash. It does not use the {TRASH_DAYS} days
+                </dd>
+              </dl>
+              <p className="type-caption mt-3 max-w-[64ch] text-ink-muted">
+                The first two run automatically. None of the three can be undone.
+              </p>
+            </>
+          )}
 
           <button
             type="button"

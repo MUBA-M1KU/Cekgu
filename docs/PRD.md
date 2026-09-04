@@ -124,12 +124,14 @@ inside the Guest workspace, word for word as [PRODUCT.md](PRODUCT.md#the-shared-
 - Given a guest record is 24 hours old, then it is no longer listed and its URL returns a not-found state
 - The Guest records library shows each record's expiry time
 
-**FR-AUTH-5.** The Guest account carries item, size and rate limits that private accounts do not.
+**FR-AUTH-5.** The Guest account carries a per-question size limit that private accounts do not.
 
-- A guest record accepts at most 12 questions, each question at most 2,000 characters across stem and options
-- The Guest account holds at most 20 non-sample records at once; a 21st submission is refused with an error that says
-  what to delete or wait for
-- Limits are enforced on the server, not only in the form
+- Each question is at most 2,000 characters across stem and options
+- **The count limits were removed on 4 September**, at the owner's request. A guest record took at most 12 questions and
+  the account held at most 20 non-sample records; neither is enforced now. A demo that hits a wall on stage costs more
+  than a shared workspace somebody could fill, and what bounds that workspace is the 24-hour sweep in FR-AUTH-4 rather
+  than a count
+- The remaining limit is enforced on the server, not only in the form
 
 ### Starting a check
 
@@ -465,7 +467,7 @@ contract and where request ids are rendered without reading the code.
 | As an educator, I delete everything my account holds and see how long data is kept                  | FR-RECORD-8                             |
 | As a presenter, I fill the check form in one action so a live demo does not open with typing        | FR-CHECK-4, FR-AUTH-2                   |
 | As a guest, I enter with one click and am told plainly that others can see and delete my records    | FR-AUTH-2, FR-AUTH-3                    |
-| As a guest, I try a real three-question check within the limits and it queues                       | FR-AUTH-5, FR-CHECK-3, FR-QUEUE-1       |
+| As a guest, I try a real three-question check and it queues                                         | FR-AUTH-5, FR-CHECK-3, FR-QUEUE-1       |
 | As a guest, I cannot delete the sample but I can reset my dispositions on it                        | FR-SAMPLE-2, FR-SAMPLE-3                |
 | As a judge, I open the sample signed out and see two model names and two request ids on one screen  | FR-SAMPLE-4, FR-EVIDENCE-1              |
 | As a judge, I verify a request id against the public receipt during Q&A                             | FR-EVIDENCE-3, FR-SAMPLE-1              |

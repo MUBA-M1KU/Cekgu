@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 
-import { GUEST_MAX_ITEM_CHARS, GUEST_MAX_ITEMS, GUEST_MAX_RECORDS } from '../shared/schemas'
+import { GUEST_MAX_ITEM_CHARS } from '../shared/schemas'
 import { guestExpiresAt, guestLimitRejection } from './guest'
 
 type Input = Parameters<typeof guestLimitRejection>[0]
@@ -26,24 +26,28 @@ test('a guest record expires 24 hours after it is created', () => {
 })
 
 describe('FR-AUTH-5 limits', () => {
-  test('a check within every limit is accepted', () => {
-    expect(guestLimitRejection(input([item(), item()]), 0)).toBeNull()
+  test('a check is accepted', () => {
+    expect(guestLimitRejection(input([item(), item()]))).toBeNull()
   })
 
-  test(`${GUEST_MAX_ITEMS} questions is the limit, not one past it`, () => {
-    const atLimit = Array.from({ length: GUEST_MAX_ITEMS }, () => item())
-    expect(guestLimitRejection(input(atLimit), 0)).toBeNull()
-    expect(guestLimitRejection(input([...atLimit, item()]), 0)?.code).toBe('guest_item_limit')
+  // The counts were capped at 12 questions and 20 records and are not any more, at the owner's
+  // request: a demo that hits a wall on stage is worse than a workspace somebody could flood. These
+  // two assert the absence, because "we removed a limit" is only true if something checks that it
+  // is gone — both of these pass trivially against an uncapped implementation and fail loudly if
+  // anyone reinstates a cap.
+  test('a check of a hundred questions is accepted', () => {
+    const many = Array.from({ length: 100 }, () => item())
+    expect(guestLimitRejection(input(many))).toBeNull()
   })
 
-  test('the item-limit message says how many to remove', () => {
-    const overBy3 = Array.from({ length: GUEST_MAX_ITEMS + 3 }, () => item())
-    expect(guestLimitRejection(input(overBy3), 0)?.message).toContain('Remove 3')
+  test('no rejection code mentions a count limit', () => {
+    const many = Array.from({ length: 100 }, () => item())
+    expect(guestLimitRejection(input(many))?.code).toBeUndefined()
   })
 
   test('an oversized question is named by its position', () => {
     const long = item('x'.repeat(GUEST_MAX_ITEM_CHARS))
-    const rejection = guestLimitRejection(input([item(), long]), 0)
+    const rejection = guestLimitRejection(input([item(), long]))
     expect(rejection?.code).toBe('guest_size_limit')
     expect(rejection?.message).toStartWith('Question 2')
   })
@@ -59,18 +63,12 @@ describe('FR-AUTH-5 limits', () => {
       ],
       key: 'A'
     }
-    expect(guestLimitRejection(input([wide]), 0)?.code).toBe('guest_size_limit')
+    expect(guestLimitRejection(input([wide]))?.code).toBe('guest_size_limit')
   })
 
-  test(`the ${GUEST_MAX_RECORDS}th record is allowed and the next is refused`, () => {
-    expect(guestLimitRejection(input([item()]), GUEST_MAX_RECORDS - 1)).toBeNull()
-    const rejection = guestLimitRejection(input([item()]), GUEST_MAX_RECORDS)
-    expect(rejection?.code).toBe('guest_record_limit')
-    expect(rejection?.message).toContain('Delete one from Records, or wait for the oldest to expire.')
-  })
-
-  test('the item limit is reported before the record limit', () => {
-    const tooMany = Array.from({ length: GUEST_MAX_ITEMS + 1 }, () => item())
-    expect(guestLimitRejection(input(tooMany), GUEST_MAX_RECORDS)?.code).toBe('guest_item_limit')
+  test('the size guard still applies inside a very long check', () => {
+    const many = Array.from({ length: 50 }, () => item())
+    const long = item('x'.repeat(GUEST_MAX_ITEM_CHARS))
+    expect(guestLimitRejection(input([...many, long]))?.code).toBe('guest_size_limit')
   })
 })

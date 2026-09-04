@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { GUEST_MAX_ITEMS, GUEST_MAX_RECORDS } from '../../shared/schemas'
 import type { Health, RecordSummary } from '../../shared/types'
 import { getHealth, listRecords } from '../api'
 import { StatusChip } from '../components/StatusChip'
 import { count } from '../plural'
-import { useSession } from '../session'
 
 const RECENT = 5
 
@@ -34,9 +32,6 @@ function family(model: string): string {
  * line in it comes from /api/health; none is computed here and none is a placeholder.
  */
 export function Dashboard() {
-  const session = useSession()
-  const isGuest = session.status === 'in' && session.isGuest
-
   const [records, setRecords] = useState<RecordSummary[] | null>(null)
   const [failed, setFailed] = useState(false)
   const [health, setHealth] = useState<Health | null>(null)
@@ -54,7 +49,6 @@ export function Dashboard() {
   }, [])
 
   const working = records?.filter((record) => record.status === 'queued' || record.status === 'checking') ?? []
-  const attention = records?.reduce((total, record) => total + record.attentionCount, 0) ?? 0
   const recent = records?.slice(0, RECENT) ?? []
   const held = records?.filter((record) => !record.isSample).length ?? 0
 
@@ -66,15 +60,12 @@ export function Dashboard() {
     <div className="dash">
       <header className="dash-head">
         <h1 className="dash-title">{returning ? 'Good to have you back.' : 'Welcome to Cekgu.'}</h1>
-        <p className="dash-sub">
-          {records === null
-            ? 'Loading your workspace.'
-            : working.length > 0
-              ? `${count(working.length, 'check is', 'checks are')} still running. You can leave and come back.`
-              : attention > 0
-                ? `${count(attention, 'item needs', 'items need')} your attention.`
-                : 'Nothing is waiting on you.'}
-        </p>
+        {/* Only what is time-sensitive and not visible anywhere else. The line this replaces read
+            "5 items need your attention", which named neither which records nor where to go: the
+            counts belong beside the record they are about, and that is where they are now. */}
+        {working.length > 0 ? (
+          <p className="dash-sub">{count(working.length, 'check is', 'checks are')} still running.</p>
+        ) : null}
         {failed ? <p className="dash-sub">We could not reach your records, try again in a moment.</p> : null}
       </header>
 
@@ -137,7 +128,7 @@ export function Dashboard() {
           </div>
         </div>
 
-        <aside className="dash-rail">
+        <aside className="dash-rail card-soft">
           <h2 className="dash-rail-heading">Recent Records</h2>
           {records !== null && recent.length === 0 ? (
             <p className="dash-recent-empty">Nothing yet. Your checks will collect here.</p>
@@ -159,17 +150,6 @@ export function Dashboard() {
               ))}
             </ul>
           )}
-
-          {isGuest ? (
-            <div className="dash-rail-note">
-              <h2 className="dash-rail-heading">Guest Allowance</h2>
-              <p className="dash-recent-empty">
-                {held} of {GUEST_MAX_RECORDS} records held, up to {GUEST_MAX_ITEMS} questions in one check. The
-                protected sample does not count against this. Guest records are removed after 24 hours, and the shared
-                workspace is visible to everyone.
-              </p>
-            </div>
-          ) : null}
         </aside>
       </div>
     </div>
