@@ -1,7 +1,5 @@
 # Terms
 
-> Draft demo notice. Not final. Re-review against the deployed product and obtain owner approval before publication.
-
 <!-- Review baseline: 5 September 2026, main 2a0be68. -->
 
 Cekgu is a demo for educators checking multiple-choice practice questions before publication. It highlights possible

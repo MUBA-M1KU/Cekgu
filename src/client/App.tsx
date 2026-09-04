@@ -20,8 +20,8 @@ export function App() {
         <Route element={<PublicLayout />}>
           <Route index element={<Home />} />
           {/* How It Works, Pricing and Trust are sections of the landing page now rather than
-              routes of their own. The old paths are kept because they are linked from the README
-              and from the deck, and they land on the section they named. */}
+              routes of their own. The old paths are kept because they are linked from the deck,
+              and they land on the section they named. */}
           <Route path="how-it-works" element={<Navigate to="/#how-it-works" replace />} />
           <Route path="pricing" element={<Navigate to="/#pricing" replace />} />
           <Route path="trust" element={<Navigate to="/#trust" replace />} />
