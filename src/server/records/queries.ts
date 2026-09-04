@@ -49,9 +49,16 @@ export async function listRecords(userId: string, filters: ListFilters): Promise
       expiresAt: records.expiresAt,
       updatedAt: records.updatedAt,
       itemCount: sql<number>`(select count(*)::int from items i where i.record_id = records.id)`,
+      /* An item needs attention while it is flagged AND nobody has decided what to do about it.
+         Recording a decision is the educator saying they have dealt with it, so it leaves this
+         count — while the machine verdict it carries never changes, because that is a finding
+         rather than a task. Without the second clause the number never moves and the screen asks
+         for work that is already done. */
       attentionCount: sql<number>`(
         select count(*)::int from items i
-        where i.record_id = records.id and i.verdict not in ('clear', 'pending')
+        where i.record_id = records.id
+          and i.verdict not in ('clear', 'pending')
+          and not exists (select 1 from dispositions d where d.item_id = i.id)
       )`
     })
     .from(records)

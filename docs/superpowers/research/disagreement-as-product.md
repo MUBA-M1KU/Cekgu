@@ -7,6 +7,15 @@ weak and the literature says why.
 **Method.** Literature synthesis by a delegated model from primary papers, fetched 2026-08-30. Numbers below are quoted
 from the cited papers; interpretation is marked.
 
+Contents:
+
+1. [The finding that constrains everything](#the-finding-that-constrains-everything)
+1. [Agreement is only evidence if errors are decorrelated](#agreement-is-only-evidence-if-errors-are-decorrelated)
+1. [When disagreement is a lie](#when-disagreement-is-a-lie)
+1. [What the demo must prove](#what-the-demo-must-prove)
+1. [Established practice anchors](#established-practice-anchors)
+1. [Sources](#sources)
+
 ## The finding that constrains everything
 
 Disagreement can be made into a **product** only where three conditions hold **jointly**:

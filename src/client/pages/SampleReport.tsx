@@ -24,7 +24,7 @@ export function SampleReport() {
     return (
       <Sheet>
         <h1>Sample Report</h1>
-        <p className="type-body mt-3 text-ink-muted">We could not load the sample report just now.</p>
+        <p className="type-ui mt-3 text-ink-muted">We could not load the sample report just now.</p>
       </Sheet>
     )
   }
@@ -32,7 +32,7 @@ export function SampleReport() {
   if (!record) {
     return (
       <Sheet>
-        <p className="type-body text-ink-muted">Loading the sample report.</p>
+        <p className="type-ui text-ink-muted">Loading the sample report.</p>
       </Sheet>
     )
   }
@@ -55,7 +55,7 @@ export function SampleReport() {
         <p className="type-caption mt-2 text-ink-muted">
           {record.subject} · {count(record.items.length, 'question')}
         </p>
-        <p className="type-body mt-3 max-w-[66ch]">
+        <p className="type-ui mt-3 max-w-[66ch]">
           This is a real review record, kept as it was produced. Open any item to see both readings, the model that
           served each one, and its Gonka request id. You can check a request id against the public receipt yourself.
         </p>
@@ -71,7 +71,7 @@ export function SampleReport() {
         ))}
       </ul>
 
-      <p className="type-body mt-8 border-t border-rule pt-5 max-w-[64ch] text-ink-muted">
+      <p className="type-ui mt-8 border-t border-rule pt-5 max-w-[64ch] text-ink-muted">
         Want to run your own?{' '}
         <Link to="/sign-in" className="underline">
           Sign In as Guest

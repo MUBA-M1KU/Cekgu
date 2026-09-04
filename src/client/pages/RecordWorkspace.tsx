@@ -31,7 +31,7 @@ export function RecordWorkspace() {
     return (
       <Sheet>
         <h1>Record</h1>
-        <p className="mt-3 type-body text-ink-muted">We could not open this record. It may have expired.</p>
+        <p className="mt-3 type-ui text-ink-muted">We could not open this record. It may have expired.</p>
       </Sheet>
     )
   }
@@ -39,12 +39,17 @@ export function RecordWorkspace() {
   if (!record) {
     return (
       <Sheet>
-        <p className="type-body text-ink-muted">Opening this record.</p>
+        <p className="type-ui text-ink-muted">Opening this record.</p>
       </Sheet>
     )
   }
 
-  const attentionCount = ATTENTION_VERDICTS.reduce((total, verdict) => total + record.counts[verdict], 0)
+  // Flagged and undecided, which is what the sentence beneath the chips says. The chips above it
+  // stay on the machine's own tallies: they are a filter over what Cekgu found, not over what is
+  // left to do, and the two numbers disagreeing after a decision is the point rather than a bug.
+  const attentionCount = record.items.filter(
+    (item) => ATTENTION_VERDICTS.includes(item.verdict) && item.dispositions.length === 0
+  ).length
   const ordered = [...record.items].sort((a, b) => {
     const rank = (verdict: ItemVerdict) => (verdict === 'clear' ? 1 : 0)
     return rank(a.verdict) - rank(b.verdict) || a.position - b.position
@@ -96,7 +101,7 @@ export function RecordWorkspace() {
       <h2 className="mt-8">Items</h2>
       {shown.length === 0 ? (
         <div className="py-12">
-          <p className="type-body text-ink-muted">No items match this filter.</p>
+          <p className="type-ui text-ink-muted">No items match this filter.</p>
           <button
             type="button"
             onClick={() => setFilter(null)}

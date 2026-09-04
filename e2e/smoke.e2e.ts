@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, type Page, test } from '@playwright/test'
 
 // TRD section 18: the first three steps of the demo acceptance test, run against a real
 // deployment. The steps that need screens which do not exist yet are marked below with the
@@ -76,10 +76,25 @@ test('sign in as guest lands in the guest workspace with the warning banner', as
 // list is showing without depending on a wrapper element's shape.
 const EVIDENCE = 'Show Evidence'
 
+// A Clear item with no decision on it collapses to one line, so that the items actually asking
+// something are not buried under nine that are not. Its evidence is still reachable — that is the
+// product's whole provenance claim — but it is one click further in, so a count of the evidence
+// buttons has to open the quiet rows first. Opening them is itself the assertion that every item
+// can still be reached.
+async function openEveryItem(page: Page): Promise<void> {
+  // Wait for the list before counting: called straight after a goto, an empty count means the
+  // items have not arrived yet rather than that they are all open, and the loop would exit having
+  // opened nothing.
+  await expect(page.getByRole('button', { name: /^Possible Key Error/ })).toBeVisible()
+  const quiet = page.getByRole('button', { expanded: false }).filter({ hasText: /Clear/ })
+  for (let n = await quiet.count(); n > 0; n = await quiet.count()) await quiet.first().click()
+}
+
 test('the sample record opens with its counts', async ({ page }) => {
   await page.goto('/sample')
 
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/practice set/i)
+  await openEveryItem(page)
   await expect(page.getByRole('button', { name: EVIDENCE })).toHaveCount(12)
 
   // The counts come from the seeded pass, so they are asserted as a set rather than as one number:
@@ -96,6 +111,7 @@ test('the sample record opens with its counts', async ({ page }) => {
 
 test('filtering to Possible Key Error narrows the item list', async ({ page }) => {
   await page.goto('/sample')
+  await openEveryItem(page)
   await expect(page.getByRole('button', { name: EVIDENCE })).toHaveCount(12)
 
   const filter = page.getByRole('button', { name: /^Possible Key Error/ })

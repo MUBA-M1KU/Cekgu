@@ -56,7 +56,7 @@ export function TrustSection() {
           <h2 className="text-[clamp(2rem,3.4vw,2.75rem)]/[1.1] tracking-[-0.025em]">
             Your questions leave our server. Here is what that means.
           </h2>
-          <p className="type-lead mt-5 text-ink-muted">
+          <p className="type-ui mt-5 text-[1.0625rem]/[1.6] text-ink-muted">
             Cekgu asks you to send your questions to a network of machines that we do not control, so it is worth being
             plain about what that means and what it does not. Your records belong to your account. A private account's
             library is visible only to that account. The Guest workspace is shared by everyone who uses it and is not

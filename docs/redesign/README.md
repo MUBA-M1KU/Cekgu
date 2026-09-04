@@ -8,6 +8,17 @@ change to `src/client/` and to [`../DESIGN.md`](../DESIGN.md).
 Raised by [issue #44](https://github.com/MUBA-M1KU/Cekgu/issues/44). The design system these argue with is
 [`../DESIGN.md`](../DESIGN.md), which stays canonical until a direction is adopted and folded into it.
 
+Contents:
+
+1. [How to look at them](#how-to-look-at-them)
+1. [The three directions](#the-three-directions)
+1. [What changed in C after it was chosen](#what-changed-in-c-after-it-was-chosen)
+1. [The second revision](#the-second-revision)
+1. [The third revision](#the-third-revision)
+1. [What the diagnosis rests on](#what-the-diagnosis-rests-on)
+1. [Quality checks run against these files](#quality-checks-run-against-these-files)
+1. [What is deliberately not here](#what-is-deliberately-not-here)
+
 ## How to look at them
 
 Open [`index.html`](index.html) in a browser. It carries the diagnosis, the three directions side by side and a
@@ -153,9 +164,15 @@ runs at. The findings that drove the work:
 `impeccable`'s slop detector was run over this directory. The first pass returned **122 findings**. Sixty-nine were
 genuine WCAG AA contrast failures introduced by darkening the grounds without re-solving the muted text on them, and
 those are fixed: every text token in all four files now clears 4.5:1 on every ground it sits on, solved numerically
-rather than by eye. Also fixed, and worth naming because they were reached for by reflex: a tracked-caps eyebrow above
-the headline on **all four** pages, text below the system's own 12 px floor, skipped heading levels, a pulsing dot
-announcing liveness on a static page, and a decorative repeating-gradient texture.
+rather than by eye.
+
+Five more are fixed and worth naming, because each was reached for by reflex:
+
+- A tracked-caps eyebrow above the headline, on **all four** pages
+- Text below the system's own 12 px floor
+- Skipped heading levels
+- A pulsing dot announcing liveness on a static page
+- A decorative repeating-gradient texture
 
 **Twenty-five findings are declined**, with reasons, so they are not re-litigated:
 

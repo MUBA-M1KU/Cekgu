@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import type { DispositionInput } from '../../shared/schemas'
-import type { Item } from '../../shared/types'
-import { BubbleRow } from './BubbleRow'
+import type { Attempt, Item } from '../../shared/types'
 import { DispositionGroup, dispositionLabel } from './DispositionGroup'
 import { EvidencePanel } from './EvidencePanel'
+import { ReadRow } from './ReadRow'
 import { StatusChip } from './StatusChip'
 import { VerdictChip } from './VerdictChip'
 
@@ -16,6 +16,19 @@ type Props = {
 
 const FAIL_CLOSED = 'Two independent, receipt-verified readings are required before Cekgu gives a verdict.'
 
+// Distinctness is proven by the receipt, so the two seats are chosen on served model. EvidencePanel
+// below applies the same rule, and the row and the panel must name the same reader B.
+function admittedSeats(item: Item): Attempt[] {
+  const seats: Attempt[] = []
+  for (const attempt of item.attempts) {
+    if (!attempt.admitted || !attempt.reading) continue
+    if (seats.some((chosen) => chosen.servedModel === attempt.servedModel)) continue
+    seats.push(attempt)
+    if (seats.length === 2) break
+  }
+  return seats
+}
+
 // A level-0 row: hairline separated, numbered with the paper's own item number in a left gutter.
 // The numbering is the paper's, so it is allowed. DESIGN.md Layout.
 export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
@@ -23,6 +36,39 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
   const [showEvidence, setShowEvidence] = useState(false)
   const latest = item.dispositions.at(-1)
   const needsDecision = item.verdict !== 'clear' && item.verdict !== 'pending'
+
+  // A clean item is the control, not the work. On the sample paper nine of twelve come back Clear,
+  // and giving each of them a stem, a reading row, a sentence and a button buries the three that
+  // are actually asking something behind nine hundred pixels of nothing-is-wrong. So a Clear item
+  // with no decision on it collapses to one line, and opening it gives back the whole row —
+  // including the evidence, which stays reachable on every item because the receipts are the
+  // product's claim and a judge must be able to open any of them.
+  const [open, setOpen] = useState(false)
+  const quiet = item.verdict === 'clear' && item.status === 'done' && !latest && !open
+
+  if (quiet) {
+    return (
+      <li className="border-t border-rule">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-expanded={false}
+          className="flex w-full items-center gap-3 py-3 text-left sm:gap-4"
+        >
+          <span className="type-mono w-7 shrink-0 text-ink-muted sm:w-10">{item.position}</span>
+          <ReadRow
+            options={item.options}
+            keyLetter={item.key}
+            readerA={admittedSeats(item)[0]?.reading?.answer ?? null}
+            readerB={admittedSeats(item)[1]?.reading?.answer ?? null}
+            condensed
+          />
+          <span className="type-body min-w-0 flex-1 truncate">{item.stem}</span>
+          <VerdictChip verdict={item.verdict} />
+        </button>
+      </li>
+    )
+  }
 
   async function record(input: DispositionInput) {
     setBusy(true)
@@ -43,8 +89,16 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
           </span>
         </div>
 
+        {/* The key and both readings in one row of letters: filled is what you keyed, and each
+            ring is a reader that chose that option. Two rings landing off the fill is the whole
+            reason this screen exists, and it should be visible before the sentence is read. */}
         <div className="mt-3">
-          <BubbleRow options={item.options} filled={item.key} label={`Supplied key for question ${item.position}`} />
+          <ReadRow
+            options={item.options}
+            keyLetter={item.key}
+            readerA={admittedSeats(item)[0]?.reading?.answer ?? null}
+            readerB={admittedSeats(item)[1]?.reading?.answer ?? null}
+          />
         </div>
 
         {item.verdictReason ? <p className="mt-3 max-w-[70ch]">{item.verdictReason}</p> : null}

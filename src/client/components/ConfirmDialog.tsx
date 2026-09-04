@@ -47,7 +47,7 @@ export function ConfirmDialog({ open, title, body, onCancel, onConfirm }: Props)
     >
       <h2 className="text-[1.25rem]/[1.25] font-semibold">{title}</h2>
       {body.map((sentence) => (
-        <p key={sentence} className="type-body mt-3">
+        <p key={sentence} className="type-ui mt-3">
           {sentence}
         </p>
       ))}

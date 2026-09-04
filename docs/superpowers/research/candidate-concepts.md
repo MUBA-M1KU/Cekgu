@@ -81,8 +81,9 @@ trivially replicable there.
 
 **The wound is real, documented and famous.** In February 2023 an Italian regulator's order led Luka to deploy a global
 filter overnight, stripping Replika's companions of the personality long-term users had built. Users called it **"the
-lobotomy"** and _"a friend with dementia"_; **r/Replika moderators pinned suicide-prevention hotlines**. A peer-reviewed
-study analysed 227 threads from the aftermath
+lobotomy"** and _"a friend with dementia"_; **r/Replika moderators pinned suicide-prevention hotlines**.
+
+A peer-reviewed study analysed 227 threads from the aftermath
 ([Hanson & Bolthouse, 2024](https://journals.sagepub.com/doi/10.1177/23780231241259627)). Only users who signed up
 before 1 February 2023 were offered a rollback.
 
@@ -123,7 +124,7 @@ silent change.
 Scored the highest native rating of anything found — _"binding on-chain governance over model identity is the one thing
 a closed vendor can never offer, by definition"_ — and died on buildability. Live governance params:
 
-```
+```text
 voting_period  172800s (48 hours)
 min_deposit    500000000000 ngonka
 quorum         25%     threshold 50%     veto 30%
@@ -168,16 +169,18 @@ extension was not connected, so domain fit was taken from the team's own descrip
 Full verification with every citation: [`verify-insurance-claims.md`](verify-insurance-claims.md),
 [`verify-akta-kata.md`](verify-akta-kata.md), [`verify-angka.md`](verify-angka.md),
 [`verify-sarikata-qc.md`](verify-sarikata-qc.md), [`verify-minit.md`](verify-minit.md),
-[`verify-sumber.md`](verify-sumber.md) and [`verify-gig-deactivation.md`](verify-gig-deactivation.md). Angka, Sarikata
-QC, Minit and Sumber tie at 78. Real user carries `[ASSUMPTION]` in all seven, as elsewhere in this ledger: the person
-is inferred from published survey, filing and workflow figures, not from talking to one.
+[`verify-sumber.md`](verify-sumber.md) and [`verify-gig-deactivation.md`](verify-gig-deactivation.md).
+
+Angka, Sarikata QC, Minit and Sumber tie at 78. Real user carries `[ASSUMPTION]` in all seven, as elsewhere in this
+ledger: the person is inferred from published survey, filing and workflow figures, not from talking to one.
 
 **Selection after Round 11.** The table deliberately did not score team familiarity, judge legibility or the shorter
-build window. Its 84 therefore remains the result of the Round 11 method, not the final product decision. On 3 September
-the team selected Vetting Room, since named **Cekgu**, after a separate review found that four Computer Science students
-can explain the exam problem from lived experience, demonstrate it with their own subject matter and make every
-GonkaRouter requirement part of the product. The 3 September mechanism benchmark produced no wrong consensus but failed
-on availability and latency, so Cekgu uses an asynchronous, retrying product design; see
+build window. Its 84 therefore remains the result of the Round 11 method, not the final product decision.
+
+On 3 September the team selected Vetting Room, since named **Cekgu**, after a separate review found that four Computer
+Science students can explain the exam problem from lived experience, demonstrate it with their own subject matter and
+make every GonkaRouter requirement part of the product. The 3 September mechanism benchmark produced no wrong consensus
+but failed on availability and latency, so Cekgu uses an asynchronous, retrying product design; see
 [`The second opinion`](three-day-rescore.md#the-second-opinion).
 
 ### Rank 1 — Tuntut
@@ -265,16 +268,24 @@ desk would move Real user from 13 to 17.
 
 A volunteer strata committee, a JMB or MC, has a transcript of its meeting and a statutory clock: the Strata Management
 Act 2013 makes the committee keep minutes, display committee minutes within 21 days, file AGM minutes with the
-Commissioner of Buildings within 28, and makes the signed minutes prima facie evidence in court. Two models from two
-labs, blind to each other, each extract decisions, actions and open items, and every item lands in one of three states:
-both agree, one reader only (the chair confirms or drops it), or readers conflict (the passage is shown), with a request
-id per reading. The adjudicator is the chair's signature, then the Tribunal.
+Commissioner of Buildings within 28, and makes the signed minutes prima facie evidence in court.
+
+Two models from two labs, blind to each other, each extract decisions, actions and open items. Every item lands in one
+of three states, with a request id per reading:
+
+- **Both agree**
+- **One reader only** — the chair confirms or drops it
+- **Readers conflict** — the passage is shown
+
+The adjudicator is the chair's signature, then the Tribunal.
 
 **Mechanism probe, measured live 2 Sept 2026**, single run, on a synthetic three-item strata committee transcript.
 MiniMax-M2.7 extracted the pool-repair decision (RM12,500), Mrs Tan's action and two open items, but omitted Mr Raj's
 action, a third lift quote from Schindler by 20 September. Kimi-K2.6 (51 s) extracted all of them, Raj's action
 included. The two labs therefore disagreed on exactly one item, unplanted, and it was a real omission: the product's
-"one reader heard this, confirm" case. DeepSeek returned upstream 429 on every call during the probe, see
+"one reader heard this, confirm" case.
+
+DeepSeek returned upstream 429 on every call during the probe, see
 [`gateway-capabilities.md`](gateway-capabilities.md#measured-2-september-2026). `[ASSUMPTION]` One transcript, one run;
 that the omission rate generalises is untested.
 
@@ -300,10 +311,12 @@ newsrooms for v1, with a Malaysian ministry press statement as the demo's source
 **Mechanism probe, measured live 2 Sept 2026**, single run: four draft sentences against one Bahasa Malaysia audit
 passage, a paraphrase of the LKAN 2/2025 paragraph on RM48.873 billion of flood-mitigation spending. MiniMax-M2.7
 returned the expected verdict on 4 of 4, including marking "identified RM48.873 billion in leakages" unsupported because
-the passage says spent, not leaked, and states that no excess payments were found. DeepSeek returned upstream 429 on
-every call during the probe, see [`gateway-capabilities.md`](gateway-capabilities.md#measured-2-september-2026), so no
-second-lab comparison was possible in that run. `[ASSUMPTION]` Four sentences from one lab; that the verdict rate
-generalises, or that two labs split where they should, is untested.
+the passage says spent, not leaked, and states that no excess payments were found.
+
+DeepSeek returned upstream 429 on every call during the probe, see
+[`gateway-capabilities.md`](gateway-capabilities.md#measured-2-september-2026), so no second-lab comparison was possible
+in that run. `[ASSUMPTION]` Four sentences from one lab; that the verdict rate generalises, or that two labs split where
+they should, is untested.
 
 **Strongest verified fact.** In December 2024 Apple Intelligence summarised a BBC notification to say Luigi Mangione had
 shot himself when the BBC story said no such thing, and Apple paused news summaries on 17 January 2025: a
@@ -592,10 +605,10 @@ is the finding**, and it is worth more than a forced recommendation.
 Two concepts survived a six-gate filter, then both died on measurement. See
 [`gateway-capabilities.md`](gateway-capabilities.md#network-reality--measured-not-marketed).
 
-| Concept                  | Killed by                                                                                                                                             |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Liar's Court**         | Replays hosts caught cheating, losing collateral. **There are no cheating slashes** — all 50 recent events are `downtime` and `missing_signature`     |
-| **Who Holds Your Words** | Maps the strangers' machines that could serve your prompt, with their stakes. Would render **10 validators and one entity holding 71% of collateral** |
+- **Liar's Court** replays hosts caught cheating, losing collateral. **There are no cheating slashes** — all 50 recent
+  events are `downtime` and `missing_signature`.
+- **Who Holds Your Words** maps the strangers' machines that could serve your prompt, with their stakes. It would render
+  **10 validators and one entity holding 71% of collateral**.
 
 **Frozen Friend also died here**, on a fact already in the research: proposal **#87 removed Kimi K2.6 from the
 network**. A companion "pinned forever" to it would have vanished. Any concept depending on a specific model lineup is
@@ -672,9 +685,10 @@ deliberation is invisible.
 **Incumbent test — the sharpest of any candidate.** LLM drift monitoring is a crowded category: Galileo, Arize, Fiddler,
 Weights & Biases, Agenta. Every one is **builder-side**, and every one can only **infer** drift statistically, because
 the category's own literature concedes the ceiling — _"providers might update models without announcement."_ Arize's
-pitch is getting from "something changed" to "what changed" by consolidating dashboards. **They infer. Gonka attests.**
-No incumbent can match that without their supplier agreeing to be pinned, which is precisely what a closed provider
-sells the freedom not to do.
+pitch is getting from "something changed" to "what changed" by consolidating dashboards.
+
+**They infer. Gonka attests.** No incumbent can match that without their supplier agreeing to be pinned, which is
+precisely what a closed provider sells the freedom not to do.
 
 **Why the three models are structural.** They are the **subject** of the audit, not the tools. Three independently
 governed models, each pinned to its own verifiable commit by its own proposal, benchmarked against each other on
@@ -758,10 +772,11 @@ app never needs to say why. The user is holding both exhibits and can verify the
 
 **The societal claim is a real, unenforced right.** The Consumer Protection Act 1999 requires prices to be displayed
 before purchase, and the Price Control and Anti-Profiteering (Price Marking for Goods and Charges for Services) Order
-2020 makes price marking mandatory. **KPDN's eAduan portal accepts receipts and photos as evidence.** The right exists;
-exercising it requires remembering and proving the menu price, which nobody can do. This makes the proof automatic.
-Enforcement is live — KPDN runs Ops Menu, has referred cases to prosecutors, and a RM902 fish dish at Genting went viral
-in March 2026.
+2020 makes price marking mandatory. **KPDN's eAduan portal accepts receipts and photos as evidence.**
+
+The right exists; exercising it requires remembering and proving the menu price, which nobody can do. This makes the
+proof automatic. Enforcement is live — KPDN runs Ops Menu, has referred cases to prosecutors, and a RM902 fish dish at
+Genting went viral in March 2026.
 
 **Incumbent test.** Receipt scanners (Fetch, expense tools) digitise receipts. Delivery-app price comparison is manual.
 Menu scraping exists as B2B tooling for restaurants. **No product diffs a photographed menu against a photographed

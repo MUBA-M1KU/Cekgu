@@ -73,8 +73,8 @@ cross-origin font fetch, so the deck only rendered correctly when the bytes were
 | **Spline Sans Mono**  | 36 KB        | SIL Open Font License 1.1 |
 
 Base64 costs a third more, so 204 KB of woff2 becomes 275 KB of CSS. Measured after: the HTML is 324 KB and `docs/demo/`
-is 924 KB, both inside the budget below. `font-display` is `block`, not `swap`, so a slide never flashes a fallback face
-in front of a judge.
+is 924 KB, both inside [the size budget](#stay-inside-the-size-budget). `font-display` is `block`, not `swap`, so a
+slide never flashes a fallback face in front of a judge.
 
 Re-fetch them from the same Google Fonts URL the scaffold's `src/client/index.html` uses, keep only the `/* latin */`
 blocks, and base64 each file once.

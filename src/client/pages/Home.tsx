@@ -8,6 +8,7 @@ import { PricingSection } from './home/PricingSection'
 import { SampleSection } from './home/SampleSection'
 import { TrustBand } from './home/TrustBand'
 import { TrustSection } from './home/TrustSection'
+import { VerdictBand } from './home/VerdictBand'
 
 // One page, four anchors. How It Works, Sample Report, Pricing and Trust and Privacy were four
 // routes; a visitor who has never heard of Cekgu should not have to navigate to find out what it
@@ -36,12 +37,21 @@ export function Home() {
 
   return (
     <>
-      <Hero record={record} />
-      <TrustBand />
-      <HowItWorksSection />
-      <SampleSection record={record} />
-      <PricingSection />
-      <TrustSection />
+      {/* The hero and the ticker are one viewport, pinned; everything after them scrolls over the
+          pair like a drawer closing. The two halves have to be siblings for that, and the second
+          one has to carry its own ground. */}
+      <div className="hero-shell">
+        <Hero record={record} />
+        <TrustBand />
+      </div>
+
+      <div className="landing-body">
+        <HowItWorksSection />
+        <VerdictBand record={record} />
+        <SampleSection record={record} />
+        <PricingSection />
+        <TrustSection />
+      </div>
     </>
   )
 }
