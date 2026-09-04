@@ -231,7 +231,16 @@ test('no two links in the workspace share a name and lead somewhere different', 
 // Issue #161 and c3638's report: an unauthenticated visitor was served the whole authenticated
 // shell — rail, topbar and an account menu reading "Signed In" over an em dash — on a URL whose
 // data could only ever 401. These assert the redirect and the absence of that chrome.
-const APP_ROUTES = ['/dashboard', '/records', '/new-check', '/settings']
+const APP_ROUTES = [
+  '/dashboard',
+  '/records',
+  '/new-check',
+  '/settings',
+  // The deep link is the one people actually share, and it is the one c3638 reported: a record
+  // they had deleted, opened in a browser that had never signed in. The id is deliberately one
+  // that does not exist, because the guard is route-level and must not rest on the row surviving.
+  '/records/00000000-0000-4000-8000-000000000000'
+]
 
 for (const route of APP_ROUTES) {
   test(`an unauthenticated visitor to ${route} is sent to sign in`, async ({ page }) => {
