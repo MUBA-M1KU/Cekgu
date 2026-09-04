@@ -11,8 +11,13 @@ import { defineConfig, devices } from '@playwright/test'
 // environment variable.
 const baseURL = process.env.E2E_BASE_URL ?? 'https://cekgu-op7lf5dspq-as.a.run.app'
 
-// Config modules evaluate once, before the first test, so this lands at the top of every run.
-console.log(`\ne2e target: ${baseURL}${process.env.E2E_BASE_URL ? '' : '  (default: the deployment, not your tree)'}\n`)
+// Config modules evaluate once per process, and Playwright loads them in the runner AND in every
+// worker — so an unguarded log prints once per worker plus one. TEST_WORKER_INDEX is set only in a
+// worker, which makes its absence the runner, which is the one place this belongs.
+if (!process.env.TEST_WORKER_INDEX)
+  console.log(
+    `\ne2e target: ${baseURL}${process.env.E2E_BASE_URL ? '' : '  (default: the deployment, not your tree)'}\n`
+  )
 
 export default defineConfig({
   testDir: './e2e',
