@@ -384,8 +384,8 @@ curl -s https://api.gonkarouter.io/v1/messages \
 | `bun run check:anchors` | Resolve every Markdown anchor link |
 | `gh issue list`         | The TODO board                     |
 
-A default `bun test` needs nothing but the repo: on 4 September it read **205 pass, 73 skip, 0 fail** — 278 tests across
-27 files, 902 `expect()` calls. The 73 skips are the six database-backed suites, which take `TEST_DATABASE_URL` and
+A default `bun test` needs nothing but the repo: on 5 September it read **226 pass, 73 skip, 0 fail** — 299 tests across
+32 files, 952 `expect()` calls. The 73 skips are the six database-backed suites, which take `TEST_DATABASE_URL` and
 refuse any host but localhost, because they truncate what they connect to.
 
 Each of those suites **truncates** the database it connects to, so running them together in one process makes them clear
