@@ -1,3 +1,4 @@
+import type { ChatMessage } from '../shared/chat'
 import type { CreateRecordInput, DispositionInput } from '../shared/schemas'
 import type { AccountStats, Health, ReceiptLookup, ReceiptStatus, RecordDetail, RecordSummary } from '../shared/types'
 
@@ -202,6 +203,23 @@ export async function getReceipt(requestId: string): Promise<ReceiptLookup> {
 // sends, so this works from the app and not from a bare curl.
 export async function signOut(): Promise<void> {
   await request<{ success: boolean }>('/api/auth/sign-out', { method: 'POST', body: '{}' })
+}
+
+// The agent is scoped to one record by its URL, and the history is sent back as prose only: the
+// server rebuilds every citation from the record it loads, so an edited request id in a client's
+// history buys nothing.
+export async function askRecord(id: string, question: string, history: ChatMessage[]): Promise<ChatMessage[]> {
+  if (MOCK) {
+    const { mockAnswer } = await import('./mock-record')
+    return mockAnswer(id)
+  }
+
+  const body = await request<{ messages: ChatMessage[] }>(`/api/records/${encodeURIComponent(id)}/chat`, {
+    method: 'POST',
+    body: JSON.stringify({ question, history })
+  })
+
+  return body.messages
 }
 
 export async function getSample(): Promise<RecordDetail> {

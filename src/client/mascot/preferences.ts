@@ -59,6 +59,45 @@ export function useMotionSetting(): MotionSetting {
   return useSyncExternalStore(subscribe, motionSetting)
 }
 
+const MUTE_KEY = 'cekgu.mute'
+const MUTE_CHANGED = 'cekgu:mute'
+
+// Mute and Reduce Motion are separate switches over separate senses, and neither implies the other.
+// Someone who turns the animation off may still want to be told what was found, and someone who
+// silences a shared office still wants the cats moving. Muting stops audio only; the captions that
+// carry the same words and the request ids behind them are never suppressed.
+export function isMuted(): boolean {
+  try {
+    return localStorage.getItem(MUTE_KEY) === 'true'
+  } catch {
+    // Storage blocked. Audible is the default, and the mute control still works for this page.
+    return false
+  }
+}
+
+export function setMuted(value: boolean): void {
+  try {
+    localStorage.setItem(MUTE_KEY, String(value))
+  } catch {
+    // Nothing to do: the event below still updates this page, it just will not outlive it.
+  }
+  window.dispatchEvent(new Event(MUTE_CHANGED))
+}
+
+function subscribeMute(onChange: () => void): () => void {
+  window.addEventListener(MUTE_CHANGED, onChange)
+  window.addEventListener('storage', onChange)
+
+  return () => {
+    window.removeEventListener(MUTE_CHANGED, onChange)
+    window.removeEventListener('storage', onChange)
+  }
+}
+
+export function useMuted(): boolean {
+  return useSyncExternalStore(subscribeMute, isMuted)
+}
+
 // styles.css keys the NFR-UX-5 reset off this attribute, so the stored setting has to reach the
 // document at boot as well as on every change. Absent means follow the system, which is why the
 // attribute is removed rather than written as "system": the CSS asks whether it is "full".

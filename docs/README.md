@@ -150,7 +150,7 @@ The product is built for practice papers and synthetic examples, not for confide
 
 - **One inference path.** `src/server/gateway/client.ts` is the only file that calls a model for reasoning, and
   `src/server/gateway/only-gonkarouter.test.ts` fails the build if a provider hostname or SDK appears anywhere in `src/`
-  outside the single documented transcription directory.
+  outside the two documented provider directories named below.
 - **Two families, proven distinct by receipt.** A verdict needs two admitted readings whose **served** models differ.
   Distinctness is taken from the receipt the gateway wrote, never from the model that was requested, so two calls to one
   family can never be counted as two readers.
@@ -231,12 +231,33 @@ claims one queued item at a time, runs its round, writes the verdict and moves o
 lease is released so a Cloud Run restart cannot strand a question. When evidence is insufficient the pipeline fails
 closed to **Unverified** and says so, rather than manufacturing a second opinion.
 
-**The one call that does not go to GonkaRouter.** An uploaded image or PDF is sent to a vision model to transcribe the
-words already printed on it. It is forbidden by its own prompt from answering a question, marking an option correct, or
-supplying a key that is not printed, and it creates no record. Every judgement about what those words mean is made
-afterwards by Gonka models carrying request ids. The exemption is one directory wide, `src/server/transcribe/`, and the
-test named above fails the build if it widens. The measured rationale is in
+**The two calls that do not go to GonkaRouter.** Both are named here rather than left to be found, because a boundary a
+reader has to discover is worse than the boundary itself.
+
+_Transcription decides nothing._ An uploaded image or PDF is sent to a vision model to transcribe the words already
+printed on it. It is forbidden by its own prompt from answering a question, marking an option correct, or supplying a
+key that is not printed, and it creates no record. Every judgement about what those words mean is made afterwards by
+Gonka models carrying request ids. The measured rationale is in
 [TRD section 20](TRD.md#20-reading-a-paper-from-an-upload).
+
+_The record assistant is the more serious boundary, and it is not claimed as a non-reasoning one._ The chat on a record
+page is phrased off the gateway, and answering a question about a record sits closer to reasoning than transcription
+does. What holds instead is narrower, and all of it is checkable in the code:
+
+- Every fact it states is retrieved by pure functions in [`src/server/chat/`](../src/server/chat/) from readings two
+  Gonka models produced, each carrying an `x-request-id` and a public receipt. The model phrases those facts and is
+  forbidden from adding one. A citation that does not resolve against the record is dropped rather than rendered, so an
+  invented request id never becomes a link
+- It may not adjudicate: it cannot say which option is correct, confirm or reject a key, or solve a question. Cekgu does
+  not certify answers, and its assistant does not either
+- Its own response id is labelled by provider and drawn as a visibly different object from a Gonka receipt — unlinked,
+  because there is nothing to open
+- `CHAT_PROVIDER=gonka` moves it onto the gateway without a code change
+
+**Every blind read, every verdict and every receipt in this product is GonkaRouter's.** The exemption is two directories
+wide, `src/server/transcribe/` and `src/server/chat/`, and the test named above fails the build if it widens again, if
+either directory imports the verdict rule or the record writer, or if a provider hostname reaches the reasoning path at
+all. [TRD section 21](TRD.md#21-the-readers-voice-and-the-record-assistant) holds the decision and its reasoning.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -251,7 +272,8 @@ test named above fails the build if it widens. The measured rationale is in
 | Auth           | Better Auth                                    | Email and password, Google OAuth, shared Guest workspace         |
 | Inference      | GonkaRouter                                    | Blind reads, draft structuring, receipts — all reasoning         |
 | Transcription  | Vision model, uploads only                     | Printed text from an image or PDF, no judgement                  |
-| Mascot         | PixiJS, pixi-live2d-display                    | Optional Live2D reader avatars                                   |
+| Assistant      | Phrasing layer, one record at a time           | Wording for facts retrieved from Gonka readings                  |
+| Mascot         | PixiJS, pixi-live2d-display, Web Speech        | Live2D reader seats, their captions and their voice              |
 | Hosting and CI | Cloud Run, Artifact Registry, GitHub Actions   | Container build, tagged PR previews, production deploy           |
 | Quality        | Biome, Prettier, TypeScript, Playwright        | Lint, format, strict types, browser smoke pass                   |
 

@@ -23,7 +23,9 @@ jq -n --argjson all "${ALL_SECRETS:?ALL_SECRETS is unset}" '
       GUEST_PASSWORD,
       MASCOT_ENABLED,
       GEMINI_API_KEY,
-      GEMINI_MODEL
+      GEMINI_MODEL,
+      CHAT_PROVIDER,
+      CHAT_MODEL
     }
   | with_entries(select(.value != null and .value != ""))
 ' > "$out"

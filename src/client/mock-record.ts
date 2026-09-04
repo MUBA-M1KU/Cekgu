@@ -1,3 +1,5 @@
+import type { ChatMessage, Citation, Seat } from '../shared/chat'
+import { seatedAttempts } from '../shared/chat'
 import type { DispositionInput } from '../shared/schemas'
 import type { AccountStats, Attempt, Item, Reading, RecordDetail, RecordSummary, VerdictCounts } from '../shared/types'
 import { verdict } from '../shared/verdict'
@@ -432,4 +434,72 @@ export function mockStats(): AccountStats {
       .map(([model, family]) => ({ model, ...family }))
       .sort((a, b) => b.readings - a.readings)
   }
+}
+
+// The mock agent turn, so the transcript, the citation pills and the two provenance treatments can
+// be looked at without a gateway key. It answers from the mock record's own first flagged item, so
+// the pills resolve against something real rather than being drawn from literals.
+export function mockAnswer(id: string): ChatMessage[] {
+  const record = mockRecord(id)
+  const item = record.items.find((candidate) => candidate.verdict !== 'clear' && candidate.verdict !== 'pending')
+  const seated = item ? seatedAttempts(item) : []
+  const [first, second] = seated
+
+  if (!item || !first) {
+    return [
+      {
+        id: crypto.randomUUID(),
+        role: 'agent',
+        seat: null,
+        text: 'Nothing in this record is flagged, so there is nothing for me to explain.',
+        citations: [],
+        provenance: { provider: 'gemini', responseId: 'resp-mock', model: 'gemini-2.5-flash' }
+      }
+    ]
+  }
+
+  const cite = (seat: Seat, attempt: typeof first): Citation => ({
+    kind: 'reading',
+    position: item.position,
+    seat,
+    model: attempt.servedModel ?? 'unknown',
+    requestId: attempt.requestId
+  })
+
+  const messages: ChatMessage[] = [
+    {
+      id: crypto.randomUUID(),
+      role: 'agent',
+      seat: null,
+      text: `Question ${item.position} is flagged because both readers landed on the same option and it is not your key.`,
+      citations: [{ kind: 'item', position: item.position }],
+      provenance: null
+    },
+    {
+      id: crypto.randomUUID(),
+      role: 'agent',
+      seat: 0,
+      text: `I read ${first.reading?.answer ?? '?'}, and I did not see your key before I answered.`,
+      citations: first.requestId
+        ? [cite(0, first), { kind: 'receipt', requestId: first.requestId, model: first.servedModel }]
+        : [cite(0, first)],
+      provenance: null
+    }
+  ]
+
+  if (second) {
+    messages.push({
+      id: crypto.randomUUID(),
+      role: 'agent',
+      seat: 1,
+      text: `So did I. Which option is actually correct is your call, not mine.`,
+      citations: [cite(1, second)],
+      provenance: null
+    })
+  }
+
+  const last = messages[messages.length - 1]
+  if (last) last.provenance = { provider: 'gemini', responseId: 'resp-mock-1788016913316', model: 'gemini-2.5-flash' }
+
+  return messages
 }

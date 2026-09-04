@@ -6,11 +6,10 @@ import { Glob } from 'bun'
 // enforces: all AI **reasoning and verification logic** must run on the Gonka Network via the
 // official gateway. Reasoning and verification, not every call a model ever serves.
 //
-// So there is one hole in the wall and it is named here rather than left to a reviewer's memory:
-// src/server/transcribe/ may reach a vision provider to turn pixels and PDF bytes into the words
-// printed on the page. That step decides nothing — every judgement about what those words mean is
-// made afterwards by two Gonka models carrying request ids. The hole is one directory wide, and
-// the reasoning path is asserted separately below so it can never widen into one.
+// So the holes in the wall are named here rather than left to a reviewer's memory. There are two,
+// they are listed in PROVIDER_DIRS below with the reasoning and the decider for each, and neither
+// may decide anything: the second assertion holds them to that by forbidding the imports a decision
+// would need. The reasoning path is asserted separately below so a hole can never widen into it.
 //
 // The rest is the easiest rule to break by accident — one `npm i openai` in a hurry, one base URL
 // edited while debugging — and nothing about a broken build would say so. The product would work.
@@ -37,9 +36,26 @@ const PROVIDER_PACKAGE =
 
 const sources = [...new Glob('src/**/*.{ts,tsx}').scanSync({ cwd: new URL('.', root).pathname })]
 
-// The single exemption, spelled as a path prefix so a second transcription file is covered and a
-// provider host anywhere else is not. Widening this line is the change a reviewer should stop.
-const TRANSCRIPTION_DIR = 'src/server/transcribe/'
+// The exemptions, spelled as path prefixes so a second file inside one is covered and a provider
+// host anywhere else is not. Widening this list is the change a reviewer should stop, and each
+// entry below records who decided it and on what reasoning.
+//
+//   src/server/transcribe/  Vision to text. Turns pixels and PDF bytes into the words already
+//                           printed on the page and is forbidden by its own prompt from deciding
+//                           anything about them. TRD section 20.
+//
+//   src/server/chat/        The record agent's phrasing layer. Decided by chaosiris on 4 September,
+//                           on the record in
+//                           docs/superpowers/specs/2026-09-04-talking-cats-and-record-agent-design.md.
+//                           THIS ONE IS DIFFERENT FROM THE FIRST AND THE DIFFERENCE MATTERS: an
+//                           answer about a record is closer to reasoning than a transcription is,
+//                           and a strict reading of the track's first rule does not permit it. What
+//                           keeps it honest rather than hidden is that every FACT the agent states
+//                           is retrieved by the pure tools in this directory from readings that
+//                           carry Gonka request ids and public receipts, the model only phrases
+//                           them, and the phrasing layer's own id is labelled by provider and never
+//                           rendered as a Gonka one. Set CHAT_PROVIDER=gonka to close it.
+const PROVIDER_DIRS = ['src/server/transcribe/', 'src/server/chat/']
 
 // Where reasoning actually happens. Named separately because the exemption above is a directory
 // rule, and a directory rule alone would not notice the day somebody moves a verdict into it.
@@ -51,7 +67,7 @@ describe('every inference goes through GonkaRouter', () => {
     for (const file of sources) {
       // This file names them on purpose; it is the thing doing the checking.
       if (file.endsWith('only-gonkarouter.test.ts')) continue
-      if (file.startsWith(TRANSCRIPTION_DIR)) continue
+      if (PROVIDER_DIRS.some((dir) => file.startsWith(dir))) continue
       const text = read(file)
       const match = DIRECT_PROVIDER_HOST.exec(text)
       if (match) offences.push(`${file}: ${match[0]}`)
@@ -59,11 +75,12 @@ describe('every inference goes through GonkaRouter', () => {
     expect(offences).toEqual([])
   })
 
-  // The exemption is for transcription only. If a file under it ever imports the verdict rule or
-  // the record writer, the boundary has stopped being a boundary.
-  test('the transcription boundary decides nothing', () => {
+  // An exemption buys a provider call, never a decision. If a file under one ever imports the
+  // verdict rule or the record writer, the boundary has stopped being a boundary. This is what
+  // holds the agent to retrieving what the Gonka readers already decided instead of deciding.
+  test('the provider boundaries decide nothing', () => {
     const offences: string[] = []
-    for (const file of sources.filter((name) => name.startsWith(TRANSCRIPTION_DIR))) {
+    for (const file of sources.filter((name) => PROVIDER_DIRS.some((dir) => name.startsWith(dir)))) {
       const text = read(file)
       for (const forbidden of ['shared/verdict', 'db/schema', 'queue/round', 'createRecordSchema']) {
         if (text.includes(forbidden)) offences.push(`${file}: ${forbidden}`)

@@ -1,7 +1,12 @@
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
 import type { Attempt, Item, ReceiptStatus } from '../../shared/types'
+import { useMuted } from '../mascot/preferences'
+import { itemUtterances } from '../mascot/speech'
+import { type SpeechHandle, speak } from '../mascot/voice'
 import { receiptPath } from '../pages/ReceiptView'
 import { BubbleRow } from './BubbleRow'
+import { VoiceOnIcon } from './icons'
 
 const RECEIPT_LABEL: Record<ReceiptStatus, string> = {
   verified: 'Verified',
@@ -81,6 +86,39 @@ function ReaderColumn({ item, attempt, seat }: { item: Item; attempt: Attempt; s
   )
 }
 
+/**
+ * The two readers, out loud, on request. Nothing here speaks on its own: the record page says the
+ * summary once and everything per item waits to be asked for, which is what keeps twelve items from
+ * becoming twelve interruptions.
+ *
+ * There is no caption because this panel IS the caption — every word spoken is already printed
+ * beside it. Muted, the control is not rendered at all rather than left dead, since the evidence is
+ * fully readable without it.
+ */
+function PlayReaders({ item }: { item: Item }) {
+  const muted = useMuted()
+  const handle = useRef<SpeechHandle | null>(null)
+
+  useEffect(() => () => handle.current?.cancel(), [])
+
+  const lines = itemUtterances(item)
+  if (muted || lines.length === 0) return null
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        handle.current?.cancel()
+        handle.current = speak(lines, { muted: false })
+      }}
+      className="btn btn-ghost btn-sm"
+    >
+      <VoiceOnIcon />
+      Play Readers
+    </button>
+  )
+}
+
 export function EvidencePanel({ item }: { item: Item }) {
   const admitted = item.attempts.filter((attempt) => attempt.admitted && attempt.reading)
 
@@ -96,7 +134,10 @@ export function EvidencePanel({ item }: { item: Item }) {
 
   return (
     <div className="mt-4 rounded-control bg-well p-4 sm:p-6">
-      <h3 className="type-eyebrow text-ink-muted">Evidence</h3>
+      <div className="flex items-center justify-between gap-4">
+        <h3 className="type-eyebrow text-ink-muted">Evidence</h3>
+        <PlayReaders item={item} />
+      </div>
 
       <div className="mt-4 flex flex-col gap-6 min-[720px]:flex-row">
         {readers[0] ? <ReaderColumn item={item} attempt={readers[0]} seat={0} /> : null}

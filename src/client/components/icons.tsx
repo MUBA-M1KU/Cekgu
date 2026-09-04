@@ -126,3 +126,25 @@ export const ChevronLeftIcon = (props: IconProps) => (
     <path d="M12 4.5 6.5 10l5.5 5.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
   </Icon>
 )
+
+// A reader speaking is the filled bubble the product already uses for a chosen option, with the
+// carry of a voice drawn off it. Muted keeps the bubble and cuts the carry, so the two glyphs read
+// as one state changing rather than two unrelated symbols.
+export const VoiceOnIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <circle cx="7" cy="10" r="3" fill="currentColor" />
+    <path
+      d="M12 7.2a4 4 0 0 1 0 5.6M14.6 5a7.5 7.5 0 0 1 0 10"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+    />
+  </Icon>
+)
+
+export const VoiceOffIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <circle cx="7" cy="10" r="3" fill="currentColor" />
+    <path d="M12.5 8l4 4M16.5 8l-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+  </Icon>
+)
