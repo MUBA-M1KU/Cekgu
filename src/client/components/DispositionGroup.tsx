@@ -13,8 +13,22 @@ const KINDS: { kind: DispositionKind; label: string; note: string }[] = [
 
 type Props = { options: Option[]; onRecord: (input: DispositionInput) => void; busy: boolean }
 
-// The chosen bubble fills in pen red, because a disposition is the human's mark and red is
-// reserved for the human hand. DESIGN.md Colour and Components.
+/**
+ * Five dispositions, one row.
+ *
+ * They were a vertical radio list with a note under every option, which is 300 px per item and the
+ * same 300 px on every flagged item. On the sample paper that is five identical forms stacked down
+ * the page, so the reader reads "You changed the supplied key" five times before making one
+ * decision, and the questions that are actually asking something are buried under the controls for
+ * answering them.
+ *
+ * One row of five, and the note belongs to the option under consideration rather than to all of
+ * them at once. Native radios inside labels, so arrow-key movement and the group semantics come
+ * from the browser rather than from ARIA we would have to keep correct (NFR-UX-2).
+ *
+ * The chosen chip fills pen red, which is the marked disposition bubble at chip scale: DESIGN.md
+ * reserves a filled red surface for exactly this and the destructive confirm button.
+ */
 export function DispositionGroup({ options, onRecord, busy }: Props) {
   const name = useId()
   const [kind, setKind] = useState<DispositionKind | null>(null)
@@ -22,14 +36,15 @@ export function DispositionGroup({ options, onRecord, busy }: Props) {
 
   const needsKey = kind === 'key_corrected'
   const blocked = kind === null || (needsKey && revisedKey === null)
+  const chosen = KINDS.find((entry) => entry.kind === kind)
 
   return (
-    <div className="mt-4">
+    <div className="disposition">
       <fieldset className="m-0 border-0 p-0">
         <legend className="type-eyebrow text-ink-muted">Your Decision</legend>
-        <div className="mt-3 flex flex-col gap-3">
+        <div className="disposition-row">
           {KINDS.map((entry) => (
-            <label key={entry.kind} className="flex cursor-pointer items-start gap-3">
+            <label key={entry.kind} className="disposition-chip type-label" data-chosen={kind === entry.kind}>
               <input
                 type="radio"
                 name={name}
@@ -37,38 +52,39 @@ export function DispositionGroup({ options, onRecord, busy }: Props) {
                 onChange={() => setKind(entry.kind)}
                 className="sr-only"
               />
-              <span
-                aria-hidden="true"
-                className={`mt-0.5 inline-block h-5 w-5 shrink-0 rounded-bubble border ${
-                  kind === entry.kind ? 'border-pen bg-pen' : 'border-rule-strong'
-                }`}
-              />
-              <span>
-                <span className="type-label block">{entry.label}</span>
-                <span className="type-caption text-ink-muted">{entry.note}</span>
-              </span>
+              {entry.label}
             </label>
           ))}
         </div>
       </fieldset>
 
+      {/* The note and the button belong to a decision in progress, so neither exists until a chip is
+          chosen. Rendered unconditionally they were five identical placeholder sentences and five
+          disabled buttons down the page, which is the same repetition the row was built to remove.
+          aria-live because the note replaces itself in place as the reader moves along the row. */}
+      <p className="type-caption disposition-note" aria-live="polite">
+        {chosen?.note ?? ''}
+      </p>
+
+      {chosen ? (
+        <button
+          type="button"
+          disabled={blocked || busy}
+          onClick={() => kind && onRecord({ kind, revisedKey, revisedText: null, note: null })}
+          className="btn btn-primary btn-sm mt-3"
+        >
+          Record Decision
+        </button>
+      ) : null}
+
       {needsKey ? (
-        <div className="mt-4">
+        <div className="disposition-key">
           <p className="type-label">Corrected Key</p>
           <div className="mt-2">
             <BubbleRow options={options} filled={revisedKey} onSelect={setRevisedKey} label="Corrected key" />
           </div>
         </div>
       ) : null}
-
-      <button
-        type="button"
-        disabled={blocked || busy}
-        onClick={() => kind && onRecord({ kind, revisedKey, revisedText: null, note: null })}
-        className="mt-4 inline-flex h-9 items-center rounded-control bg-ink px-4 font-medium text-on-ink disabled:opacity-60"
-      >
-        Record Decision
-      </button>
     </div>
   )
 }

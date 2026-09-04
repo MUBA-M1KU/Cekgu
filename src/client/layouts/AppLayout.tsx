@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link, Navigate, Outlet, useLocation } from 'react-router'
+import { Navigate, Outlet, useLocation } from 'react-router'
 import type { RecordSummary } from '../../shared/types'
 import { listRecords } from '../api'
 import { AppSidebar } from '../components/AppSidebar'
 import { AppTopbar } from '../components/AppTopbar'
 import { GuestDrawer } from '../components/GuestBanner'
+import { SiteFooter } from '../components/SiteFooter'
 import { useSession } from '../session'
 
 // Whether the sidebar is wide or narrow is a preference a person sets once and expects to find
@@ -107,14 +108,11 @@ export function AppLayout() {
         <main className="app-content">
           <Outlet />
         </main>
-
-        <footer className="app-footer" role="contentinfo">
-          <p className="type-caption text-ink-muted">Two readers, and the receipts to prove it.</p>
-          <Link to="/#trust" className="app-footer-link type-caption">
-            Trust and Privacy
-          </Link>
-        </footer>
       </div>
+
+      <footer className="app-footer" role="contentinfo">
+        <SiteFooter />
+      </footer>
     </div>
   )
 }
