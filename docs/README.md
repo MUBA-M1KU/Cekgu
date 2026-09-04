@@ -110,15 +110,32 @@ of those requirements in the product, not only in its source code.
 
 <img src="img/diagram-round.svg" alt="Two model families read one item in parallel, with retries and failed attempts recorded" width="100%">
 
-### The upload boundary
+### The provider boundaries
 
-An uploaded image or PDF is first sent to Google's Gemini API to transcribe the words printed on it. That is the sole
-non-reasoning boundary: it creates a draft only, cannot answer questions or invent an answer key, and does not create a
-record. GonkaRouter then structures the transcription and handles every later reasoning or verification step.
+Two steps do not run on GonkaRouter. Both are named here rather than left to be found, because a boundary a reader has
+to discover is worse than the boundary itself.
 
-This boundary is documented and guarded in the repository. See
-[TRD section 20](TRD.md#20-reading-a-paper-from-an-upload) for the measured rationale and
-[`only-gonkarouter.test.ts`](../src/server/gateway/only-gonkarouter.test.ts) for the enforcement test.
+**Transcription is not a judgement.** An uploaded image or PDF is sent to Google's Gemini API to transcribe the words
+printed on it. It produces a draft only, is forbidden by its own prompt from answering a question or supplying a key,
+and creates no record. GonkaRouter then structures that text and makes every decision about what it says.
+
+**The record assistant is the more serious boundary, and it is not claimed as a non-reasoning one.** The chat on a
+record page is phrased by Gemini, and answering a question about a record sits closer to reasoning than transcription
+does. What holds instead is narrower and checkable in the code:
+
+- Every fact it states is retrieved by pure functions in [`src/server/chat/`](../src/server/chat/) from readings two
+  Gonka models produced, each carrying an `x-request-id` and a public receipt. The model phrases those facts; it is
+  forbidden from adding one
+- It may not adjudicate. It cannot say which option is correct, confirm or reject an answer key, or solve a question.
+  Cekgu does not certify answers, and its assistant does not either
+- Its own response id is labelled by provider and is never rendered as a Gonka request id
+- `CHAT_PROVIDER=gonka` moves it onto the gateway without a code change
+
+**Every blind read, every verdict and every receipt in this product is GonkaRouter's.** Both boundaries are guarded in
+the repository: [`only-gonkarouter.test.ts`](../src/server/gateway/only-gonkarouter.test.ts) fails the build if a
+provider hostname appears anywhere outside those two directories, or if either of them imports the verdict rule or the
+record writer. See [TRD section 20](TRD.md#20-reading-a-paper-from-an-upload) for the measured rationale behind the
+first.
 
 <p align="right"><a href="#readme-top">back to top</a></p>
 
@@ -145,6 +162,7 @@ manufactured answer.
 | Data                 | PostgreSQL, Drizzle ORM                  | Accounts, records, and review history            |
 | AI                   | GonkaRouter                              | Blind reads, structuring, verification, receipts |
 | Upload transcription | Google Gemini API                        | Printed-text transcription only                  |
+| Record assistant     | Google Gemini API                        | Phrases answers retrieved from Gonka readings    |
 | Hosting              | Google Cloud Run                         | Deployed application                             |
 | Testing              | Bun test, Playwright, Biome, Prettier    | Unit, browser, lint, and document checks         |
 
