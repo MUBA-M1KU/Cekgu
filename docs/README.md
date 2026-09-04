@@ -274,6 +274,7 @@ public/                  static assets: brand/ and the Live2D mascot runtime fil
 drizzle/                 four committed SQL migrations
 e2e/                     Playwright: smoke.e2e.ts and flow.e2e.ts
 docs/                    this documentation tree, and the GitHub-facing readme
+  submission/            Devfolio field copy and submission handoff
 .github/workflows/       CI on pull request with a preview URL, deploy on merge
 Dockerfile               the Cloud Run image
 .agents/skills/          37 skills, the committed source of truth
