@@ -194,11 +194,15 @@ export function NewCheck() {
       <h2 className="mt-8">Questions</h2>
       {errorFor('items') ? <p className="mt-2 type-caption text-pen">{errorFor('items')}</p> : null}
 
+      {/* A card each, not a rule each. Twelve questions used to arrive as twelve hairlines down
+          the sheet, which is the same device the guest hint above already declines. */}
       {items.map((item, index) => (
-        <fieldset key={item.id} className="mt-5 border-0 border-t border-rule p-0 pt-5">
+        <fieldset key={item.id} className="mt-5 border-0 p-0">
+          {/* The legend stays outside the card. A <legend> renders in the fieldset's border box,
+              so putting the well on the fieldset itself hangs it over the card's top edge. */}
           <legend className="type-eyebrow text-ink-muted">Question {index + 1}</legend>
 
-          <div className="mt-4 flex flex-col gap-5">
+          <div className="mt-2 flex flex-col gap-5 rounded-sheet bg-well p-5">
             <Field label="Question" htmlFor={`stem-${index}`} error={errorFor('items', index, 'stem')}>
               <textarea
                 id={`stem-${index}`}
@@ -274,21 +278,21 @@ export function NewCheck() {
                 label={`Keyed option for question ${index + 1}`}
               />
             </Field>
-          </div>
 
-          {items.length > 1 ? (
-            <button
-              type="button"
-              className="mt-5 inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium"
-              onClick={() => setItems((current) => current.filter((_, i) => i !== index))}
-            >
-              Remove Question {index + 1}
-            </button>
-          ) : null}
+            {items.length > 1 ? (
+              <button
+                type="button"
+                className="inline-flex h-9 self-start items-center rounded-control border border-rule-strong px-4 font-medium"
+                onClick={() => setItems((current) => current.filter((_, i) => i !== index))}
+              >
+                Remove Question {index + 1}
+              </button>
+            ) : null}
+          </div>
         </fieldset>
       ))}
 
-      <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-rule pt-6">
+      <div className="mt-6 flex flex-wrap items-center gap-4">
         <button
           type="button"
           className="inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium disabled:opacity-60"

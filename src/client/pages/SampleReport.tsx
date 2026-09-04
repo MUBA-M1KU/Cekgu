@@ -71,7 +71,7 @@ export function SampleReport() {
         ))}
       </ul>
 
-      <p className="type-ui mt-8 border-t border-rule pt-5 max-w-[64ch] text-ink-muted">
+      <p className="type-ui mt-8 max-w-[72ch] rounded-sheet bg-well p-5 text-ink-muted">
         Want to run your own?{' '}
         <Link to="/sign-in" className="underline">
           Sign In as Guest
