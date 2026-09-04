@@ -1,8 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Cekgu">
   <!-- Dark-ground variant. The in-app mark is inline (src/client/components/Mark.tsx) and follows
-       the theme on its own; this file is for surfaces that can only take an <img> or a raster: the
-       deck, Devfolio, a README rendered on GitHub's dark theme. Ink is --ink dark (#eceae4) and the
-       pen is --pen dark (#f07079), both from docs/DESIGN.md rather than picked by eye. -->
+       the theme on its own; this file is for surfaces that can only take an img element or a
+       raster: the deck, Devfolio, a README rendered on GitHub's dark theme. Ink is the dark `ink`
+       token (#eceae4) and the pen is the dark `pen` token (#f07079), both from docs/DESIGN.md
+       rather than picked by eye.
+
+       Token names are written without their CSS prefix on purpose: a double hyphen is illegal
+       inside an XML comment, and it made this file fail to parse as a standalone document. -->
   <!-- The drawing occupies x 7..59.5 and y 8.5..53, so it sat 1.25 units right of centre and 1.25
        above it. Same shift as cekgu-mark.svg, which carries identical geometry. -->
   <g transform="translate(-1.25 1.25)">
