@@ -46,8 +46,8 @@ equals 282 s, which is 4:42. That is between 4:30 and 5:00, with 18 s of headroo
 10. [1:36] click, "Key Corrected", then click the "B" bubble under "Corrected Key", then click "Record Decision", then
     wait 2 s for the summary to update. "Cekgu doesn't change anything. The educator does, and the record keeps both.
     The machine verdict stays exactly where it was."
-11. [1:48] scroll, back over the twelve items on this record. "This sample has no Unverified question, so we skip that
-    beat rather than invent one: all twelve questions got two receipt-verified answers, so nothing reached the
+11. [1:48] scroll, back over the twelve questions on this record. "This sample has no Unverified question, so we skip
+    that beat rather than invent one: all twelve questions got two receipt-verified answers, so nothing reached the
     Unverified branch. If one had, Cekgu would refuse to invent consensus."
 12. [2:00] click, "Records", then wait 3 s for /records to settle. "Back in Records, the corrected disposition is kept
     on the sample."
@@ -84,8 +84,8 @@ Segment 1 ends at 2:30.
    that marks a question Unverified rather than guessing. On forty clean-control runs it flagged nothing. Not one."
 10. [4:18] Slide 10, Business, 12 seconds. "We charge for questions checked, not tokens. And I'll say it before you do:
     nobody has paid us anything. This is a price to test."
-11. [4:30] Slide 11, Close, 12 seconds. "We accept losing marks when we're wrong. Not when the paper is. Check the exam
-    before the exam checks us."
+11. [4:30] Slide 11, Close, 12 seconds. "We accept losing marks when we're wrong. Not when the paper is. Check the paper
+    before the students sit it."
 
 Deck arithmetic: 11 slides x 12 s = 132 s, starting at 2:30 and ending at 4:42.
 
