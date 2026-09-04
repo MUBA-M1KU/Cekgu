@@ -2,6 +2,8 @@
 
 > Draft demo notice. Not final. Re-review against the deployed product and obtain owner approval before publication.
 
+<!-- Review baseline: 4 September 2026, main d3a31341dc004c433da2365ce524034443e864d7. -->
+
 Cekgu processes assessment content so educators can inspect potential problems. Do not enter confidential final papers
 or personal data in questions or notes. A private account does not make that content suitable for external processing.
 
@@ -14,7 +16,7 @@ Review records store assessment metadata alongside the questions and supplied ke
 your review decisions. They are associated with the account that created them. Free-text fields can contain personal
 information if entered; the absence of a dedicated learner field does not prevent it from being stored.
 
-The Reduce Motion preference is stored locally in your browser.
+The Reduce Motion and theme preferences are stored locally in your browser.
 
 ## Where processing happens
 
@@ -46,11 +48,22 @@ the worker runs; records remain accessible to guests until that cleanup succeeds
 its related review data from the app database without a recovery option. The protected sample is excluded from Guest
 deletion and expiry.
 
-Private deletion hides the record from your library but retains a stored copy. It does not cancel queued or running
-checks, so those questions may still be sent for processing. This demo has no restore interface or verified automatic
-permanent-deletion deadline for private records.
+Private deletion hides the record from your library and schedules permanent removal from the app database 30 days after
+deletion. This demo has no restore interface. Private records not deleted are scheduled for removal after 90 days
+without a stored update; simply opening a record does not currently renew that period. These removals depend on the
+hourly cleanup worker running successfully, so the stated periods are cleanup thresholds, not exact deletion times.
+
+In Settings, deleting all records immediately removes the account's non-sample records and related review data from the
+app database, including records already hidden by private deletion. There is no recovery. For Guest, this removes other
+guests' records too; the protected sample remains.
+
+Hiding a private record does not cancel queued or running checks, so its questions may still be sent for processing.
+Permanent deletion cannot recall questions already sent to external services.
 
 Deleting a record does not delete your account or guarantee removal from infrastructure backups, service logs or
 third-party systems.
 
 See also [terms](terms.md) and [acceptable use](acceptable-use.md).
+
+<!-- Release review: Settings currently says opening a record renews retention, but GET /api/records/:id does not
+update records.updated_at. Reconcile implementation, Settings copy and this notice before publication. -->

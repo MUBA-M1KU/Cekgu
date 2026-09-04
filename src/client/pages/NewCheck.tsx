@@ -4,7 +4,9 @@ import { createRecordSchema, GUEST_MAX_ITEM_CHARS, GUEST_MAX_ITEMS, itemCharCoun
 import { ApiError, createRecord } from '../api'
 import { BubbleRow } from '../components/BubbleRow'
 import { Field, inputClass } from '../components/Field'
+import { Select } from '../components/Select'
 import { Sheet } from '../components/Sheet'
+import { DEMO_PAPER } from '../demo-paper'
 import { useSession } from '../session'
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F']
@@ -27,6 +29,15 @@ function emptyItem(): DraftItem {
   }
 }
 
+function demoItems(): DraftItem[] {
+  return DEMO_PAPER.items.map((item) => ({
+    id: crypto.randomUUID(),
+    stem: item.stem,
+    options: item.options.map((option) => ({ ...option })),
+    key: item.key
+  }))
+}
+
 // Letters are positional, so removing option B has to renumber everything after it.
 function relabel(options: { letter: string; text: string }[]) {
   return options.map((option, index) => ({ ...option, letter: LETTERS[index] ?? option.letter }))
@@ -44,8 +55,29 @@ export function NewCheck() {
   const [items, setItems] = useState<DraftItem[]>([emptyItem()])
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
+  const [prefilled, setPrefilled] = useState(false)
 
   const maxItems = isGuest ? GUEST_MAX_ITEMS : Number.POSITIVE_INFINITY
+
+  function fillWithDemo() {
+    setTitle(DEMO_PAPER.title)
+    setSubject(DEMO_PAPER.subject)
+    setLanguage(DEMO_PAPER.language)
+    setContext(DEMO_PAPER.context)
+    setItems(demoItems())
+    setErrors({})
+    setPrefilled(true)
+  }
+
+  function clearForm() {
+    setTitle('')
+    setSubject('')
+    setLanguage('en')
+    setContext('')
+    setItems([emptyItem()])
+    setErrors({})
+    setPrefilled(false)
+  }
 
   function patchItem(index: number, patch: Partial<DraftItem>) {
     setItems((current) => current.map((item, i) => (i === index ? { ...item, ...patch } : item)))
@@ -106,9 +138,33 @@ export function NewCheck() {
   return (
     <Sheet as="form" onSubmit={submit}>
       <h1>New Check</h1>
-      <p className="mt-3 max-w-[62ch] type-body text-ink-muted">
+      <p className="mt-3 max-w-[62ch] type-ui text-ink-muted">
         Type the questions you are about to publish. Two independent models answer each one without seeing your key.
       </p>
+
+      {isGuest ? (
+        <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-sheet bg-well p-4">
+          <div className="min-w-0 flex-1">
+            <p className="type-label">Signed In as Guest</p>
+            <p className="mt-1 max-w-[62ch] type-caption text-ink-muted">
+              A demo should not start with typing. This fills every field with a three-question paper: one key is wrong
+              on purpose, and one question has two defensible answers depending on the convention.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={fillWithDemo}
+            className="inline-flex h-9 shrink-0 items-center rounded-sheet border border-rule-strong px-4 font-medium"
+          >
+            Fill With Demo Content
+          </button>
+          {prefilled ? (
+            <button type="button" onClick={clearForm} className="type-label shrink-0 underline">
+              Clear the Form
+            </button>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="mt-6 flex flex-col gap-5">
         <Field label="Assessment Title" htmlFor="title" error={errorFor('title')}>
@@ -120,13 +176,7 @@ export function NewCheck() {
             <input id="subject" className={inputClass} value={subject} onChange={(e) => setSubject(e.target.value)} />
           </Field>
           <Field label="Language" htmlFor="language" error={errorFor('language')}>
-            <select id="language" className={inputClass} value={language} onChange={(e) => setLanguage(e.target.value)}>
-              {LANGUAGES.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+            <Select id="language" label="Language" value={language} options={LANGUAGES} onChange={setLanguage} />
           </Field>
         </div>
 
@@ -176,6 +226,7 @@ export function NewCheck() {
                     <span className="type-label w-4 shrink-0 text-ink-muted">{option.letter}</span>
                     <input
                       id={`option-${index}-${optionIndex}`}
+                      aria-label={`Question ${index + 1}, option ${option.letter}`}
                       className={inputClass}
                       value={option.text}
                       onChange={(e) =>
@@ -266,7 +317,7 @@ export function NewCheck() {
       </div>
 
       {errorFor('form') ? (
-        <p role="alert" className="mt-4 type-body text-pen">
+        <p role="alert" className="mt-4 type-ui text-pen">
           {errorFor('form')}
         </p>
       ) : null}

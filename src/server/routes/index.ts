@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { type AppEnv, requireSession } from '../session'
+import { accountRoutes } from './account'
 import { authRoutes } from './auth'
 import { healthRoutes } from './health'
 import { recordRoutes } from './records'
@@ -23,6 +24,7 @@ api.use('*', async (c, next) => {
   return requireSession(c, next)
 })
 
+api.route('/', accountRoutes)
 api.route('/', healthRoutes)
 api.route('/', recordRoutes)
 api.route('/', sampleRoutes)

@@ -105,7 +105,8 @@ jobs:
           mv "$RUNNER_TEMP/env-vars.preview.json" "$RUNNER_TEMP/env-vars.json"
           printf 'Preview env: %s\n' "$(jq -r 'keys | join(", ")' "$RUNNER_TEMP/env-vars.json")"
 
-      # shell: bash adds pipefail, so a failed describe fails this step instead of posting an empty URL.
+      # The default shell is bash -e with no pipefail, which let a failed describe leave the URL
+      # empty and the step green. shell: bash turns pipefail on for every pipe in the step.
       # No traffic, and min-instances 0 so a preview revision is not held warm.
       # Production keeps min-instances 1 from deploy.yml; that is a revision-level setting.
       - name: Deploy the pr-${{ github.event.pull_request.number }} revision
@@ -134,23 +135,49 @@ jobs:
           url=$(gcloud run services describe "${{ vars.CLOUD_RUN_SERVICE }}" \
             --project "${{ vars.GCP_PROJECT_ID }}" \
             --region "${{ vars.GCP_REGION }}" \
-            --format=json | jq -r --arg tag "$tag" '.status.traffic[] | select(.tag == $tag) | .url')
-          if [ -z "$url" ] || [ "$url" = 'null' ]; then
+            --format=json | jq -r --arg tag "$tag" 'first(.status.traffic[]? | select(.tag == $tag) | .url) // empty')
+          if [ -z "$url" ]; then
             echo "::error::no tagged url returned for $tag"
             exit 1
           fi
           echo "url=$url" >> "$GITHUB_OUTPUT"
           printf 'Preview: %s\n' "$url" >> "$GITHUB_STEP_SUMMARY"
 
+      # GITHUB_SHA on a pull_request event is the synthetic merge commit on refs/pull/N/merge,
+      # which appears nowhere in the PR's own commit list and changes whenever main moves. The
+      # sentence claims to name the commit being previewed, so it has to be the head sha.
       - name: Comment the preview URL
         if: steps.service.outputs.exists == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           URL: ${{ steps.deploy.outputs.url }}
           PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          body=$(printf 'Preview deploy for %s\n\n%s\n\nServes no production traffic. It shares production configuration, including the database.' "$GITHUB_SHA" "$URL")
+          body=$(printf 'Preview deploy for %s\n\n%s\n\nServes no production traffic. It shares production configuration, including the database.' "$SHA" "$URL")
           gh pr comment "$PR" --body "$body" --edit-last --create-if-none
+
+      # A step's if: carries an implicit success(), so every step above is skipped once one fails
+      # and --edit-last never runs. The previous push's comment then stays on the PR presenting a
+      # preview URL as if it were this commit's. failure() is deliberately unqualified: if the
+      # service check itself failed, steps.service has no output to test and the stale comment
+      # would survive, which is the defect rather than a narrower case of it.
+      #
+      # Edits only, no --create-if-none: correcting a comment that makes a false claim is the fix,
+      # while announcing a failure the checks list already shows in red is noise. A cancelled run
+      # reaches neither step, and self-heals because the push that superseded it comments in turn.
+      - name: Correct the preview comment when the deploy failed
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          body=$(printf 'No preview deploy for %s\n\nThis push did not reach a running revision. Any URL this comment carried before was deployed from an earlier commit and is not the code under review.\n\n%s' "$SHA" "$RUN")
+          if ! gh pr comment "$PR" --body "$body" --edit-last; then
+            echo '::notice::no preview comment on this PR to correct'
+          fi
 
   preview-cleanup:
     name: Remove the preview revision

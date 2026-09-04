@@ -1,69 +1,57 @@
-import { Link } from 'react-router'
-import { Sheet } from '../components/Sheet'
+import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router'
+import type { RecordDetail } from '../../shared/types'
+import { getSample } from '../api'
+import { Hero } from './home/Hero'
+import { HowItWorksSection } from './home/HowItWorksSection'
+import { PricingSection } from './home/PricingSection'
+import { SampleSection } from './home/SampleSection'
+import { TrustBand } from './home/TrustBand'
+import { TrustSection } from './home/TrustSection'
+import { VerdictBand } from './home/VerdictBand'
 
+// One page, four anchors. How It Works, Sample Report, Pricing and Trust and Privacy were four
+// routes; a visitor who has never heard of Cekgu should not have to navigate to find out what it
+// does. /sample is still its own route because the full record is a tool rather than a section.
+//
+// The sample is fetched once here and shared by the hero card and the worked example below, so
+// both show the real record rather than a fixture and the page makes one request rather than two.
 export function Home() {
+  const [record, setRecord] = useState<RecordDetail | null>(null)
+  const { hash } = useLocation()
+
+  useEffect(() => {
+    // A landing page that cannot reach the API is still a landing page. Both consumers reserve
+    // their space and degrade to a quiet line, so a failure here costs nothing above the fold.
+    getSample()
+      .then(setRecord)
+      .catch(() => setRecord(null))
+  }, [])
+
+  // The browser tries to scroll to a fragment before React has mounted the section it names, so
+  // a direct hit on /#pricing lands at the top. This also carries the /pricing redirect through.
+  useEffect(() => {
+    if (!hash) return
+    document.querySelector(hash)?.scrollIntoView()
+  }, [hash])
+
   return (
     <>
-      <Sheet>
-        <p className="type-eyebrow text-ink-muted">Pre-publication review for multiple-choice papers</p>
-        <h1 className="type-display mt-4 max-w-[18ch]">A learner should never lose marks to a wrong answer key.</h1>
-        <p className="type-lead mt-5 max-w-[58ch]">
-          Cekgu has two independent AI models sit every question blind, before your learners do. It shows you which keys
-          and which wording deserve a second look, and leaves every decision to you.
-        </p>
-        <div className="mt-6 flex flex-wrap items-center gap-4">
-          <Link
-            to="/sign-in"
-            className="inline-flex h-9 items-center rounded-sheet bg-ink px-4 font-medium text-on-ink"
-          >
-            Try Cekgu
-          </Link>
-          <Link
-            to="/sample"
-            className="inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium"
-          >
-            See a Real Report
-          </Link>
-        </div>
-      </Sheet>
+      {/* The hero and the ticker are one viewport, pinned; everything after them scrolls over the
+          pair like a drawer closing. The two halves have to be siblings for that, and the second
+          one has to carry its own ground. */}
+      <div className="hero-shell">
+        <Hero record={record} />
+        <TrustBand />
+      </div>
 
-      <section className="mt-12">
-        <h2>What Goes Wrong</h2>
-        <div className="mt-5 grid gap-6 sm:grid-cols-3">
-          <div>
-            <p className="type-label">A wrong key</p>
-            <p className="type-body mt-2 text-ink-muted">
-              Everyone who answered correctly is marked wrong. You find out when the complaints arrive.
-            </p>
-          </div>
-          <div>
-            <p className="type-label">Two defensible answers</p>
-            <p className="type-body mt-2 text-ink-muted">
-              The question is fair to whoever guessed your intent, and unfair to everyone who read it carefully.
-            </p>
-          </div>
-          <div>
-            <p className="type-label">Wording that shifts the meaning</p>
-            <p className="type-body mt-2 text-ink-muted">
-              You knew what you meant. The paper says something slightly different.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="mt-12">
-        <h2>Why Two Readers</h2>
-        <p className="type-body mt-4 max-w-[64ch]">
-          One AI gives you one opinion, and it will happily agree with the answer key you show it. Cekgu withholds your
-          key and asks two different model families to answer independently. Where they agree with each other and
-          disagree with you, that is worth your attention. Where fewer than two independent readings survive
-          verification, Cekgu says so instead of inventing a result.
-        </p>
-        <p className="type-body mt-4 max-w-[64ch] text-ink-muted">
-          Cekgu is a first pass, not a vetting committee, and agreement between models is not proof of truth. It does
-          not certify a paper, change a key, or grade anyone.
-        </p>
-      </section>
+      <div className="landing-body">
+        <HowItWorksSection />
+        <VerdictBand record={record} />
+        <SampleSection record={record} />
+        <PricingSection />
+        <TrustSection />
+      </div>
     </>
   )
 }

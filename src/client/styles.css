@@ -1,20 +1,29 @@
 @import "tailwindcss";
 
 /* Tokens copied verbatim from docs/DESIGN.md. One source of truth per colour via light-dark();
-   color-scheme follows the system unless data-theme on the root forces one side. */
+   light is the default and data-theme on the root forces either side. */
 :root {
-  color-scheme: light dark;
+  /* Light is the default rather than the system's choice: the demo is presented on a projector
+     and a judge's own dark setting should not change what they are shown. The [data-theme] blocks
+     below still switch, so the dark palette stays reachable rather than dead. */
+  color-scheme: light;
 
-  --paper: light-dark(#f1efea, #12171e); /* the desk: page ground */
-  --sheet: light-dark(#fbfaf7, #1a2029); /* the review document and every raised surface */
-  --well: light-dark(#eae7e0, #222a35); /* recessed areas: evidence panel, code, table stripes */
-  --ink: light-dark(#17202b, #eceae4); /* text, filled bubbles, primary buttons */
-  --ink-muted: light-dark(#4f5a68, #a6afba); /* secondary text, helper text, timestamps */
-  --rule: light-dark(#d6d2c9, #323b47); /* hairlines between rows, non-interactive borders */
-  --rule-strong: light-dark(#7a828c, #6b7682); /* input and control borders, at least 3:1 on the sheet */
+  /* The ground moved off warm off-white and onto a cool grey. Warm cream plus a serif body is
+     the most saturated look in AI-generated design right now, and Cekgu was one step from it;
+     the pen red is the only warm thing on the page now, which is the point of it. Every pair
+     below was solved numerically against all three grounds, not chosen by eye. */
+  --paper: light-dark(#edeff1, #12161c); /* the desk: page ground */
+  --sheet: light-dark(#ffffff, #1a2029); /* the review document and every raised surface */
+  --well: light-dark(#e3e6ea, #222a35); /* recessed areas: evidence panel, code, table stripes */
+  --ink: light-dark(#14181f, #eceae4); /* text, filled bubbles, primary buttons */
+  --ink-muted: light-dark(#4d5560, #a6afba); /* secondary text, helper text, timestamps */
+  --rule: light-dark(#d7dbe0, #323b47); /* hairlines between rows, non-interactive borders */
+  /* 3.78:1 on the well, which is the tightest of the three grounds. #7a828c cleared it on the
+     old warm well and does not on this one. */
+  --rule-strong: light-dark(#6b7480, #6b7682); /* input and control borders, at least 3:1 on the sheet */
   --pen: light-dark(#b3202f, #f07079); /* the human's red: dispositions, attention count, delete */
-  --pen-ink: light-dark(#fbfaf7, #12171e); /* text on a filled pen surface */
-  --on-ink: light-dark(#fbfaf7, #12171e); /* text on a filled ink surface */
+  --pen-ink: light-dark(#ffffff, #12161c); /* text on a filled pen surface */
+  --on-ink: light-dark(#ffffff, #12161c); /* text on a filled ink surface */
 
   --verdict-clear: light-dark(#2c6e49, #7cc79c);
   --verdict-key-error: light-dark(#a34a08, #f2a468);
@@ -24,8 +33,8 @@
 
   --focus: var(--ink);
   --focus-halo: var(--sheet);
-  --shadow-tint: light-dark(rgb(23 32 43 / 0.06), transparent);
-  --shadow-overlay-tint: light-dark(rgb(23 32 43 / 0.18), rgb(0 0 0 / 0.5));
+  --shadow-tint: light-dark(rgb(20 24 31 / 0.07), transparent);
+  --shadow-overlay-tint: light-dark(rgb(20 24 31 / 0.2), rgb(0 0 0 / 0.5));
   --shadow-sheet: 0 1px 2px var(--shadow-tint);
   --shadow-overlay: 0 12px 32px var(--shadow-overlay-tint);
 }
@@ -208,6 +217,13 @@
   font-weight: 400;
 }
 
+@utility type-ui {
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  font-weight: 400;
+}
+
 @utility type-label {
   font-family: var(--font-ui);
   font-size: 0.8125rem;
@@ -267,4 +283,952 @@
   color: var(--ink);
   background: var(--well);
   white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------------------------
+   Marketing chrome. These are the pieces of direction C that are genuinely bespoke — a scrim
+   solved against a specific video, a glass card, a ticker — and would be unreadable as a wall of
+   utilities. Everything else on the landing page is Tailwind. */
+
+/* The marketing page is wider than the app's 880 px document measure, because it is a page rather
+   than a document. DESIGN.md's measure still governs everything behind sign-in. */
+.wrap {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: var(--s-5);
+}
+
+/* Every fragment target clears the sticky bar plus a little air. */
+section[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+.nav-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition:
+    background-color var(--t-panel) var(--ease-out),
+    box-shadow var(--t-panel) var(--ease-out);
+}
+
+/* Solid only once the hero is behind it. Over the video the nav is transparent, so the clip is
+   not cropped by a bar that has nothing in it yet. */
+/* Solid, not translucent. backdrop-filter has nothing to blur over a flat ground, so on every
+   route but the landing a glass bar rendered as a half-transparent one. That is the page's own
+   fault rather than the host's, and the fix is to stop asking for glass where there is no
+   content behind it. */
+.nav-sticky[data-solid="true"] {
+  background: var(--sheet);
+  box-shadow: 0 1px 0 var(--rule);
+}
+
+/* The landing only: the bar sits over the hero clip for a full viewport of scrolling, which is
+   real content for the blur to work on. It is glass from the first pixel rather than transparent
+   until scrolled — a bar with no background at all is the same defect as one with a broken glass
+   background, which is that it has no surface. Over the clip the blur has something to work on,
+   so this is real glass rather than a tint pretending to be one. */
+.nav-sticky[data-glass="true"] {
+  background: color-mix(in oklab, var(--sheet) 72%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+}
+
+.nav-sticky[data-glass="true"][data-solid="true"] {
+  background: color-mix(in oklab, var(--sheet) 86%, transparent);
+}
+
+/* The hero and the ticker under it are one viewport, exactly, at any screen size. The shell owns
+   the height and the hero flexes into whatever the ticker does not use, so the pair fills the
+   window without the ticker pushing it over by its own height — which is what a fixed
+   calc(100dvh - 4.25rem) on the hero alone did.
+   
+   It is also sticky at z-index 0, so the sections after it scroll over the top like a drawer
+   closing. That is MakanLah's reveal footer, inverted: the thing that stays put is behind, and the
+   thing that moves carries an opaque ground of its own. */
+.hero-shell {
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  height: 100dvh;
+  /* Exactly one viewport in every realistic window, and taller only when the content genuinely
+     cannot fit one — a 620 px-tall desktop window, say. Clipping the headline to hold the height
+     would be worse than the section running a little long. */
+  min-height: fit-content;
+  display: flex;
+  flex-direction: column;
+  margin-top: -4.25rem;
+}
+
+.hero {
+  position: relative;
+  /* flex-basis auto, not 0: a flex item with min-height 0 shrinks below its own content, which
+     is what let the headline slide under the nav in a short window. */
+  flex: 1 0 auto;
+  padding-top: 4.25rem;
+  display: flex;
+  align-items: center;
+  /* Not overflow: hidden. Hijiki hangs past the bottom edge on purpose, and .hero-media does its
+     own clipping, so nothing else here needs the section to clip. */
+  --cat-w: clamp(8rem, 17vw, 16rem);
+}
+
+/* The sliding half. Opaque, or the pinned hero shows through it as it passes over. */
+.landing-body {
+  position: relative;
+  z-index: 1;
+  background: var(--paper);
+}
+
+.hero-media {
+  position: absolute;
+  inset: 0;
+  /* Not a negative z-index. A negative child paints before the block-level backgrounds of its
+     ancestors, so the page wrapper's own --paper ground covered the video entirely. */
+  z-index: 0;
+  overflow: hidden;
+  /* Painted on the container rather than as a sibling element, so it cannot cover the video. */
+  background:
+    radial-gradient(120% 90% at 74% 42%, color-mix(in oklab, var(--pen) 10%, transparent) 0%, transparent 46%),
+    linear-gradient(160deg, #f7f6f3 0%, #e9e7e1 46%, #dedbd3 100%);
+}
+
+/* The clip carries the generator's own sparkle mark at 91% across and 83% down its frame. Scaling
+   from the top left carries that corner past the right edge at every viewport this page supports.
+   Verified at sixty viewport sizes; see docs/redesign/README.md. */
+.hero-media video,
+.hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+  transform: scale(1.14);
+  transform-origin: top left;
+}
+
+/* Two axes, because the copy runs down the left and the video's subject is on the right. */
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, var(--paper) 0%, color-mix(in oklab, var(--paper) 34%, transparent) 8rem, transparent 14rem),
+    linear-gradient(
+      92deg,
+      color-mix(in oklab, var(--paper) 96%, transparent) 0%,
+      color-mix(in oklab, var(--paper) 84%, transparent) 34%,
+      color-mix(in oklab, var(--paper) 28%, transparent) 62%,
+      transparent 100%
+    );
+}
+
+/* Hijiki is draped over the line where the hero ends: body on the ground above it, both front paws
+   hanging across the ticker band below. The pose was rendered around an invisible ledge at 66.3%
+   of the image height, so the offset is that fraction times the 1.025 aspect, not a nudged number.
+   Resizing the cat keeps the grip on the line. */
+.hero-body {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-cat {
+  position: absolute;
+  right: clamp(1rem, 4vw, 4.5rem);
+  bottom: calc(var(--cat-w) * -0.345);
+  width: var(--cat-w);
+  height: auto;
+  pointer-events: none;
+  z-index: 3;
+  filter: drop-shadow(0 16px 20px rgb(20 24 31 / 0.32));
+  animation: cat-grip 1.1s var(--ease-out) 0.45s both;
+}
+
+@keyframes cat-grip {
+  from {
+    transform: translateY(26%) rotate(-2.5deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) rotate(0);
+    opacity: 1;
+  }
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  height: 2rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-bubble);
+  background: color-mix(in oklab, var(--sheet) 70%, transparent);
+  /* It sits on the hero clip, so there is something to blur. Without this it was a 70 per cent
+     tint over a moving image and read as a half-finished panel rather than as glass. */
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  backdrop-filter: blur(10px) saturate(150%);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+}
+
+/* Stacked, the card is the full column: right-aligned under a full-width headline reads as a
+   stray element, and it is also exactly where Hijiki sits. */
+.hero-card {
+  position: relative;
+  padding: var(--s-5);
+  border: 1px solid color-mix(in oklab, var(--sheet) 90%, transparent);
+  border-radius: 1.5rem;
+  background: color-mix(in oklab, var(--sheet) 90%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  backdrop-filter: blur(18px) saturate(170%);
+  /* A contact shadow, not a diffuse glow. The 1 px light border is what separates the card from
+     the photograph behind it; a wide blur on top of that is the generated-UI signature. */
+  box-shadow: 0 8px 16px -10px rgb(20 24 31 / 0.45);
+}
+
+@media (width >= 64rem) {
+  .hero-card {
+    max-width: 25rem;
+    margin-left: auto;
+  }
+}
+
+.marquee {
+  flex: none;
+  overflow: hidden;
+  border-block: 1px solid var(--rule);
+  background: var(--ink);
+  color: color-mix(in oklab, var(--on-ink) 72%, transparent);
+  padding-block: 0.9rem;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  gap: var(--s-6);
+  padding-inline: var(--s-5);
+  white-space: nowrap;
+  animation: marquee-slide 38s linear infinite;
+}
+
+/* Half, because the list is rendered twice so the loop has no seam. */
+@keyframes marquee-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Raised surfaces on the marketing page are softer and rounder than the app's 4 px document
+   corner, because a card here is a card and not a sheet of paper. */
+.card-soft {
+  border-radius: 1.25rem;
+  background: var(--sheet);
+  box-shadow: 0 1px 2px var(--shadow-tint);
+}
+
+/* ---------------------------------------------------------------------------------------------
+   The slot: one option letter carrying up to three facts at once. Filled means the key on the
+   paper; an inner ring means reader A chose it; an outer ring means reader B did. A key error is
+   then a single glyph — a filled A beside a double-ringed B — rather than three stacked rows of
+   bubbles a reader has to compare by eye. This is the one idea direction C is built on, so it is
+   a real component rather than a decoration. */
+.slot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  flex: none;
+  border: 1.5px solid var(--rule-strong);
+  border-radius: var(--r-bubble);
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--ink-muted);
+}
+
+.slot[data-key="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--on-ink);
+}
+
+.slot::before,
+.slot::after {
+  content: "";
+  position: absolute;
+  border-radius: var(--r-bubble);
+  border: 1.5px solid transparent;
+}
+
+/* The two rings sit outside the glyph rather than inside it, so the letter stays the same size
+   whether nobody or both readers picked it and the row never reflows. */
+.slot[data-reader-a="true"]::before {
+  inset: -0.28rem;
+  border-color: var(--ink);
+}
+
+.slot[data-reader-b="true"]::after {
+  inset: -0.56rem;
+  border-color: var(--rule-strong);
+}
+
+/* A reading the gateway could not verify: the seat existed, nothing came back that counted. */
+.slot[data-void="true"] {
+  border-style: dashed;
+}
+
+/* The one glyph the human owns. Pen red is the human's colour everywhere else in the product. */
+.slot[data-pen="true"] {
+  border-color: var(--pen);
+  color: var(--pen);
+}
+
+/* The rings extend 0.56rem past the glyph on every side; without the inline padding the outer
+   ring of the first and last slot is clipped by whatever contains the row. */
+.read-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem;
+  padding-block: 0.56rem;
+  padding-inline: 0.56rem;
+  margin-inline: -0.56rem;
+}
+
+/* ---------------------------------------------------------------------------------------------
+   The five verdicts, as a full-bleed band of committed colour. It is the one place on the page
+   where the palette is the surface rather than an accent, and it is where the vocabulary the rest
+   of the product speaks in is defined. The figure in each panel is the verdict drawn rather than
+   named: two filled circles for agreement, two halves for ambiguity, a dashed outline for a
+   reading that never arrived. */
+.fields {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+@media (max-width: 64rem) {
+  .fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Five panels in two columns leaves the fifth alone beside a hole in the band, so it takes the
+   whole row, and needs less height for it because it is no longer a column. Bounded at both ends:
+   in the single-column stack below it every panel is already full width and the shorter height
+   would only crowd the count into the paragraph. */
+@media (min-width: 40.0625rem) and (max-width: 64rem) {
+  .fields > :last-child {
+    grid-column: 1 / -1;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 40rem) {
+  .fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* A column rather than a positioned box: the count is pushed to the floor by auto margin instead
+   of being pinned there, so a panel that has to run full width across a two-column band grows
+   under its own copy rather than printing the number through it. */
+.field-v {
+  display: flex;
+  flex-direction: column;
+  min-height: 17rem;
+  padding: 1.75rem 1.35rem 1.5rem;
+  color: var(--on-ink);
+}
+
+.field-v .count {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 2.25rem;
+  line-height: 1;
+  opacity: 0.55;
+}
+
+.figure {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  margin-bottom: 0.9rem;
+}
+
+.figure span {
+  width: 1.625rem;
+  height: 1.625rem;
+  border-radius: var(--r-bubble);
+  border: 2px solid currentColor;
+}
+
+.figure span[data-fill="full"] {
+  background: currentColor;
+}
+
+.figure span[data-fill="half"] {
+  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+}
+
+.figure span[data-fill="faint"] {
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.figure span[data-fill="none"] {
+  border-style: dashed;
+}
+
+/* ---------------------------------------------------------------------------------------------
+   Back to top. The landing page is one document with five sections and a pinned hero, so the way
+   back is a long scroll; the control appears only once the hero is behind you. */
+.to-top {
+  position: fixed;
+  right: var(--s-5);
+  bottom: var(--s-5);
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-bubble);
+  background: var(--sheet);
+  color: var(--ink);
+  box-shadow: 0 6px 20px var(--shadow-tint);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.5rem);
+  transition:
+    opacity var(--t-quick) ease-out,
+    transform var(--t-quick) ease-out,
+    visibility var(--t-quick);
+}
+
+.to-top[data-shown="true"] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+/* ---------------------------------------------------------------------------------------------
+   The post-authentication shell: a hover rail, a glass topbar, the content container and a quiet
+   footer. The rail is the one piece here that is genuinely bespoke — it animates width, which the
+   usual advice forbids, but a 64 px rail that becomes 200 px is a width change and faking it with
+   a transform would move the icons it is supposed to leave still. */
+
+.app-shell {
+  --app-foot-h: 9.5rem;
+}
+
+.app-rail {
+  position: fixed;
+  inset-block: 0;
+  left: 0;
+  z-index: 40;
+  display: flex;
+  width: 4rem;
+  flex-direction: column;
+  gap: var(--s-5);
+  padding: var(--s-4) 0;
+  border-right: 1px solid var(--rule);
+  background: var(--sheet);
+  overflow: hidden;
+  transition: width var(--t-panel) var(--ease-out);
+}
+
+.app-rail:hover,
+.app-rail:focus-within {
+  width: 12.5rem;
+}
+
+.app-rail-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 39;
+  opacity: 0;
+  pointer-events: none;
+  background: color-mix(in oklab, var(--ink) 22%, transparent);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  transition: opacity var(--t-panel) var(--ease-out);
+}
+
+.app-rail:hover ~ .app-rail-backdrop,
+.app-rail:focus-within ~ .app-rail-backdrop {
+  opacity: 1;
+}
+
+.app-rail-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.25rem;
+  padding-inline: 1.125rem;
+  color: var(--ink);
+}
+
+/* Without this the mark loses its own width to the label as the rail opens: the span keeps its
+   layout width while only its opacity animates, and 20 + 12 + 40 does not fit in a 28 px box. */
+.app-rail-logo svg {
+  flex: none;
+}
+
+.app-rail-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 1.5rem;
+  padding-inline: 1.125rem;
+}
+
+.app-rail-rule {
+  width: 1.25rem;
+  flex: none;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.app-rail-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.5rem;
+  padding-inline: 1.125rem;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  transition: color var(--t-quick) var(--ease-out);
+}
+
+.app-rail-link:hover {
+  color: var(--ink);
+}
+
+.app-rail-link.active {
+  color: var(--ink);
+}
+
+/* The active mark is a 2 px bar at the leading edge, which reads at 64 px and at 200 px alike. */
+.app-rail-link.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 2px;
+  border-radius: 0 2px 2px 0;
+  background: var(--pen);
+}
+
+.app-rail-icon {
+  display: grid;
+  width: 1.375rem;
+  flex: none;
+  place-items: center;
+}
+
+/* Labels and section headings crossfade rather than slide, so nothing moves horizontally except
+   the rail's own edge. */
+.app-rail-text {
+  opacity: 0;
+  transition: opacity var(--t-quick) var(--ease-out);
+}
+
+.app-rail:hover .app-rail-text,
+.app-rail:focus-within .app-rail-text {
+  opacity: 1;
+}
+
+.app-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  height: 3.5rem;
+  margin-left: 4rem;
+  padding-inline: var(--s-4);
+  border-bottom: 1px solid var(--rule);
+  /* Solid. The authenticated pages are a flat ground, so there is nothing for a blur to act on
+     and the glass version rendered as a half-transparent bar with the page showing through it. */
+  background: var(--sheet);
+}
+
+.app-icon-button,
+.app-avatar {
+  position: relative;
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: var(--r-bubble);
+  color: var(--ink-muted);
+  transition:
+    background-color var(--t-quick) var(--ease-out),
+    color var(--t-quick) var(--ease-out);
+}
+
+.app-icon-button:hover,
+.app-avatar:hover {
+  background: var(--well);
+  color: var(--ink);
+}
+
+.app-avatar {
+  border: 1px solid var(--rule-strong);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.app-badge {
+  position: absolute;
+  top: 0.1875rem;
+  right: 0.1875rem;
+  display: grid;
+  min-width: 1rem;
+  height: 1rem;
+  place-items: center;
+  padding-inline: 0.25rem;
+  border-radius: var(--r-bubble);
+  background: var(--pen);
+  color: var(--pen-ink);
+}
+
+/* SolarSim's popover, matched: w-[min(20rem,calc(100vw-2rem))], max-h-[400px] with its own
+   scroll, a 0.75rem radius, one border, a deep shadow, a header row above divided rows, and an
+   entrance that scales up from 95% while rising 10px. Solid, never translucent — it sits over a
+   flat page and there is nothing for a blur to act on. */
+.app-pop {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 60;
+  width: min(20rem, calc(100vw - 2rem));
+  max-height: 25rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid var(--rule);
+  border-radius: 0.75rem;
+  background: var(--sheet);
+  box-shadow: var(--shadow-overlay);
+  transform-origin: top right;
+  animation: pop-in var(--t-panel) var(--ease-out) both;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.app-pop-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-4);
+  border-bottom: 1px solid var(--rule);
+}
+
+/* divide-y: rows are separated from each other, not boxed individually. */
+.app-pop-list > * + * {
+  border-top: 1px solid var(--rule);
+}
+
+.app-pop-row {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  text-align: left;
+  transition: background-color var(--t-quick) var(--ease-out);
+}
+
+.app-pop-row:hover {
+  background: var(--well);
+}
+
+/* The unread dot, as SolarSim marks an unread notification. */
+.app-pop-dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  margin-top: 0.4rem;
+  flex: none;
+  border-radius: var(--r-bubble);
+  background: var(--pen);
+}
+
+.app-pop-empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-2);
+  padding: var(--s-6) var(--s-4);
+  text-align: center;
+  color: var(--ink-muted);
+}
+
+.app-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 100dvh;
+  margin-left: 4rem;
+  /* The reveal: the page reserves the footer's height below itself and paints over it until the
+     reader reaches the end. */
+  margin-bottom: var(--app-foot-h);
+  flex-direction: column;
+  background: var(--paper);
+}
+
+/* SolarSim's dashboard container: centred, capped, and the same on every authenticated screen so
+   no page has a measure of its own to get wrong. */
+.app-content {
+  flex: 1;
+  width: 100%;
+  max-width: 100rem;
+  margin-inline: auto;
+  padding: var(--s-5) var(--s-4) var(--s-6);
+}
+
+/* The document keeps DESIGN.md's 880 px measure inside that container, unchanged from the layout
+   this replaces. margin-inline: auto is what centres it: without it the measure caps the width and
+   the page hangs off the left edge of a container up to 1600 px wide. */
+.app-doc {
+  max-width: 55rem;
+  margin-inline: auto;
+}
+
+/* MakanLah's footer is a reveal: fixed at the bottom, behind the page, with the content scrolling
+   over it and uncovering it at the end. The previous version copied the look and not the
+   behaviour, which is the half that makes it work — and it is also what gives the blur something
+   to act on, since the page's own ground passes over it. */
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 4rem;
+  right: 0;
+  z-index: 0;
+  height: var(--app-foot-h);
+  border-top: 1px solid var(--rule);
+  background: color-mix(in oklab, var(--sheet) 70%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(1.18);
+  backdrop-filter: blur(10px) saturate(1.18);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--sheet) 60%, transparent);
+}
+
+.app-footer-inner {
+  display: grid;
+  max-width: 100rem;
+  height: 100%;
+  margin-inline: auto;
+  padding-inline: var(--s-4);
+  gap: var(--s-3);
+  justify-items: end;
+  align-content: center;
+  text-align: right;
+}
+
+.app-footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  color: var(--ink);
+}
+
+.app-footer-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+
+.app-footer-link {
+  color: var(--ink-muted);
+  border-bottom: 1px solid var(--rule-strong);
+  padding-bottom: 1px;
+  transition: color var(--t-quick) var(--ease-out);
+}
+
+.app-footer-link:hover {
+  color: var(--ink);
+}
+
+/* ---------------------------------------------------------------------------------------------
+   Nothing browser-native. The scrollbar is the one piece of chrome that appears on every screen
+   without being asked for, so it is styled like the rest of the product rather than left to the
+   platform. */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule-strong) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--rule-strong);
+  border: 2px solid transparent;
+  background-clip: content-box;
+  border-radius: var(--r-bubble);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ink-muted);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ---------------------------------------------------------------------------------------------
+   Every glass surface that is left, guarded. A translucent background with no working blur behind
+   it reads as a half-finished panel rather than as glass, which is the defect the review named.
+   Each of these sits over the hero clip or over scrolling content, so the blur has something to
+   act on; where it cannot run, or where the reader has asked for less transparency, the surface
+   goes solid rather than staying see-through. */
+
+@supports not (backdrop-filter: blur(1px)) {
+  .nav-sticky[data-glass="true"],
+  .hero-card,
+  .hero-badge,
+  .app-footer {
+    background: var(--sheet);
+  }
+
+  .app-rail-backdrop {
+    background: color-mix(in oklab, var(--ink) 34%, transparent);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .nav-sticky[data-glass="true"],
+  .hero-card,
+  .hero-badge,
+  .app-footer {
+    background: var(--sheet);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .app-rail-backdrop {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* The custom select, and the checkbox beside it. Both replace a browser-native control whose menu
+   and tick the product cannot style: they are the last two places a screen stopped looking like
+   Cekgu and started looking like the operating system. */
+.select-control {
+  display: flex;
+  width: 100%;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  padding-inline: var(--s-3);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-sheet);
+  background: var(--sheet);
+  color: var(--ink);
+  text-align: left;
+  transition: border-color var(--t-quick) var(--ease-out);
+}
+
+.select-control:hover {
+  border-color: var(--ink-muted);
+}
+
+.select-list {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  right: 0;
+  z-index: 60;
+  max-height: 15rem;
+  margin: 0;
+  padding: 0.25rem;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--rule);
+  border-radius: 0.75rem;
+  background: var(--sheet);
+  box-shadow: var(--shadow-overlay);
+  transform-origin: top;
+  animation: pop-in var(--t-panel) var(--ease-out) both;
+}
+
+.select-option {
+  padding: 0.4375rem var(--s-3);
+  border-radius: var(--r-sheet);
+  cursor: pointer;
+}
+
+.select-option[data-active="true"] {
+  background: var(--well);
+}
+
+.select-option[aria-selected="true"] {
+  font-weight: 500;
+}
+
+/* appearance: none strips the platform tick; everything drawn here is the product's own. */
+.check-box {
+  appearance: none;
+  width: 1.0625rem;
+  height: 1.0625rem;
+  flex: none;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-sheet);
+  background: var(--sheet);
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+  transition:
+    background-color var(--t-quick) var(--ease-out),
+    border-color var(--t-quick) var(--ease-out);
+}
+
+.check-box::before {
+  content: "";
+  width: 0.625rem;
+  height: 0.625rem;
+  transform: scale(0);
+  transform-origin: center;
+  transition: transform var(--t-quick) var(--ease-out);
+  background: var(--on-ink);
+  clip-path: polygon(14% 47%, 0 61%, 39% 100%, 100% 22%, 85% 8%, 38% 71%);
+}
+
+.check-box:checked {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.check-box:checked::before {
+  transform: scale(1);
 }

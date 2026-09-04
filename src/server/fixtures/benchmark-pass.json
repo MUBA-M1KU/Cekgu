@@ -1,0 +1,1400 @@
+{
+  "pass": "capture-2026-09-03",
+  "capturedAt": "2026-09-03T09:25:53.000Z",
+  "record": {
+    "title": "Introductory computer science practice set",
+    "subject": "Computer Science",
+    "language": "en",
+    "context": "Synthetic first-year practice questions written to evaluate the check pipeline. No real or confidential exam content."
+  },
+  "items": [
+    {
+      "stem": "What is the time complexity of reading the element at a known index in an array?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "O(1)"
+        },
+        {
+          "letter": "B",
+          "text": "O(log n)"
+        },
+        {
+          "letter": "C",
+          "text": "O(n)"
+        },
+        {
+          "letter": "D",
+          "text": "O(n log n)"
+        }
+      ],
+      "key": "A",
+      "attempts": [
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788426383844621629-410375",
+          "devshardId": "70340",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426383844621629-410375",
+            "x_devshard_id": "70340",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:06:51Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 534,
+            "ttft_ms": 27328,
+            "duration_ms": 27328
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "A",
+            "defensible": ["A"],
+            "reason": "Reading an element at a known index in an array is a constant‑time operation because the memory address of the element can be computed directly from the base address and the index. Therefore the time complexity is O(1)."
+          },
+          "latencyMs": 27745,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "deepseek-ai/DeepSeek-V4-Flash-0731",
+          "servedModel": null,
+          "requestId": null,
+          "devshardId": null,
+          "fallbackHeader": null,
+          "httpStatus": 429,
+          "receiptStatus": "missing",
+          "receiptJson": null,
+          "readingJson": null,
+          "latencyMs": 579,
+          "admitted": false,
+          "rejectionReason": "The gateway answered 429. {\"error\":{\"message\":\"rate limit exceeded: too many concurrent requests\",\"type\":\"upstream_error\",\"param\":\"\",\"code\":null}}"
+        },
+        {
+          "requestedModel": "deepseek-ai/DeepSeek-V4-Flash-0731",
+          "servedModel": null,
+          "requestId": null,
+          "devshardId": null,
+          "fallbackHeader": null,
+          "httpStatus": 429,
+          "receiptStatus": "missing",
+          "receiptJson": null,
+          "readingJson": null,
+          "latencyMs": 818,
+          "admitted": false,
+          "rejectionReason": "The gateway answered 429. {\"error\":{\"message\":\"rate limit exceeded: too many concurrent requests\",\"type\":\"upstream_error\",\"param\":\"\",\"code\":null}}"
+        },
+        {
+          "requestedModel": "deepseek-ai/DeepSeek-V4-Flash-0731",
+          "servedModel": null,
+          "requestId": null,
+          "devshardId": null,
+          "fallbackHeader": null,
+          "httpStatus": null,
+          "receiptStatus": "missing",
+          "receiptJson": null,
+          "readingJson": null,
+          "latencyMs": 90013,
+          "admitted": false,
+          "rejectionReason": "The call passed the 90 second evidence cutoff."
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788426429986649454-410589",
+          "devshardId": "70158",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426429986649454-410589",
+            "x_devshard_id": "70158",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:08:01Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 742,
+            "ttft_ms": 51876,
+            "duration_ms": 51876
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "A",
+            "defensible": ["A"],
+            "reason": "Arrays support random access via contiguous memory allocation and pointer arithmetic, so reading an element at a known index takes constant time regardless of the array size."
+          },
+          "latencyMs": 52037,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788426475140384999-410759",
+          "devshardId": "70335",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426475140384999-410759",
+            "x_devshard_id": "70335",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:08:09Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 768,
+            "ttft_ms": 14640,
+            "duration_ms": 14640
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "A",
+            "defensible": ["A"],
+            "reason": "Arrays store elements in contiguous memory, so calculating the address of the ith element from the base address and the element size is done in constant time regardless of the array size. Therefore, reading by a known index requires the same number of operations no matter how large the array grows."
+          },
+          "latencyMs": 14879,
+          "admitted": false,
+          "rejectionReason": "A hedge of this call returned first, so this reading was recorded and discarded."
+        }
+      ]
+    },
+    {
+      "stem": "Which transport protocol retransmits lost segments so that data arrives complete and in order?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "TCP"
+        },
+        {
+          "letter": "B",
+          "text": "UDP"
+        },
+        {
+          "letter": "C",
+          "text": "ICMP"
+        },
+        {
+          "letter": "D",
+          "text": "ARP"
+        }
+      ],
+      "key": "A",
+      "attempts": [
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788426535424312672-411133",
+          "devshardId": "70343",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426535424312672-411133",
+            "x_devshard_id": "70343",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:09:04Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 441,
+            "ttft_ms": 8999,
+            "duration_ms": 8999
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "A",
+            "defensible": ["A"],
+            "reason": "TCP is a transport protocol that provides reliable, ordered delivery by retransmitting lost segments."
+          },
+          "latencyMs": 9167,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788426490327021456-410883",
+          "devshardId": "70343",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426490327021456-410883",
+            "x_devshard_id": "70343",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:09:28Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 923,
+            "ttft_ms": 78490,
+            "duration_ms": 78490
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "A",
+            "defensible": ["A"],
+            "reason": "TCP is a connection-oriented protocol that uses acknowledgments and retransmission to ensure reliable data transfer, guaranteeing that lost segments are resent and data arrives in order. In contrast, UDP does not provide such mechanisms, and ICMP and ARP serve different functions without handling data retransmission."
+          },
+          "latencyMs": 78644,
+          "admitted": false,
+          "rejectionReason": "A hedge of this call returned first, so this reading was recorded and discarded."
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": null,
+          "requestId": null,
+          "devshardId": null,
+          "fallbackHeader": null,
+          "httpStatus": null,
+          "receiptStatus": "missing",
+          "receiptJson": null,
+          "readingJson": null,
+          "latencyMs": 90001,
+          "admitted": false,
+          "rejectionReason": "The call passed the 90 second evidence cutoff."
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788426580312259782-411380",
+          "devshardId": "70114",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426580312259782-411380",
+            "x_devshard_id": "70114",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:09:56Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 756,
+            "ttft_ms": 15926,
+            "duration_ms": 15926
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "A",
+            "defensible": ["A"],
+            "reason": "TCP is the only transport-layer protocol listed that provides reliable delivery through acknowledgments, sequence numbers, and retransmission of lost segments to ensure data arrives complete and in order. UDP is connectionless and unreliable, while ICMP and ARP are not transport protocols at all."
+          },
+          "latencyMs": 15984,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": null,
+          "requestId": null,
+          "devshardId": null,
+          "fallbackHeader": null,
+          "httpStatus": null,
+          "receiptStatus": "missing",
+          "receiptJson": null,
+          "readingJson": null,
+          "latencyMs": 90002,
+          "admitted": false,
+          "rejectionReason": "The call passed the 90 second evidence cutoff."
+        }
+      ]
+    },
+    {
+      "stem": "Which data structure removes elements in first in, first out order?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Stack"
+        },
+        {
+          "letter": "B",
+          "text": "Queue"
+        },
+        {
+          "letter": "C",
+          "text": "Binary search tree"
+        },
+        {
+          "letter": "D",
+          "text": "Hash table"
+        }
+      ],
+      "key": "A",
+      "attempts": [
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788426625321985624-411634",
+          "devshardId": "70240",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426625321985624-411634",
+            "x_devshard_id": "70240",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:10:36Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 445,
+            "ttft_ms": 11648,
+            "duration_ms": 11648
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "B",
+            "defensible": ["B"],
+            "reason": "A queue is a linear structure that follows the first‑in, first‑out (FIFO) order when removing elements. A stack uses LIFO, binary search trees and hash tables do not enforce a FIFO removal order."
+          },
+          "latencyMs": 11743,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788426625325882756-411637",
+          "devshardId": "70335",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426625325882756-411637",
+            "x_devshard_id": "70335",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:11:23Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 750,
+            "ttft_ms": 58394,
+            "duration_ms": 58394
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "B",
+            "defensible": ["B"],
+            "reason": "A queue is defined by the first-in, first-out (FIFO) principle, where elements are removed in the same order they were added. A stack uses last-in, first-out order, while binary search trees and hash tables have no inherent FIFO removal behavior."
+          },
+          "latencyMs": 58626,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": null,
+          "requestId": null,
+          "devshardId": null,
+          "fallbackHeader": null,
+          "httpStatus": null,
+          "receiptStatus": "missing",
+          "receiptJson": null,
+          "readingJson": null,
+          "latencyMs": 90020,
+          "admitted": false,
+          "rejectionReason": "The call passed the 90 second evidence cutoff."
+        }
+      ]
+    },
+    {
+      "stem": "In big-O notation, what does O(n) say about an algorithm?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "It always takes exactly n steps to finish"
+        },
+        {
+          "letter": "B",
+          "text": "Its running time grows at most linearly with the input size"
+        },
+        {
+          "letter": "C",
+          "text": "It uses n bytes of memory whatever the input"
+        },
+        {
+          "letter": "D",
+          "text": "It is faster than every O(log n) algorithm"
+        }
+      ],
+      "key": "B",
+      "attempts": [
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788426760673079683-412385",
+          "devshardId": "70114",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426760673079683-412385",
+            "x_devshard_id": "70114",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:13:39Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 801,
+            "ttft_ms": 59145,
+            "duration_ms": 59145
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "B",
+            "defensible": ["B"],
+            "reason": "Big-O notation describes an asymptotic upper bound, so O(n) means the algorithm's running time grows no faster than a constant multiple of the input size n. Options A and C incorrectly imply exact values, and D is wrong because asymptotic bounds ignore constant factors and lower-order terms that determine actual speed for any given input."
+          },
+          "latencyMs": 59673,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788426760342254913-412381",
+          "devshardId": "70228",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426760342254913-412381",
+            "x_devshard_id": "70228",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:13:44Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 1181,
+            "ttft_ms": 64000,
+            "duration_ms": 64000
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "B",
+            "defensible": ["B"],
+            "reason": "O(n) indicates that the algorithm's running time grows at most linearly as the input size increases, not that it takes exactly n steps. It does not describe memory usage and is not generally faster than algorithms with lower growth rates like O(log n)."
+          },
+          "latencyMs": 64168,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788426805588420213-412661",
+          "devshardId": "70343",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426805588420213-412661",
+            "x_devshard_id": "70343",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:13:56Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 681,
+            "ttft_ms": 30923,
+            "duration_ms": 30923
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "B",
+            "defensible": ["B"],
+            "reason": "O(n) describes an upper bound on the running time that grows proportionally to the input size, meaning the time does not exceed a constant multiple of n for sufficiently large inputs. It does not guarantee exact step counts, memory usage, or comparisons to other complexities."
+          },
+          "latencyMs": 31316,
+          "admitted": false,
+          "rejectionReason": "A hedge of this call returned first, so this reading was recorded and discarded."
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788426805486909927-412658",
+          "devshardId": "70114",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426805486909927-412658",
+            "x_devshard_id": "70114",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:14:44Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 800,
+            "ttft_ms": 79271,
+            "duration_ms": 79271
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "B",
+            "defensible": ["B"],
+            "reason": "Big-O notation defines an asymptotic upper bound on growth rate, so O(n) means the running time grows no faster than linearly with input size. The other options incorrectly imply exact counts, ignore the possibility of describing time versus space, or misunderstand that O(n) does not guarantee better performance than a tighter bound like O(log n)."
+          },
+          "latencyMs": 79482,
+          "admitted": false,
+          "rejectionReason": "A hedge of this call returned first, so this reading was recorded and discarded."
+        }
+      ]
+    },
+    {
+      "stem": "Mutual exclusion, hold and wait, and no preemption are three of the four conditions required for deadlock. What is the fourth?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Round-robin scheduling"
+        },
+        {
+          "letter": "B",
+          "text": "Virtual memory"
+        },
+        {
+          "letter": "C",
+          "text": "Circular wait"
+        },
+        {
+          "letter": "D",
+          "text": "Context switching"
+        }
+      ],
+      "key": "C",
+      "attempts": [
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788426885228676885-413222",
+          "devshardId": "70240",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426885228676885-413222",
+            "x_devshard_id": "70240",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:15:09Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 775,
+            "ttft_ms": 24574,
+            "duration_ms": 24574
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "C",
+            "defensible": ["C"],
+            "reason": "The fourth necessary condition for deadlock is circular wait, where each process holds resources needed by another process in a chain. Without circular wait, a deadlock cannot occur even if the other three conditions are satisfied."
+          },
+          "latencyMs": 24769,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788426885349357569-413226",
+          "devshardId": "70158",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426885349357569-413226",
+            "x_devshard_id": "70158",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:15:26Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 645,
+            "ttft_ms": 41392,
+            "duration_ms": 41392
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "C",
+            "defensible": ["C"],
+            "reason": "The four Coffman conditions required for deadlock are mutual exclusion, hold and wait, no preemption, and circular wait. Round-robin scheduling, virtual memory, and context switching are unrelated operating system concepts and not conditions for deadlock."
+          },
+          "latencyMs": 41665,
+          "admitted": true,
+          "rejectionReason": null
+        }
+      ]
+    },
+    {
+      "stem": "Which layer of the TCP/IP model does HTTP belong to?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Transport"
+        },
+        {
+          "letter": "B",
+          "text": "Presentation"
+        },
+        {
+          "letter": "C",
+          "text": "Application"
+        },
+        {
+          "letter": "D",
+          "text": "Internet"
+        }
+      ],
+      "key": "C",
+      "attempts": [
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788426927288511388-413432",
+          "devshardId": "70345",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426927288511388-413432",
+            "x_devshard_id": "70345",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:15:52Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 901,
+            "ttft_ms": 25050,
+            "duration_ms": 25050
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "C",
+            "defensible": ["C"],
+            "reason": "HTTP is an application layer protocol in the TCP/IP model, used for web communication. It operates on top of the transport layer, which provides end-to-end communication services."
+          },
+          "latencyMs": 25306,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788426927294305234-413435",
+          "devshardId": "70158",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426927294305234-413435",
+            "x_devshard_id": "70158",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:16:47Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 749,
+            "ttft_ms": 80133,
+            "duration_ms": 80133
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "C",
+            "defensible": ["C"],
+            "reason": "HTTP is an application-layer protocol in the TCP/IP model because it defines the rules for communication between web clients and servers. The TCP/IP model does not include a Presentation layer, and HTTP does not perform transport or internet-layer functions like segmenting traffic or routing packets."
+          },
+          "latencyMs": 80372,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788426972283902005-413662",
+          "devshardId": "70158",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788426972283902005-413662",
+            "x_devshard_id": "70158",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:17:04Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 757,
+            "ttft_ms": 52615,
+            "duration_ms": 52615
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "C",
+            "defensible": ["C"],
+            "reason": "HTTP is an application-layer protocol in the TCP/IP model, providing the rules for client-server communication over the web. The TCP/IP model does not include a Presentation layer, the Transport layer handles end-to-end delivery with protocols like TCP, and the Internet layer handles addressing and routing with IP."
+          },
+          "latencyMs": 52768,
+          "admitted": false,
+          "rejectionReason": "A hedge of this call returned first, so this reading was recorded and discarded."
+        }
+      ]
+    },
+    {
+      "stem": "What does a primary key guarantee about a relational table?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Every column in the table holds a number"
+        },
+        {
+          "letter": "B",
+          "text": "Rows are returned in the order they were inserted"
+        },
+        {
+          "letter": "C",
+          "text": "The table is joined to exactly one other table"
+        },
+        {
+          "letter": "D",
+          "text": "Every row can be identified by a value that is unique and not null"
+        }
+      ],
+      "key": "D",
+      "attempts": [
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788427025477331726-413874",
+          "devshardId": "70345",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427025477331726-413874",
+            "x_devshard_id": "70345",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:17:34Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 1126,
+            "ttft_ms": 29312,
+            "duration_ms": 29312
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "D",
+            "defensible": ["D"],
+            "reason": "A primary key uniquely identifies each row in a table and cannot contain null values. This guarantees that every row can be referenced by a unique, non‑null identifier."
+          },
+          "latencyMs": 29514,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788427070487135404-414091",
+          "devshardId": "70335",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427070487135404-414091",
+            "x_devshard_id": "70335",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:18:10Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 798,
+            "ttft_ms": 19600,
+            "duration_ms": 19600
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "D",
+            "defensible": ["D"],
+            "reason": "A primary key is defined by the relational model as a column or combination of columns that uniquely identifies each row and cannot contain null values. The other options describe unrelated or incorrect properties: columns may be any data type, tables have no inherent row order, and primary keys impose no requirements on how many tables a table may be joined with."
+          },
+          "latencyMs": 19749,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788427025480484637-413877",
+          "devshardId": "70158",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427025480484637-413877",
+            "x_devshard_id": "70158",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:18:30Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 806,
+            "ttft_ms": 85191,
+            "duration_ms": 85191
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "D",
+            "defensible": ["D"],
+            "reason": "A primary key ensures each row is uniquely identifiable by a value or combination of values that cannot be null, which is the core guarantee of entity integrity in the relational model. None of the other options describe properties enforced by a primary key, as tables may contain various data types, have no inherent row order, and may be joined to any number of other tables."
+          },
+          "latencyMs": 85355,
+          "admitted": false,
+          "rejectionReason": "A hedge of this call returned first, so this reading was recorded and discarded."
+        }
+      ]
+    },
+    {
+      "stem": "What does a compiler do with a source program?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Translates it into another language, usually machine code, before it runs"
+        },
+        {
+          "letter": "B",
+          "text": "Runs it one statement at a time without translating it"
+        },
+        {
+          "letter": "C",
+          "text": "Reformats it to match the project style guide"
+        },
+        {
+          "letter": "D",
+          "text": "Removes unused files from the project directory"
+        }
+      ],
+      "key": "A",
+      "attempts": [
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788427111307744381-414267",
+          "devshardId": "70228",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427111307744381-414267",
+            "x_devshard_id": "70228",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:18:42Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 494,
+            "ttft_ms": 10785,
+            "duration_ms": 10785
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "A",
+            "defensible": ["A"],
+            "reason": "A compiler translates source code into another language, usually machine code, before the program runs, whereas an interpreter executes statements one at a time without translating them first."
+          },
+          "latencyMs": 11016,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788427111437881990-414271",
+          "devshardId": "70158",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427111437881990-414271",
+            "x_devshard_id": "70158",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:19:23Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 786,
+            "ttft_ms": 52330,
+            "duration_ms": 52330
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "A",
+            "defensible": ["A"],
+            "reason": "A compiler translates source code written in a high-level programming language into another language, typically machine code or assembly, before the program executes. This distinguishes it from an interpreter, which runs code one statement at a time during runtime without producing a separate translated program beforehand."
+          },
+          "latencyMs": 52712,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788427156265894689-414422",
+          "devshardId": "70114",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427156265894689-414422",
+            "x_devshard_id": "70114",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:20:37Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 784,
+            "ttft_ms": 81590,
+            "duration_ms": 81590
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "A",
+            "defensible": ["A"],
+            "reason": "A compiler translates the entire source program into another language—typically machine code or bytecode—before execution begins, producing an output file that can be run independently. This is fundamentally different from an interpreter, which processes and executes statements one at a time without producing a separate translated program first."
+          },
+          "latencyMs": 81703,
+          "admitted": false,
+          "rejectionReason": "A hedge of this call returned first, so this reading was recorded and discarded."
+        }
+      ]
+    },
+    {
+      "stem": "What is the main job of the Domain Name System?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Handing out IP addresses to devices joining a network"
+        },
+        {
+          "letter": "B",
+          "text": "Choosing a route for packets travelling between networks"
+        },
+        {
+          "letter": "C",
+          "text": "Encrypting the traffic between a browser and a web server"
+        },
+        {
+          "letter": "D",
+          "text": "Translating domain names into IP addresses"
+        }
+      ],
+      "key": "C",
+      "attempts": [
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788427238422211326-414866",
+          "devshardId": "70340",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427238422211326-414866",
+            "x_devshard_id": "70340",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:21:09Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 768,
+            "ttft_ms": 30867,
+            "duration_ms": 30867
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "D",
+            "defensible": ["D"],
+            "reason": "The Domain Name System’s primary purpose is to resolve human‑friendly domain names into the numeric IP addresses that computers use to communicate. Although DNS can be involved in other tasks such as load balancing, its core function is name‑to‑address translation."
+          },
+          "latencyMs": 31072,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788427238422211356-414867",
+          "devshardId": "70335",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427238422211356-414867",
+            "x_devshard_id": "70335",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:21:10Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 778,
+            "ttft_ms": 31726,
+            "duration_ms": 31726
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "D",
+            "defensible": ["D"],
+            "reason": "The Domain Name System primarily translates human-readable domain names into machine-readable IP addresses, enabling users to reach websites without memorizing numerical addresses. The other options describe separate technologies—DHCP, routing protocols, and TLS encryption—each with a different core purpose."
+          },
+          "latencyMs": 31895,
+          "admitted": true,
+          "rejectionReason": null
+        }
+      ]
+    },
+    {
+      "stem": "Why does a processor have a cache?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "To keep files after the machine is switched off"
+        },
+        {
+          "letter": "B",
+          "text": "To keep recently used data closer to the processor than main memory is"
+        },
+        {
+          "letter": "C",
+          "text": "To add more cores to the processor"
+        },
+        {
+          "letter": "D",
+          "text": "To translate assembly language into machine code"
+        }
+      ],
+      "key": "B",
+      "attempts": [
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788427271471396159-415048",
+          "devshardId": "70340",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427271471396159-415048",
+            "x_devshard_id": "70340",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:21:25Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 637,
+            "ttft_ms": 13749,
+            "duration_ms": 13749
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "B",
+            "defensible": ["B"],
+            "reason": "A cache provides a small, fast memory near the CPU that stores recently accessed data and instructions, reducing the time the processor spends waiting for main memory. This improves overall performance by minimizing memory access latency."
+          },
+          "latencyMs": 13885,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788427271470561205-415045",
+          "devshardId": "70335",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427271470561205-415045",
+            "x_devshard_id": "70335",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:21:54Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 648,
+            "ttft_ms": 43111,
+            "duration_ms": 43111
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "B",
+            "defensible": ["B"],
+            "reason": "Cache memory stores frequently or recently accessed data in fast memory physically closer to the processor than main memory, which reduces access latency. The other options incorrectly describe non-volatile storage, processor multicore architecture, and assembly translation."
+          },
+          "latencyMs": 43274,
+          "admitted": true,
+          "rejectionReason": null
+        }
+      ]
+    },
+    {
+      "stem": "How many bytes are there in one kilobyte?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "512"
+        },
+        {
+          "letter": "B",
+          "text": "1000"
+        },
+        {
+          "letter": "C",
+          "text": "1024"
+        },
+        {
+          "letter": "D",
+          "text": "8192"
+        }
+      ],
+      "key": "B",
+      "attempts": [
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788427322427714435-415314",
+          "devshardId": "70326",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427322427714435-415314",
+            "x_devshard_id": "70326",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:22:37Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 689,
+            "ttft_ms": 42344,
+            "duration_ms": 42344
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "C",
+            "defensible": ["B", "C"],
+            "reason": "In the SI standard a kilobyte equals 1000 bytes, but in computing the traditional definition treats a kilobyte as 1024 bytes. Since the question is from a computer‑science perspective, the conventional answer is 1024."
+          },
+          "latencyMs": 42549,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788427322427236581-415312",
+          "devshardId": "70335",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427322427236581-415312",
+            "x_devshard_id": "70335",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:23:00Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 772,
+            "ttft_ms": 65546,
+            "duration_ms": 65546
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "C",
+            "defensible": ["B", "C"],
+            "reason": "In traditional computer science usage, one kilobyte equals 1024 bytes (2^10), though a competent reader could also select 1000 based on the SI definition of the SI prefix 'kilo-' and modern standards like IEC 80000-13 which reserve 1024 for the kibibyte."
+          },
+          "latencyMs": 65664,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": null,
+          "requestId": null,
+          "devshardId": null,
+          "fallbackHeader": null,
+          "httpStatus": null,
+          "receiptStatus": "missing",
+          "receiptJson": null,
+          "readingJson": null,
+          "latencyMs": 90008,
+          "admitted": false,
+          "rejectionReason": "The call passed the 90 second evidence cutoff."
+        }
+      ]
+    },
+    {
+      "stem": "What does creating a branch in Git let a developer do?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Erase the history of the repository"
+        },
+        {
+          "letter": "B",
+          "text": "Compress the working directory to save disk space"
+        },
+        {
+          "letter": "C",
+          "text": "Publish the project to a package registry"
+        },
+        {
+          "letter": "D",
+          "text": "Work on changes without disturbing the main line of development"
+        }
+      ],
+      "key": "D",
+      "attempts": [
+        {
+          "requestedModel": "deepseek-ai/DeepSeek-V4-Flash-0731",
+          "servedModel": null,
+          "requestId": null,
+          "devshardId": null,
+          "fallbackHeader": null,
+          "httpStatus": 429,
+          "receiptStatus": "missing",
+          "receiptJson": null,
+          "readingJson": null,
+          "latencyMs": 865,
+          "admitted": false,
+          "rejectionReason": "The gateway answered 429. {\"error\":{\"message\":\"rate limit exceeded: too many concurrent requests\",\"type\":\"upstream_error\",\"param\":\"\",\"code\":null}}"
+        },
+        {
+          "requestedModel": "deepseek-ai/DeepSeek-V4-Flash-0731",
+          "servedModel": null,
+          "requestId": null,
+          "devshardId": null,
+          "fallbackHeader": null,
+          "httpStatus": 429,
+          "receiptStatus": "missing",
+          "receiptJson": null,
+          "readingJson": null,
+          "latencyMs": 807,
+          "admitted": false,
+          "rejectionReason": "The gateway answered 429. {\"error\":{\"message\":\"rate limit exceeded: too many concurrent requests\",\"type\":\"upstream_error\",\"param\":\"\",\"code\":null}}"
+        },
+        {
+          "requestedModel": "deepseek-ai/DeepSeek-V4-Flash-0731",
+          "servedModel": null,
+          "requestId": null,
+          "devshardId": null,
+          "fallbackHeader": null,
+          "httpStatus": 429,
+          "receiptStatus": "missing",
+          "receiptJson": null,
+          "readingJson": null,
+          "latencyMs": 703,
+          "admitted": false,
+          "rejectionReason": "The gateway answered 429. {\"error\":{\"message\":\"rate limit exceeded: too many concurrent requests\",\"type\":\"upstream_error\",\"param\":\"\",\"code\":null}}"
+        },
+        {
+          "requestedModel": "MiniMaxAI/MiniMax-M2.7",
+          "servedModel": "MiniMaxAI/MiniMax-M2.7",
+          "requestId": "req-1788427450313588933-416068",
+          "devshardId": "70240",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427450313588933-416068",
+            "x_devshard_id": "70240",
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "created_at": "2026-09-03T09:24:27Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 964,
+            "ttft_ms": 17311,
+            "duration_ms": 17311
+          },
+          "readingJson": {
+            "model": "MiniMaxAI/MiniMax-M2.7",
+            "answer": "D",
+            "defensible": ["D"],
+            "reason": "Creating a branch in Git isolates development work so changes can be made independently of the main line. This allows developers to experiment and add features without disturbing the stable version of the project."
+          },
+          "latencyMs": 17439,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788427452690511195-416092",
+          "devshardId": "70114",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427452690511195-416092",
+            "x_devshard_id": "70114",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:25:05Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 760,
+            "ttft_ms": 52917,
+            "duration_ms": 52917
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "D",
+            "defensible": ["D"],
+            "reason": "Creating a branch establishes an isolated line of development that lets developers experiment or implement features without modifying the main codebase. This keeps the primary branch stable until the new work is reviewed and merged."
+          },
+          "latencyMs": 53022,
+          "admitted": true,
+          "rejectionReason": null
+        },
+        {
+          "requestedModel": "moonshotai/Kimi-K2.6",
+          "servedModel": "moonshotai/Kimi-K2.6",
+          "requestId": "req-1788427497691118244-416228",
+          "devshardId": "70335",
+          "fallbackHeader": null,
+          "httpStatus": 200,
+          "receiptStatus": "verified",
+          "receiptJson": {
+            "x_request_id": "req-1788427497691118244-416228",
+            "x_devshard_id": "70335",
+            "model": "moonshotai/Kimi-K2.6",
+            "created_at": "2026-09-03T09:25:51Z",
+            "outcome": "success",
+            "status_code": 200,
+            "stream": false,
+            "total_tokens": 772,
+            "ttft_ms": 54236,
+            "duration_ms": 54236
+          },
+          "readingJson": {
+            "model": "moonshotai/Kimi-K2.6",
+            "answer": "D",
+            "defensible": ["D"],
+            "reason": "Creating a branch in Git creates an independent line of development that isolates new commits from other branches. This allows developers to experiment or make changes without affecting the main codebase until they are ready to merge."
+          },
+          "latencyMs": 54352,
+          "admitted": false,
+          "rejectionReason": "A hedge of this call returned first, so this reading was recorded and discarded."
+        }
+      ]
+    }
+  ]
+}

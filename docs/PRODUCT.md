@@ -391,7 +391,7 @@ submission can show a coherent destination without pretending every page ships t
 | ------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------- |
 | **Profile & Preferences** | Manage display name, language, theme and accessibility choices           | Minimal account identity only                       |
 | **Usage & Billing**       | Show plan, question allowance, invoices, payment method and cancellation | Pricing hypothesis only; no submission payment flow |
-| **Data & Security**       | Export account data, delete account and review active sessions           | Paid launch                                         |
+| **Data & Security**       | Export account data, delete account and review active sessions           | Deleting every record, and the retention notice     |
 | **Help**                  | Provide product guidance, status and contact support                     | FAQ and one support route                           |
 | **Service Status**        | Disclose model availability incidents and degraded queue behaviour       | Later public status page; in-app status now         |
 
@@ -564,9 +564,11 @@ The demo must show a risk light working, not models producing text.
 The protected sample is assembled from the measured benchmark's recorded readings and public request IDs; nothing in it
 is fabricated. Items that never obtained two verified readings appear as **Unverified** rather than being filled in, so
 the sample's verdict counts follow whichever benchmark pass or rerun is loaded, and the two-minute flow above must be
-rehearsed against the loaded sample. The live submission creates a genuine queued record but is not required to finish
-during the pitch. If it does finish, that is a bonus reveal. If a model is unavailable, the visible **Checking** or
-**Unverified** state proves the fail-closed design rather than breaking the story.
+rehearsed against the loaded sample.
+
+The live submission creates a genuine queued record but is not required to finish during the pitch. If it does finish,
+that is a bonus reveal. If a model is unavailable, the visible **Checking** or **Unverified** state proves the
+fail-closed design rather than breaking the story.
 
 The strongest visual beat is the change from a crowded paper summary to one obvious action: inspect the key marked
 **Stack**. The strongest technical beat is the receipt-backed proof that two distinct models independently chose
@@ -578,10 +580,11 @@ The strongest visual beat is the change from a crowded paper summary to one obvi
 
 **Cekgu ships the Live2D mascot animated and state-driven, never as a still picture.** It loads after the record content
 and never blocks input, results or evidence, but a static image is only the reduced-motion and load-failure fallback,
-not the shipped default. The supplied Tororo & Hijiki archive is healthy and contains deployable runtime material for
-two cats; the runtime files are committed under `public/live2d/` and the authoring sources are not. The pair is
-unusually relevant: two visibly distinct readers can make “two independent model families” understandable before the
-technical explanation begins.
+not the shipped default.
+
+The supplied Tororo & Hijiki archive is healthy and contains deployable runtime material for two cats; the runtime files
+are committed under `public/live2d/` and the authoring sources are not. The pair is unusually relevant: two visibly
+distinct readers can make “two independent model families” understandable before the technical explanation begins.
 
 This is a product-feasibility decision, not the branding design. Logo shape, mascot identity, palette and generated
 concept art belong in the later branding round requested by the team.

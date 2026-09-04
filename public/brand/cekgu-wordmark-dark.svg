@@ -1,0 +1,5 @@
+<!-- Light-ground variant, ink #eceae4 from docs/DESIGN.md. Written literally for the same reason
+     as cekgu-mark.svg: currentColor does not inherit into an <img>-loaded SVG. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 48" role="img" aria-label="Cekgu">
+  <text x="0" y="38" fill="#eceae4" font-family="'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="-0.8">Cekgu</text>
+</svg>

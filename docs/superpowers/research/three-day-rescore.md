@@ -145,9 +145,18 @@ model. The answer key stayed local until classification.
 
 Two preliminary runs were rejected as invalid rather than counted against the product. Putting all twelve items in one
 prompt made all three models exceed 30 seconds, reproducing the known long-prompt failure. Sending 36 item-level calls
-at once then returned
-`{"error":{"code":"rate_limited","message":"too many concurrent requests for this account; lower your parallelism and retry"}}`
-across the account. The valid run processed two questions at a time, four concurrent calls, which the gateway accepted.
+at once then returned this across the account:
+
+```json
+{
+  "error": {
+    "code": "rate_limited",
+    "message": "too many concurrent requests for this account; lower your parallelism and retry"
+  }
+}
+```
+
+The valid run processed two questions at a time, four concurrent calls, which the gateway accepted.
 
 | Result                                     | Pass 1    | Pass 2    | Acceptance threshold                |
 | ------------------------------------------ | --------- | --------- | ----------------------------------- |
@@ -178,6 +187,63 @@ it could not replace Kimi during this window.
 its intended state in both passes and two verified models inside 30 seconds. Neither happened. The evidence supports an
 asynchronous review queue with bounded retries and an **Unverified** state; it does not support the original synchronous
 full-paper demo. Choosing that architecture changes the demo and needs team approval before `PRODUCT.md` is written.
+
+### The 30-item evaluation set — 4 September
+
+**Method.** The committed paper in `src/server/fixtures/evaluation-set.json` — 20 clean controls, 5 items mis-keyed on
+purpose, 5 written to be ambiguous — run twice through the **deployed** pipeline rather than a local harness, so every
+verdict came from the queue, worker and gateway client a judge exercises.
+
+The Guest account caps a record at 12 items, so each pass ran as three records of ten; the worker drains one item at a
+time regardless. Verdicts, request ids and latencies were read back from `GET /api/records/:id`, nothing was written by
+hand, and the six records were deleted afterwards. Turnaround is the item's own wall clock: its first attempt starting
+to its last one finishing.
+
+| Result                            | Pass A      | Pass B      | Both        |
+| --------------------------------- | ----------- | ----------- | ----------- |
+| **False flags on clean controls** | **0 of 20** | **0 of 20** | **0 of 40** |
+| Mis-keyed caught                  | 4 of 5      | 4 of 5      | 8 of 10     |
+| Ambiguous caught                  | 4 of 5      | 2 of 5      | 6 of 10     |
+| Unverified                        | 7 of 30     | 12 of 30    | 19 of 60    |
+| Median turnaround                 | 73.4 s      | 40.7 s      | 50.5 s      |
+| 95th-percentile turnaround        | 229.5 s     | 722.7 s     | 311.2 s     |
+| Attempts, of which admitted       | 97 / 55     | 108 / 50    | 205 / 105   |
+
+**The headline is the empty row.** Across 40 clean-control runs the pipeline never once flagged a good question. Every
+error it made was an abstention or a miss, never a false accusation — which is the failure direction that matters,
+because a lecturer who is sent to re-read a correct item loses an evening, and one who stops trusting the flags loses
+the product.
+
+**Of the 20 planted-defect runs: 14 caught, 5 Unverified, 1 false negative.** The single false negative is
+`http-model-layer` in pass A, which came back **Clear** on an item written to be ambiguous. It is the same item, with
+the same failure, that the sample capture missed on 3 September.
+
+That makes it a characterised limitation rather than a fluke: the rule only sees ambiguity when a reader _says_ more
+than one option is defensible, and two confident readers are indistinguishable from an unambiguous question. In pass B
+the same item returned **Unverified**, so it has never produced the same confident error twice.
+
+No item caught in one pass came back **Clear** in the other. The disagreements are all catch-versus-abstain, which is
+the fail-closed rule doing what it was written to do rather than the verdict being unstable.
+
+**Availability, not accuracy, is what the Unverified rate measures.** 19 of 60 item-runs never obtained two
+receipt-verified readings. Of the 100 rejected attempts, 53 passed the 90-second evidence cutoff, 36 were gateway `429`
+rate limits, 6 lost a hedge and 5 returned an unparseable body. Admitted calls themselves were quick — median 21.4 s in
+pass A and 19.3 s in pass B — so the turnaround figures above are dominated by retries, not by model latency.
+
+**This rate is a load effect and should not be read against the sample record.** The 12-item capture on 3 September
+returned 0 Unverified; these 30-item passes returned 7 and 12. Thirty items back to back sustain rate limiting that a
+twelve-item paper never reaches, and [gotcha 10](../../TRD.md#5-verified-gotchas) in the TRD is account-level. Quoting 0
+of 12 beside 19 of 60 without that explanation would misrepresent both.
+
+**All three families served, and the ordering moved between passes.** Pass A was carried by MiniMax (31 readings) and
+Kimi (23), with DeepSeek serving 1. Pass B was MiniMax 32, DeepSeek 13, Kimi 5. DeepSeek answered `429` to everything on
+3 September, so this is the first run in which the third family contributed; the health ordering reshuffling between
+passes is the queue behaving as TRD section 13 designed it. 116 of the 205 attempts carried a Gonka request id.
+
+**Against the mechanism benchmark above, this is not a rerun.** That test judged a synchronous full-paper design and
+failed it on availability and latency. The queue measured here — deferred hedge, three-attempt family budget,
+third-family fallback, health ordering — is the architecture chosen _because_ it failed. The two tables are not
+comparable and the earlier verdict does not stand against what shipped.
 
 ## The window
 

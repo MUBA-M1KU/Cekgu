@@ -113,7 +113,10 @@ inside the Guest workspace, word for word as [PRODUCT.md](PRODUCT.md#the-shared-
 
 - The text beside the button and in the banner both read: **Shared demo workspace. Anything you add can be viewed or
   deleted by other guests. Do not enter real, personal or confidential exam content.**
-- The banner is visible on every Guest page without scrolling at 375 px wide and cannot be dismissed for the session
+- The banner is visible on every Guest page without scrolling at 375 px wide. It carries a single dismiss control, and
+  dismissal is remembered in that browser. Dismissing hides the strip, not the disclosure: the same sentence stays
+  beside the **Sign In as Guest** button and in Settings under Account, so a returning guest can always read it. A
+  browser that refuses storage keeps showing the banner
 - No product copy uses the word "anonymous" to describe the Guest account
 
 **FR-AUTH-4.** Guest-created records expire 24 hours after creation and carry no recovery promise.
@@ -149,6 +152,15 @@ workspace.
 - Given the educator submits, then the record row exists in **Records** before any model has answered
 - Given the educator closes the tab during **Queued** or **Checking**, when they return, then the record and its
   progress are intact
+
+**FR-CHECK-4.** On the shared Guest account, **New Check** says so and offers a paper that fills every field in one
+action. A demo on a projector must not open with typing.
+
+- The control is offered only to the Guest account. A private account is not shown it
+- Given it is used, then title, subject, language, context, three questions with their options and all three keys are
+  filled, and the form is submittable without another keystroke
+- A second control reverses it, so a presenter can go back to an empty form on stage
+- The copy says what is in the paper, never what the readers will decide about it
 
 ### The queue
 
@@ -273,6 +285,18 @@ count and last updated time, and opening a row enters the record workspace.
 - A private deletion is a soft delete retained for 30 days; the restore surface is a paid-launch feature and is not
   required here
 - A Guest deletion is immediate and the confirmation says there is no recovery
+- A soft-deleted private record is destroyed once its 30 days are up, without anyone asking
+
+**FR-RECORD-8.** Settings carries a **Delete All Records** control and states how long the account keeps data. This is
+the erasure path a person exercising their PDPA rights reaches for, so it is deliberately not the same action as
+FR-RECORD-6.
+
+- The default retention is 3 months for a private account, counted from the last time a record was opened or changed,
+  and 24 hours for Guest. Settings states the one that applies to the account reading it
+- Given the control is confirmed, then every record the account holds is destroyed immediately, including anything
+  already in Trash, and nothing is recoverable
+- The protected sample is refused and the result says so, on Guest as on any other route (FR-SAMPLE-2)
+- On Guest the confirmation says the workspace is shared, so the deletion takes records other guests added
 
 ### Evidence
 
@@ -309,6 +333,20 @@ recorded readings and public request ids from a real pass; nothing in it is fabr
 
 - Every request id in the sample resolves to a public receipt whose model matches the displayed served model
 - Items that never obtained two verified readings in the loaded pass appear as **Unverified**, not filled in
+
+**How the loaded pass satisfies this, 3 September.** The twelve items are a subset of
+`src/server/fixtures/evaluation-set.json`, which is the benchmark's own paper — its `fifo-structure` and `dns-role`
+entries are the two mis-keys the write-up names, word for word. The subset is both of those, the first two items
+labelled ambiguous and the first eight labelled clean, and their stems, options and keys are byte-identical to that
+file, so the sample's questions can be diffed against the repository.
+
+Two caveats belong with that claim:
+
+- **They are not provably the identical twelve pass 1 used**, because pass 1's per-item output no longer exists. They
+  are drawn from the same committed set and include the two items it is known to have contained. All 32 request ids were
+  confirmed to resolve with matching models.
+- **The second bullet is currently satisfied vacuously**: every item obtained two verified readings, so there is no
+  Unverified item in the sample.
 
 **FR-SAMPLE-2.** The sample record is protected: it cannot be deleted, its questions, readings and verdicts cannot be
 edited, and it is labelled as the sample.
@@ -354,10 +392,14 @@ pauses when the tab is hidden or the mascot is off screen.
 
 - Keyboard and screen-reader users can complete every flow without the mascot rendering at all
 
-**FR-MASCOT-5.** The attribution the team lead accepted for the Tororo & Hijiki sample assets and the Cubism SDK is
-shown in the product, within the trust copy or the page footer.
+**FR-MASCOT-5.** The attribution for the Tororo & Hijiki sample assets and the Cubism SDK is recorded in the repository
+documentation. It is **not** rendered in the product.
 
 - The attribution names the assets as Live2D sample characters, not as Cekgu's own
+- AlaskanTuna removed it from the frontend on 3 September and accepted responsibility for the licence position. It was
+  previously a footer on every page. Note that the Live2D Free Material License Agreement does carry attribution
+  conditions, so this is a decision the team lead owns rather than a detail the build settled
+- It remains in [`README.md`](README.md) and [`TRD.md`](TRD.md), which is where a licence review would look
 
 ## Non-functional requirements
 
@@ -420,6 +462,8 @@ contract and where request ids are rendered without reading the code.
 | As an educator, I record Key Corrected and the original verdict stays in history                    | FR-RECORD-4, FR-RECORD-2                |
 | As an educator, I see an Unverified item, understand why, and retry it later                        | FR-VERDICT-2, FR-QUEUE-5, FR-EVIDENCE-2 |
 | As an educator, I select several old records and delete them with a clear warning                   | FR-RECORD-6, FR-RECORD-7                |
+| As an educator, I delete everything my account holds and see how long data is kept                  | FR-RECORD-8                             |
+| As a presenter, I fill the check form in one action so a live demo does not open with typing        | FR-CHECK-4, FR-AUTH-2                   |
 | As a guest, I enter with one click and am told plainly that others can see and delete my records    | FR-AUTH-2, FR-AUTH-3                    |
 | As a guest, I try a real three-question check within the limits and it queues                       | FR-AUTH-5, FR-CHECK-3, FR-QUEUE-1       |
 | As a guest, I cannot delete the sample but I can reset my dispositions on it                        | FR-SAMPLE-2, FR-SAMPLE-3                |
@@ -465,9 +509,14 @@ Verbatim from [Explicitly outside version one](PRODUCT.md#explicitly-outside-ver
 - Claims that consensus is truth, cryptographic proof or an on-chain transaction
 - A full animated mascot if the review loop and receipt trail are not already stable
 
-Also out of this document's scope, because the ladder places them after submission: paste and CSV import, Bahasa
-Malaysia product copy, Trash restore, duplication, export, email notifications, billing, library search and filters, and
-every expansion-rung feature.
+Also out of this document's scope, because the ladder places them after submission:
+
+- Paste and CSV import
+- Bahasa Malaysia product copy
+- Trash restore, duplication and export
+- Email notifications and billing
+- Library search and filters
+- Every expansion-rung feature
 
 ## Traceability
 
@@ -484,7 +533,7 @@ Each [submission floor](PRODUCT.md#submission-floor) bullet maps to the requirem
 | The five machine verdicts, including ordinary Unverified handling             | FR-VERDICT-2, FR-VERDICT-3, FR-VERDICT-4, FR-QUEUE-5    |
 | A record review with summary counts, item filters and human dispositions      | FR-RECORD-2, FR-RECORD-3, FR-RECORD-4                   |
 | A model-evidence view with every Gonka Request ID visible                     | FR-EVIDENCE-1, FR-EVIDENCE-2, FR-EVIDENCE-3, NFR-PROV-3 |
-| Records that can be opened, selected and deleted                              | FR-RECORD-5, FR-RECORD-6, FR-RECORD-7                   |
+| Records that can be opened, selected and deleted                              | FR-RECORD-5, FR-RECORD-6, FR-RECORD-7, FR-RECORD-8      |
 | One protected sample record containing the real benchmark evidence            | FR-SAMPLE-1, FR-SAMPLE-2, FR-SAMPLE-3, FR-SAMPLE-4      |
 | A deployed URL that stays useful when one model is unavailable                | NFR-OPS-1, FR-QUEUE-2, FR-QUEUE-4                       |
 
@@ -493,9 +542,17 @@ The mascot (FR-MASCOT-1 to FR-MASCOT-5) is not a floor bullet. It ships behind i
 
 ## Open questions
 
-- **Which benchmark pass seeds the sample record.** Decided 3 September: pass 1, which gives ten verified verdicts
-  including both key errors, with the two ambiguous items shown as Unverified. The rehearsal must match that loaded
-  pass, and a rerun replaces it only if it verifies at least as many items
+- **Which benchmark pass seeds the sample record.** ~~Decided 3 September: pass 1~~ — **superseded 3 September.** Pass
+  1's per-item output does not exist in this repository; only two of its request ids survive, quoted in
+  [`three-day-rescore.md`](superpowers/research/three-day-rescore.md#the-mechanism-benchmark--failed-3-september). The
+  sample is seeded instead from `capture-2026-09-03`, a fresh pass over a twelve-item subset of the committed
+  `src/server/fixtures/evaluation-set.json`, run through the shipped queue. Three consequences follow:
+  - It verified **12 of 12** against the ten this clause required, and both planted key errors were caught
+  - **It contains no Unverified item**, where pass 1 had two. The acceptance test's step 6 has no Unverified verdict to
+    demonstrate and step 2's "Unverified items present where that pass had them" now passes vacuously; the rehearsal
+    script is being rewritten around a rejected attempt instead, of which the pass has plenty
+  - One of the two ambiguous items was reported **Clear**, which is a false negative rather than an abstention, and is
+    stated in the README's limitations
 - **Guest limit values.** The 12-question, 2,000-character and 20-record limits in FR-AUTH-5 are defaults chosen here
   because PRODUCT.md fixes none. They stand until the team changes them
 - **Private sign-in mechanism.** Resolved in [`TRD.md`](TRD.md): Better Auth with Google sign-in and email plus

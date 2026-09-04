@@ -1,16 +1,20 @@
-# Verification: Minit, Tested For Concordance
+# Verification: Minit, tested for concordance
 
 **VIABLE, 78/100.** Above the 70 line, not LOCK. The wedge is real and statutory: the Second Schedule of the Strata
 Management Act 2013 makes the management committee keep minutes, publish them within 28 days, and makes the signed
 minutes prima facie evidence in court. The phenomenon is real but thinly measured. Two things stand between VIABLE and
-LOCK, ranked under [Open Risks](#open-risks): whether Malaysian JMB and MC meetings actually produce a transcript, and
+LOCK, ranked under [Open risks](#open-risks): whether Malaysian JMB and MC meetings actually produce a transcript, and
 whether the screen can be told apart from the dozen fact checkers the judges will see the same afternoon.
 
 **The candidate.** Working name Minit (Malay for "minutes"). Meeting minutes that two independent AIs agree happened.
 Two models from two labs, blind to each other, each extract decisions, actions (owner, date) and undecided items from
-the same transcript; items are matched, then compared field by field, and every item lands in one of three states: both
-agree (publish), one reader only (chair confirms or drops), readers conflict (show the passage). Each reading carries a
-Gonka request id.
+the same transcript. Items are matched, then compared field by field, and every item lands in one of three states:
+
+- **Both agree** — publish
+- **One reader only** — the chair confirms or drops it
+- **Readers conflict** — show the passage
+
+Each reading carries a Gonka request id.
 
 **Method.** Verified 2 September 2026 against [`RUBRIC.md`](RUBRIC.md). Budget: 15 search/fetch calls, plus a local read
 of the Strata Management Act 2013 PDF that one fetch saved. Where a search found nothing it says "negative result".
@@ -18,19 +22,19 @@ Citations are inline by publisher, title and date; every URL is under [Sources](
 
 Contents:
 
-1. [Phenomenon: AI Note-Takers Invent And Omit](#phenomenon-ai-note-takers-invent-and-omit)
-1. [Malaysian Wedge](#malaysian-wedge)
+1. [Phenomenon: AI note-takers invent and omit](#phenomenon-ai-note-takers-invent-and-omit)
+1. [Malaysian wedge](#malaysian-wedge)
 1. [Incumbents](#incumbents)
-1. [Track Fit](#track-fit)
-1. [Predicted Competition](#predicted-competition)
+1. [Track fit](#track-fit)
+1. [Predicted competition](#predicted-competition)
 1. [Scores](#scores)
-1. [Novelty Test](#novelty-test)
-1. [Kill Criteria](#kill-criteria)
-1. [Judge Legibility](#judge-legibility)
-1. [Open Risks](#open-risks)
+1. [Novelty test](#novelty-test)
+1. [Kill criteria](#kill-criteria)
+1. [Judge legibility](#judge-legibility)
+1. [Open risks](#open-risks)
 1. [Sources](#sources)
 
-## Phenomenon: AI Note-Takers Invent And Omit
+## Phenomenon: AI note-takers invent and omit
 
 **Finding: real, vendor-admitted, weakly measured.** No peer-reviewed 2024-26 study measuring decision or action-item
 hallucination rates in commercial note-takers surfaced. Negative result on that specific claim. What did surface:
@@ -66,7 +70,7 @@ hallucination rates in commercial note-takers surfaced. Negative result on that 
 **What this supports in the pitch:** "the vendors themselves tell you to check the summary before you send it" is
 citable verbatim. "X% of decisions are invented" is not; do not say it.
 
-## Malaysian Wedge
+## Malaysian wedge
 
 **Finding: the statutory duty is exact and quotable, and the volunteer bodies carrying it have no secretary.** The
 provisions below are read directly from the Act text (Laws of Malaysia, Act 757, Strata Management Act 2013, reprint
@@ -96,11 +100,13 @@ Buildings, attached to next year's notice). That is the second-use answer, writt
 
 **Tribunal and dispute evidence.** The Tribunal for Housing and Strata Management resolved 11,361 cases in 2023 against
 9,617 in 2022 (Malay Mail, "Housing and local govt minister says record 99.87pc housing and strata cases solved by
-tribunal in 2023", 30 Jan 2024). That figure combines housing and strata claims. A reported case about AGM compliance:
-Jaya One Management Corporation had held no AGM or EGM for more than 38 months after September 2020 (Focus Malaysia, "A
-landmark case that upholds Malaysia's strata law & a stern lesson to all MC, JMB", date not captured). Mahwengkwai (law
-firm), "Challenging a Strata Management Tribunal Award in Malaysia", confirms the Tribunal's jurisdiction covers
-meetings and AGMs. **A Tribunal case turning specifically on the content of minutes: negative result.**
+tribunal in 2023", 30 Jan 2024). That figure combines housing and strata claims.
+
+On AGM compliance, Jaya One Management Corporation had held no AGM or EGM for more than 38 months after September 2020
+(Focus Malaysia, "A landmark case that upholds Malaysia's strata law & a stern lesson to all MC, JMB", date not
+captured), and Mahwengkwai (law firm), "Challenging a Strata Management Tribunal Award in Malaysia", confirms the
+Tribunal's jurisdiction covers meetings and AGMs. **A Tribunal case turning specifically on the content of minutes:
+negative result.**
 
 **Forum evidence.** Lowyat Forum, "Complain on JMB" (forum.lowyat.net/topic/3200536): "Both the JMB chairman and
 management refused to show proof or minutes of committee decisions." Timetec (vendor blog), "The JMB Committee Handover
@@ -112,12 +118,16 @@ snippet, unverified by fetch); 9,486 strata units launched in 2H 2024, up 7% (RE
 2H 2024, April 2025); 242 developments in Sarawak issued strata titles as of 3 May (DayakDaily, year not captured). Ask
 KPKT or a COB for the scheme count before the pitch; do not invent one.
 
-**Public bodies.** Local Government Act 1976 (Act 171), consolidated text on CommonLII: minutes of all proceedings of
-the local authority "shall be kept at the office of the local authority and shall at all reasonable times be open to the
-inspection of any Councillor or rate-payer", who "may at all reasonable times make a copy of any part thereof without
-fee"; committee minutes are not open to rate-payers "unless the local authority otherwise directs"; "All minutes shall
-be confirmed and signed by the Chairman". Section number not verified. University senates, PTAs and NGO boards: not
-searched; treat as unverified extensions of the wedge, not evidence.
+**Public bodies.** Local Government Act 1976 (Act 171), consolidated text on CommonLII. Section number not verified:
+
+- Minutes of all proceedings of the local authority "shall be kept at the office of the local authority and shall at all
+  reasonable times be open to the inspection of any Councillor or rate-payer", who "may at all reasonable times make a
+  copy of any part thereof without fee"
+- Committee minutes are not open to rate-payers "unless the local authority otherwise directs"
+- "All minutes shall be confirmed and signed by the Chairman"
+
+University senates, PTAs and NGO boards were not searched; treat them as unverified extensions of the wedge, not
+evidence.
 
 ## Incumbents
 
@@ -128,7 +138,7 @@ searched; treat as unverified extensions of the wedge, not evidence.
   speech-to-text pass, one summary pass. Fathom is reported to use OpenAI Whisper for transcription (StackNova). No
   comparison mentions a cross-model check or a per-item confidence display. **Negative result on any verification
   feature.** The vendor disclaimers under
-  [Phenomenon: AI Note-Takers Invent And Omit](#phenomenon-ai-note-takers-invent-and-omit) are the closest thing to one
+  [Phenomenon: AI note-takers invent and omit](#phenomenon-ai-note-takers-invent-and-omit) are the closest thing to one
 - **Board portals.** Diligent ("Best Board Meeting Minutes Software 2026"; "The leading board meeting minutes software")
   drafts minutes and tracks action items with Diligent Boards AI. OnBoard has a "Minutes AI" product page. Boardable
   generates minutes from meetings held in Boardable Video. BoardPro uses AI for agendas. BoardBreeze's competitor blog
@@ -152,7 +162,7 @@ searched; treat as unverified extensions of the wedge, not evidence.
    resolutions listed, filed with the COB) at a price a volunteer JMB can pay. Board portals do the document but at
    corporate prices and without independent verification
 
-## Track Fit
+## Track fit
 
 **Finding: honest, provided the unit of consensus is the item and disagreement is shown, not averaged.**
 
@@ -179,7 +189,7 @@ searched; treat as unverified extensions of the wedge, not evidence.
 **Not verified:** GonkaRouter context length against a two-hour AGM transcript (20-30k words). Check the TRD's measured
 limits before committing to whole-transcript extraction; chunking changes the consensus logic.
 
-## Predicted Competition
+## Predicted competition
 
 **Estimate: 2 of ~30 teams ship something recognisably similar; 0-1 with a governance wedge.** Defence:
 
@@ -208,7 +218,7 @@ year. Open with the JMB chair, not with the transcript.
 | Buildability           | 20      |     16 | No data, access or partnership needed; a mock AGM transcript can be scripted. Docked for matching logic and transcript length against gateway limits       |
 | **Total**              | **100** | **78** | Above 70: viable                                                                                                                                           |
 
-## Novelty Test
+## Novelty test
 
 1. **Convergence count: 2.** Generic meeting summarisers. What makes ours unrecognisable: the unit is a minute item with
    two request ids and a chair-confirm state, and the output is a paragraph 7 document, not a summary
@@ -219,7 +229,7 @@ year. Open with the JMB chair, not with the transcript.
    minutes must accompany next year's notice under 12(3)(a). The second opening is the next committee meeting, with the
    previous minutes already in the tool as the "matters arising" input
 
-## Kill Criteria
+## Kill criteria
 
 | Criterion                                                       | Triggered? | Why                                                                                 |
 | --------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------- |
@@ -231,16 +241,16 @@ year. Open with the JMB chair, not with the transcript.
 
 None triggered.
 
-## Judge Legibility
+## Judge legibility
 
 **Ten-second version: "Minutes two AIs agree happened. Anything only one heard, the chair confirms. Every line has a
 receipt."** An infrastructure judge grasps that instantly and will immediately ask what the matcher is; have the answer.
-Against their Reddit lead-finder reference: Minit is the same shape, a recurring job that keeps running on post-event
-tokens, monthly per committee, and it is legible as a specific need ("the JMB has 28 days and no secretary") rather than
-a copy of Otter. The risk for legibility is the screen, not the sentence: if it looks like a fact checker, the sentence
-gets lost.
 
-## Open Risks
+Against their Reddit lead-finder reference, Minit is the same shape: a recurring job that keeps running on post-event
+tokens, monthly per committee, legible as a specific need ("the JMB has 28 days and no secretary") rather than a copy of
+Otter. The risk for legibility is the screen, not the sentence: if it looks like a fact checker, the sentence gets lost.
+
+## Open risks
 
 1. **Transcript availability.** The product assumes Zoom, Teams or Meet produced a transcript. Many JMB AGMs are held in
    a hall, in Malay, English and Chinese, with no recording. Not verified either way; the single biggest hole.

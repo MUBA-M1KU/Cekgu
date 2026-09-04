@@ -3,12 +3,15 @@
 The spoken script for Demo Day at APU, 6 September 2026. Owned by the `pitch-smith` subagent
 ([`.claude/agents/pitch-smith.md`](../../.claude/agents/pitch-smith.md)).
 
-> **Draft, 3 September 2026. The build is not frozen.** Sections 1 to 5 and 7 to 11 are speakable today. Section 6, the
-> live demo, is **planned against the deployed sample and has not been rehearsed against a running app**, because there
-> is none yet: the repository holds the documents and an unmerged scaffold. Every beat in it comes from
-> [the two-minute product flow](../PRODUCT.md#two-minute-product-flow) and
-> [the submission demo as an acceptance test](../PRD.md#the-submission-demo-as-an-acceptance-test). Rehearse it against
-> the real app at the freeze, correct every literal label to what the screen says, then delete this note.
+> **4 September 2026, written against the frozen build.** The app is live at `cekgu-op7lf5dspq-as.a.run.app` and its
+> sample record is public at `/api/sample`, signed out. Every count, model id, request id and literal button label below
+> was read off the running app and the record today, not planned against a design. The one exception is
+> [the 30-item evaluation](../superpowers/research/three-day-rescore.md#the-30-item-evaluation-set--4-september) behind
+> slide 08, which is its own recorded run through the same deployed queue.
+>
+> **What is still open is the rehearsal, not the build.** Nobody has walked section 6 with a clock in front of an
+> audience; that is issue #42. Run it once before the room fills, correct any label the app has changed since, and cut
+> this paragraph to the second sentence.
 
 Contents:
 
@@ -16,8 +19,8 @@ Contents:
 1. [Run of show at a glance](#0-run-of-show-at-a-glance)
 1. [Opening route drafts](#1-opening-route-drafts)
 1. [Introduction](#2-introduction-000-015--32-words--speaker)
-1. [The problem](#3-the-problem-015-040--54-words--speaker)
-1. [The objective](#4-the-objective-040-100--46-words--speaker)
+1. [The problem](#3-the-problem-015-040--58-words--speaker)
+1. [The objective](#4-the-objective-040-100--45-words--speaker)
 1. [How the check works](#5-how-the-check-works-100-135--77-words--speaker)
 1. [Live demo](#6-live-demo-135-245--driver)
 1. [The proof](#7-the-proof-245-315--62-words--speaker)
@@ -39,7 +42,8 @@ Contents:
   or click to advance. `N` speaker notes, `T` rehearsal timer, `R` reset — all off by default and never in the PDF.
 - **Speakers** — **SPEAKER** narrates and owns the deck and the clock. **DRIVER** owns the keyboard and the app.
 - **Notation** — plain text is **spoken**, _italics_ are on-stage action, `NOTE:` is internal and never spoken.
-- **Team** — Team M1KU. `TO FILL:` the four member names, on the cover slide and in the Devfolio submission.
+- **Team** — Team M1KU. `TO FILL:` the four member names, in the **Devfolio submission**. Slide 01 carries the team name
+  and nothing else, deliberately: a deck should not advertise an unfinished state to a judge.
 
 **Never present a recording as live.** If something fails, say so out loud and take the
 [fallback ladder](#13-fallback-ladder).
@@ -115,7 +119,7 @@ that".
 **Chosen.** It is specific to this audience, it takes eight seconds, and the differentiator arrives before the product
 does.
 
-### Finalized script
+### Finalized opening
 
 > "We're Team M1KU, and we built Cekgu. Every university in this room already vets its exam papers by committee. The
 > committee reads the paper. Cekgu re-solves it, before a single student does."
@@ -134,33 +138,40 @@ empty. DRIVER is idle with the cursor off screen._
 
 `NOTE:` Handshake, not a beat. Do not read a URL aloud.
 
-## 3. The problem (0:15-0:40 · 54 words · SPEAKER)
+## 3. The problem (0:15-0:40 · 58 words · SPEAKER)
 
 **[Slide 02 — Problem statement]**
 
 _(15 second)_
 
-> "Here's one item on a twelve-question quiz. Which data structure follows FIFO? The supplied key says Stack. The answer
-> is Queue."
+> "Here's one item on a twelve-question quiz. Which data structure removes elements first in, first out? The supplied
+> key says Stack. The answer is Queue."
 
 _(25 second)_
 
 > "That paper was vetted. Signed off. Published with the defect still in it. Not big questions. One wrong key, two
 > defensible answers, a missing word. Small enough to survive a careful human read."
 
-`NOTE:` The red pen mark at the bottom right of the slide is the committee's sign-off. Point at it on "signed off" if a
-hand is free, and do not explain the joke.
+`NOTE:` The item on the slide is question 3 of the sample record, verbatim, down to the four option texts. The red pen
+mark at the bottom right is the committee's sign-off. Point at it on "signed off" if a hand is free, and do not explain
+the joke.
 
-## 4. The objective (0:40-1:00 · 46 words · SPEAKER)
+`NOTE:` 58 words in 25 seconds is 139 wpm, about two seconds over. If the rehearsal runs long, "Not big questions." is
+the line to cut.
+
+## 4. The objective (0:40-1:00 · 45 words · SPEAKER)
 
 **[Slide 03 — Project objective]**
 
-> "So the lecturer re-reads all twelve, with the same attention on each. Cekgu turns twelve into four. Two possible key
-> errors, two it could not verify, eight clear. Those are real counts from our own benchmark. The four are where a human
-> should spend the evening."
+> "So the lecturer re-reads all twelve, with the same attention on each. Cekgu turns twelve into three. Two possible key
+> errors, one possible ambiguity, nine clear. Those are the live counts on our public sample. The three are where a
+> human should spend the evening."
 
-`NOTE:` "Could not verify" is deliberate. Do not say "failed". Those two items are the fail-closed rule working, and
-slide 08 collects on that in three minutes.
+`NOTE:` Say "possible" both times; the word is doing work. The counts are what `GET /api/sample` returns right now, and
+a judge can open the Sample Report signed out and count the chips.
+
+`NOTE:` **There is no Unverified item in this sample.** Nothing in the pitch may promise a judge one. If asked, it is
+real product behaviour that this particular capture did not produce; the [Q&A](#12-qa-session-5-minutes) has the answer.
 
 ## 5. How the check works (1:00-1:35 · 77 words · SPEAKER)
 
@@ -178,11 +189,13 @@ slide 08 collects on that in three minutes.
 [a major plus](../source/gonkarouter-challenge.md#4-developer-tips-straight-from-the-organisers). Say the ordering out
 loud. Do not read all five rows; they are already on the slide.
 
+`NOTE:` The Unverified line is the rule, not a prediction. Say "is Unverified", never "you'll see one" — this record has
+none, and the [demo](#6-live-demo-135-245--driver) shows the rejected attempts instead.
+
 ## 6. Live demo (1:35-2:45 · DRIVER)
 
-> **PLANNED, NOT REHEARSED.** Written from [the two-minute product flow](../PRODUCT.md#two-minute-product-flow) against
-> the deployed sample record. Walk it end to end on the real app at the freeze, correct every literal label below to
-> what the screen actually says, then remove this block.
+> **Walked on the live app, 4 September. Not yet rehearsed with a clock** — that is issue #42. Every literal below is
+> the label the screen shows today. If one has changed, the screen wins, not this file.
 
 **[Slide 05 — The demo moment]** _(1:35-1:45 · 19 words · SPEAKER)_
 
@@ -191,27 +204,45 @@ loud. Do not read all five rows; they are already on the slide.
 _SPEAKER stops talking. DRIVER Alt+Tabs to the app and narrates only the numbered lines._
 
 1. **Click:** `Sign In as Guest`. _The shared-workspace banner appears and stays put._
-1. **Click:** the record row labelled `Sample`. _The summary resolves into five verdict filters with their counts,
-   attention items first._
-1. **Click:** the `Possible Key Error` filter chip. _Twelve rows collapse to two._
-1. **Click:** the item whose stem reads `Which data structure follows FIFO?`. _The evidence panel opens inline beneath
-   the item, not on a new page._
-1. **The moment:** _the supplied key bubble is filled on `Stack`, and both reader columns have theirs filled on `Queue`.
-   One sentence under it reads_ **"Both readers chose Queue. The supplied key is Stack."** _A judge sees the
+1. **Click:** the row titled `Introductory computer science practice set`, the one carrying the `Sample` chip. _The
+   workspace opens. Five verdict filters with their counts, and one line in red:_ **"3 items need attention"**
+1. **Click:** the `Possible Key Error` filter chip, which reads `2`. _Twelve rows collapse to two._
+1. **Click:** `Show Evidence` on question 3, `Which data structure removes elements in first in, first out order?`. _The
+   evidence panel opens inline beneath the item, not on a new page._
+1. **The moment:** _the supplied key bubble is filled on `A`, and both reader columns have theirs filled on `B`. The
+   sentence above the button reads_ **"Both readers chose Queue. The supplied key is Stack."** _A judge sees the
    disagreement before anyone explains it._
-1. **Point at:** the two served model names, `MiniMaxAI/MiniMax-M2.7` and `moonshotai/Kimi-K2.6`, and the **two distinct
-   Gonka Request IDs** beneath them, each with its receipt chip reading `Verified`. _Say this one out loud: this is what
+1. **Point at:** the two `Served Model` names, `moonshotai/Kimi-K2.6` and `MiniMaxAI/MiniMax-M2.7`, and the **two
+   distinct `Request Id` values** beneath them, each with `Receipt Verified`. _Say this one out loud: this is what
    proves the reasoning ran on the network and not on our server._
-1. **Click:** `Key Corrected`, then the `C` bubble. _The attention count drops. The machine verdict chip stays exactly
-   where it was._
-1. **Click:** any item chipped `Unverified`. _The attempt table names the family that timed out, with the fail-closed
-   sentence beside it._
+1. **Scroll to:** `All Attempts`, still on question 3. _Three rows. Two are `Admitted`. The third is `Timed Out`, and
+   the reason beside it reads_ **"The call passed the 90 second evidence cutoff."** _Say it: a reading with no verified
+   receipt is not a second reader. Cekgu keeps it and refuses to count it._
+1. **Click:** `Key Corrected`, then the `B` bubble under `Corrected Key`, then `Record Decision`. _The attention count
+   drops. The machine verdict chip stays exactly where it was._
 
 _DRIVER stops. SPEAKER takes the deck back._
 
 `NOTE:` Read the request ids off the screen; do not recite them from this file. Never wait for a load in silence. If a
-click is slow, say what is about to appear. **Run `Reset Sample` before the pitch** so step 7 starts from `Unreviewed`
-([FR-SAMPLE-3](../PRD.md#the-sample-record)).
+click is slow, say what is about to appear.
+
+`NOTE:` **The `All Attempts` table scrolls sideways.** At laptop width the `Request Id`, `Shard`, `Latency` and
+`Receipt` columns sit off the right edge. Point at `Status` and the reason under it, which are always visible; the ids
+for step 6 are in the reader columns above, not in this table.
+
+`NOTE:` **If step 7 has more time, use question 1 instead.** Clear the filter, `Show Evidence` on
+`What is the time complexity of reading the element at a known index in an array?`, and its `All Attempts` has six rows
+that add up: two `Admitted`, two `Rate Limited` carrying the gateway's own words, one `Timed Out` at the 90-second
+cutoff, and a hedge that lost its own race. It is the stronger picture and it costs about eight seconds more. Question
+12 is the same shape with three rate limits and no cutoff.
+
+`NOTE:` **Reset the sample before the pitch** ([FR-SAMPLE-3](../PRD.md#the-sample-record)), so step 8 starts with no
+disposition on it. There is no button: signed in as Guest, open the browser console on the app and run
+`await fetch('/api/sample/reset', { method: 'POST' })`. It answers `{"reset":true}`.
+
+`NOTE:` **The Guest workspace is shared and it will have other people's records in it.** On 4 September the list held
+four besides the sample. Identify the row by its title and its `Sample` chip, or type `Introductory` into `Search`
+first. Do not scroll hunting for it on stage.
 
 `NOTE:` The "submit a new check and walk away" beat is **cut from the stage demo** and lives in
 [the video](#14-the-two-minute-video-shot-list) instead. It costs twenty seconds and proves less than the receipt does.
@@ -221,14 +252,19 @@ Offer it in Q&A if a judge asks whether the thing actually runs.
 
 **[Slide 06 — The proof]**
 
-> "That's the part this track is actually about. Every reading carries a Gonka request id, and these two are real ones
-> from our benchmark run. Different models, different ids, both receipts verified.
+> "That's the part this track is actually about. Every reading carries a Gonka request id. These two are from question
+> nine on the record you just had open. Different models, different ids, both receipts verified.
 >
-> Paste either id into that receipts URL right now and the gateway will tell you which model served it. That's what
-> proves this reasoning didn't come out of our server."
+> Paste either id into that receipts URL and the gateway tells you which model served it. That's what proves this
+> reasoning didn't come out of our server."
 
 `NOTE:` If a judge reaches for a phone here, **stop and let them**. It is the best thing that can happen in this pitch.
 The receipt is gateway metadata, not cryptographic or on-chain proof, and we say so if pressed.
+
+`NOTE:` These two ids are **in the sample record**, on question 9, the mis-keyed DNS item. That is the whole point of
+the beat: a judge can lift either string off the wall, search the Sample Report for it, and find the reading it belongs
+to. Both were re-verified against `GET /v1/receipts/{id}` on 4 September — HTTP 200, `outcome: success`, served model
+matching the slide.
 
 ## 8. How it is built (3:15-3:45 · 63 words · SPEAKER)
 
@@ -247,15 +283,44 @@ models cross-verifying, and a Gonka Request ID shown for every step. The fourth,
 
 **[Slide 08 — Motivation and challenges]**
 
-> "We measured before we built, and it went against us. Third of September, twelve items, two models. MiniMax finished
-> all twenty-four calls. Kimi finished thirteen. Not one item had two readings inside thirty seconds.
+> "We measured before we built, and it went against us. Twelve items, two models, and not one had two readings inside
+> thirty seconds.
 >
-> So we threw out the instant checker and built a queue that fails closed. And every verdict that did reach two verified
-> readings was right. Thirteen of thirteen. No false alarms."
+> So we threw out the instant checker and built a queue that fails closed. Twelve of twelve got two verified readings.
+>
+> Then thirty items, twice. It caught fourteen of twenty planted defects. And on forty clean-control runs it flagged
+> nothing. Not one."
 
 `NOTE:` This is the slide that says we tested our own idea and let the result change the architecture. Do not soften it
 into "we faced some challenges". The sponsors asked for
 [a complete implementation rather than a complex one](../brief.md#how-we-are-judged), and this is what that sounds like.
+
+`NOTE:` **Land on "Not one."** The zero is the one figure on this deck the sample record cannot support, and it is the
+failure direction a lecturer actually cares about. Beat, then take slide 09.
+
+`NOTE:` **Three measurements share this slide and the deck keeps them apart.**
+
+- The chart is the benchmark that
+  [recorded a verdict of "failed"](../superpowers/research/three-day-rescore.md#the-mechanism-benchmark--failed-3-september);
+  it judged a synchronous design nobody shipped.
+- The `12 of 12` in the left column is the public sample record, on twelve items drawn from the same committed
+  evaluation set — **they are not provably the identical twelve** ([PRD](../PRD.md#the-sample-record)), so never say
+  "the same twelve".
+- The dot rows are a third run entirely:
+  [the 30-item set, twice through the deployed queue](../superpowers/research/three-day-rescore.md#the-30-item-evaluation-set--4-september).
+
+Never blur them, and never quote the benchmark's "thirteen of thirteen" as if it described the record on screen.
+
+`NOTE:` **The 30-item run's own Unverified rate, 19 of 60, is deliberately off the slide.** It is a load effect, not a
+regression: thirty items back to back sustain account-level rate limiting that a twelve-item paper never reaches.
+Quoting it beside the sample record's own 0 of 12 without that sentence misrepresents both, and the sentence does not
+fit on a wall. If a judge asks, [the Q&A](#12-qa-session-5-minutes) carries it with the explanation attached.
+
+`NOTE:` **The one green dot at the end of the defect row is a real miss.** It is question 6 of the sample record as
+well: "Which layer of the TCP/IP model does HTTP belong to?", written to be ambiguous, returned **Clear** in the first
+pass and **Unverified** in the second. No item caught in one pass ever came back **Clear** in the other. It is in
+[the README](../README.md#what-cekgu-cannot-do) as a characterised limitation. **DO NOT PRESENT IT AS FIXED OR AS A
+ONE-OFF.**
 
 ## 10. Business model (4:15-4:35 · 49 words · SPEAKER)
 
@@ -280,7 +345,7 @@ tight, cut the plan list, not the last sentence.
 | "The paper gets marked before the students do."       | Good rhythm, wrong verb. Cekgu never marks anything                           |
 | "Check the exam before the exam checks us."           | **Chosen.** The concept's own line, and it puts the student back in it        |
 
-### Finalized
+### Finalized close
 
 > "We accept losing marks when we're wrong. Not when the paper is.
 >
@@ -294,12 +359,12 @@ tight, cut the plan list, not the last sentence.
 
 **"Is the demo hardcoded?"**
 
--> No. The sample record is recorded output from our own benchmark on 3 September, including the real Gonka request ids,
-and you can query any of them against the public receipts endpoint from your own laptop right now. Nothing in it was
-written by hand, and items that never got two verified readings show as **Unverified** rather than being filled in. If
-you want it live, give me a question and I'll queue it in front of you. **(THE LIVE PATH DEPENDS ON THE BUILD BEING
-FINISHED AT THE FREEZE. If it is not, say the sample is recorded evidence and offer the receipt lookup instead. Never
-imply a recording is live.)**
+-> No. The sample record is what our own queue produced on 3 September, kept exactly as it came back: twelve items,
+forty-two attempts, thirty-two distinct Gonka request ids. Eighteen of those attempts were rejected and they are still
+in the record with the gateway's own error text beside them, because a run that only kept its successes would be a
+brochure. Query any id against the public receipts endpoint from your own laptop right now. If you want it live, give me
+a question and I'll queue it in front of you, though it will not finish while we're standing here. **(A LIVE CHECK TAKES
+MINUTES, NOT SECONDS. Offer the queued state, not a finished verdict.)**
 
 **"What stops the two models from just agreeing with each other?"**
 
@@ -308,6 +373,15 @@ agreement is not coordination. It could still be correlation, because two large 
 be wrong the same way. That is exactly why the verdict reads **Possible Key Error** and not "key error", and why only
 the educator can change a key. Two models agreeing doesn't make an answer true. It makes the item worth a human minute.
 **(WE HAVE NOT MEASURED HOW CORRELATED MINIMAX AND KIMI ARE. Do not claim independence of training data.)**
+
+**"How do you know it doesn't just flag everything?"**
+
+-> Because we counted the other direction. Forty clean-control runs — twenty good questions, each run twice through the
+deployed queue — and it flagged none of them. Zero. Every error it made in that run was an abstention or a miss, never a
+false accusation, and that is the direction that matters: a lecturer sent to re-read a correct item loses an evening,
+but a lecturer who stops trusting the flags is gone. The same run caught fourteen of twenty planted defects. **(SIXTY
+ITEM-RUNS ON ONE COMMITTED PAPER, NOT A PUBLISHED PRECISION FIGURE. Say the size of the set before you say the
+result.)**
 
 **"Why does this need to be decentralised at all?"**
 
@@ -320,21 +394,46 @@ product copy says so.)**
 
 **"What happens when the gateway rate-limits you?"**
 
--> We hit that during the benchmark. Thirty-six calls at once came back `rate_limited` across the whole account. So the
-worker holds a hard cap of four calls in flight for the entire process, and retries on a bounded budget. When the budget
-is spent the item goes **Unverified**, which is a visible state with a **Retry Verification** button next to it, not a
-silent gap. We never fill a missing second reading with the first model's answer, and we never count the same model
-twice.
+-> It happened on the record you just looked at. DeepSeek answered `429` — "rate limit exceeded: too many concurrent
+requests" — on five calls, timed out on a sixth, and never served one reading. All twelve items still got two
+receipt-verified readings, from the other two families. That is the queue doing its job rather than a story we're
+telling you: a hard cap of four calls in flight, three attempts per family, and the third family taken when one fails.
+When the budget really is spent the item goes **Unverified**, which is a visible state with a **Retry Verification**
+button next to it, not a silent gap. We never fill a missing second reading with the first model's answer, and we never
+count the same model twice.
 
 ### Second tier, likely
 
 **"How accurate is it? Give me a number."**
 
--> I'm not going to give you a percentage, because I don't have one that would mean anything. What I have is one
-labelled run: twelve items, four planted defects, eight clean controls. Thirteen verdicts reached the two-model
-threshold and all thirteen matched what was planted, with no false flags on the clean items. That is a feasibility
-signal on a sample of thirteen. **(NO ACCURACY PERCENTAGE. A broader labelled set across subjects, languages and
-difficulty is required before we publish one, and it is the first thing we would build with the prize.)**
+-> I'm not going to give you a percentage, because I don't have one that would mean anything on sixty runs. Here is what
+I do have. A committed thirty-item paper — twenty clean, five mis-keyed, five written to be ambiguous — put twice
+through the deployed queue. Of the forty clean-control runs, none were flagged. Of the twenty planted-defect runs,
+fourteen were caught, five abstained as **Unverified**, and one came back **Clear**. The twelve-item record on screen is
+the same picture smaller: both key errors caught, one ambiguity caught, one missed, no clean control flagged. **(NO
+ACCURACY PERCENTAGE. A broader labelled set across subjects, languages and difficulty is required before we publish one,
+and it is the first thing we would build with the prize.)**
+
+**"You planted two ambiguous items and only caught one. Isn't that a failure?"**
+
+-> It's a miss, and it's in our README rather than waiting for you to find it. Cekgu detects disagreement between
+readers, and ambiguity only when a reader declares more than one option defensible. On the kilobyte question both
+readers said 1024 and both wrote that 1000 was defensible too, so the rule fired. On the other one both committed to a
+single answer, and two confident readers who agree are indistinguishable from an unambiguous question. That's a property
+of the design, not a threshold we can tune. It also tells you which direction we fail in, which is the quiet one. The
+same item failed the same way in our thirty-item run, so it is characterised rather than a fluke — and in the second
+pass it came back **Unverified** instead. **(NOT FIXED. Do not offer it as a one-off.)**
+
+**"Your rule starts with Unverified, but there isn't one in the record. Where is it?"**
+
+-> Not in this capture, and I'd rather say that than show you a stale one. Every one of the twelve items got its two
+receipt-verified readings, so nothing reached the Unverified branch. What the record does have is eighteen rejected
+attempts sitting next to the ones that counted — rate limits, ninety-second cutoffs, hedges that lost their own race.
+That's the same rule doing the same thing one layer down: an attempt with no verified receipt never becomes a reader.
+Push thirty items through back to back and you see plenty of it — nineteen of sixty item-runs came back **Unverified**
+in the run behind that slide. That is load, not accuracy: thirty items sustain account-level rate limiting a twelve-item
+paper never reaches, and every one of those nineteen has a **Retry Verification** button on it. **(UNVERIFIED IS SHIPPED
+AND TESTED, BUT IT IS NOT DEMONSTRABLE FROM THIS SAMPLE. Do not promise to show one.)**
 
 **"Why would a lecturer upload an unreleased exam paper to a decentralised network?"**
 
@@ -370,8 +469,11 @@ not promise it for a date.)**
 
 **"Why those two models?"**
 
--> They're the two on the gateway that completed reliably in our own measurement. DeepSeek returned a 429 and then a
-ninety-second timeout in the same window, so we didn't build on it.
+-> We didn't pick two, we configured three. MiniMax and Kimi are the two that answered; DeepSeek was rate-limited across
+the whole capture and served nothing. The queue orders families by a rolling success rate, so it used the ones that were
+up. A day later, on our thirty-item run, DeepSeek served fourteen readings and the ordering reshuffled between the two
+passes. A family that keeps failing is demoted, never dropped, because one candidate cannot produce two distinct
+readings.
 
 **"Is the request id on-chain?"**
 
@@ -402,17 +504,17 @@ order.
 
 Decide this before you need it. Venue wifi will be bad.
 
-| If                                    | Then                                                                                                                             |
-| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| The gateway is slow or rate-limited   | Say so out loud. The sample record is recorded evidence and needs no gateway. Stay on it and offer a live receipt lookup instead |
-| A live check does not finish on stage | Do not wait in silence. It is **Queued**, and the design says you may leave. Move to slide 06                                    |
-| The venue network is down             | Slides 05 and 06 carry the whole demo, both real request ids included. Say "this is the deck, not the app" before you start      |
-| The deployed app is down              | Run locally on the demo laptop against the seeded sample record, and say that is what you are doing                              |
-| The laptop dies                       | [`pitch-deck.pdf`](pitch-deck.pdf) on the second machine and on a USB stick. It is self-contained and needs no network           |
+| If                                      | Then                                                                                                                           |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| The gateway is slow or rate-limited     | Say so out loud. The sample record is stored evidence and needs no gateway. Stay on it and offer a live receipt lookup instead |
+| A live check does not finish on stage   | Do not wait in silence. It is **Queued**, and the design says you may leave. Move to slide 06                                  |
+| The record list is full of other guests | Type `Introductory` into `Search`. The Guest workspace is shared and other guests' records sit in it                           |
+| The venue network is down               | Slides 05 and 06 carry the whole demo, both real request ids included. Say "this is the deck, not the app" before you start    |
+| The deployed app is down                | Run locally on the demo laptop against the seeded sample record, and say that is what you are doing                            |
+| The laptop dies                         | [`pitch-deck.pdf`](pitch-deck.pdf) on the second machine and on a USB stick. It is self-contained and needs no network         |
 
-`TO FILL:` a recorded MP4 of the two-minute flow, kept offline at `assets/cekgu-demo.mp4`, once the app exists. That is
-issue #47, and it is not in this ladder until it is on disk. **If it is ever played on stage, say the word "recording"
-first.**
+`TO FILL:` a recorded MP4 of the two-minute flow, kept offline at `assets/cekgu-demo.mp4`. That is issue #47, and it is
+not in this ladder until it is on disk. **If it is ever played on stage, say the word "recording" first.**
 
 ## 14. The two-minute video, shot list
 
@@ -422,42 +524,49 @@ system, the demonstration of it ([opening ceremony, 00:39](../source/opening-cer
 not appear in it at all. This is a shot list only; recording is issue #47.
 
 **Capture.** 1920x1080, the deployed URL in a clean browser window, no bookmarks bar, no notifications, cursor visible.
-Record the voice-over separately over the screen capture. Run `Reset Sample` before rolling.
+Record the voice-over separately over the screen capture. Reset the sample before rolling, per
+[section 6](#6-live-demo-135-245--driver).
 
-| #   | Time      | On screen                                                                                               | Voice-over                                                                                                |
-| --- | --------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| 1   | 0:00-0:15 | Sign-in page. Cursor moves to **Sign In as Guest** and clicks. The banner appears and holds             | "We accept losing marks when we're wrong. We shouldn't lose them because the answer key was wrong."       |
-| 2   | 0:15-0:30 | The records library. Open the row labelled **Sample**. The verdict summary and its counts resolve       | "Twelve Computer Science questions. Eight clean, two with a planted key error, two ambiguous."            |
-| 3   | 0:30-0:55 | Click the **Possible Key Error** filter. Open the FIFO item. Hold on the two bubble rows                | "Both readers answered this blind. Neither saw the key. Both chose Queue. The key says Stack."            |
-| 4   | 0:55-1:15 | **The receipt beat.** Zoom the evidence panel: two model names, two request ids, two **Verified** chips | "Two different models on the Gonka network. Two request ids, both receipts verified. You can check them." |
-| 5   | 1:15-1:35 | Click **Key Corrected**, pick `C`. The summary updates. The machine verdict chip stays visible          | "Cekgu doesn't change anything. The educator does, and the record keeps both."                            |
-| 6   | 1:35-1:50 | Open an **Unverified** item. The attempt table shows the family that timed out                          | "When only one model answers, there's no verdict. Cekgu refuses to invent consensus."                     |
-| 7   | 1:50-2:00 | **New Check**, type one question, **Submit Check**. The record appears as **Queued**. Close the tab     | "Start a check and walk away. It's a queue, not a spinner."                                               |
+| #   | Time      | On screen                                                                                                                        | Voice-over                                                                                                            |
+| --- | --------- | -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| 1   | 0:00-0:15 | Sign-in page. Cursor moves to **Sign In as Guest** and clicks. The banner appears and holds                                      | "We accept losing marks when we're wrong. We shouldn't lose them because the answer key was wrong."                   |
+| 2   | 0:15-0:30 | The records library. Open **Introductory computer science practice set**, the row with the **Sample** chip. The summary resolves | "Twelve computer science questions, already checked. Nine came back clear. Three need a human."                       |
+| 3   | 0:30-0:55 | Click the **Possible Key Error** filter, which reads **2**. **Show Evidence** on question 3. Hold on the three bubble rows       | "Both readers answered this blind. Neither saw the key. Both chose Queue. The key says Stack."                        |
+| 4   | 0:55-1:15 | **The receipt beat.** Zoom the evidence panel: two **Served Model** names, two **Request Id** values, two **Verified** chips     | "Two different models on the Gonka network. Two request ids, both receipts verified. You can check them."             |
+| 5   | 1:15-1:35 | **Key Corrected**, then bubble `B` under **Corrected Key**, then **Record Decision**. The machine verdict chip stays visible     | "Cekgu doesn't change anything. The educator does, and the record keeps both."                                        |
+| 6   | 1:35-1:50 | Clear the filter. **Show Evidence** on question 1, scroll to **All Attempts**. Hold on the six rows                              | "Six calls went out. Two rate limits, a timeout, a hedge that lost. Two came back with receipts. Only those counted." |
+| 7   | 1:50-2:00 | **New Check**, **Fill With Demo Content**, **Submit Check**. The record appears as **Queued**. Close the tab                     | "Start a check and walk away. It's a queue, not a spinner."                                                           |
 
-**Literal inputs for shot 7**, so anyone can re-record it without asking:
+**Literal inputs for shot 7**, so anyone can re-record it without asking. **Fill With Demo Content** writes all of this
+in one click, and typing it by hand is the fallback, not the plan:
 
-- **Assessment Title:** `Data Structures Week 3`
+- **Assessment Title:** `Week 6 networks and data structures quiz`
 - **Subject:** `Computer Science`
-- **Question:** `Which data structure follows FIFO?`
-- **Options:** `Array` · `Stack` · `Queue` · `Tree`
+- **Question 3:** `Which data structure removes elements in first in, first out order?`
+- **Options:** `Stack` · `Queue` · `Binary search tree` · `Hash table`
 - **Keyed Option:** `B`
 
 `NOTE:` Shot 4 is the one that cannot be cut. It is the track's proof obligation and the single frame that separates
 this entry from a prompt typed into a chat window. Hold it long enough to read an id off the screen.
+
+`NOTE:` **Shot 6 replaces an Unverified item, which this record does not contain.** Question 1's `All Attempts` table
+has six rows: two `Admitted`, two `Rate Limited` with the gateway's own error text, one `Timed Out` at ninety seconds,
+and a hedge recorded and discarded. Question 12 is the same shape if question 1 renders badly, with three rate limits
+and no cutoff. The table scrolls sideways, so frame the `Status` column and the reason text under it, and let the
+`Request Id` column sit off-frame — the ids are already in shot 4.
 
 `NOTE:` Do not speed up or cut around a slow model call. If a call takes forty seconds, cut to the queued state and say
 so. A video that pretends the gateway is instant contradicts slide 08 of our own deck.
 
 ## 15. Pre-flight
 
-- [ ] Team roster filled on slide 01, replacing the last red `to fill` chip. The live demo URL and its QR are on slide
-      10 already
-- [ ] Section 6 rehearsed against the running app, and every literal label in it corrected to what the screen says
-- [ ] Slides 05 and 06 replaced with real screenshots once the UI exists, so nothing on the wall is a drawing of the
-      product
+- [ ] Four member names entered in the **Devfolio submission**. They are deliberately not on the deck; slide 01 carries
+      the team name only, and slide 10 already carries the live demo URL and its QR
+- [ ] Section 6 rehearsed with a clock against the running app, and every literal label in it re-checked against the
+      screen. Issue #42
 - [ ] Every claim in this script is demonstrable on screen inside the time budget
 - [ ] Rehearsed end to end with the timer (`T`), under 4:45 spoken
-- [ ] `Reset Sample` run immediately before the pitch
+- [ ] `POST /api/sample/reset` run immediately before the pitch, from a Guest session
 - [ ] Fallback clip recorded and playable offline
 - [ ] `pitch-deck.pdf` exported and opened on a second machine, with the network off
 - [ ] `du -sh docs/demo/` under 3 MB, `du -h docs/demo/pitch-deck.pdf` under 2 MB

@@ -8,6 +8,22 @@ revealed, and the rules were read out.
 > model and language are what matter. **Editing** — timestamps preserved; filler and dead air trimmed; ASR-mangled
 > proper nouns corrected, see the key below. Transcribed 2026-08-26.
 
+Contents:
+
+1. [Proper-noun correction key](#proper-noun-correction-key)
+1. [00:06 Welcome and agenda](#0006-welcome-and-agenda)
+1. [00:09 MUBA, co-hosts and sponsor tiers](#0009-muba-co-hosts-and-sponsor-tiers)
+1. [00:10 StarGlobal, supporting sponsor](#0010-starglobal-supporting-sponsor)
+1. [00:13 GCC, supporting sponsor, absent](#0013-gcc-supporting-sponsor-absent)
+1. [00:14 Sui, gold sponsor and track reveal](#0014-sui-gold-sponsor-and-track-reveal)
+1. [00:21 Thetanuts Finance, silver sponsor and track reveal](#0021-thetanuts-finance-silver-sponsor-and-track-reveal)
+1. [00:27 GonkaRouter, silver sponsor and track reveal](#0027-gonkarouter-silver-sponsor-and-track-reveal)
+1. [00:31 Rules and regulations reading](#0031-rules-and-regulations-reading)
+1. [00:39 Q&A on Slido](#0039-qa-on-slido)
+1. [00:52 Announcements](#0052-announcements)
+1. [01:00 Photo session and close](#0100-photo-session-and-close)
+1. [Deltas against the public website](#deltas-against-the-public-website)
+
 ## Proper-noun correction key
 
 Whisper consistently mangled the names. Corrections applied throughout:
@@ -25,20 +41,6 @@ Whisper consistently mangled the names. Corrections applied throughout:
 | "growth reading"                                                 | **rules reading**               |
 | "d5 / defy"                                                      | **DeFi**                        |
 | Carol / Rafael / Sean / Benjamin / Jack / Rain / Wayne / Richard | (people — spellings unverified) |
-
-Contents:
-
-1. [00:06 Welcome and agenda](#0006-welcome-and-agenda)
-1. [00:09 MUBA, co-hosts and sponsor tiers](#0009-muba-co-hosts-and-sponsor-tiers)
-1. [00:10 StarGlobal, supporting sponsor](#0010-starglobal-supporting-sponsor)
-1. [00:13 GCC, supporting sponsor, absent](#0013-gcc-supporting-sponsor-absent)
-1. [00:14 Sui, gold sponsor and track reveal](#0014-sui-gold-sponsor-and-track-reveal)
-1. [00:21 Thetanuts Finance, silver sponsor and track reveal](#0021-thetanuts-finance-silver-sponsor-and-track-reveal)
-1. [00:27 GonkaRouter, silver sponsor and track reveal](#0027-gonkarouter-silver-sponsor-and-track-reveal)
-1. [00:31 Rules and regulations reading](#0031-rules-and-regulations-reading)
-1. [00:39 Q&A on Slido](#0039-qa-on-slido)
-1. [00:52 Announcements](#0052-announcements)
-1. [01:00 Photo session and close](#0100-photo-session-and-close)
 
 ## 00:06 Welcome and agenda
 
@@ -224,14 +226,13 @@ Full text lives in the **`hackathon-rules` channel on Discord**. Richard read th
 
 ### Team formation
 
-| Rule                    | Detail                                                                                                |
-| ----------------------- | ----------------------------------------------------------------------------------------------------- |
-| **Team size**           | **2–4 members.** No solo registration allowed                                                         |
-| **Background**          | No restriction — _"no matter who you are, you're able to join"_                                       |
-| **Physical attendance** | **At least one member must attend the pitching day**; organizers strongly hope **all** members attend |
-|                         | _"If you're from another country, you need to be able to attend the pitching session"_                |
-|                         | Attend the **full day**, not just your slot                                                           |
-| **Team changes**        | Any issue, such as a member withdrawing — **notify organizers via Discord**                           |
+- **Team size** — **2–4 members.** No solo registration allowed
+- **Background** — no restriction, _"no matter who you are, you're able to join"_
+- **Physical attendance** — **at least one member must attend the pitching day**; organizers strongly hope **all**
+  members attend
+  - _"If you're from another country, you need to be able to attend the pitching session"_
+  - Attend the **full day**, not just your slot
+- **Team changes** — any issue, such as a member withdrawing: **notify organizers via Discord**
 
 ### The project
 

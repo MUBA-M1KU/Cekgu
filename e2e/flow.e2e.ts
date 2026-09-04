@@ -11,7 +11,7 @@ import { expect, test } from '@playwright/test'
 //
 test.skip(!process.env.E2E_FLOW, 'Set E2E_FLOW=1 to run the live gateway path.')
 
-test('a guest types a check and gets a receipt-verified verdict', async ({ page, request }) => {
+test('a guest types a check and gets a receipt-verified verdict', async ({ page }) => {
   test.setTimeout(600_000)
   const errors: string[] = []
   page.on('console', (message) => message.type() === 'error' && errors.push(message.text()))
@@ -57,6 +57,12 @@ test('a guest types a check and gets a receipt-verified verdict', async ({ page,
   expect(await page.locator('a[href*="/v1/receipts/"]').count()).toBeGreaterThanOrEqual(2)
   expect(errors).toEqual([])
 
-  // Guest records expire in 24 hours anyway, but leaving demo litter in a shared workspace is rude.
-  await request.delete('/api/records', { data: { ids: [recordId] } })
+  // Guest records expire in 24 hours anyway, but leaving demo litter in a shared workspace is rude,
+  // and the workspace is shared with whoever opens the demo next. This deletes through the page's own
+  // context because the bare `request` fixture is a separate context that never saw the guest sign-in:
+  // it holds no session cookie, so the same call there answers 401 and drops the record on the floor.
+  // Asserted, because a cleanup nothing checks is how five 'Browser flow check' records reached
+  // production in one morning.
+  const cleanup = await page.context().request.delete('/api/records', { data: { ids: [recordId] } })
+  expect(cleanup.ok(), `cleanup failed: ${cleanup.status()} ${await cleanup.text()}`).toBe(true)
 })

@@ -1,9 +1,9 @@
-# Verification: Sumber, Tested For Support
+# Verification: Sumber, tested for support
 
 **VIABLE, 78/100.** Above the 70 bar, not LOCK. Wedge A (newsrooms) for v1, with Malaysian government press statements
 as the demo's _source document_ rather than as the user; the reasoning is under [Recommendation](#recommendation). The
 difference between 78 and LOCK is one named Malaysian desk editor, see
-[Open Items For The Next Round](#open-items-for-the-next-round).
+[Open items for the next round](#open-items-for-the-next-round).
 
 **The candidate.** A writer pastes a draft and the documents it cites. Two models from two labs, each shown only one
 sentence and the passage it cites, blind to each other, say whether the passage supports the sentence. Agreement passes
@@ -18,21 +18,21 @@ definition, at the end of the section, carries the article title.
 
 Contents:
 
-1. [Wedge A: Newsrooms](#wedge-a-newsrooms)
-1. [Wedge B: Government Communications](#wedge-b-government-communications)
-1. [Wedge C: Hallucinated Citations](#wedge-c-hallucinated-citations)
+1. [Wedge A: newsrooms](#wedge-a-newsrooms)
+1. [Wedge B: government communications](#wedge-b-government-communications)
+1. [Wedge C: hallucinated citations](#wedge-c-hallucinated-citations)
 1. [Incumbents](#incumbents)
-1. [Predicted Competition](#predicted-competition)
+1. [Predicted competition](#predicted-competition)
 1. [Scores](#scores)
-1. [Novelty Test](#novelty-test)
-1. [Kill Criteria](#kill-criteria)
-1. [Judge Legibility](#judge-legibility)
+1. [Novelty test](#novelty-test)
+1. [Kill criteria](#kill-criteria)
+1. [Judge legibility](#judge-legibility)
 1. [Recommendation](#recommendation)
-1. [Open Items For The Next Round](#open-items-for-the-next-round)
+1. [Open items for the next round](#open-items-for-the-next-round)
 
-## Wedge A: Newsrooms
+## Wedge A: newsrooms
 
-### Incidents, 2024 To 2026
+### Incidents, 2024 to 2026
 
 The Apple/BBC case is the exact Sumber pattern: a machine-written sentence that the source it summarised never
 supported.
@@ -109,10 +109,11 @@ Three corrections to how the competitor scan paraphrases it:
 Clearbrief's Cite Check Report, an audit trail for law-firm partners (LawSites, "Clearbrief Launches Cite Check Report
 to Give Law Firm Partners an Audit Trail Against AI Hallucinations", Dec 2025,
 https://www.lawnext.com/2025/12/clearbrief-launches-cite-check-report-to-give-law-firm-partners-an-audit-trail-against-ai-hallucinations.html).
-It is legal, internal to the firm, and not framed around Article 50. The penalty tier for Article 50 breaches (the
-scan's `[NEEDS SOURCE]` on €15M/3%) was not verified this round.
+It is legal, internal to the firm, and not framed around Article 50.
 
-## Wedge B: Government Communications
+The penalty tier for Article 50 breaches (the scan's `[NEEDS SOURCE]` on €15M/3%) was not verified this round.
+
+## Wedge B: government communications
 
 - **AI drafting is real and at scale.** "AI at Work 2.0", 5 Feb 2025: 445,000 public officers get Google Workspace
   generative AI; the 270-officer pilot (including Jabatan Digital Negara) used it for "drafting policy papers and
@@ -136,7 +137,7 @@ scan's `[NEEDS SOURCE]` on €15M/3%) was not verified this round.
 whole candidate. As a _user_ wedge it is weak: no incident, no named comms officer, and no route to one before 5
 September. Use the statement as the source in the demo; do not pitch the agency as the buyer.
 
-## Wedge C: Hallucinated Citations
+## Wedge C: hallucinated citations
 
 - **Global scale:** Damien Charlotin's AI Hallucination Cases database held 1,668 decisions as of 2 July 2026 (US 1,163,
   UK 59); trajectory roughly 200 in mid-2025, 719 by Jan 2026, 1,227 by early April 2026, 1,598 by 9 June 2026; now five
@@ -205,7 +206,7 @@ https://arxiv.org/html/2606.21155.
   'Tools and strategies for detecting AI case citation hallucinations'
 [Vaquill]: https://www.vaquill.ai/blog/lexis-ai-vs-westlaw-ai 'Lexis+ AI vs Westlaw AI 2026'
 
-### What They Structurally Cannot Do
+### What they structurally cannot do
 
 - **The retrieval tools cannot stop issuing verdicts.** Factiverse, Originality.ai and Grammarly sell "is this true"
   against the open web. That is their product and their moat. They cannot run on an unpublished draft against private
@@ -220,7 +221,7 @@ https://arxiv.org/html/2606.21155.
 - **None produces a public per-piece check page** for the reader of the finished article. All of them report to the
   author
 
-## Predicted Competition
+## Predicted competition
 
 **Estimate: 8 to 12 of roughly 30 teams build a web-search fact checker; 1 to 2 build something recognisably Sumber.**
 
@@ -254,9 +255,9 @@ phrase "fact-check".
 | Buildability           | 20      |     17 | Two calls per sentence, no retrieval, no database, no partner. Sentence-to-passage mapping is the one hard part; hand-pasted passages are fine for v1 |
 | **Total**              | **100** | **78** | Above 70. Viable                                                                                                                                      |
 
-## Novelty Test
+## Novelty test
 
-1. **Convergence count: 2.** Defended under [Predicted Competition](#predicted-competition). Fails to 10-plus if the
+1. **Convergence count: 2.** Defended under [Predicted competition](#predicted-competition). Fails to 10-plus if the
    judges file it as a fact-checker, which is a presentation risk, not a concept flaw.
 2. **Incumbent: Clearbrief**, then Factiverse, Originality.ai, Grammarly Citation Finder, Westlaw Quick Check. What
    Sumber does that they structurally cannot: independent, externally resolvable attestations from two labs the vendor
@@ -266,7 +267,7 @@ phrase "fact-check".
    changed is the draft. Alternatively the comms officer the next time Workspace Gemini drafts a statement from a
    40-page report. Both are weekly, not once.
 
-## Kill Criteria
+## Kill criteria
 
 | Criterion                                                 | Triggered? | Note                                                                                                                          |
 | --------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -276,7 +277,7 @@ phrase "fact-check".
 | Demo needs more than 90 seconds of setup                  | No         | Two pastes. Pre-load the sample                                                                                               |
 | Buildability depends on data, access or a partnership     | No         | Wedge A and the demo use public documents. Wedge C would trip this if it needed a case-law database; source-bound v1 does not |
 
-## Judge Legibility
+## Judge legibility
 
 **Can two inference-infrastructure people grasp it in ten seconds with no Malaysian legal context? Yes, if it opens with
 Apple, not with Article 50.**
@@ -320,7 +321,7 @@ inferred from the workflow; and the concept sits inside a 10-team fact-check clu
 closed world, the blind per-sentence split and the reader-facing page in the first ten seconds, or it files as the fifth
 fact checker of the afternoon.
 
-## Open Items For The Next Round
+## Open items for the next round
 
 - Name one Malaysian desk editor or sub-editor who would run it Monday. This is the difference between 78 and a LOCK
 - Verify the Article 99 penalty tier for Article 50 breaches against EUR-Lex before any figure goes on a slide

@@ -1,6 +1,6 @@
-# Verification: Sarikata QC, Tested For Fidelity
+# Verification: Sarikata QC, tested for fidelity
 
-**VIABLE, 78/100.** Above the 70 line, not a LOCK, for two reasons set out in [Why Not LOCK](#why-not-lock): the
+**VIABLE, 78/100.** Above the 70 line, not a LOCK, for two reasons set out in [Why not LOCK](#why-not-lock): the
 Malaysian pain is inferred from the workflow rather than evidenced by a dated Malaysian source, and the "mistranslations
 go viral" framing is not supported for 2023-26.
 
@@ -13,17 +13,17 @@ Contents:
 1. [Phenomenon](#phenomenon)
 1. [Incumbents](#incumbents)
 1. [Users](#users)
-1. [Track Fit](#track-fit)
-1. [Predicted Competition](#predicted-competition)
+1. [Track fit](#track-fit)
+1. [Predicted competition](#predicted-competition)
 1. [Scores](#scores)
-1. [Novelty Test](#novelty-test)
-1. [Kill Criteria](#kill-criteria)
-1. [Not Checked In Budget](#not-checked-in-budget)
-1. [Why Not LOCK](#why-not-lock)
+1. [Novelty test](#novelty-test)
+1. [Kill criteria](#kill-criteria)
+1. [Not checked in budget](#not-checked-in-budget)
+1. [Why not LOCK](#why-not-lock)
 
 ## Phenomenon
 
-### Phenomenon: What Was Found
+### Phenomenon: what was found
 
 | Claim                                                                                 | Evidence                                                                                                                                                                                                                                                                                                                                               | Status                                                                          | Source                                                                       |
 | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
@@ -66,7 +66,7 @@ Contents:
   https://worldofbuzz.com/after-tun-mahathirs-viral-chinese-signboard-rant-dbp-tells-msians-not-to-neglect-or-belittle-bahasa-melayu/
   "After Tun Mahathir's Viral Chinese Signboard Rant, DBP Tells M'sians Not to Neglect or Belittle Bahasa Melayu"
 
-### Phenomenon: Negative Results
+### Phenomenon: negative results
 
 - **Viral subtitle mistake on Astro, Netflix or TV3, 2023-26: negative result.** Two searches. The only Netflix Malaysia
   subtitle controversy surfaced is the August 2020 "Kotak Burung" tweet (The Rakyat Post, "Butthurt Malaysians Offended
@@ -86,7 +86,7 @@ Contents:
 - **Malaysian subtitling volume or turnaround figures: negative result.** No numbers surfaced.
 - **DBP or Finas comment on subtitle quality specifically: negative result.** DBP comments found concern signage.
 
-### Reading Of The Phenomenon
+### Reading of the phenomenon
 
 The regulatory floor (mandatory BM subtitles since 1977, Netflix rejecting non-compliant files, a Malay style guide) is
 solid. The "mistranslations go viral" story is **not** supported for 2023-26 in this session; the viral incidents are
@@ -95,7 +95,7 @@ rejection and turnaround pressure, not virality, unless a 2024-26 incident is fo
 
 ## Incumbents
 
-### Incumbents Found
+### Incumbents found
 
 | Product                                                                    | What its QA does                                                                                                                                                                                                   | Blind back-translation by a second lab, per cue? | Source                                                                            |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------ | --------------------------------------------------------------------------------- |
@@ -140,7 +140,7 @@ rejection and turnaround pressure, not virality, unless a 2024-26 incident is fo
   https://help.inten.to/article/mt-studio-mt-quality-metrics
   'MT Studio - Evaluation Projects - MT Quality Metrics, accessed 2 Sept 2026'
 
-### Incumbents: Negative Results
+### Incumbents: negative results
 
 - **Any product that back-translates blind with an independent second model and flags per cue: negative result** across
   the 2026 GeekLink roundup, XL8's AQC documentation, Alconost, Translated.com and the QE literature surfaced. The
@@ -151,19 +151,21 @@ rejection and turnaround pressure, not virality, unless a 2024-26 incident is fo
 - **Papercup, Verbit, Rask, Deepdub, ElevenLabs dubbing, Smartcat, Phrase LQA, ModelFront, Lilt: not checked** within
   budget. No claim either way.
 
-### What Incumbents Structurally Cannot Do
+### What incumbents structurally cannot do
 
 XL8 sells the machine translation. Its AQC is its own model checking its own output, and the article discloses no
 mechanism and no provenance. A vendor whose revenue is the translation cannot credibly sell an independent audit of that
 translation; the buyer (Netflix, Astro's vendor manager) needs a verifier that is not the translator. OOONA and EZTitles
-are rule engines by design and do not read meaning. Netflix's QC is internal and not available to Astro, Media Prima or
-RTM. The structural gap is **independent, third-party-verifiable, per-cue semantic verification with a public provenance
+are rule engines by design and do not read meaning, and Netflix's QC is internal and not available to Astro, Media Prima
+or RTM.
+
+The structural gap is **independent, third-party-verifiable, per-cue semantic verification with a public provenance
 trail** (Gonka request id per reading). A per-cue back-translation pass alone is something XL8 could ship in a sprint,
 so the moat is the independence and the audit trail, not the back-translation.
 
 ## Users
 
-### Users Found
+### Users found
 
 | Fact                                                                                                                                                                                                               | Source                         |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ |
@@ -195,7 +197,7 @@ so the moat is the independence and the audit trail, not the back-translation.
   https://en.wikipedia.org/wiki/Astro_Wah_Lai_Toi
   'Astro Wah Lai Toi, accessed 2 Sept 2026'
 
-### Users: Negative Results
+### Users: negative results
 
 - **Named QC lead at Astro, Media Prima/Tonton, RTM or Viu Malaysia: negative result.**
 - **Malaysia-specific per-minute subtitler rates: negative result.** ProZ and Glassdoor pages exist but no figure was
@@ -203,16 +205,16 @@ so the moat is the independence and the audit trail, not the back-translation.
 - **A stated pain from a Malaysian subtitler or vendor: negative result.** The pain is inferred from Netflix's
   reject-on-fail QC and the existence of a large vendor hub in KL, not from a quote.
 
-### Would The Same Team Open It Monday?
+### Would the same team open it Monday?
 
 Yes, if the team is a vendor QC desk (Iyuno KL or a smaller house). Subtitle QC is a batch job that recurs per episode;
 the second open is the next episode of the same series, with the glossary carried over. For a freelance subtitler
 working alone the second open is the next delivery. For a government comms officer the use is sporadic, so the notice
 use case fails the second-use test and should stay a footnote.
 
-## Track Fit
+## Track fit
 
-### Is It Honest Cross-Verification?
+### Is it honest cross-verification?
 
 Yes. The product has no output without the disagreement between readers. Three roles from different labs:
 
@@ -228,7 +230,7 @@ vendor, so they are load-bearing in the UI. Kill criterion 3 does not apply.
 One Q&A risk: "why not have two models translate and compare?" The answer is that a back reader that cannot see the
 source cannot be anchored by it, so it tests the delivered text as a viewer would receive it. Say this on the slide.
 
-### Banned Cluster
+### Banned cluster
 
 It sits adjacent to "Bahasa Malaysia language and translation assistants". What makes it unrecognisable:
 
@@ -238,15 +240,17 @@ It sits adjacent to "Bahasa Malaysia language and translation assistants". What 
 - The government-notice angle **does** drift back toward the cluster and toward "multilingual public assistant". Keep it
   as one line, not a demo path.
 
-## Predicted Competition
+## Predicted competition
 
 Of roughly 30 teams: about 8-12 build the worked-example fact checker; 4-6 build a multilingual public or government
 chatbot; 2-3 build a BM translation assistant; 0-1 build anything subtitle-shaped. Recognisably similar to Sarikata QC,
 meaning a tool that audits an existing human translation per segment with a blind back reader and a fact diff: **1, at
-most 2.** Defence: an LLM brainstorm against this brief produces "translate X into four languages with consensus", which
-is a translator; it does not produce "verify the translation someone else already delivered", because that requires
-knowing the vendor QC workflow exists. The translation-assistant teams could add a "verify" button, but their product
-remains a translator and their demo remains a chat box.
+most 2.**
+
+Defence: an LLM brainstorm against this brief produces "translate X into four languages with consensus", which is a
+translator. It does not produce "verify the translation someone else already delivered", because that requires knowing
+the vendor QC workflow exists. The translation-assistant teams could add a "verify" button, but their product remains a
+translator and their demo remains a chat box.
 
 ## Scores
 
@@ -259,16 +263,16 @@ remains a translator and their demo remains a chat box.
 | Buildability           | 20      |     16 | SRT/VTT parse, three calls per cue, queue UI, editor decision store. No partnership or private data needed. Risk: a 22-minute episode is 300-400 cues, so ~1,000 calls per file against GonkaRouter rate limits; batch cues and cap the demo file |
 | **Total**              | **100** | **78** | Above 70                                                                                                                                                                                                                                          |
 
-## Novelty Test
+## Novelty test
 
-1. **Convergence count:** 1-2 of ~30. Defended under [Predicted Competition](#predicted-competition).
+1. **Convergence count:** 1-2 of ~30. Defended under [Predicted competition](#predicted-competition).
 2. **Incumbent test:** XL8 MediaCAT AQC, OOONA, EZTitles, Subtitle Edit, Netflix internal QC, COMETKiwi. What they
    structurally cannot do: sell an independent audit of their own translation, or expose a public per-reading provenance
    trail. See [Incumbents](#incumbents).
 3. **Second-use test:** Iyuno KL QC editor, next Monday, next episode of the same series, glossary carried over, last
    week's overrides visible. See [Users](#users).
 
-## Kill Criteria
+## Kill criteria
 
 | Criterion                                                    | Triggered?         | Note                                                                                                                                                                                                                                                                                      |
 | ------------------------------------------------------------ | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -278,13 +282,13 @@ remains a translator and their demo remains a chat box.
 | Demo needs more than 90 seconds of setup                     | No                 | Pre-loaded seeded SRT                                                                                                                                                                                                                                                                     |
 | Buildability depends on data, access or partnership not held | **Flag, not kill** | Needs bilingual subtitle pairs with real errors. No Malaysian vendor file is in hand; plan to author a seeded pair or use an openly licensed film. Verify GonkaRouter rate limits in [`gonkarouter-tutorial.md`](../../source/gonkarouter-tutorial.md) before committing to per-cue calls |
 
-## Not Checked In Budget
+## Not checked in budget
 
 Papercup, Verbit, Rask, Deepdub, ElevenLabs dubbing, Smartcat, Phrase LQA, ModelFront, Lilt; ISO 17100 text;
 Malaysia-specific subtitler rates; Iyuno KL page body (fetch returned header only); Astro, Media Prima, RTM and Viu QC
 staffing.
 
-## Why Not LOCK
+## Why not LOCK
 
 Two reasons, and a phone call would close the second:
 

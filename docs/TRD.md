@@ -11,7 +11,11 @@ API, provenance display, mascot runtime and tests, and section 19 indexes the de
 The initial verified sections were measured against the live API on **2026-08-29** with our own key. Receipt and
 fallback behaviour was verified on **2026-08-31**; availability and account concurrency were measured again on
 **2026-09-03** and are dated where introduced. Where a measurement contradicts organizer material, the measurement is
-recorded and the contradiction is named. The application decisions were taken on **2026-09-03**.
+recorded and the contradiction is named.
+
+The application decisions were taken on **2026-09-03**, and the application described in sections 9 to 19 shipped that
+day and is deployed. Where this half of the document describes gateway behaviour, it remains a measurement record rather
+than a description of our code.
 
 Contents:
 
@@ -153,16 +157,20 @@ in [`superpowers/research/gateway-capabilities.md`](superpowers/research/gateway
 `deepseek-ai/DeepSeek-V4-Flash-0731` returned `429` on every call, sequential single requests included, with
 `X-Gonka-No-Fallback: true` set, body
 `{"error":{"message":"rate limit exceeded: too many concurrent requests","type":"upstream_error"}}`, while Kimi answered
-in about 50 s and MiniMax in 8–23 s. Single run. Interpretation, not yet shown to generalise: upstream availability
-rotates across the three models within a single evening, so treat the labs as interchangeable readers, run on whichever
-two are up, and prove distinctness by receipt rather than by which model was asked for. Detail in
+in about 50 s and MiniMax in 8–23 s. Single run.
+
+**Interpretation, not yet shown to generalise.** Upstream availability rotates across the three models within a single
+evening. Treat the labs as interchangeable readers, run on whichever two are up, and prove distinctness by receipt
+rather than by which model was asked for. Detail in
 [`superpowers/research/gateway-capabilities.md`](superpowers/research/gateway-capabilities.md#measured-2-september-2026).
 
 **Availability, measured 2026-09-03, 00:49–01:08 MYT.** In a controlled two-pass benchmark of 12 short CS questions,
 MiniMax completed **24 of 24** item calls, while Kimi completed **13 of 24** before a 90-second cutoff. Kimi had no
-completion inside 30 seconds. Separate short health probes returned an upstream `429` and then a 90-second timeout from
-DeepSeek. Of 24 item-runs, 13 obtained two receipt-verified model families and none obtained two within 30 seconds. Full
-method and request-id examples are in
+completion inside 30 seconds, and separate short health probes returned an upstream `429` and then a 90-second timeout
+from DeepSeek.
+
+Of 24 item-runs, 13 obtained two receipt-verified model families and none obtained two within 30 seconds. Full method
+and request-id examples are in
 [`three-day-rescore.md`](superpowers/research/three-day-rescore.md#the-mechanism-benchmark--failed-3-september).
 
 **Parallel fan-out works.** Three concurrent requests, one per model, completed in **16.2 s wall clock** — bounded by
@@ -276,8 +284,11 @@ hedge is mandatory.
 Kimi all returned `404` from `GET /v1/receipts/{x-request-id}` on the first fetch after the body was read, and `200`
 between 664 ms and 808 ms later. Path, auth and query-string variants were all `404` in that window, so this is
 propagation delay rather than a wrong URL — the endpoint is unauthenticated and takes the id exactly as the header gives
-it. **A client that verifies the receipt inline and fails closed on `404` produces `unverified` for every item and no
-verdict ever renders.** Poll with a short interval and a budget of a few seconds instead. The body is:
+it.
+
+**A client that verifies the receipt inline and fails closed on `404` produces `unverified` for every item and no
+verdict ever renders.** Poll with a short interval and a budget of a few seconds instead; the shipped client polls at
+250 ms intervals with a 5 s budget. The body is:
 
 ```json
 {
@@ -297,20 +308,28 @@ verdict ever renders.** Poll with a short interval and a budget of a few seconds
 **The fallback substitution, reproduced 2026-09-03.** `deepseek-ai/DeepSeek-V4-Flash-0731` was saturated, which made the
 guard in [section 4](#cross-verification-validity-contract) demonstrable on one pair of calls:
 
-| Request                          | Result                                                                                  |
-| -------------------------------- | --------------------------------------------------------------------------------------- |
-| With `X-Gonka-No-Fallback: true` | `429`, `rate limit exceeded: too many concurrent requests`, no `x-request-id` at all    |
-| Without the header               | `200`, `X-Gonka-Fallback: deepseek-ai/DeepSeek-V4-Flash-0731 -> MiniMaxAI/MiniMax-M2.7` |
+- **With `X-Gonka-No-Fallback: true`:** `429`, `rate limit exceeded: too many concurrent requests`, no `x-request-id` at
+  all.
+- **Without the header:** `200`, `X-Gonka-Fallback: deepseek-ai/DeepSeek-V4-Flash-0731 -> MiniMaxAI/MiniMax-M2.7`.
 
 The body's own `model` field read `MiniMaxAI/MiniMax-M2.7`. So a DeepSeek and MiniMax pair requested without the header
 would have been MiniMax twice, and nothing in the response body would have said so. Note the header's format is
 `<requested> -> <served>`, and that the `429` carries no `x-request-id`, so a rejected call has no receipt to show.
 
-**Gotcha 10, measured 2026-09-03.** A 36-call item-level fan-out produced account-level `429` responses with
-`{"error":{"code":"rate_limited","message":"too many concurrent requests for this account; lower your parallelism and retry"}}`.
-A controlled wave of four concurrent calls was accepted. This is one account and one window, so four is a measured safe
-point, not a documented limit. Bound concurrency and retry `429`; do not launch one request per item across a paper at
-once.
+**Gotcha 10, measured 2026-09-03.** A 36-call item-level fan-out produced account-level `429` responses. A controlled
+wave of four concurrent calls was accepted.
+
+```json
+{
+  "error": {
+    "code": "rate_limited",
+    "message": "too many concurrent requests for this account; lower your parallelism and retry"
+  }
+}
+```
+
+This is one account and one window, so four is a measured safe point, not a documented limit. Bound concurrency and
+retry `429`; do not launch one request per item across a paper at once.
 
 ## 6. Rate limits and timeouts
 
@@ -364,14 +383,27 @@ GUEST_PASSWORD=                                         # Used server-side only 
 MASCOT_ENABLED=false                                    # FR-MASCOT-1 feature flag. true for the demo
 ```
 
-The three model ids are not configuration. They are a constant list in `src/server/gateway/models.ts`, checked against
-`GET /v1/models` at server start so a renamed id fails loudly rather than as a `400` mid-queue. The Anthropic surface is
-unused by the product; the base-URL rule in [section 1](#1-gateway-base-urls-and-auth) still stands for anyone pointing
-Claude Code at the gateway.
+The three model ids are not configuration. They are a constant list in `src/server/gateway/models.ts`. **They are not
+verified against `GET /v1/models` at start**, which was the intention when this section was first written and is not
+what shipped: a renamed id would surface as a `400` on the first call of a round rather than as a loud failure at boot.
+The gateway has returned the same three ids on every check since 29 August, so the exposure is a gateway rename during
+the event, and the round's own rejection path records it as an attempt with its reason rather than losing it.
 
-**`.env.example` must change to match**, in a separate commit: drop `GONKA_BASE_URL_ANTHROPIC` and the three
-`GONKA_MODEL_*` lines, add the eight new names above with their comments and empty values, and keep the two GonkaRouter
-lines. The `env-drift` hook compares `.env` against `.env.example`, so the two files change together.
+**Adding the check now would be worse than the gap it closes**, which is the reason it is not a to-do. A boot-time
+`GET /v1/models` makes the process's ability to start depend on the gateway being reachable, and
+[gotcha 10](#5-verified-gotchas) is account-level rate limiting that reaches every endpoint. A window like the twenty
+minutes DeepSeek spent returning `429` on 3 September would then have meant no deploy succeeding and Cloud Run holding
+no healthy revision to route to: a total outage manufactured by the guard against a partial one.
+
+The queue's whole design treats the gateway as unreliable and degrades around it, and boot must not treat it as a
+precondition. The Anthropic surface is unused by the product; the base-URL rule in
+[section 1](#1-gateway-base-urls-and-auth) still stands for anyone pointing Claude Code at the gateway.
+
+**`.env.example` carries exactly the names above**, with their comments and empty values, and is committed. The
+`env-drift` hook compares `.env` against it, so the two files change together. Two further variables exist in the
+server's environment and deliberately do not appear here: `MIGRATE_ON_START` and `WORKER_ENABLED`, both defaulting to
+on, which only a preview revision sets to `false`. They are explained in [section 10](#10-hosting-and-cicd), because
+they are a deployment concern rather than part of the contract a developer fills in. `PORT` defaults to `8080`.
 
 **Account state, 2026-08-29:** balance **20.00 USDT**, monthly cost 0.00 after 9 test requests and 1,011 tokens. Tokens
 are unlimited for the event; email Jack if the credit is ever exhausted.
@@ -394,15 +426,19 @@ critical path, and Bun runs TypeScript directly so the server has no build step.
 src/
   client/            Vite + React 19 single-page app, TypeScript strict, Tailwind v4
   server/            Hono on Bun: /api routes, static serving, the queue worker
-    gateway/         the hand-rolled fetch client and the model-id constant (section 14 and 8)
-    queue/           claim, dispatch, hedge, health (section 13)
+    db/              the Drizzle schema and the pooled connection
+    gateway/         the hand-rolled fetch client, reading admission, the model-id constant (sections 14 and 8)
+    queue/           claim, round, hedge, health, semaphore, worker (section 13)
+    records/         the query layer the records routes call
     routes/          one file per resource in section 15
+    fixtures/        the committed evaluation set and the benchmark pass the sample is seeded from
     index.ts         entry point: migrate, seed the Guest user and sample, start the worker, listen
   shared/            TypeScript types, zod schemas, verdict.ts (the rule as a pure function)
 public/              static assets, copied into the client build as-is
   brand/             logo, favicon, the still mascot PNGs
   live2d/            tororo/runtime and hijiki/runtime, committed Cubism runtime files
 drizzle/             SQL migrations generated by drizzle-kit, committed
+e2e/                 Playwright: smoke.e2e.ts against a deployed URL, flow.e2e.ts behind E2E_FLOW=1
 .github/workflows/   ci.yml (pull request) and deploy.yml (main)
 Dockerfile           multi-stage on oven/bun:1
 vite.config.ts       client build, dev proxy of /api to the server
@@ -415,16 +451,17 @@ from one definition, which is what keeps FR-CHECK-2's server-side checks equal t
 
 ### Stack
 
-| Layer             | Choice                                | Reason                                                                                  |
-| ----------------- | ------------------------------------- | --------------------------------------------------------------------------------------- |
-| Runtime, packages | Bun                                   | Already the project's runner; runs TypeScript without a compile step                    |
-| HTTP              | Hono                                  | Small, typed, runs on Bun natively, streams SSE without an adapter                      |
-| Client            | Vite, React 19, Tailwind v4           | Fast build, no framework server to host; the app is one SPA behind `/api`               |
-| ORM               | Drizzle with drizzle-kit migrations   | Schema in TypeScript, SQL migrations committed, Better Auth adapter exists              |
-| Auth              | Better Auth                           | Google OAuth and email/password with a Drizzle adapter, sessions in Postgres            |
-| Validation        | zod, in `src/shared`                  | One schema for the form and the API boundary                                            |
-| Lint, format      | Biome for code, Prettier for Markdown | Unchanged from the tooling table in [`AGENTS.md`](../AGENTS.md#tech-stack-and-commands) |
-| Tests             | `bun test`, Playwright                | See [Testing](#18-testing)                                                              |
+| Layer             | Choice                                        | Reason                                                                                  |
+| ----------------- | --------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Runtime, packages | Bun                                           | Already the project's runner; runs TypeScript without a compile step                    |
+| HTTP              | Hono                                          | Small, typed, runs on Bun natively, streams SSE without an adapter                      |
+| Client            | Vite 8, React 19, React Router 8, Tailwind v4 | Fast build, no framework server to host; the app is one SPA behind `/api`               |
+| Language          | TypeScript 7, strict                          | `noUncheckedIndexedAccess`; the shared types are the contract between the halves        |
+| ORM               | Drizzle with drizzle-kit migrations           | Schema in TypeScript, SQL migrations committed, Better Auth adapter exists              |
+| Auth              | Better Auth                                   | Google OAuth and email/password with a Drizzle adapter, sessions in Postgres            |
+| Validation        | zod, in `src/shared`                          | One schema for the form and the API boundary                                            |
+| Lint, format      | Biome for code, Prettier for Markdown         | Unchanged from the tooling table in [`AGENTS.md`](../AGENTS.md#tech-stack-and-commands) |
+| Tests             | `bun test`, Playwright                        | See [Testing](#18-testing)                                                              |
 
 The client talks to the server only through the contracts in [section 15](#15-api-contracts). The GonkaRouter key never
 reaches the client (NFR-SEC-2); every inference call originates in `src/server/gateway`.
@@ -481,45 +518,57 @@ so the production URL always runs the head of `main`.
 
 **Traffic is routed explicitly, and the routing is asserted.** A preview deploy rewrites the service's traffic block
 from the implicit "latest revision" pointer to an explicit revision pin. Once pinned, a plain `gcloud run deploy`
-uploads a new revision and **does not move traffic to it**, while still reporting success. Production served the #19
-scaffold through four later deploys before anyone noticed, because `GET /` answers 200 on every revision; only
-`POST /api/auth/guest`, which exists in one revision and not the other, exposed it. So `deploy.yml` follows the deploy
-with `gcloud run services update-traffic cekgu --to-revisions <revision>=100`, naming the revision that run built rather
-than `--to-latest`, which a concurrent preview deploy could win. A final step re-reads the service and fails the run
-unless the revision serving 100% is **the one that run deployed** and `GET /` returns 200. It compares against that
-revision rather than against the service's newest, because a preview deploy for any open pull request creates newer
-revisions continuously; comparing against those failed a deploy whose traffic was in fact correct. Removing a tag with
-`update-traffic --remove-tags` and routing with `--to-revisions` both leave other tags intact, so preview URLs on open
-pull requests survive a production deploy.
+uploads a new revision and **does not move traffic to it**, while still reporting success.
+
+That failure is silent, and it happened: production served the #19 scaffold through four later deploys before anyone
+noticed. `GET /` answers 200 on every revision, so only `POST /api/auth/guest`, which exists in one revision and not the
+other, exposed it. Three steps in `deploy.yml` close it:
+
+1. Deploy the image.
+2. Route with `gcloud run services update-traffic cekgu --to-revisions <revision>=100`, naming the revision that run
+   built rather than `--to-latest`, which a concurrent preview deploy could win.
+3. Re-read the service and fail the run unless the revision serving 100% is **the one that run deployed** and `GET /`
+   returns 200.
+
+Step 3 compares against that revision rather than against the service's newest, because a preview deploy for any open
+pull request creates newer revisions continuously; comparing against those failed a deploy whose traffic was in fact
+correct. Removing a tag with `update-traffic --remove-tags` and routing with `--to-revisions` both leave other tags
+intact, so preview URLs on open pull requests survive a production deploy.
 
 ### Configuration at deploy time
 
 Every variable in [section 8](#8-configuration-contract) is a GitHub Actions secret of the same name and is passed on
-every deploy, preview and production alike, with `--env-vars-file` rather than `--set-env-vars`. **Do not "fix" that
-back.** `--set-env-vars` is comma-delimited and a Neon connection string can contain a comma; gcloud's custom-delimiter
-escape hatch does not save it either, because `@`, `|` and `:` all occur in connection strings and passwords. The file
-form is JSON, which gcloud's YAML parser accepts, so every value survives verbatim. The variable list lives once, in
-`.github/scripts/render-env-vars.sh`; a name with no repository secret is omitted rather than written empty, so the
-server sees it unset. **Secret Manager is explicitly not used.** It would add IAM bindings, a second console and a
-`--set-secrets` mapping to keep in step, for a key that already lives in GitHub's secret store and is rotated by pasting
-a new value. Cloud Run environment variables are visible to anyone with viewer access to the project; that is the whole
-team, which is the intended audience.
+every deploy, preview and production alike, with `--env-vars-file` rather than `--set-env-vars`.
+
+- **Do not "fix" that back.** `--set-env-vars` is comma-delimited and a Neon connection string can contain a comma.
+  gcloud's custom-delimiter escape hatch does not save it either, because `@`, `|` and `:` all occur in connection
+  strings and passwords. The file form is JSON, which gcloud's YAML parser accepts, so every value survives verbatim.
+- **The variable list lives once**, in `.github/scripts/render-env-vars.sh`. A name with no repository secret is omitted
+  rather than written empty, so the server sees it unset.
+- **Secret Manager is explicitly not used.** It would add IAM bindings, a second console and a `--set-secrets` mapping
+  to keep in step, for a key that already lives in GitHub's secret store and is rotated by pasting a new value.
+
+Cloud Run environment variables are visible to anyone with viewer access to the project; that is the whole team, which
+is the intended audience.
 
 Previews share production's values, including `DATABASE_URL`, so a preview writes to the production database. That is
-acceptable for a two-day window with one shared Guest workspace and is stated here so nobody is surprised. Two
-consequences: Google OAuth on a preview URL fails the redirect-URI check, because only the production origin is
-registered, so previews are tested through Guest and email sign-in; and `BETTER_AUTH_URL` is set to the production
-origin, so `POST /api/auth/guest` on a preview sets a cookie for the preview origin only because Better Auth derives the
-cookie domain from the request, not from that variable.
+acceptable for a two-day window with one shared Guest workspace, and is stated here so nobody is surprised. It has two
+consequences:
+
+- **Google OAuth on a preview URL fails the redirect-URI check**, because only the production origin is registered.
+  Previews are tested through Guest and email sign-in instead.
+- **`BETTER_AUTH_URL` is set to the production origin**, yet `POST /api/auth/guest` on a preview sets a cookie for the
+  preview origin only, because Better Auth derives the cookie domain from the request rather than from that variable.
 
 **Sharing the database is not the same as sharing the right to change it.** A preview revision additionally sets
 `MIGRATE_ON_START=false` and `WORKER_ENABLED=false`. Without them, opening a preview URL — which CI posts on the pull
 request so that people click it — boots an unreviewed revision that applies that branch's pending migrations to the
 production database and starts its own copy of every background timer against production rows. `--min-instances 0`
-narrows the window to "while a tab is open"; it does not close it. Both variables default to on when unset, so
-production, local development and a developer's own `.env` are unaffected and neither name belongs in
-[section 8](#8-configuration-contract). A preview still serves the full UI and API against production data, which is
-what this section wanted; it simply cannot alter the schema or delete rows on a timer.
+narrows the window to "while a tab is open"; it does not close it.
+
+Both variables default to on when unset, so production, local development and a developer's own `.env` are unaffected,
+and neither name belongs in [section 8](#8-configuration-contract). A preview still serves the full UI and API against
+production data, which is what this section wanted; it simply cannot alter the schema or delete rows on a timer.
 
 ## 11. Data model
 
@@ -549,12 +598,14 @@ the records library needs attention counts per record (FR-RECORD-5) without a jo
 ```ts
 import {
   boolean,
+  index,
   integer,
   jsonb,
   pgEnum,
   pgTable,
   text,
   timestamp,
+  unique,
   uuid,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema"; // generated by Better Auth: user, session, account, verification
@@ -608,7 +659,9 @@ export const records = pgTable("records", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+}, (table) => [
+  index("records_user_id_deleted_at_idx").on(table.userId, table.deletedAt),
+]);
 
 export const items = pgTable("items", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -625,7 +678,12 @@ export const items = pgTable("items", {
   verdictReason: text("verdict_reason"),
   status: itemStatus("status").notNull().default("queued"),
   attemptsUsed: integer("attempts_used").notNull().default(0),
-});
+  claimedAt: timestamp("claimed_at", { withTimezone: true }),
+}, (table) => [
+  index("items_record_id_status_idx").on(table.recordId, table.status),
+  index("items_status_idx").on(table.status),
+  unique("items_record_id_position_key").on(table.recordId, table.position),
+]);
 
 export const attempts = pgTable("attempts", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -648,7 +706,9 @@ export const attempts = pgTable("attempts", {
   finishedAt: timestamp("finished_at", { withTimezone: true }),
   admitted: boolean("admitted").notNull().default(false),
   rejectionReason: text("rejection_reason"),
-});
+}, (table) => [
+  index("attempts_item_id_started_at_idx").on(table.itemId, table.startedAt),
+]);
 
 export const dispositions = pgTable("dispositions", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -662,7 +722,9 @@ export const dispositions = pgTable("dispositions", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+}, (table) => [
+  index("dispositions_item_id_created_at_idx").on(table.itemId, table.createdAt),
+]);
 
 export const modelHealth = pgTable("model_health", {
   model: text("model").primaryKey(),
@@ -679,7 +741,10 @@ export const modelHealth = pgTable("model_health", {
 Notes on the shape:
 
 - `records.status` has no `deleted` value. Deletion is `deleted_at`; a soft-deleted private record is filtered from
-  every list and is purged after 30 days (FR-RECORD-7). A Guest deletion is a hard `DELETE` and cascades
+  every list and is purged by `sweepRetiredRecords` once `TRASH_DAYS` have passed (FR-RECORD-7). A Guest deletion is a
+  hard `DELETE` and cascades
+- `records.updated_at` is what retention is measured from, so a record still being worked on does not age out
+  (FR-RECORD-8)
 - `records.expires_at` is set to creation plus 24 hours for Guest records and left null for private ones (FR-AUTH-4)
 - `items.options` is an ordered array of `{letter, text}`; `items.key` is a letter. Learner data has no column anywhere
   (NFR-SEC-3, FR-RECORD-1)
@@ -690,6 +755,10 @@ Notes on the shape:
   after the latest such disposition, so a retry never counts an earlier reading twice (FR-QUEUE-5)
 - `model_health` is the on-disk mirror of the worker's in-memory stats, one row per model, written every 30 seconds and
   read by `GET /api/health`
+- `items.claimed_at` records when the worker took the item. A claim older than the fifteen-minute lease in
+  [section 13](#13-queue-and-worker) is released back to `queued`, so a crash mid-round does not strand an item
+- The unique constraint on `(record_id, position)` is what makes an item's position in the paper its identity, so a
+  duplicated submission cannot produce two item 3s
 
 ## 12. Auth and the Guest account
 
@@ -712,13 +781,18 @@ limits, warning banner and deletion behaviour key off that one comparison.
 `GUEST_EMAIL` and `GUEST_PASSWORD` from the environment and forwards the resulting `Set-Cookie` to the browser. The
 password never leaves the server and is never shown to a visitor. Every guest therefore holds a session on the same user
 and shares one library, which is exactly what [PRODUCT.md](PRODUCT.md#the-shared-guest-account) asks for (FR-AUTH-2).
-Server-side limits on Guest requests: 12 items per record, 2,000 characters per item across stem and options, 20
-non-sample records at once (FR-AUTH-5).
 
-The worker runs a sweep every five minutes that hard-deletes Guest records whose `expires_at` has passed, except any
-with `is_sample = true`, and purges private records whose `deleted_at` is more than 30 days old. The sample record is
-owned by the Guest user, is the one record with `is_sample = true`, and is refused by every mutating route except
-dispositions (FR-SAMPLE-2, FR-SAMPLE-3).
+Server-side limits on Guest requests (FR-AUTH-5): **12 items** per record, **2,000 characters** per item across stem and
+options, **20 non-sample records** at once.
+
+The worker runs two sweeps. `sweepExpiredGuestRecords` runs every five minutes and hard-deletes Guest records whose
+`expires_at` has passed. `sweepRetiredRecords` runs hourly, hard-deletes any record whose `deleted_at` is more than
+`TRASH_DAYS` old, and hard-deletes any record untouched for `RETENTION_DAYS` (FR-RECORD-7, FR-RECORD-8). Both windows
+live in `src/shared/schemas.ts` because Settings prints them, so the notice and the sweep cannot drift apart. The hourly
+cadence is deliberate: the shorter of the two windows is thirty days.
+
+Both sweeps exempt `is_sample = true`. The sample record is owned by the Guest user, is the one record with that flag,
+and is refused by every mutating route except dispositions (FR-SAMPLE-2, FR-SAMPLE-3).
 
 ## 13. Queue and worker
 
@@ -747,21 +821,31 @@ RETURNING *
 holds, and a crashed claim is released with its transaction. On start the worker resets any item left in `running` to
 `queued`, because a Cloud Run restart mid-round leaves no one to finish it.
 
+A claim also carries a **fifteen-minute lease**. `items.claimed_at` is stamped when the item is taken, and a sweep
+returns any item whose claim is older than the lease to `queued`. `SKIP LOCKED` protects against two workers racing; the
+lease protects against the case it cannot see, which is a worker that took an item and then died without its transaction
+rolling back — a Cloud Run instance replaced mid-round leaves exactly that.
+
 ### One round
 
 1. Take the **healthy set**: the three model ids ordered by rolling 15-minute success rate, then median latency, from
    the in-memory health stats. A model with zero successes and at least three failures in the window is excluded —
-   unless fewer than two would remain, in which case the excluded families are demoted to the end of the order rather
-   than dropped. One candidate cannot produce two distinct readings, so dropping the second guarantees **Unverified**
-   without a call being attempted, and a struggling family is strictly better than a certain failure. **The trade is not
-   free:** when a family really is down, demoting it turns an instant **Unverified** into a slow one, because the seat
-   now spends up to three attempts of 90 s on it before moving. On a projector that is an item resolving in half a
-   minute against four
+   unless fewer than two would remain, in which case the excluded families are **demoted to the end of the order rather
+   than dropped**. One candidate cannot produce two distinct readings, so dropping the second guarantees **Unverified**
+   without a call being attempted, and a struggling family is strictly better than a certain failure.
+
+   **The trade is not free.** When a family really is down, demoting it turns an instant **Unverified** into a slow one:
+   the seat now spends up to three attempts of 90 s on it before moving. On a projector that is an item resolving in
+   half a minute against four and a half.
+
 1. Request the top two families **in parallel**, each through the [gateway client](#14-consensus-rule) and each holding
    one slot of the global semaphore of **4**
 1. **Deferred hedge:** if a call has not returned after **45 s**, fire a duplicate of the same call to the same model,
    holding another slot. Whichever returns first is the candidate; the other is recorded and discarded
 1. **Hard cutoff** at **90 s** per call. A call past the cutoff is aborted and recorded as timed out with no request id
+   A second ceiling of **120 s** bounds the whole call including its receipt poll, because a receipt fetch that never
+   resolves would otherwise hold a seat open indefinitely; it is the outer bound, and the 90 s cutoff is what the
+   evidence view names.
 1. If one family fails, after rejection, timeout or a non-200, try the **third family** for that seat
 1. Each model has a **retry budget of three attempts per item** per round, hedges included. When both seats have an
    admitted reading, or every family in the healthy set has exhausted its budget, the round ends
@@ -774,17 +858,20 @@ floor is different: nothing completed under 30 s on 3 September, so a 2 s hedge 
 
 **Revised from 25 s to 45 s, measured 3 September.** At 25 s the hedge fired on nearly every call: Kimi answered an
 eight-token prompt in 24.8 s and a solver prompt in 52.7 s, and MiniMax's median moved between 12.6 s and 29 s across
-two runs an hour apart. Almost every reading therefore cost two gateway calls and two of the four semaphore slots, and
-that doubling is what produces the account-level `429`s in [gotcha 10](#5-verified-gotchas). Those failures are what
-marks a family unhealthy, and a round left with one healthy candidate cannot produce two distinct readings at all — so
-the hedge meant to rescue a slow call was manufacturing the outage it was hedging against.
+two runs an hour apart.
+
+Almost every reading therefore cost two gateway calls and two of the four semaphore slots, and that doubling is what
+produces the account-level `429`s in [gotcha 10](#5-verified-gotchas). Those failures are what marks a family unhealthy,
+and a round left with one healthy candidate cannot produce two distinct readings at all — so the hedge meant to rescue a
+slow call was manufacturing the outage it was hedging against.
 
 **25 s was an arithmetic slip rather than a judgement call**, and it is worth naming so nobody reintroduces it. The
 paragraph above justifies rejecting a 2 s hedge because "nothing completed under 30 s on 3 September" — and 25 s is also
-below that floor. The sentence refutes 25 s exactly as it refutes 2 s, fifteen words apart. The hedge also duplicates
-**the same model**, not a third family, so firing it below the completion floor puts a second concurrent call into the
-model already struggling. 45 s is weakly dominant: when the gateway is fast the hedge never fires and the constant does
-not matter, and when it is slow 45 s is what stops the doubling.
+below that floor. The sentence refutes 25 s exactly as it refutes 2 s, fifteen words apart.
+
+The hedge also duplicates **the same model**, not a third family, so firing it below the completion floor puts a second
+concurrent call into the model already struggling. 45 s is weakly dominant: when the gateway is fast the hedge never
+fires and the constant does not matter, and when it is slow 45 s is what stops the doubling.
 
 **Deriving the threshold from the rolling median** the health ring already keeps is the principled version, and it is
 deliberately not done here. A behaviour change to the queue this close to the deadline is a bad trade, and a constant
@@ -1047,6 +1134,14 @@ Body `{ "ids": ["<uuid>", …] }`. For a private session, sets `deleted_at` on e
 hard-deletes. The sample is skipped and named in the response (FR-RECORD-6, FR-RECORD-7, FR-SAMPLE-2). Response:
 `{ "deleted": ["<uuid>"], "skipped": [{ "id": "<uuid>", "reason": "sample" }], "mode": "trash" | "immediate" }`.
 
+### `DELETE /api/account/records`
+
+No body. Hard-deletes every record owned by the session, private and Guest alike, including rows already carrying a
+`deleted_at`. This is FR-RECORD-8 erasure rather than the `DELETE /api/records` soft path, and the difference is
+deliberate: a control labelled **Delete All Records** that left a recoverable copy for thirty days would be untrue. The
+sample is skipped and named, which is what keeps the demo record alive when a guest presses it. Response is the same
+shape as `DELETE /api/records`, with `mode` always `"immediate"`.
+
 ### `POST /api/records/:id/duplicate`
 
 Copies title, subject, language, context and the items' stems, options and keys into a new `queued` record owned by the
@@ -1089,6 +1184,21 @@ private session, `404` `sample_not_loaded` when no sample is seeded.
 **Public.** No body. Signs the caller into the Guest user as described in [section 12](#12-auth-and-the-guest-account)
 and returns `{ "user": { "id": "…", "isGuest": true } }` with the session cookie set (FR-AUTH-2).
 
+### `GET /api/session`
+
+**Public**, and registered ahead of the session gate so a signed-out caller gets an answer rather than a 401. Returns
+who the caller is and whether this is the shared Guest account, which the client cannot work out for itself because the
+Guest test is a comparison against server configuration.
+
+```json
+{
+  "user": { "id": "…", "email": "…", "name": "…" },
+  "isGuest": true
+}
+```
+
+Signed out, the body is `{ "user": null, "isGuest": false }`.
+
 ### `GET /api/health`
 
 **Public.** Per-model rolling health from `model_health`, plus the mascot flag so the client learns it without a second
@@ -1114,15 +1224,19 @@ config route.
 The evidence view is the track's proof moment and is where FR-EVIDENCE-1 to FR-EVIDENCE-4, FR-VERDICT-4 and NFR-PROV-3
 are discharged on screen, not in a document.
 
-**In the item evidence view** every attempt is a row, newest first, showing: requested model, served model from the
-receipt, the request id as selectable text and a link to `https://api.gonkarouter.io/v1/receipts/<id>`, devshard id,
-latency in seconds, a receipt status chip reading **Verified**, **Mismatch**, **Missing** or **Pending**, and whether it
-was admitted with the rejection reason if not. An attempt that returned no headers shows **No request id returned** and
-the reason in place of the link. The two admitted readings sit above the attempt list side by side with model name,
-chosen option, defensible options and reason, and beneath them the verdict with `verdict_reason` printed in full, for
-example "Both readers chose Queue. The supplied key is Stack. Rule: two verified readings agree on a non-key option, so
-Possible Key Error". When only one family answered, the second column shows that seat's attempt history, never a
-duplicate reading.
+**In the item evidence view** every attempt is a row, newest first, carrying:
+
+- Requested model, and served model from the receipt
+- The request id as selectable text, and a link to `https://api.gonkarouter.io/v1/receipts/<id>`
+- Devshard id, and latency in seconds
+- A receipt status chip reading **Verified**, **Mismatch**, **Missing** or **Pending**
+- Whether the attempt was admitted, with the rejection reason if not
+
+An attempt that returned no headers shows **No request id returned** and the reason in place of the link. The two
+admitted readings sit above the attempt list side by side with model name, chosen option, defensible options and reason.
+Beneath them is the verdict with `verdict_reason` printed in full, for example "Both readers chose Queue. The supplied
+key is Stack. Rule: two verified readings agree on a non-key option, so Possible Key Error". When only one family
+answered, the second column shows that seat's attempt history, never a duplicate reading.
 
 **In the record summary** the counts by verdict from `GET /api/records/:id` are the filter chips, each with its count,
 attention verdicts first and **Clear** last (FR-RECORD-3). Wherever **Unverified** appears the fail-closed sentence is
@@ -1164,25 +1278,50 @@ that generation.
 **Fallbacks.** `prefers-reduced-motion: reduce` or the user's Reduce Motion setting stops the loop on the first idle
 frame. A failed WebGL context, core script or asset swaps the canvas for the still PNG in `public/brand/` with no error
 surfaced. The canvas is `aria-hidden`, ignores pointer events, pauses on `visibilitychange` and when scrolled off
-screen, and is hidden below 768 px wide. State text on the record remains the only authoritative signal. Attribution to
-Live2D's Tororo and Hijiki sample characters and the Cubism SDK is in the page footer (FR-MASCOT-5).
+screen, and is hidden below 768 px wide. State text on the record remains the only authoritative signal.
+
+Tororo and Hijiki are Live2D sample characters, used under the Live2D Free Material License Agreement, and are not
+Cekgu's own. Built with the Live2D Cubism SDK. That attribution used to render as a footer on every page; AlaskanTuna
+removed it from the frontend on 3 September and owns the licence position, so it lives here and in the README instead
+(FR-MASCOT-5).
 
 ## 18. Testing
 
-**`bun test`** covers the three pieces that must be right before any screen exists:
+`bun test`: 194 pass, 72 skip, 0 fail, 266 tests across 24 files; the Playwright pass: 9 passed, 1 skipped.
 
 - `src/shared/verdict.test.ts`: every row of the [rule table](#14-consensus-rule) plus the two edge cases, with the
   reason text asserted
 - `src/server/gateway/client.test.ts`: the gateway client with a mocked `fetch`, covering a clean 200, a
   `X-Gonka-Fallback` response, a receipt whose model mismatches, a `<think>`-wrapped body, unparseable JSON, a 429 and a
   timeout. Each asserts the returned provenance record and the rejection reason
-- `src/server/queue/claim.test.ts`: two concurrent claims never take the same item, a crashed claim is released, and the
-  semaphore never exceeds four
+- `src/server/queue/claim.concurrency.test.ts`: two concurrent claims never take the same item, a crashed claim is
+  released, and the semaphore never exceeds four
+- `src/server/retention.sweep.test.ts`: a record either side of each of the two windows, so a flipped comparison fails
+  rather than only a wrong window, and the sample surviving however old it is
+- `src/server/routes/account.test.ts`: erasure taking a private account's Trash with its live records, the sample
+  refused and named, and another account untouched
 
-**Playwright smoke** runs against the deployed URL after every production deploy and on demand against a preview: Sign
-In as Guest lands in the Guest workspace with the warning banner, the sample opens with its counts, and one evidence
-panel shows two model names and two request ids. It is the first three steps of the
-[demo acceptance test](PRD.md#the-submission-demo-as-an-acceptance-test) automated.
+**The database-backed suites are opt-in, and are run one file at a time.** They are the 72 skips in the count above,
+opting in through `TEST_DATABASE_URL`. Each truncates the database it connects to, so running them together in one
+process makes them clear each other's fixtures mid-run, which is also why they refuse any host but localhost. One file
+at a time, against a throwaway Postgres:
+
+```bash
+docker run -d --name cekgu-test -e POSTGRES_PASSWORD=x -e POSTGRES_DB=cekgu -p 55432:5432 postgres:18-alpine
+export TEST_DATABASE_URL='postgres://postgres:x@127.0.0.1:55432/cekgu'
+
+bun test src/server/sample.test.ts                    # 17 pass
+bun test src/server/guest.sweep.test.ts               # 5 pass
+bun test src/server/retention.sweep.test.ts           # 5 pass
+bun test src/server/queue/claim.concurrency.test.ts   # 8 pass
+bun test src/server/routes/records.test.ts            # 23 pass
+bun test src/server/routes/account.test.ts            # 6 pass
+```
+
+**The Playwright pass** runs against a **deployed URL**, never a local build: production by default, any other
+deployment through `E2E_BASE_URL`, and automatically after every production deploy. It asserts rendered content rather
+than that a root element is attached, because an attached root passes against a blank page, against a failed fetch shown
+as an empty state, and against a React error boundary.
 
 The CI order in [section 10](#10-hosting-and-cicd) runs `bun test` before the image is built, so a broken rule never
 gets a preview URL.
@@ -1207,3 +1346,13 @@ Every decision that was open on 2 September is now a section above.
 **What was fixed before any of this and still is:** the gateway, the model ids returned by `GET /v1/models`, the two
 base URLs, the no-fallback contract, receipt verification, and the requirement that every call returns its
 `x-request-id` alongside its content.
+
+**What changed after this table was written.** Sections 9 to 18 were a plan when they were first committed and are now a
+description: the service is deployed, the sample record is seeded and public, and the figures in section 18 come from
+real runs. Two things in this half are still design rather than description, and are marked where they appear:
+
+- The model-id list is not verified against the gateway at boot ([section 8](#8-configuration-contract))
+- The hedge threshold is a constant rather than being derived from the rolling median
+  ([section 13](#13-queue-and-worker))
+
+Both are deliberate, and both are cheaper to state than to change two days before a submission.

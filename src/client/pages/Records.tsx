@@ -4,6 +4,7 @@ import type { RecordStatus, RecordSummary } from '../../shared/types'
 import { deleteRecords, listRecords } from '../api'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { Field, inputClass } from '../components/Field'
+import { Select } from '../components/Select'
 import { Sheet } from '../components/Sheet'
 import { StatusChip } from '../components/StatusChip'
 import { useSession } from '../session'
@@ -90,21 +91,21 @@ export function Records() {
           />
         </Field>
         <Field label="Status" htmlFor="status">
-          <select
+          <Select
             id="status"
-            className={inputClass}
+            label="Status"
             value={status}
-            onChange={(event) => setStatus(event.target.value as '' | RecordStatus)}
-          >
-            {STATUSES.map((entry) => (
-              <option key={entry.value} value={entry.value}>
-                {entry.label}
-              </option>
-            ))}
-          </select>
+            options={STATUSES.map((entry) => ({ value: entry.value, label: entry.label }))}
+            onChange={(value) => setStatus(value as '' | RecordStatus)}
+          />
         </Field>
         <label className="flex h-9 items-center gap-2">
-          <input type="checkbox" checked={attention} onChange={(event) => setAttention(event.target.checked)} />
+          <input
+            type="checkbox"
+            className="check-box"
+            checked={attention}
+            onChange={(event) => setAttention(event.target.checked)}
+          />
           <span className="type-label">Needs Attention</span>
         </label>
       </div>
@@ -129,7 +130,7 @@ export function Records() {
 
       {failed ? (
         <div className="py-12">
-          <p className="type-body text-ink-muted">We could not load your records, try again in a moment.</p>
+          <p className="type-ui text-ink-muted">We could not load your records, try again in a moment.</p>
           <button
             type="button"
             onClick={load}
@@ -139,10 +140,10 @@ export function Records() {
           </button>
         </div>
       ) : records === null ? (
-        <p className="mt-6 type-body text-ink-muted">Loading your records.</p>
+        <p className="mt-6 type-ui text-ink-muted">Loading your records.</p>
       ) : records.length === 0 ? (
         <div className="py-12">
-          <p className="type-body text-ink-muted">No records yet.</p>
+          <p className="type-ui text-ink-muted">No records yet.</p>
           <button
             type="button"
             onClick={() => navigate('/new-check')}
@@ -159,8 +160,10 @@ export function Records() {
                 <th className="w-8 py-2 pr-3 font-medium">
                   <span className="sr-only">Select</span>
                 </th>
-                <th className="py-2 pr-4 font-medium">Title</th>
-                <th className="py-2 pr-4 font-medium">Subject</th>
+                {/* Title is what a person scans for and the longest cell in the row, so it gets
+                    the width. Auto-layout gave it the same weight as Subject and wrapped it. */}
+                <th className="w-[38%] py-2 pr-4 font-medium">Title</th>
+                <th className="w-[22%] py-2 pr-4 font-medium">Subject</th>
                 <th className="py-2 pr-4 text-right font-medium">Questions</th>
                 <th className="py-2 pr-4 font-medium">Status</th>
                 <th className="py-2 pr-4 text-right font-medium">Attention</th>
@@ -178,6 +181,7 @@ export function Records() {
                   <td className="py-3 pr-3">
                     <input
                       type="checkbox"
+                      className="check-box"
                       checked={selected.has(record.id)}
                       onChange={() => toggle(record.id)}
                       aria-label={`Select ${record.title}`}

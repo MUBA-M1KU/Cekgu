@@ -151,10 +151,22 @@ export async function deleteRecords(ids: string[]): Promise<DeleteResult> {
   return request<DeleteResult>('/api/records', { method: 'DELETE', body: JSON.stringify({ ids }) })
 }
 
+// FR-RECORD-8. Erasure of everything the account holds, Trash included. Distinct from
+// deleteRecords, which is per-record and soft for a private account.
+export async function deleteAllRecords(): Promise<DeleteResult> {
+  return request<DeleteResult>('/api/account/records', { method: 'DELETE' })
+}
+
 export async function getHealth(): Promise<Health> {
   if (MOCK) return { models: [], windowMinutes: 15, mascotEnabled: true }
 
   return request<Health>('/api/health')
+}
+
+// Better Auth's own sign-out. It answers 403 without an Origin header, which a browser always
+// sends, so this works from the app and not from a bare curl.
+export async function signOut(): Promise<void> {
+  await request<{ success: boolean }>('/api/auth/sign-out', { method: 'POST', body: '{}' })
 }
 
 export async function getSample(): Promise<RecordDetail> {

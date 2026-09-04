@@ -4,6 +4,12 @@ export const GUEST_MAX_ITEMS = 12
 export const GUEST_MAX_ITEM_CHARS = 2000
 export const GUEST_MAX_RECORDS = 20
 
+// Both windows are printed in Settings and enforced by the sweep in src/server/retention.ts, so
+// they live here rather than on either side of that pair. RETENTION_DAYS is the default keep
+// period for a private account; TRASH_DAYS is how long a deleted record stays recoverable.
+export const RETENTION_DAYS = 90
+export const TRASH_DAYS = 30
+
 const LETTER = /^[A-F]$/
 
 export const optionSchema = z.object({

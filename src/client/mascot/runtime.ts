@@ -231,6 +231,20 @@ async function buildStage(
       clearTimers()
       canvas.removeEventListener('webglcontextlost', onContextLost)
       app.ticker.remove(tick)
+
+      // Each model has to leave the ticker before pixi destroys it. Application.destroy() destroys
+      // its ticker first and the stage children second, and Live2DModel.destroy() sets
+      // autoUpdate = false from inside itself, whose setter calls ticker.remove(). By then _head
+      // is null and it throws "Cannot read properties of null (reading 'next')".
+      //
+      // That throw lands in React's effect cleanup, so it took the whole app down to a blank page
+      // on any navigation away from a record while the stage was mounted. Destroying the models
+      // here, while the ticker is still alive, leaves app.destroy() an empty stage.
+      for (const cat of CATS) {
+        app.stage.removeChild(models[cat])
+        models[cat].destroy({ children: true, texture: true, baseTexture: true })
+      }
+
       app.destroy(false, { children: true, texture: true, baseTexture: true })
     }
   }

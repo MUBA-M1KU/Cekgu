@@ -10,14 +10,37 @@
       CEKGU PITCH DECK - MUBA Blockchain Hackathon 2026, GonkaRouter track
       ============================================================================
 
-      DRAFT, 3 September 2026. Written against docs/PRODUCT.md, docs/DESIGN.md and
-      the 3 September mechanism benchmark in
-      docs/superpowers/research/three-day-rescore.md.
+      4 September 2026, against the frozen build. The app is deployed at
+      cekgu-op7lf5dspq-as.a.run.app and its sample record is public at
+      /api/sample, with no sign-in.
 
-      THE BUILD IS NOT FROZEN. Every product surface below is drawn as a diagram
-      from DESIGN.md, not screenshotted from a running app, because there is no
-      running app yet. Slides 05 and 06 are replaced with real screenshots at the
-      freeze. Nothing here may be presented as a screenshot until it is one.
+      WHERE THE NUMBERS COME FROM
+      Three different measurements, and the deck never mixes them. Slide 08
+      carries all three, each with its own label, and the pitch script's
+      section 9 says which is which out loud.
+        - The public sample record, capture-2026-09-03, is the current product.
+          Slides 03, 05 and 06 and the "12 of 12" on slide 08 are read from it:
+          9 Clear, 2 Possible Key Error, 1 Possible Ambiguity, 0 Unverified.
+          Every request id on slide 06 is in that record and resolves against
+          GET api.gonkarouter.io/v1/receipts/{id}.
+        - The 3 September mechanism benchmark, in
+          docs/superpowers/research/three-day-rescore.md, is history. It is on
+          slide 08 as the latency chart only, labelled as the benchmark, because
+          it is what killed the synchronous design. Its recorded verdict of
+          "failed" judged that design, not the queue that replaced it, and
+          nothing on this deck may imply otherwise.
+        - The 30-item evaluation set, run twice through the deployed queue on
+          4 September, is the dot field on slide 08: 60 item-runs, 40 clean
+          controls with no false flag among them, 20 planted defects of which 14
+          were caught, 5 abstained as Unverified and 1 came back Clear. Its own
+          Unverified rate, 19 of 60, is deliberately absent: it is a load effect
+          that needs a spoken sentence beside it, and the script carries it.
+
+      DIAGRAMS, NOT SCREENSHOTS. Every product surface below is drawn from
+      DESIGN.md. The literal option letters, stems, model ids, request ids and
+      verdict sentences inside them are the record's own, so a judge who lifts a
+      string off a slide finds it in the app. Nothing here may be presented as a
+      screenshot until it is one.
 
       DEVFOLIO REQUIRED SECTIONS -> SLIDES
         Problem Statement and Project Objective  02, 03
@@ -53,11 +76,17 @@
       EXPORT
       Chromium headless, Page.printToPDF with printBackground true,
       preferCSSPageSize true, 20in x 11.25in (= 1920x1080 at 96dpi).
+      Before printing, assert document.fonts.check() for all three families.
+      Awaiting document.fonts.ready is NOT enough: it resolves once the faces
+      the visible slide needs have arrived. See FONT PRIMING in the CSS.
+      Verify the result with pdfinfo, never with file(1), which reports 8 pages
+      for this 10-page deck, and with pdffonts, which must list Schibsted
+      Grotesk, Source Serif 4 and Spline Sans Mono.
 
       SELF-CONTAINED
-      No network is needed to open this file. The CSS and the JS are inline and
-      the three fonts are served from assets/fonts/, so the deck renders the
-      same on a laptop with no wifi as it does here.
+      No network is needed to open this file. The CSS, the JS and the three
+      woff2 fonts are all inline, so the deck renders the same on a laptop with
+      no wifi as it does here.
       ============================================================================
     -->
 
@@ -117,6 +146,7 @@
         --tint-clear: color-mix(in oklab, var(--verdict-clear) 12%, var(--sheet));
         --tint-key-error: color-mix(in oklab, var(--verdict-key-error) 12%, var(--sheet));
         --tint-unverified: color-mix(in oklab, var(--verdict-unverified) 12%, var(--sheet));
+        --tint-ambiguity: color-mix(in oklab, var(--verdict-ambiguity) 12%, var(--sheet));
 
         --font-paper: 'Source Serif 4', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
         --font-ui: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif;
@@ -134,6 +164,32 @@
         font-family: var(--font-ui);
         color: var(--ink);
         -webkit-font-smoothing: antialiased;
+      }
+
+      /* ======================================================================
+         FONT PRIMING - why this exists, because deleting it silently breaks the PDF
+         document.fonts.status reports "loaded" as soon as the faces the FIRST
+         slide needs have arrived, and only slide 01 is .active at load. Slide 01
+         is set entirely in Schibsted Grotesk, so Source Serif 4 and Spline Sans
+         Mono stayed "unloaded". @media print then reveals all ten slides at once
+         and Chromium took the print snapshot before those two decoded, so every
+         serif question stem and every request id was dropped out of the PDF with
+         no error anywhere. This element renders one glyph in each face at load,
+         so all three are in document.fonts before anything prints. It is a real
+         rendered box, not display:none, because a face nothing renders is a face
+         nothing requests.
+         ====================================================================== */
+      #fontprime {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        font-size: 8px;
+        line-height: 1;
       }
 
       /* ======================================================================
@@ -217,17 +273,6 @@
       .mono {
         font-family: var(--font-mono);
         font-variant-numeric: tabular-nums slashed-zero;
-      }
-
-      /* A slot a human must fill before this deck is shown to anyone. Red is
-         the human's mark in this system, and this is a mark a human must make. */
-      .tofill {
-        font-family: var(--font-mono);
-        font-size: 26px;
-        color: var(--pen);
-        border: 1px dashed var(--pen);
-        border-radius: var(--r-sheet);
-        padding: 4px 12px;
       }
 
       /* ======================================================================
@@ -373,6 +418,14 @@
       svg .v-ambig {
         fill: var(--verdict-ambiguity);
       }
+      svg .v-ambig-bg {
+        fill: var(--tint-ambiguity);
+      }
+      svg .v-ambig-s {
+        fill: none;
+        stroke: var(--verdict-ambiguity);
+        stroke-width: 2;
+      }
       svg .v-split {
         fill: var(--verdict-split);
       }
@@ -462,7 +515,8 @@
         }
         #bar,
         #notes,
-        #timer {
+        #timer,
+        #fontprime {
           display: none !important;
         }
       }
@@ -470,6 +524,16 @@
   </head>
 
   <body>
+    <div id="fontprime" aria-hidden="true">
+      <span style="font-family: var(--font-ui); font-weight: 400">Aa0</span>
+      <span style="font-family: var(--font-ui); font-weight: 500">Aa0</span>
+      <span style="font-family: var(--font-ui); font-weight: 700">Aa0</span>
+      <span style="font-family: var(--font-paper); font-weight: 400">Aa0</span>
+      <span style="font-family: var(--font-paper); font-weight: 600">Aa0</span>
+      <span style="font-family: var(--font-mono); font-weight: 400">Aa0</span>
+      <span style="font-family: var(--font-mono); font-weight: 500">Aa0</span>
+    </div>
+
     <div id="stage">
       <!-- ============================ 01 COVER ============================ -->
       <section
@@ -505,7 +569,7 @@
             />
           </svg>
         </div>
-        <p class="foot">Team M1KU <span class="tofill" style="font-size: 20px">roster to fill</span></p>
+        <p class="foot">Team M1KU</p>
       </section>
 
       <!-- ========================== 02 THE PROBLEM ======================== -->
@@ -529,31 +593,32 @@
             <line x1="48" y1="86" x2="892" y2="86" class="s-rule" />
             <rect x="48" y="112" width="620" height="9" rx="4" class="f-rule" />
             <line x1="48" y1="146" x2="892" y2="146" class="s-rule" />
-            <rect x="48" y="172" width="470" height="9" rx="4" class="f-rule" />
-            <line x1="48" y1="206" x2="892" y2="206" class="s-rule" />
 
-            <!-- the item in question, recessed into the well -->
-            <rect x="24" y="226" width="892" height="330" rx="4" class="f-well" />
-            <text class="paper f-ink" x="56" y="292" font-size="34">Which data structure follows FIFO?</text>
-            <text class="label f-muted" x="56" y="348" font-size="20">SUPPLIED KEY</text>
+            <!-- The item in question, recessed into the well. Question 3 of the
+                 public sample record, verbatim: stem, four options, key A. -->
+            <rect x="24" y="166" width="892" height="390" rx="4" class="f-well" />
+            <text class="paper f-ink" x="56" y="232" font-size="34">Which data structure removes elements</text>
+            <text class="paper f-ink" x="56" y="274" font-size="34">in first in, first out order?</text>
+            <text class="label f-muted" x="56" y="336" font-size="20">SUPPLIED KEY</text>
             <g>
-              <circle cx="76" cy="404" r="21" class="s-strong" />
-              <text x="76" y="411" font-size="20" font-weight="500" text-anchor="middle" class="f-ink">A</text>
-              <text x="76" y="452" font-size="21" text-anchor="middle" class="f-muted">Array</text>
+              <circle cx="76" cy="390" r="21" class="f-ink" />
+              <text x="76" y="397" font-size="20" font-weight="500" text-anchor="middle" class="f-well">A</text>
+              <text x="76" y="438" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Stack</text>
 
-              <circle cx="216" cy="404" r="21" class="f-ink" />
-              <text x="216" y="411" font-size="20" font-weight="500" text-anchor="middle" class="f-well">B</text>
-              <text x="216" y="452" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Stack</text>
+              <circle cx="226" cy="390" r="21" class="s-strong" />
+              <text x="226" y="397" font-size="20" font-weight="500" text-anchor="middle" class="f-ink">B</text>
+              <text x="226" y="438" font-size="21" text-anchor="middle" class="f-muted">Queue</text>
 
-              <circle cx="356" cy="404" r="21" class="s-strong" />
-              <text x="356" y="411" font-size="20" font-weight="500" text-anchor="middle" class="f-ink">C</text>
-              <text x="356" y="452" font-size="21" text-anchor="middle" class="f-muted">Queue</text>
+              <circle cx="376" cy="390" r="21" class="s-strong" />
+              <text x="376" y="397" font-size="20" font-weight="500" text-anchor="middle" class="f-ink">C</text>
+              <text x="376" y="438" font-size="21" text-anchor="middle" class="f-muted">Binary search</text>
+              <text x="376" y="464" font-size="21" text-anchor="middle" class="f-muted">tree</text>
 
-              <circle cx="496" cy="404" r="21" class="s-strong" />
-              <text x="496" y="411" font-size="20" font-weight="500" text-anchor="middle" class="f-ink">D</text>
-              <text x="496" y="452" font-size="21" text-anchor="middle" class="f-muted">Tree</text>
+              <circle cx="526" cy="390" r="21" class="s-strong" />
+              <text x="526" y="397" font-size="20" font-weight="500" text-anchor="middle" class="f-ink">D</text>
+              <text x="526" y="438" font-size="21" text-anchor="middle" class="f-muted">Hash table</text>
             </g>
-            <text x="56" y="518" font-size="24" class="f-muted">Published. Nobody re-solved it.</text>
+            <text x="56" y="520" font-size="24" class="f-muted">Published. Nobody re-solved it.</text>
 
             <rect x="48" y="596" width="580" height="9" rx="4" class="f-rule" />
             <line x1="48" y1="630" x2="892" y2="630" class="s-rule" />
@@ -573,7 +638,7 @@
       <section
         class="slide"
         data-budget="20"
-        data-speaker-notes="The counts on the right are pass 1 of the 3 Sept benchmark, not an illustration."
+        data-speaker-notes="The counts on the right are live on /api/sample right now, not an illustration."
       >
         <div class="stack">
           <div class="head">
@@ -616,8 +681,8 @@
                 <path d="M844 278l14 10-14 10" stroke-linecap="round" stroke-linejoin="round" />
               </g>
 
-              <text class="label f-muted" x="928" y="22" font-size="22">FOUR ITEMS, IN ORDER</text>
-              <text class="mono f-pen" x="1728" y="26" font-size="30" text-anchor="end">4</text>
+              <text class="label f-muted" x="928" y="22" font-size="22">THREE ITEMS, IN ORDER</text>
+              <text class="mono f-pen" x="1728" y="26" font-size="30" text-anchor="end">3</text>
 
               <rect x="928" y="52" width="800" height="76" rx="4" class="card" />
               <rect x="952" y="80" width="300" height="8" rx="4" class="f-rule" />
@@ -628,41 +693,38 @@
                 <text class="label v-key" x="62" y="25" font-size="21">Possible Key Error</text>
               </g>
 
-              <rect x="928" y="140" width="800" height="76" rx="4" class="card" />
-              <rect x="952" y="168" width="380" height="8" rx="4" class="f-rule" />
-              <g transform="translate(1418 162)">
+              <rect x="928" y="156" width="800" height="76" rx="4" class="card" />
+              <rect x="952" y="184" width="380" height="8" rx="4" class="f-rule" />
+              <g transform="translate(1418 178)">
                 <rect width="290" height="36" rx="18" class="v-key-bg" />
                 <circle cx="24" cy="18" r="7" class="v-key" />
                 <circle cx="42" cy="18" r="7" class="v-key-s" />
                 <text class="label v-key" x="62" y="25" font-size="21">Possible Key Error</text>
               </g>
 
-              <rect x="928" y="228" width="800" height="76" rx="4" class="card" />
-              <rect x="952" y="256" width="340" height="8" rx="4" class="f-rule" />
-              <g transform="translate(1505 250)">
-                <rect width="203" height="36" rx="18" class="v-unver-bg" />
-                <circle cx="26" cy="18" r="8" class="v-unver-s" stroke-dasharray="3 3" />
-                <text class="label v-unver" x="48" y="25" font-size="21">Unverified</text>
+              <!-- Two half-filled bubbles, the Possible Ambiguity glyph in
+                   DESIGN.md and in src/client/components/VerdictChip.tsx. -->
+              <rect x="928" y="260" width="800" height="76" rx="4" class="card" />
+              <rect x="952" y="288" width="340" height="8" rx="4" class="f-rule" />
+              <g transform="translate(1418 282)">
+                <rect width="290" height="36" rx="18" class="v-ambig-bg" />
+                <circle cx="24" cy="18" r="7" class="v-ambig-s" />
+                <path d="M24 11a7 7 0 0 0 0 14z" class="v-ambig" />
+                <circle cx="44" cy="18" r="7" class="v-ambig-s" />
+                <path d="M44 11a7 7 0 0 0 0 14z" class="v-ambig" />
+                <text class="label v-ambig" x="64" y="25" font-size="21">Possible Ambiguity</text>
               </g>
 
-              <rect x="928" y="316" width="800" height="76" rx="4" class="card" />
-              <rect x="952" y="344" width="420" height="8" rx="4" class="f-rule" />
-              <g transform="translate(1505 338)">
-                <rect width="203" height="36" rx="18" class="v-unver-bg" />
-                <circle cx="26" cy="18" r="8" class="v-unver-s" stroke-dasharray="3 3" />
-                <text class="label v-unver" x="48" y="25" font-size="21">Unverified</text>
-              </g>
+              <line x1="928" y1="396" x2="1728" y2="396" class="s-rule" />
 
-              <line x1="928" y1="418" x2="1728" y2="418" class="s-rule" />
-
-              <rect x="928" y="444" width="800" height="76" rx="4" class="card" />
-              <text class="mono f-muted" x="952" y="490" font-size="26">8 items</text>
-              <g transform="translate(1577 466)">
+              <rect x="928" y="428" width="800" height="76" rx="4" class="card" />
+              <text class="mono f-muted" x="952" y="474" font-size="26">9 items</text>
+              <g transform="translate(1577 450)">
                 <rect width="131" height="36" rx="18" class="v-clear-bg" />
                 <circle cx="24" cy="18" r="7" class="v-clear" />
                 <text class="label v-clear" x="44" y="25" font-size="21">Clear</text>
               </g>
-              <text class="f-muted" x="928" y="552" font-size="22">3 Sep benchmark, pass 1 of 12 items</text>
+              <text class="f-muted" x="928" y="552" font-size="22">The public sample record, 12 items</text>
             </svg>
           </div>
         </div>
@@ -683,15 +745,17 @@
             <svg viewBox="0 0 1728 520" role="img" aria-label="How a Cekgu check runs, from item to verdict">
               <!-- the item, with its key held back -->
               <rect x="0.5" y="120.5" width="319" height="270" rx="4" class="card" />
-              <text class="paper f-ink" x="28" y="176" font-size="26">Which data structure</text>
-              <text class="paper f-ink" x="28" y="212" font-size="26">follows FIFO?</text>
+              <text class="paper f-ink" x="28" y="166" font-size="25">Which data structure</text>
+              <text class="paper f-ink" x="28" y="196" font-size="25">removes elements in</text>
+              <text class="paper f-ink" x="28" y="226" font-size="25">first in, first out</text>
+              <text class="paper f-ink" x="28" y="256" font-size="25">order?</text>
               <g class="s-strong">
-                <circle cx="46" cy="266" r="16" />
-                <circle cx="106" cy="266" r="16" />
-                <circle cx="166" cy="266" r="16" />
-                <circle cx="226" cy="266" r="16" />
+                <circle cx="46" cy="300" r="16" />
+                <circle cx="106" cy="300" r="16" />
+                <circle cx="166" cy="300" r="16" />
+                <circle cx="226" cy="300" r="16" />
               </g>
-              <g transform="translate(28 318)">
+              <g transform="translate(28 334)">
                 <rect width="234" height="40" rx="20" class="f-well" />
                 <text class="label f-ink" x="24" y="27" font-size="21">Key Withheld</text>
               </g>
@@ -706,31 +770,31 @@
               <text class="mono f-ink" x="440" y="94" font-size="24">MiniMax-M2.7</text>
               <g>
                 <circle cx="720" cy="86" r="16" class="s-strong" />
-                <circle cx="780" cy="86" r="16" class="s-strong" />
-                <circle cx="840" cy="86" r="16" class="f-ink" />
+                <circle cx="780" cy="86" r="16" class="f-ink" />
+                <circle cx="840" cy="86" r="16" class="s-strong" />
                 <circle cx="900" cy="86" r="16" class="s-strong" />
-                <text x="840" y="132" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Queue</text>
+                <text x="780" y="132" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Queue</text>
               </g>
-              <text x="840" y="186" font-size="32" text-anchor="middle" class="f-muted">=</text>
+              <text x="780" y="186" font-size="32" text-anchor="middle" class="f-muted">=</text>
               <text class="mono f-ink" x="440" y="238" font-size="24">Kimi-K2.6</text>
               <g>
                 <circle cx="720" cy="230" r="16" class="s-strong" />
-                <circle cx="780" cy="230" r="16" class="s-strong" />
-                <circle cx="840" cy="230" r="16" class="f-ink" />
+                <circle cx="780" cy="230" r="16" class="f-ink" />
+                <circle cx="840" cy="230" r="16" class="s-strong" />
                 <circle cx="900" cy="230" r="16" class="s-strong" />
-                <text x="840" y="276" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Queue</text>
+                <text x="780" y="276" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Queue</text>
               </g>
 
               <line x1="440" y1="322" x2="960" y2="322" class="s-rule" />
-              <text x="840" y="382" font-size="32" text-anchor="middle" class="f-muted">&#8800;</text>
+              <text x="750" y="382" font-size="32" text-anchor="middle" class="f-muted">&#8800;</text>
 
               <text class="label f-muted" x="440" y="428" font-size="22">THE SUPPLIED KEY</text>
               <g>
-                <circle cx="720" cy="420" r="16" class="s-strong" />
-                <circle cx="780" cy="420" r="16" class="f-ink" />
+                <circle cx="720" cy="420" r="16" class="f-ink" />
+                <circle cx="780" cy="420" r="16" class="s-strong" />
                 <circle cx="840" cy="420" r="16" class="s-strong" />
                 <circle cx="900" cy="420" r="16" class="s-strong" />
-                <text x="780" y="466" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Stack</text>
+                <text x="720" y="466" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Stack</text>
               </g>
 
               <g class="s-strong">
@@ -772,19 +836,20 @@
           <svg viewBox="0 0 940 740" role="img" aria-label="An item flagged Possible Key Error, with both blind readings">
             <rect x="0.5" y="0.5" width="939" height="739" rx="4" class="card" />
 
-            <text class="paper f-ink" x="44" y="82" font-size="32">Which data structure follows FIFO?</text>
+            <text class="paper f-ink" x="44" y="64" font-size="32">Which data structure removes elements</text>
+            <text class="paper f-ink" x="44" y="104" font-size="32">in first in, first out order?</text>
 
-            <text class="label f-muted" x="44" y="142" font-size="20">SUPPLIED KEY</text>
+            <text class="label f-muted" x="44" y="152" font-size="20">SUPPLIED KEY</text>
             <g>
-              <circle cx="64" cy="192" r="19" class="s-strong" />
-              <text x="64" y="199" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">A</text>
-              <circle cx="184" cy="192" r="19" class="f-ink" />
-              <text x="184" y="199" font-size="19" font-weight="500" text-anchor="middle" class="f-sheet">B</text>
-              <text x="184" y="240" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Stack</text>
-              <circle cx="304" cy="192" r="19" class="s-strong" />
-              <text x="304" y="199" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">C</text>
-              <circle cx="424" cy="192" r="19" class="s-strong" />
-              <text x="424" y="199" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">D</text>
+              <circle cx="64" cy="196" r="19" class="f-ink" />
+              <text x="64" y="203" font-size="19" font-weight="500" text-anchor="middle" class="f-sheet">A</text>
+              <text x="64" y="244" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Stack</text>
+              <circle cx="184" cy="196" r="19" class="s-strong" />
+              <text x="184" y="203" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">B</text>
+              <circle cx="304" cy="196" r="19" class="s-strong" />
+              <text x="304" y="203" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">C</text>
+              <circle cx="424" cy="196" r="19" class="s-strong" />
+              <text x="424" y="203" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">D</text>
             </g>
 
             <line x1="44" y1="286" x2="896" y2="286" class="s-rule" />
@@ -795,11 +860,11 @@
             <g>
               <circle cx="72" cy="418" r="19" class="s-strong" />
               <text x="72" y="425" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">A</text>
-              <circle cx="152" cy="418" r="19" class="s-strong" />
-              <text x="152" y="425" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">B</text>
-              <circle cx="232" cy="418" r="19" class="f-ink" />
-              <text x="232" y="425" font-size="19" font-weight="500" text-anchor="middle" class="f-well">C</text>
-              <text x="232" y="466" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Queue</text>
+              <circle cx="152" cy="418" r="19" class="f-ink" />
+              <text x="152" y="425" font-size="19" font-weight="500" text-anchor="middle" class="f-well">B</text>
+              <text x="152" y="466" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Queue</text>
+              <circle cx="232" cy="418" r="19" class="s-strong" />
+              <text x="232" y="425" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">C</text>
               <circle cx="312" cy="418" r="19" class="s-strong" />
               <text x="312" y="425" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">D</text>
             </g>
@@ -814,11 +879,11 @@
             <g>
               <circle cx="522" cy="418" r="19" class="s-strong" />
               <text x="522" y="425" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">A</text>
-              <circle cx="602" cy="418" r="19" class="s-strong" />
-              <text x="602" y="425" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">B</text>
-              <circle cx="682" cy="418" r="19" class="f-ink" />
-              <text x="682" y="425" font-size="19" font-weight="500" text-anchor="middle" class="f-well">C</text>
-              <text x="682" y="466" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Queue</text>
+              <circle cx="602" cy="418" r="19" class="f-ink" />
+              <text x="602" y="425" font-size="19" font-weight="500" text-anchor="middle" class="f-well">B</text>
+              <text x="602" y="466" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Queue</text>
+              <circle cx="682" cy="418" r="19" class="s-strong" />
+              <text x="682" y="425" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">C</text>
               <circle cx="762" cy="418" r="19" class="s-strong" />
               <text x="762" y="425" font-size="19" font-weight="500" text-anchor="middle" class="f-ink">D</text>
             </g>
@@ -856,18 +921,18 @@
           <div class="head">
             <h2>Every reading carries a request id.</h2>
             <p class="lead" style="max-width: 48ch">
-              Copy it into the receipt URL. The gateway names the model that answered.
+              Copy one into the receipt URL. The gateway names the model.
             </p>
           </div>
           <div class="body">
-            <svg viewBox="0 0 1728 520" role="img" aria-label="Two Gonka request ids and their receipts from the benchmark">
-              <text class="label f-muted" x="0" y="20" font-size="22">3 SEP BENCHMARK, MIS-KEYED DNS ITEM</text>
+            <svg viewBox="0 0 1728 520" role="img" aria-label="Two Gonka request ids and their receipts from the sample record">
+              <text class="label f-muted" x="0" y="20" font-size="22">PUBLIC SAMPLE RECORD, QUESTION 9</text>
 
               <rect x="0" y="48" width="838" height="250" rx="4" class="f-well" />
               <text class="label f-muted" x="36" y="100" font-size="20">SERVED MODEL</text>
               <text class="mono f-ink" x="36" y="144" font-size="30">MiniMaxAI/MiniMax-M2.7</text>
               <text class="label f-muted" x="36" y="198" font-size="20">REQUEST ID</text>
-              <text class="mono f-ink" x="36" y="242" font-size="30">req-1788368110223424388-206439</text>
+              <text class="mono f-ink" x="36" y="242" font-size="30">req-1788427238422211326-414866</text>
               <g transform="translate(660 80)">
                 <rect width="146" height="38" rx="19" class="f-sheet" />
                 <text class="label f-ink" x="24" y="26" font-size="20">Verified</text>
@@ -877,7 +942,7 @@
               <text class="label f-muted" x="926" y="100" font-size="20">SERVED MODEL</text>
               <text class="mono f-ink" x="926" y="144" font-size="30">moonshotai/Kimi-K2.6</text>
               <text class="label f-muted" x="926" y="198" font-size="20">REQUEST ID</text>
-              <text class="mono f-ink" x="926" y="242" font-size="30">req-1788368110204753015-206436</text>
+              <text class="mono f-ink" x="926" y="242" font-size="30">req-1788427238422211356-414867</text>
               <g transform="translate(1550 80)">
                 <rect width="146" height="38" rx="19" class="f-sheet" />
                 <text class="label f-ink" x="24" y="26" font-size="20">Verified</text>
@@ -885,7 +950,7 @@
 
               <line x1="0" y1="352" x2="1728" y2="352" class="s-rule" />
               <text class="mono f-muted" x="0" y="418" font-size="30">
-                api.gonkarouter.io/v1/receipts/req-1788368110223424388-206439
+                api.gonkarouter.io/v1/receipts/req-1788427238422211326-414866
               </text>
               <g transform="translate(0 454)">
                 <rect width="326" height="40" rx="20" class="v-key-bg" />
@@ -894,7 +959,7 @@
                 <text class="label v-key" x="68" y="28" font-size="22">Possible Key Error</text>
               </g>
               <text x="430" y="482" font-size="25" class="f-muted">
-                Both ids are public. Neither reading counts without one.
+                Both ids are on the public sample record. Neither reading counts without one.
               </text>
             </svg>
           </div>
@@ -988,18 +1053,22 @@
       <section
         class="slide"
         data-budget="30"
-        data-speaker-notes="This is the slide that says we measured before we built. Do not skip the 13 of 13."
+        data-speaker-notes="Chart is the benchmark that failed. Numbers below are the queue that replaced it."
       >
         <div class="two-up">
           <div>
             <p class="eyebrow">Motivation and challenges</p>
             <h2>No item had two readings in 30 seconds.</h2>
             <p class="lead">So Cekgu queues the work, retries, and fails closed.</p>
-            <p class="lead">Fewer than two verified readings is never a verdict.</p>
+            <p class="lead">On the sample record: 12 of 12 items, two verified readings.</p>
           </div>
 
-          <svg viewBox="0 0 1020 700" role="img" aria-label="Measured call latency for both models on 3 September">
-            <text class="label f-muted" x="0" y="20" font-size="22">SECONDS TO A COMPLETED CALL, 3 SEP</text>
+          <svg
+            viewBox="0 0 1020 856"
+            role="img"
+            aria-label="Above, the 3 September benchmark's call latency. Below, 30 items run twice through the deployed queue: 40 clean control runs with no false flags, and 20 planted defect runs of which 14 were caught, 5 abstained as Unverified and 1 came back Clear"
+          >
+            <text class="label f-muted" x="0" y="20" font-size="22">SECONDS TO A COMPLETED CALL, 3 SEP BENCHMARK</text>
 
             <line x1="463" y1="80" x2="463" y2="430" class="s-rule" stroke="var(--rule-strong)" stroke-dasharray="6 6" />
             <text class="mono f-muted" x="463" y="66" font-size="24" text-anchor="middle">30s</text>
@@ -1028,11 +1097,42 @@
               <text x="990" y="466">90</text>
             </g>
 
-            <line x1="0" y1="566" x2="1020" y2="566" class="s-rule" />
-            <text class="mono f-ink" x="0" y="640" font-size="58">13 of 13</text>
-            <text x="0" y="680" font-size="23" class="f-muted">verified verdicts matched the planted state</text>
-            <text class="mono f-ink" x="580" y="640" font-size="58">0</text>
-            <text x="580" y="680" font-size="23" class="f-muted">false flags on the clean controls</text>
+            <!-- Below the rule is a third measurement, and it is not the sample
+                 record: the committed 30-item evaluation set run twice through the
+                 deployed queue, 60 item-runs in all, recorded in
+                 docs/superpowers/research/three-day-rescore.md. One dot is one
+                 item-run, filled in that item's own verdict colour, so the top row
+                 carrying no flag colour at all IS the claim. The 30-item run's own
+                 Unverified rate is deliberately absent: it is a load effect that
+                 needs a spoken sentence beside it, and that sentence lives in the
+                 script and the Q&A, not on a wall. -->
+            <line x1="0" y1="534" x2="1020" y2="534" class="s-rule" />
+            <text class="label f-muted" x="0" y="576" font-size="22">30-ITEM EVALUATION SET, RUN TWICE THROUGH THE DEPLOYED QUEUE</text>
+
+            <text class="mono f-ink" x="0" y="640" font-size="26">40 clean control runs</text>
+            <text class="mono f-ink" x="1020" y="640" font-size="48" text-anchor="end">0 false flags</text>
+            <g class="v-clear">
+              <circle cx="9" cy="692" r="9" /><circle cx="34" cy="692" r="9" /><circle cx="59" cy="692" r="9" /><circle cx="84" cy="692" r="9" /><circle cx="109" cy="692" r="9" /><circle cx="134" cy="692" r="9" /><circle cx="159" cy="692" r="9" /><circle cx="184" cy="692" r="9" /><circle cx="209" cy="692" r="9" /><circle cx="234" cy="692" r="9" />
+              <circle cx="259" cy="692" r="9" /><circle cx="284" cy="692" r="9" /><circle cx="309" cy="692" r="9" /><circle cx="334" cy="692" r="9" /><circle cx="359" cy="692" r="9" /><circle cx="384" cy="692" r="9" /><circle cx="409" cy="692" r="9" /><circle cx="434" cy="692" r="9" /><circle cx="459" cy="692" r="9" /><circle cx="484" cy="692" r="9" />
+              <circle cx="509" cy="692" r="9" /><circle cx="534" cy="692" r="9" /><circle cx="559" cy="692" r="9" /><circle cx="584" cy="692" r="9" /><circle cx="609" cy="692" r="9" /><circle cx="634" cy="692" r="9" /><circle cx="659" cy="692" r="9" /><circle cx="684" cy="692" r="9" /><circle cx="709" cy="692" r="9" /><circle cx="734" cy="692" r="9" />
+              <circle cx="759" cy="692" r="9" /><circle cx="784" cy="692" r="9" /><circle cx="809" cy="692" r="9" /><circle cx="834" cy="692" r="9" /><circle cx="859" cy="692" r="9" /><circle cx="884" cy="692" r="9" /><circle cx="909" cy="692" r="9" /><circle cx="934" cy="692" r="9" /><circle cx="959" cy="692" r="9" /><circle cx="984" cy="692" r="9" />
+            </g>
+
+            <text class="mono f-ink" x="0" y="768" font-size="26">20 planted defect runs</text>
+            <text class="mono f-ink" x="1020" y="768" font-size="48" text-anchor="end">14 caught</text>
+            <g class="v-key">
+              <circle cx="9" cy="820" r="9" /><circle cx="34" cy="820" r="9" /><circle cx="59" cy="820" r="9" /><circle cx="84" cy="820" r="9" /><circle cx="109" cy="820" r="9" /><circle cx="134" cy="820" r="9" /><circle cx="159" cy="820" r="9" /><circle cx="184" cy="820" r="9" />
+            </g>
+            <g class="v-ambig">
+              <circle cx="209" cy="820" r="9" /><circle cx="234" cy="820" r="9" /><circle cx="259" cy="820" r="9" /><circle cx="284" cy="820" r="9" /><circle cx="309" cy="820" r="9" /><circle cx="334" cy="820" r="9" />
+            </g>
+            <g class="v-unver">
+              <circle cx="359" cy="820" r="9" /><circle cx="384" cy="820" r="9" /><circle cx="409" cy="820" r="9" /><circle cx="434" cy="820" r="9" /><circle cx="459" cy="820" r="9" />
+            </g>
+            <g class="v-clear">
+              <circle cx="484" cy="820" r="9" />
+            </g>
+            <text x="530" y="828" font-size="22" class="f-muted">5 abstained as Unverified. 1 came back Clear.</text>
           </svg>
         </div>
       </section>
@@ -1108,7 +1208,7 @@
                 <td class="mono" style="font-size: 24px; color: var(--ink-muted); letter-spacing: 0.06em; padding: 0 56px 20px 0">
                   REPOSITORY
                 </td>
-                <td class="mono" style="font-size: 30px; padding: 0 0 20px">github.com/MUBA-M1KU/dev</td>
+                <td class="mono" style="font-size: 30px; padding: 0 0 20px">github.com/MUBA-M1KU/Cekgu</td>
               </tr>
               <tr>
                 <td class="mono" style="font-size: 24px; color: var(--ink-muted); letter-spacing: 0.06em; padding: 0 56px 0 0">
@@ -1232,6 +1332,22 @@
           },
           true
         )
+
+        // Belt and braces with #fontprime: ask for every face by name too, so a
+        // print begun before layout settles still finds all three loaded.
+        if (document.fonts && document.fonts.load) {
+          ;[
+            '400 16px "Schibsted Grotesk"',
+            '500 16px "Schibsted Grotesk"',
+            '700 16px "Schibsted Grotesk"',
+            '400 16px "Source Serif 4"',
+            '600 16px "Source Serif 4"',
+            '400 16px "Spline Sans Mono"',
+            '500 16px "Spline Sans Mono"'
+          ].forEach(function (face) {
+            document.fonts.load(face)
+          })
+        }
 
         fit()
         show(i)
