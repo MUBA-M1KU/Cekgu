@@ -238,7 +238,11 @@ export function AppTopbar({ records }: Props) {
                     ([record, running_]) => (
                       <li key={record.id}>
                         <Link to={`/records/${record.id}`} className="app-pop-row" onClick={() => setOpen(null)}>
-                          <span className="app-pop-dot" aria-hidden="true" />
+                          <span
+                            className="app-pop-dot"
+                            data-running={running_ ? 'true' : undefined}
+                            aria-hidden="true"
+                          />
                           <span className="min-w-0 flex-1">
                             <span className="type-label block truncate">{record.title}</span>
                             <span className="type-caption mt-1 block text-ink-muted">

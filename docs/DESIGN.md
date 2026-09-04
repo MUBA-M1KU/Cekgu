@@ -256,14 +256,20 @@ Mobile halves the two largest steps: sheet padding drops from `--s-6` to `--s-4`
 
 ### Radius
 
-Two radii, each with a name that says what it is for:
+Three radii, each with a name that says what it is for:
 
 - `--r-bubble: 999px`. Anything descended from the OMR bubble is round: verdict chips, status chips, filter counts, the
   disposition bubbles, avatars, the mascot's stage badge
-- `--r-sheet: 4px`. Anything descended from paper is nearly square: the sheet, inputs, buttons, dialogs, the evidence
-  panel, tables. Paper has corners
+- `--r-sheet: 1.25rem`. Every surface: the sheet, dialogs, cards, popovers, the evidence panel, recessed panels
+- `--r-control: 0.625rem`. Everything a person operates directly: buttons, text inputs, the select trigger
 
-There is no medium radius. If a component does not know whether it is a bubble or a sheet, it is a sheet.
+**Paper was nearly square until 4 September**, at `4px`, on the reasoning that paper has corners. It read as sharp
+beside the landing and dashboard cards, which had drifted to four different medium radii — 12, 16, 20 and 24px — and the
+owner asked for the rounded ones to win. The four collapsed onto one value and paper came with them.
+
+Controls get their own step rather than sharing the surface radius, because `1.25rem` on a 36px control clamps to a
+pill, and the pill is the bubble's meaning rather than a button's. If a component does not know which it is, it is a
+surface.
 
 ### Borders and elevation
 

@@ -100,7 +100,7 @@ export function SampleSection({ record }: { record: RecordDetail | null }) {
 
             {item.verdictReason ? <p className="type-ui mt-5 max-w-[70ch]">{item.verdictReason}</p> : null}
 
-            <div className="mt-6 grid gap-6 rounded-[1rem] bg-well p-5 sm:p-6 lg:grid-cols-2">
+            <div className="mt-6 grid gap-6 rounded-sheet bg-well p-5 sm:p-6 lg:grid-cols-2">
               <Reading item={item} index={0} />
               <Reading item={item} index={1} />
             </div>

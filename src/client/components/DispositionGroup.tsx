@@ -65,7 +65,7 @@ export function DispositionGroup({ options, onRecord, busy }: Props) {
         type="button"
         disabled={blocked || busy}
         onClick={() => kind && onRecord({ kind, revisedKey, revisedText: null, note: null })}
-        className="mt-4 inline-flex h-9 items-center rounded-sheet bg-ink px-4 font-medium text-on-ink disabled:opacity-60"
+        className="mt-4 inline-flex h-9 items-center rounded-control bg-ink px-4 font-medium text-on-ink disabled:opacity-60"
       >
         Record Decision
       </button>

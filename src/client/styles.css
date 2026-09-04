@@ -66,7 +66,14 @@
 
   /* Two radii by descent: round for bubbles, nearly square for paper. There is no medium radius. */
   --r-bubble: 999px;
-  --r-sheet: 4px;
+  /* Paper is rounded now. DESIGN.md called for 4px and said paper has corners; at that value the
+     sheets, dialogs and panels read as sharp beside the landing and dashboard cards, which had
+     drifted to four different medium radii. The owner asked for the rounded ones to win, so this is
+     the one value they all collapse onto. */
+  --r-sheet: 1.25rem;
+  /* 1.25rem on a 36px control clamps to a pill, which is the bubble's job and not a button's, so
+     controls get their own step. Still visibly rounded, still not a bubble. */
+  --r-control: 0.625rem;
 
   --t-quick: 120ms; /* hover, focus, chip and bubble state changes */
   --t-panel: 200ms; /* evidence panel and popover enter and exit */
@@ -93,6 +100,7 @@
 
   --radius-bubble: var(--r-bubble);
   --radius-sheet: var(--r-sheet);
+  --radius-control: var(--r-control);
 
   /* Deliberately no --spacing-* here. Tailwind's numeric scale is 4px steps, so redefining
      --spacing-9 as --s-9 turned h-9 into 96px rather than 36px. DESIGN.md's steps map onto the
@@ -487,7 +495,7 @@ section[id] {
   position: relative;
   padding: var(--s-5);
   border: 1px solid color-mix(in oklab, var(--sheet) 90%, transparent);
-  border-radius: 1.5rem;
+  border-radius: var(--r-sheet);
   background: color-mix(in oklab, var(--sheet) 90%, transparent);
   -webkit-backdrop-filter: blur(18px) saturate(170%);
   backdrop-filter: blur(18px) saturate(170%);
@@ -543,7 +551,7 @@ section[id] {
 /* Raised surfaces on the marketing page are softer and rounder than the app's 4 px document
    corner, because a card here is a card and not a sheet of paper. */
 .card-soft {
-  border-radius: 1.25rem;
+  border-radius: var(--r-sheet);
   background: var(--sheet);
   box-shadow: 0 1px 2px var(--shadow-tint);
 }
@@ -958,8 +966,12 @@ section[id] {
   transition: width var(--t-panel) var(--ease-out);
 }
 
+/* :has(:focus-visible), not :focus-within. A mouse click leaves focus on the link it followed, so
+   :focus-within held the rail open after the pointer had gone — the rail stayed at 200px on the page
+   it had just navigated to. :focus-visible only matches focus the browser judges worth showing,
+   which is the keyboard case this needs to keep and not the mouse case that caused the bug. */
 .app-rail:hover,
-.app-rail:focus-within {
+.app-rail:has(:focus-visible) {
   width: 12.5rem;
 }
 
@@ -976,7 +988,7 @@ section[id] {
 }
 
 .app-rail:hover ~ .app-rail-backdrop,
-.app-rail:focus-within ~ .app-rail-backdrop {
+.app-rail:has(:focus-visible) ~ .app-rail-backdrop {
   opacity: 1;
 }
 
@@ -1199,7 +1211,9 @@ section[id] {
   background: var(--well);
 }
 
-/* The unread dot, as SolarSim marks an unread notification. */
+/* The unread dot, as SolarSim marks an unread notification. Pen only where a person is being
+   asked for something; DESIGN.md reserves red for the human hand, and a check the machine is still
+   running is not that. */
 .app-pop-dot {
   width: 0.375rem;
   height: 0.375rem;
@@ -1207,6 +1221,10 @@ section[id] {
   flex: none;
   border-radius: var(--r-bubble);
   background: var(--pen);
+}
+
+.app-pop-dot[data-running="true"] {
+  background: var(--ink-muted);
 }
 
 .app-pop-empty {
@@ -1435,7 +1453,7 @@ section[id] {
   overflow-y: auto;
   list-style: none;
   border: 1px solid var(--rule);
-  border-radius: 0.75rem;
+  border-radius: var(--r-sheet);
   background: var(--sheet);
   box-shadow: var(--shadow-overlay);
   transform-origin: top;
@@ -1537,7 +1555,7 @@ section[id] {
    alternatives to it rather than the way on. */
 .dash-hero {
   padding: var(--s-5);
-  border-radius: 1.25rem;
+  border-radius: var(--r-sheet);
   background: var(--sheet);
   box-shadow: 0 1px 2px var(--shadow-tint);
 }
@@ -1630,7 +1648,7 @@ section[id] {
   padding: var(--s-5);
   /* Reserved for the motif, so the copy never runs under it. */
   padding-inline-end: 6.5rem;
-  border-radius: 1.25rem;
+  border-radius: var(--r-sheet);
   background: var(--sheet);
   box-shadow: 0 1px 2px var(--shadow-tint);
   color: inherit;
