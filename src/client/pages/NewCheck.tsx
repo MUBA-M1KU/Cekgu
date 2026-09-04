@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router'
 import { createRecordSchema, GUEST_MAX_ITEM_CHARS, itemCharCount } from '../../shared/schemas'
 import { ApiError, createRecord } from '../api'
 import { BubbleRow } from '../components/BubbleRow'
+import { Card, CardBody, CardHead } from '../components/Card'
 import { Field, inputClass } from '../components/Field'
+import { PlusIcon, TrashIcon } from '../components/icons'
 import { Select } from '../components/Select'
-import { Sheet } from '../components/Sheet'
 import { DEMO_PAPER } from '../demo-paper'
 import { useSession } from '../session'
 
@@ -43,6 +44,16 @@ function relabel(options: { letter: string; text: string }[]) {
   return options.map((option, index) => ({ ...option, letter: LETTERS[index] ?? option.letter }))
 }
 
+/**
+ * The form that starts a check.
+ *
+ * Two columns from the xl breakpoint: the paper on the left, and a rail on the right carrying
+ * what is about to be sent and the button that sends it. The single-column version put Submit
+ * Check under question nine, which is the one place on the page a reader has stopped looking.
+ *
+ * Each question is a surface rather than a fieldset separated by a rule, because a question is a
+ * block a person edits, moves through and deletes as one thing.
+ */
 export function NewCheck() {
   const navigate = useNavigate()
   const session = useSession()
@@ -130,190 +141,231 @@ export function NewCheck() {
     }
   }
 
+  const keyed = items.filter((item) => item.key !== '').length
+
   return (
-    <Sheet as="form" onSubmit={submit}>
-      <h1>New Check</h1>
-      <p className="mt-3 max-w-[62ch] type-ui text-ink-muted">
-        Type the questions you are about to publish. Two independent models answer each one without seeing your key.
-      </p>
-
-      {isGuest ? (
-        <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-sheet bg-well p-4">
-          <div className="min-w-0 flex-1">
-            <p className="type-label">Signed In as Guest</p>
-            <p className="mt-1 max-w-[62ch] type-caption text-ink-muted">
-              A demo should not start with typing. This fills every field with a three-question paper: one key is wrong
-              on purpose, and one question has two defensible answers depending on the convention.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={fillWithDemo}
-            className="inline-flex h-9 shrink-0 items-center rounded-control border border-rule-strong px-4 font-medium"
-          >
-            Fill With Demo Content
-          </button>
-          {prefilled ? (
-            <button type="button" onClick={clearForm} className="type-label shrink-0 underline">
-              Clear the Form
-            </button>
-          ) : null}
+    <form onSubmit={submit} noValidate>
+      <header className="page-head">
+        <div className="min-w-0">
+          <h1 className="page-title">New Check</h1>
+          <p className="page-sub">
+            Type the questions you are about to publish. Two independent models answer each one without seeing your key.
+          </p>
         </div>
-      ) : null}
+      </header>
 
-      <div className="mt-6 flex flex-col gap-5">
-        <Field label="Assessment Title" htmlFor="title" error={errorFor('title')}>
-          <input id="title" className={inputClass} value={title} onChange={(e) => setTitle(e.target.value)} />
-        </Field>
-
-        <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Subject" htmlFor="subject" error={errorFor('subject')}>
-            <input id="subject" className={inputClass} value={subject} onChange={(e) => setSubject(e.target.value)} />
-          </Field>
-          <Field label="Language" htmlFor="language" error={errorFor('language')}>
-            <Select id="language" label="Language" value={language} options={LANGUAGES} onChange={setLanguage} />
-          </Field>
-        </div>
-
-        <Field
-          label="Context"
-          htmlFor="context"
-          helper="Optional. Anything the readers should know, such as the year group."
-          error={errorFor('context')}
-        >
-          <textarea
-            id="context"
-            rows={2}
-            className={inputClass}
-            value={context}
-            onChange={(e) => setContext(e.target.value)}
-          />
-        </Field>
-      </div>
-
-      <h2 className="mt-8">Questions</h2>
-      {errorFor('items') ? <p className="mt-2 type-caption text-pen">{errorFor('items')}</p> : null}
-
-      {/* A card each, not a rule each. Twelve questions used to arrive as twelve hairlines down
-          the sheet, which is the same device the guest hint above already declines. */}
-      {items.map((item, index) => (
-        <fieldset key={item.id} className="mt-5 border-0 p-0">
-          {/* The legend stays outside the card. A <legend> renders in the fieldset's border box,
-              so putting the well on the fieldset itself hangs it over the card's top edge. */}
-          <legend className="type-eyebrow text-ink-muted">Question {index + 1}</legend>
-
-          <div className="mt-2 flex flex-col gap-5 rounded-sheet bg-well p-5">
-            <Field label="Question" htmlFor={`stem-${index}`} error={errorFor('items', index, 'stem')}>
-              <textarea
-                id={`stem-${index}`}
-                rows={2}
-                className={`${inputClass} type-lead`}
-                value={item.stem}
-                onChange={(e) => patchItem(index, { stem: e.target.value })}
+      <div className="page-grid">
+        <div className="col-span-12 flex flex-col gap-4 xl:col-span-8">
+          {isGuest ? (
+            <Card>
+              <CardHead
+                title="Signed In as Guest"
+                description="A demo should not start with typing. This fills every field with a three-question paper: one key is wrong on purpose, and one question has two defensible answers depending on the convention."
+                action={
+                  <button type="button" onClick={fillWithDemo} className="btn btn-outline btn-sm">
+                    Fill With Demo Content
+                  </button>
+                }
               />
-            </Field>
+              {prefilled ? (
+                <div className="card-foot">
+                  <button type="button" onClick={clearForm} className="btn btn-ghost btn-sm">
+                    Clear the Form
+                  </button>
+                </div>
+              ) : null}
+            </Card>
+          ) : null}
 
-            <Field
-              label="Options"
-              htmlFor={`option-${index}-0`}
-              helper="Two to six options. One must be the key."
-              error={errorFor('items', index, 'options')}
-            >
-              <div className="flex flex-col gap-2">
-                {item.options.map((option, optionIndex) => (
-                  <div key={option.letter} className="flex items-center gap-3">
-                    <span className="type-label w-4 shrink-0 text-ink-muted">{option.letter}</span>
-                    <input
-                      id={`option-${index}-${optionIndex}`}
-                      aria-label={`Question ${index + 1}, option ${option.letter}`}
-                      className={inputClass}
-                      value={option.text}
-                      onChange={(e) =>
+          <Card>
+            <CardHead title="The Paper" description="What the readers are told before they see a single question." />
+            <CardBody>
+              <Field label="Assessment Title" htmlFor="title" error={errorFor('title')}>
+                <input id="title" className={inputClass} value={title} onChange={(e) => setTitle(e.target.value)} />
+              </Field>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field label="Subject" htmlFor="subject" error={errorFor('subject')}>
+                  <input
+                    id="subject"
+                    className={inputClass}
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                  />
+                </Field>
+                <Field label="Language" htmlFor="language" error={errorFor('language')}>
+                  <Select id="language" label="Language" value={language} options={LANGUAGES} onChange={setLanguage} />
+                </Field>
+              </div>
+
+              <Field
+                label="Context"
+                htmlFor="context"
+                helper="Optional. Anything the readers should know, such as the year group."
+                error={errorFor('context')}
+              >
+                <textarea
+                  id="context"
+                  rows={2}
+                  className={inputClass}
+                  value={context}
+                  onChange={(e) => setContext(e.target.value)}
+                />
+              </Field>
+            </CardBody>
+          </Card>
+
+          {errorFor('items') ? (
+            <p role="alert" className="type-caption text-pen">
+              {errorFor('items')}
+            </p>
+          ) : null}
+
+          {items.map((item, index) => (
+            <fieldset key={item.id} className="question-block m-0 border-0 p-0">
+              <legend className="sr-only">Question {index + 1}</legend>
+              <div className="question-head">
+                <span className="type-eyebrow text-ink-muted">Question {index + 1}</span>
+                {items.length > 1 ? (
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setItems((current) => current.filter((_, i) => i !== index))}
+                  >
+                    <TrashIcon size={15} />
+                    Remove
+                  </button>
+                ) : null}
+              </div>
+
+              <div className="question-body">
+                <Field label="Question" htmlFor={`stem-${index}`} error={errorFor('items', index, 'stem')}>
+                  <textarea
+                    id={`stem-${index}`}
+                    rows={2}
+                    className={`${inputClass} type-lead`}
+                    value={item.stem}
+                    onChange={(e) => patchItem(index, { stem: e.target.value })}
+                  />
+                </Field>
+
+                <Field
+                  label="Options"
+                  htmlFor={`option-${index}-0`}
+                  helper="Two to six options. One must be the key."
+                  error={errorFor('items', index, 'options')}
+                >
+                  <div className="flex flex-col gap-2">
+                    {item.options.map((option, optionIndex) => (
+                      <div key={option.letter} className="flex items-center gap-3">
+                        <span className="type-mono w-4 shrink-0 text-ink-muted">{option.letter}</span>
+                        <input
+                          id={`option-${index}-${optionIndex}`}
+                          aria-label={`Question ${index + 1}, option ${option.letter}`}
+                          className={inputClass}
+                          value={option.text}
+                          onChange={(e) =>
+                            patchItem(index, {
+                              options: item.options.map((o, i) =>
+                                i === optionIndex ? { ...o, text: e.target.value } : o
+                              )
+                            })
+                          }
+                        />
+                        {item.options.length > 2 ? (
+                          <button
+                            type="button"
+                            className="btn btn-ghost btn-sm"
+                            aria-label={`Remove option ${option.letter} from question ${index + 1}`}
+                            onClick={() => {
+                              const next = relabel(item.options.filter((_, i) => i !== optionIndex))
+                              patchItem(index, {
+                                options: next,
+                                key: next.some((o) => o.letter === item.key) ? item.key : ''
+                              })
+                            }}
+                          >
+                            Remove
+                          </button>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                </Field>
+
+                {item.options.length < 6 ? (
+                  <div>
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-sm"
+                      onClick={() =>
                         patchItem(index, {
-                          options: item.options.map((o, i) => (i === optionIndex ? { ...o, text: e.target.value } : o))
+                          options: relabel([...item.options, { letter: '', text: '' }])
                         })
                       }
-                    />
-                    {item.options.length > 2 ? (
-                      <button
-                        type="button"
-                        className="inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium shrink-0"
-                        onClick={() => {
-                          const next = relabel(item.options.filter((_, i) => i !== optionIndex))
-                          patchItem(index, {
-                            options: next,
-                            key: next.some((o) => o.letter === item.key) ? item.key : ''
-                          })
-                        }}
-                      >
-                        Remove
-                      </button>
-                    ) : null}
+                    >
+                      <PlusIcon size={15} />
+                      Add Option
+                    </button>
                   </div>
-                ))}
+                ) : null}
+
+                <Field label="Keyed Option" htmlFor={`key-${index}`} error={errorFor('items', index, 'key')}>
+                  <BubbleRow
+                    options={item.options}
+                    filled={item.key === '' ? null : item.key}
+                    onSelect={(letter) => patchItem(index, { key: letter })}
+                    label={`Keyed option for question ${index + 1}`}
+                  />
+                </Field>
               </div>
-            </Field>
+            </fieldset>
+          ))}
 
-            {item.options.length < 6 ? (
-              <div>
-                <button
-                  type="button"
-                  className="inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium"
-                  onClick={() =>
-                    patchItem(index, {
-                      options: relabel([...item.options, { letter: '', text: '' }])
-                    })
-                  }
-                >
-                  Add Option
-                </button>
-              </div>
-            ) : null}
-
-            <Field label="Keyed Option" htmlFor={`key-${index}`} error={errorFor('items', index, 'key')}>
-              <BubbleRow
-                options={item.options}
-                filled={item.key === '' ? null : item.key}
-                onSelect={(letter) => patchItem(index, { key: letter })}
-                label={`Keyed option for question ${index + 1}`}
-              />
-            </Field>
-
-            {items.length > 1 ? (
-              <button
-                type="button"
-                className="inline-flex h-9 self-start items-center rounded-control border border-rule-strong px-4 font-medium"
-                onClick={() => setItems((current) => current.filter((_, i) => i !== index))}
-              >
-                Remove Question {index + 1}
-              </button>
-            ) : null}
+          <div>
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={() => setItems((current) => [...current, emptyItem()])}
+            >
+              <PlusIcon size={15} />
+              Add Question
+            </button>
           </div>
-        </fieldset>
-      ))}
+        </div>
 
-      <div className="mt-6 flex flex-wrap items-center gap-4">
-        <button
-          type="button"
-          className="inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium disabled:opacity-60"
-          onClick={() => setItems((current) => [...current, emptyItem()])}
-        >
-          Add Question
-        </button>
-        <button
-          type="submit"
-          disabled={submitting}
-          className="inline-flex h-9 items-center rounded-control bg-ink px-4 font-medium text-on-ink disabled:opacity-60"
-        >
-          Submit Check
-        </button>
+        <div className="col-span-12 xl:col-span-4">
+          <Card className="sticky-rail">
+            <CardHead title="Before You Send" />
+            <CardBody>
+              <dl className="fact-list type-ui">
+                <dt className="type-caption">Questions</dt>
+                <dd className="type-mono">{items.length}</dd>
+                <dt className="type-caption">Keys set</dt>
+                <dd className="type-mono">
+                  {keyed} of {items.length}
+                </dd>
+                <dt className="type-caption">Readings</dt>
+                <dd className="type-mono">{items.length * 2}</dd>
+              </dl>
+              <p className="type-caption text-ink-muted">
+                Two readings per question, one from each family, and each one carries its own Gonka request id. Your key
+                is never sent with the question.
+              </p>
+            </CardBody>
+            <div className="card-foot">
+              <button type="submit" disabled={submitting} className="btn btn-primary w-full">
+                {submitting ? 'Submitting' : 'Submit Check'}
+              </button>
+              {errorFor('form') ? (
+                <p role="alert" className="type-caption text-pen">
+                  {errorFor('form')}
+                </p>
+              ) : null}
+            </div>
+          </Card>
+        </div>
       </div>
-
-      {errorFor('form') ? (
-        <p role="alert" className="mt-4 type-ui text-pen">
-          {errorFor('form')}
-        </p>
-      ) : null}
-    </Sheet>
+    </form>
   )
 }

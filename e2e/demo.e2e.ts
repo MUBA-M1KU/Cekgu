@@ -90,9 +90,12 @@ test.describe('the live demo walk', () => {
     )
     expect(models.length).toBeGreaterThanOrEqual(2)
 
+    // Every id on screen is a link to its own receipt. The link goes to the viewer rather than
+    // straight to the gateway JSON, and the viewer offers the gateway URL itself; the step below
+    // walks that second hop so the chain is asserted end to end rather than at its first link.
     const links = await item
-      .locator('a[href*="/v1/receipts/"]')
-      .evaluateAll((all) => all.map((anchor) => (anchor as HTMLAnchorElement).href))
+      .locator('a[href*="/receipt/"]')
+      .evaluateAll((all) => all.map((anchor) => (anchor as HTMLAnchorElement).getAttribute('href') ?? ''))
     for (const id of ids) expect(links.some((href) => href.endsWith(id))).toBe(true)
 
     // 7. All Attempts keeps what did not count. The driver says this one out loud: a reading with

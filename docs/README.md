@@ -157,8 +157,12 @@ There is no other AI provider anywhere in the code, which a search for provider 
 
 - **Where the request ids come from.** Each GonkaRouter response carries an `x-request-id` header. The client reads it
   off the raw response before parsing the body, stores it with the attempt, and the evidence view shows it beside the
-  reading it belongs to, as selectable text with a link to the public receipt. Detail:
+  reading it belongs to, as selectable text and as a link to the receipt viewer. Detail:
   [Request IDs and provenance](TRD.md#4-request-ids-and-provenance)
+- **Where the ids lead.** Every request id in the product links to `/receipt/<id>`, which names each field the gateway
+  recorded — served model, outcome, devshard, tokens, time to first token, duration — and then hands over the raw
+  `https://api.gonkarouter.io/v1/receipts/<id>` so the same facts can be checked against the gateway rather than against
+  us. The link out carries a confirmation naming the host and the path, because it leaves the product
 - **How the receipt check works.** The client sends `X-Gonka-No-Fallback: true`, and rejects any response carrying
   `x-gonka-fallback`, the header by which the gateway reports a substitution it made regardless. It then fetches
   `GET /v1/receipts/<id>` and requires the receipt's model to match the one requested. A reading that fails any step is
@@ -177,6 +181,21 @@ which model was asked for.
 
 The receipt is gateway metadata that makes the serving model publicly inspectable. It is not cryptographic or on-chain
 proof, and the product says so.
+
+**Why the receipt viewer reads through our own server.** `api.gonkarouter.io` sends no `Access-Control-Allow-Origin`
+header, so a browser on our origin cannot read a receipt that anyone can `curl` unauthenticated. `GET /api/receipts/:id`
+is a read-through that exists for that reason alone. It sends **no `Authorization` header**, because the endpoint behind
+it needs none, so it grants a caller nothing they did not already have; that is also why it is public alongside
+`GET /api/sample`, which the signed-out sample report needs. The request id is matched against `^req-\d+-\d+$` before
+the call, so a pasted path cannot turn it into an open proxy for other gateway routes. It reports `found`, `not_found`,
+`unreachable` and `invalid` as four separate answers: a gateway we could not reach is not the same fact as a receipt
+that was never written, and reporting an outage as an absent receipt would read as the product having invented the id.
+
+**Where the verification shows up as a number.** `GET /api/stats` counts, in one query, how many of an account's
+readings carry a receipt naming the model that was requested. The dashboard leads with that figure, and it is the one
+number on the screen a judge can check without taking the product's word for it: open any record, follow a request id,
+compare. Detail: [`GET /api/stats`](TRD.md#get-apistats) and
+[`GET /api/receipts/:requestId`](TRD.md#get-apireceiptsrequestid)
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 

@@ -55,7 +55,9 @@ describe('glass surfaces', () => {
   // review named, so every surface that asks for transparency has to also ask for the blur. Scrims
   // and gradients are exempt: their transparency is the composite, not a material.
   test('no surface is translucent without a blur', () => {
-    const exempt = /^\.hero-media$|^\.hero-scrim$|\[data-solid="true"\]$/
+    // Matched on the suffix rather than on the one scrim that existed when this was written: the
+    // shell grew a second one for the mobile sidebar, and a scrim is a scrim wherever it is.
+    const exempt = /^\.hero-media$|-scrim$|\[data-solid="true"\]$/
     const bare: string[] = []
     for (const { selector, body } of parse(withoutFallbacks)) {
       if (exempt.test(selector)) continue
@@ -66,24 +68,7 @@ describe('glass surfaces', () => {
   })
 })
 
-describe('the rail opens on one condition', () => {
-  // Three rules make the rail open: its width, the backdrop behind it, and the labels' opacity.
-  // They are only correct together. #182 moved the first two off :focus-within, because a mouse
-  // click leaves focus on the link it followed and the rail stayed open after the pointer left.
-  // The third was missed, and the mismatch was worse than the original bug: the labels turned
-  // opaque while the rail stayed 4rem wide, so `overflow: hidden` sliced every one of them
-  // mid-word. Counted on the source rather than the rule parser above, which cannot see a
-  // selector list split across lines — which is exactly how all three of these are written.
-  const selectors = [...css.matchAll(/^\s*(\.app-rail[^,{\n]*)[,{]/gm)].map((match) => (match[1] ?? '').trim())
-
-  test('no rail selector opens on :focus-within', () => {
-    expect(selectors.filter((selector) => selector.includes(':focus-within'))).toEqual([])
-  })
-
-  test('hover and :has(:focus-visible) open the rail in the same places', () => {
-    const hover = selectors.filter((selector) => selector.startsWith('.app-rail:hover'))
-    const focus = selectors.filter((selector) => selector.startsWith('.app-rail:has(:focus-visible)'))
-    expect(hover.length).toBe(3)
-    expect(focus.length).toBe(hover.length)
-  })
-})
+// #195 asserted that the three rules opening the hover rail agreed on one condition. There is no
+// hover rail any more: the sidebar holds a width a person sets and does not react to the pointer,
+// so the bug class those tests guarded cannot occur and there are no .app-rail selectors left for
+// them to count. The sidebar has no equivalent to guard, which is the point of the change.
