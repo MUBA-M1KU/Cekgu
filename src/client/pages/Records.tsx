@@ -112,7 +112,7 @@ export function Records() {
 
       {/* Destructive controls are not visible until a selection exists (FR-RECORD-6). */}
       {selected.size > 0 ? (
-        <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-rule pt-4">
+        <div className="mt-6 flex flex-wrap items-center gap-4 rounded-control bg-well p-3">
           <p className="type-label">{selected.size} selected</p>
           <button
             type="button"
