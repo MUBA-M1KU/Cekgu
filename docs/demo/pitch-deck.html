@@ -1570,6 +1570,154 @@
         box-shadow: inset 0 0 0 1.5px rgb(240 112 121 / 0.4);
         color: #f07079;
       }
+      /* The user slide: a persona card and an in / time / out panel. */
+      .user {
+        display: grid;
+        grid-template-columns: 0.92fr 1.08fr;
+        gap: 28px;
+        align-items: stretch;
+      }
+      .persona {
+        background: var(--ink);
+        color: var(--on-ink);
+        border-radius: var(--r-sheet);
+        padding: 22px 28px 20px;
+        display: flex;
+        flex-direction: column;
+      }
+      .persona-top {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 18px;
+      }
+      .persona-img {
+        position: relative;
+        width: 108px;
+        height: 108px;
+        border-radius: var(--r-bubble);
+        overflow: hidden;
+        flex-shrink: 0;
+        background: rgb(255 255 255 / 0.08);
+        box-shadow: inset 0 0 0 2px rgb(240 112 121 / 0.5);
+      }
+      .persona-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .persona-img .mono {
+        display: none;
+        position: absolute;
+        inset: 0;
+        align-items: center;
+        justify-content: center;
+        font-size: 44px;
+        font-weight: 500;
+        color: #f07079;
+      }
+      .persona-img.empty .mono {
+        display: flex;
+      }
+      .persona-name {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: var(--on-ink);
+      }
+      .persona-role {
+        margin: 6px 0 0;
+        font-family: var(--font-mono);
+        font-size: 17px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: rgb(255 255 255 / 0.6);
+      }
+      .facts {
+        margin: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 24px;
+        border-top: 1px solid rgb(255 255 255 / 0.14);
+      }
+      .facts div {
+        padding: 10px 0;
+        border-bottom: 1px solid rgb(255 255 255 / 0.14);
+      }
+      .facts dt {
+        font-family: var(--font-mono);
+        font-size: 15px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #f07079;
+        margin-bottom: 5px;
+      }
+      .facts dd {
+        margin: 0;
+        font-size: 19px;
+        line-height: 1.35;
+        color: rgb(255 255 255 / 0.84);
+      }
+      .persona-quote {
+        margin: auto 0 0;
+        padding: 12px 0 0 18px;
+        border-left: 3px solid #f07079;
+        font-family: var(--font-paper);
+        font-style: italic;
+        font-size: 22px;
+        line-height: 1.35;
+        color: var(--on-ink);
+      }
+      .io-col {
+        display: flex;
+        flex-direction: column;
+      }
+      .io {
+        background: var(--sheet);
+        border: 1px solid var(--rule);
+        border-radius: var(--r-sheet);
+        padding: 6px 28px;
+        flex: 1;
+      }
+      .io-row {
+        display: grid;
+        grid-template-columns: 96px 1fr;
+        gap: 18px;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--rule);
+        align-items: start;
+      }
+      .io-row:last-child {
+        border-bottom: 0;
+      }
+      .io-tag {
+        font-family: var(--font-mono);
+        font-size: 19px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--pen);
+        padding-top: 3px;
+      }
+      .io-row p {
+        margin: 0;
+        font-size: 21px;
+        line-height: 1.4;
+        color: var(--ink-muted);
+      }
+      .io-row p b {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .io-note {
+        margin-top: 8px !important;
+        font-family: var(--font-mono);
+        font-size: 15px !important;
+        letter-spacing: 0.06em;
+        color: var(--ink-muted);
+      }
       .links {
         margin-top: 56px;
         border-collapse: collapse;
@@ -2009,6 +2157,82 @@
             <div class="stamp on-ink">
               Vetting committees exist because the risk is real. <b>Cekgu is the pass before the committee, not a replacement for it.</b>
               <span class="src">UiTM final-examination guidance</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================= 02b THE USER ============================ -->
+      <section
+        class="slide"
+        data-section="User"
+        data-budget="20"
+        data-speaker-notes="This is who we built it for. Not a university, not a student: one tutor who writes the paper and answers for it when a learner pushes back. She is a composite of the primary operator in PRODUCT.md, so do not name a real person. The right side is the whole product in three rows. She types the paper in, stem, options, key. The record exists before any model runs and she can walk away, because a verdict takes minutes, not seconds. What comes back is one record with a verdict on every item, the risky ones first, two readings each with a model name and a request id, and her own decision kept beside the verdict, never over it. Land on never over it."
+      >
+        <div class="pad">
+          <div class="chrome">
+            <span class="lockup"
+              ><svg viewBox="0 0 64 64" role="img" aria-label="Cekgu"><use href="#cekgu-mark" /></svg><b>Cekgu</b></span
+            >
+            <span class="run" data-run></span>
+          </div>
+
+          <div class="head">
+            <p class="eyebrow">1. Problem statement &middot; the user</p>
+            <h2 class="title">Meet Cikgu Farah. <em>She answers for the paper.</em></h2>
+            <p class="sub">Independent tutor, publishes a practice set several times a month. A composite of the primary operator in PRODUCT.md, not a named person.</p>
+          </div>
+
+          <div class="body">
+            <div class="user">
+              <div class="persona" data-stagger>
+                <div class="persona-top">
+                  <span class="persona-img">
+                    <img src="assets/hero-user.png" alt="" onerror="this.parentNode.classList.add('empty'); this.remove()" />
+                    <span class="mono">F</span>
+                  </span>
+                  <div>
+                    <p class="persona-name">Cikgu Farah, 34</p>
+                    <p class="persona-role">Independent tutor &middot; Introductory Computer Science &middot; Shah Alam</p>
+                  </div>
+                </div>
+                <dl class="facts">
+                  <div><dt>Publishes</dt><dd>A twelve-item practice set, several times a month.</dd></div>
+                  <div><dt>Device</dt><dd>A laptop to write the paper. A phone to check progress.</dd></div>
+                  <div><dt>Accountable for</dt><dd>Every item a learner challenges. Investigate, remark, communicate.</dd></div>
+                  <div><dt>Wants</dt><dd>A second pair of eyes and a short list of risks. Not an AI author.</dd></div>
+                  <div><dt>Not served first</dt><dd>Students, universities buying site-wide, licensing bodies, essay markers.</dd></div>
+                  <div><dt>Content</dt><dd>Practice sets. Never a confidential final paper in version one.</dd></div>
+                </dl>
+                <blockquote class="persona-quote">&ldquo;I do not want an AI writing my paper. I want to know which three questions to look at again, and why.&rdquo;</blockquote>
+              </div>
+
+              <div class="io-col">
+                <p class="lead" style="margin: 0 0 18px">Cekgu is a pre-publication check for multiple-choice papers. <strong>Two models sit each item blind, and she reads only what came back different.</strong></p>
+                <div class="io" data-stagger>
+                  <div class="io-row">
+                    <span class="io-tag">In &rarr;</span>
+                    <div>
+                      <p>Title, subject, language. Then each item, typed: <b>the stem, two to six options, one keyed answer.</b></p>
+                      <p class="io-note">Validated before any model runs &middot; paste and CSV import after submission</p>
+                    </div>
+                  </div>
+                  <div class="io-row">
+                    <span class="io-tag">&#9201;</span>
+                    <div>
+                      <p><b>The record exists in under a second.</b> A verdict on each item within five minutes at the 95th percentile. Minutes, not seconds; she can leave.</p>
+                      <p class="io-note">NFR-PERF-1 &middot; NFR-PERF-2</p>
+                    </div>
+                  </div>
+                  <div class="io-row">
+                    <span class="io-tag">Out &rarr;</span>
+                    <div>
+                      <p>One record. <b>A verdict on every item, attention first.</b> Two readings each, with the served model and its request id. Her decision stored beside the verdict, never over it.</p>
+                      <p class="io-note">FR-RECORD-3 &middot; FR-EVIDENCE-1 &middot; FR-RECORD-4</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
