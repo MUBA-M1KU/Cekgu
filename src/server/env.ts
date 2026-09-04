@@ -11,6 +11,7 @@ function optional(name: string): string | null {
 
 const googleClientId = optional('GOOGLE_CLIENT_ID')
 const googleClientSecret = optional('GOOGLE_CLIENT_SECRET')
+const geminiApiKey = optional('GEMINI_API_KEY')
 
 export const env = {
   port: Number(process.env.PORT ?? 8080),
@@ -31,5 +32,9 @@ export const env = {
   workerEnabled: process.env.WORKER_ENABLED !== 'false',
   // Google stays optional so a deployment without an OAuth client still boots with
   // email and Guest sign-in working. FR-AUTH-2 is the demo path, not Google.
-  google: googleClientId && googleClientSecret ? { clientId: googleClientId, clientSecret: googleClientSecret } : null
+  google: googleClientId && googleClientSecret ? { clientId: googleClientId, clientSecret: googleClientSecret } : null,
+  // Optional on purpose: absent, POST /api/extract answers 503 with a sentence saying uploads are
+  // off, and every other route is unaffected. A deployment without this key is a working product
+  // with one affordance missing, not a broken one.
+  gemini: geminiApiKey ? { apiKey: geminiApiKey, model: optional('GEMINI_MODEL') ?? 'gemini-2.5-flash' } : null
 }
