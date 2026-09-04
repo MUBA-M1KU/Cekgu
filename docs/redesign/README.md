@@ -57,10 +57,14 @@ Six revisions, all from the owner's notes on 3 September.
   scroll, a full-viewport hero with background media behind a two-axis scrim, a marquee trust band, then sections
 - **Four routes became one page.** How It Works, Sample Report, Pricing and Trust and Privacy are sections with anchors,
   not separate screens
-- **The hero carries a generated video.** `hero.mp4` is 10 seconds, 1280 x 720, 539 KB, no audio track, with
+- **The hero carries a generated video.** `hero.mp4` is 9 seconds, 1280 x 720, 651 KB, no audio track, with
   `hero-poster.jpg` and a CSS gradient behind it so the hero is composed before a byte of video arrives. It was
-  generated in Gemini and regenerated once: the first pass laid down **navy** ink, which contradicts the design system's
-  rule that red is the human hand and nothing else is
+  generated in Gemini and regenerated twice: the first pass laid down **navy** ink, which contradicts the design
+  system's rule that red is the human hand and nothing else is, and the second cut the pen in mid-air with the mark
+  still on the page at the last frame. **The loop is baked into the asset.** The clip is the generated ten seconds minus
+  its first second, and that first second is cross-dissolved back in over the tail, so the file's own first and last
+  frames are consecutive frames of the source and plain `loop` shows no cut. Re-cutting `hero.mp4` without that dissolve
+  brings the cut back
 - **Sign-in loses the shared-workspace note** and both cards centre their content
 - **The record workspace gets a topbar and a drawer.** The drawer is MakanLah's pattern, from the same owner rather than
   SolarSim's hover rail: a modal dialog with a blurred scrim, a sliding panel, and a hamburger at the topbar's leading
