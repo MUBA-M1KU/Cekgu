@@ -9,12 +9,11 @@ import { env } from './env'
 import { recordDetail } from './records/queries'
 
 // FR-SAMPLE-1: the sample carries recorded readings and public request ids from a real benchmark
-// pass, and nothing in it is fabricated. Neither the paper nor any pass is in this repository, so
-// this module loads both from a file supplied by whoever ran the benchmark and refuses to invent
-// either. With no file, there is no sample and GET /api/sample says so.
+// pass, and nothing in it is fabricated. This module loads the pass from the committed capture and
+// refuses to invent any of it. With no file, there is no sample and GET /api/sample says so.
 
-// Committed by whoever ran the benchmark, alongside the paper it was run on. Absent from this
-// repository today, which is why seeding is a no-op rather than an error.
+// Written by scripts/capture-benchmark-pass.ts, which ran the twelve-item paper through the product's
+// own queue against the live gateway on 3 September. Absent, seeding is a no-op rather than an error.
 export const SAMPLE_PASS_PATH = './src/server/fixtures/benchmark-pass.json'
 
 const option = z.object({ letter: z.string().min(1), text: z.string().min(1) })

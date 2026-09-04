@@ -1,8 +1,8 @@
 import { expect, type Page, test } from '@playwright/test'
 
-// TRD section 18: the first three steps of the demo acceptance test, run against a real
-// deployment. The steps that need screens which do not exist yet are marked below with the
-// issue that unblocks them, so a green run never implies the demo path is covered.
+// TRD section 18: the PRD demo acceptance test run against a real deployment, plus the regressions
+// that shipped past it. Nothing is mocked, so a green run says the deployment serves the demo path,
+// not that the code in the tree does; playwright.config.ts names that trap.
 
 // Assert rendered content, never that #root is attached: an attached root passes against a
 // blank page, against a failed fetch rendered as an empty state, and against a React error

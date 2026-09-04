@@ -384,6 +384,9 @@ GUEST_PASSWORD=                                         # Used server-side only 
 
 MASCOT_ENABLED=false                                    # FR-MASCOT-1 feature flag. true for the demo
 
+GEMINI_API_KEY=                                         # Transcription only, section 20. Absent, uploads are off
+GEMINI_MODEL=gemini-2.5-flash                           # Verify against GET /v1beta/models before changing this
+
 CHAT_PROVIDER=gemini                                    # gemini | gonka. See section 21
 CHAT_MODEL=gemini-2.5-flash                             # Separate from GEMINI_MODEL. Never …-flash-lite
 ```

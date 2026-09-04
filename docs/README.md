@@ -351,7 +351,7 @@ is not meant to be one.
 ```sh
 bun run lint           # Biome across the code, Prettier across Markdown and YAML
 bun run typecheck      # tsc --noEmit, strict, noUncheckedIndexedAccess
-bun test               # 254 pass, 73 skip, 0 fail across 35 files
+bun test               # 312 pass, 73 skip, 0 fail across 39 files
 bun run e2e            # Playwright against the deployment named by E2E_BASE_URL
 bun run check:anchors
 ```
