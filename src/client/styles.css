@@ -2279,10 +2279,14 @@ section[id] {
     }
   }
 
+  /* No reading measure here, deliberately. A measure is for a column of prose someone settles into
+     and it was breaking this sentence onto a second line on a screen wide enough to hold it whole.
+     This is one line of chrome that has to be read once before anything is typed, so it takes the
+     width it is given and wraps only when the drawer is genuinely too narrow. */
   .guest-drawer-text {
     min-width: 0;
     flex: 1;
-    max-width: 92ch;
+    text-wrap: pretty;
   }
 
   .guest-drawer-close {
