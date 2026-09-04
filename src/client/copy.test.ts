@@ -62,6 +62,28 @@ describe('the pages', () => {
     expect(offences).toEqual([])
   })
 
+  test('state the retention windows in Settings from the constants the sweep enforces', () => {
+    const settings = read('pages/Settings.tsx')
+
+    expect(settings).toContain("import { RETENTION_DAYS, TRASH_DAYS } from '../../shared/schemas'")
+    expect(settings).toMatch(/\$\{RETENTION_DAYS\} days/)
+    expect(settings).toMatch(/\$\{TRASH_DAYS\} days/)
+  })
+
+  // The page printed Math.round(RETENTION_DAYS / 30) as "3 months". Three calendar months is 89 to
+  // 92 days and retention.ts compares against RETENTION_DAYS * 86_400_000, so the unit on screen was
+  // one the sweep never enforces.
+  test('state those windows in days, never converted to months', () => {
+    expect(read('pages/Settings.tsx')).not.toMatch(/\bmonths?\b/)
+  })
+
+  // sweepRetiredRecords keys on records.updatedAt, and GET /api/records/:id writes nothing, so
+  // reading a record does not move its clock. The page claimed the window was "counted from the
+  // last time you opened or changed one", which is wrong in the account holder's disfavour.
+  test('do not claim that opening a record postpones its deletion', () => {
+    expect(unwrapSource(read('pages/Settings.tsx'))).toContain('opening a record does not count as a change')
+  })
+
   test('price the four plans as pilot plans', () => {
     const pricing = read('pages/home/PricingSection.tsx')
     const plans: [string, string][] = [
