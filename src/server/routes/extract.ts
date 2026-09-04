@@ -15,11 +15,16 @@ import { ACCEPTED_TYPES, MAX_BYTES, transcribe, transcriptionUnavailable } from 
 // itself would put the product's name on a claim nobody read.
 // A ceiling on the whole structuring step, not on one call. callGonka already stops a single call
 // at 90 s, so three families in sequence can spend four and a half minutes before anyone is told
-// anything — and a teacher watching an upload has given up long before that. Measured on the real
-// gateway on 4 September, one paper took 120 s because the first family in the order was rate
-// limited and the round only found a healthy one on the third try. This is what turns that into a
-// sentence they can act on.
-const STRUCTURE_CEILING_MS = 75_000
+// anything — and a teacher watching an upload has given up long before that.
+//
+// Set just above one complete attempt, 90 s for the call and 5 s for its receipt, rather than at
+// a round number. A ceiling below that can cut off a call that was about to succeed, which is the
+// worst outcome available: the reader waits the whole time and gets nothing. Above it, the only
+// thing being refused is a SECOND family, and by then the wait is already indefensible.
+//
+// Measured end to end through this route on 4 September: a PNG answered in 35 s and the same paper
+// as a PDF in 74 s, both correct, both on MiniMax. The spread is the gateway's, not the file's.
+const STRUCTURE_CEILING_MS = 100_000
 
 export const extractRoutes = new Hono<AppEnv>()
 
