@@ -1220,6 +1220,81 @@ config route.
 }
 ```
 
+### `GET /api/stats`
+
+Account-wide aggregates for the dashboard, in one round trip and one row. Every figure is a count of rows this account
+owns; nothing is computed from anything but the tables. `families` is keyed on the **served** model each receipt names,
+never on what was requested, so a family that was asked and did not answer contributes nothing.
+
+`verifiedReadings` over `readings` is the track requirement stated as a number, and it is the one dashboard figure a
+reader can check without taking the product's word for it: open a record, follow a request id to
+`GET /v1/receipts/{id}`, compare.
+
+```json
+{
+  "records": 4,
+  "items": 12,
+  "counts": {
+    "clear": 7,
+    "possible_key_error": 2,
+    "possible_ambiguity": 1,
+    "split_opinion": 1,
+    "unverified": 1,
+    "pending": 0
+  },
+  "readings": 23,
+  "verifiedReadings": 23,
+  "families": [{ "model": "moonshotai/Kimi-K2.6", "readings": 12, "verified": 12 }]
+}
+```
+
+### `GET /api/receipts/:requestId`
+
+**Public.** A read-through to the gateway's own [`GET /v1/receipts/{x-request-id}`](#1-gateway-base-urls-and-auth).
+
+It exists for one reason: the gateway sends **no `Access-Control-Allow-Origin` header**, so a browser on our origin
+cannot read a receipt even though anyone can `curl` it unauthenticated. Without this route the receipt viewer could only
+ever show a link, never a receipt.
+
+The route sends **no `Authorization` header**, because the endpoint behind it needs none. It therefore grants the caller
+no authority they did not already have, which is why it is public alongside `GET /api/sample`: the Sample Report is
+reachable signed out and its request ids are the point of it (FR-SAMPLE-4). This is metadata, not inference; no model is
+called and no prompt is sent.
+
+`requestId` is matched against `^req-\d{1,25}-\d{1,12}$` before the call, so a pasted path cannot turn the read-through
+into an open proxy for other gateway routes.
+
+Always `200`. The four statuses are distinct facts and the viewer says which:
+
+| `status`      | Means                                                                        |
+| ------------- | ---------------------------------------------------------------------------- |
+| `found`       | The gateway returned a receipt, carried through verbatim in `receipt`        |
+| `not_found`   | The gateway answered `404`. No receipt was ever written for that id          |
+| `unreachable` | The gateway did not answer, or answered with something that is not a receipt |
+| `invalid`     | The id is not shaped like a Gonka request id, so no call was made            |
+
+`not_found` and `unreachable` are never collapsed. An outage reported as an absent receipt would read as "this product
+invented the request id", which is the one thing the screen exists to disprove.
+
+```json
+{
+  "requestId": "req-1788426383844621629-410375",
+  "status": "found",
+  "receipt": {
+    "x_request_id": "req-1788426383844621629-410375",
+    "x_devshard_id": "70340",
+    "model": "MiniMaxAI/MiniMax-M2.7",
+    "created_at": "2026-09-03T09:06:51Z",
+    "outcome": "success",
+    "status_code": 200,
+    "stream": false,
+    "total_tokens": 534,
+    "ttft_ms": 27328,
+    "duration_ms": 27328
+  }
+}
+```
+
 ## 16. Provenance display
 
 The evidence view is the track's proof moment and is where FR-EVIDENCE-1 to FR-EVIDENCE-4, FR-VERDICT-4 and NFR-PROV-3

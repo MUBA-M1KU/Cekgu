@@ -18,7 +18,7 @@ const FAIL_CLOSED = 'Two independent, receipt-verified readings are required bef
 
 // Distinctness is proven by the receipt, so the two seats are chosen on served model. EvidencePanel
 // below applies the same rule, and the row and the panel must name the same reader B.
-function admittedSeats(item: Item): Attempt[] {
+export function admittedSeats(item: Item): Attempt[] {
   const seats: Attempt[] = []
   for (const attempt of item.attempts) {
     if (!attempt.admitted || !attempt.reading) continue
@@ -112,30 +112,37 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
           </p>
         ) : null}
 
-        {!readOnly && item.verdict === 'unverified' ? (
-          <button
-            type="button"
-            disabled={busy}
-            onClick={async () => {
-              setBusy(true)
-              await onRetry(item.id)
-              setBusy(false)
-            }}
-            className="mt-3 inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium disabled:opacity-60"
-          >
-            Retry Verification
-          </button>
-        ) : null}
+        {/* One row, so the two controls are spaced by the row rather than sitting flush against
+            each other. Each carried its own top margin and nothing carried a gap between them, so
+            Retry Verification and Show Evidence touched on any item that offered both. */}
+        {(!readOnly && item.verdict === 'unverified') || item.attempts.length > 0 ? (
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            {!readOnly && item.verdict === 'unverified' ? (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={async () => {
+                  setBusy(true)
+                  await onRetry(item.id)
+                  setBusy(false)
+                }}
+                className="btn btn-outline"
+              >
+                Retry Verification
+              </button>
+            ) : null}
 
-        {item.attempts.length > 0 ? (
-          <button
-            type="button"
-            aria-expanded={showEvidence}
-            onClick={() => setShowEvidence((open) => !open)}
-            className="type-label mt-3 inline-flex h-9 items-center rounded-control border border-rule-strong px-4"
-          >
-            {showEvidence ? 'Hide Evidence' : 'Show Evidence'}
-          </button>
+            {item.attempts.length > 0 ? (
+              <button
+                type="button"
+                aria-expanded={showEvidence}
+                onClick={() => setShowEvidence((open) => !open)}
+                className="btn btn-outline"
+              >
+                {showEvidence ? 'Hide Evidence' : 'Show Evidence'}
+              </button>
+            ) : null}
+          </div>
         ) : null}
 
         {showEvidence ? <EvidencePanel item={item} /> : null}

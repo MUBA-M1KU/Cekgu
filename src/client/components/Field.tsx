@@ -34,5 +34,7 @@ export function Field({ label, htmlFor, helper, error, children }: Props) {
   )
 }
 
+// min-h rather than h, so one class serves both a single-line input and a textarea, and both
+// line up with the 36 px select and button beside them.
 export const inputClass =
-  'w-full rounded-control border border-rule-strong bg-transparent px-3 py-2 text-ink placeholder:text-ink-muted'
+  'w-full min-h-9 rounded-control border border-rule-strong bg-transparent px-3 py-1.5 text-ink transition-colors placeholder:text-ink-muted hover:border-ink-muted'
