@@ -1390,10 +1390,14 @@ section[id] {
   color: var(--ink);
 }
 
+/* The wordmark's one treatment. Lockup.tsx and AppRail.tsx already set 1.25rem, 700 and -0.02em
+   inline; this was the third rendering of the same word and it disagreed with them on all three,
+   at 1.125rem, 600 and -0.035em, while carrying the larger 28 px mark. A bigger mark beside a
+   smaller word is the tell that the values were tuned by hand rather than chosen. */
 .app-footer-name {
-  font-size: 1.125rem;
-  font-weight: 600;
-  letter-spacing: -0.035em;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .app-footer-link {
