@@ -551,13 +551,15 @@ section[id] {
   position: relative;
   display: grid;
   place-items: center;
-  width: 1.375rem;
-  height: 1.375rem;
+  /* Sizeable, so the walkthrough can draw the same bubble larger without a second component. The
+     default and the ratio below are the values this rule already had. */
+  width: var(--slot-size, 1.375rem);
+  height: var(--slot-size, 1.375rem);
   flex: none;
   border: 1.5px solid var(--rule-strong);
   border-radius: var(--r-bubble);
   font-family: var(--font-ui);
-  font-size: 0.75rem;
+  font-size: calc(var(--slot-size, 1.375rem) * 0.545);
   font-weight: 500;
   line-height: 1;
   color: var(--ink-muted);
@@ -610,6 +612,197 @@ section[id] {
   padding-block: 0.56rem;
   padding-inline: 0.56rem;
   margin-inline: -0.56rem;
+}
+
+/* ---------------------------------------------------------------------------------------------
+   How It Works is a walkthrough, not a card wall. The five steps genuinely happen in order, so the
+   rail carries the sequence and reports position while the panels carry one step each. The
+   five-across grid this replaces gave every step a fifth of a row at the widest breakpoint, which
+   is not enough width for a figure and a paragraph, and it made an ordered process read as a set
+   of parallel options. */
+.hiw-grid {
+  display: grid;
+  gap: var(--s-6);
+  margin-top: var(--s-6);
+}
+
+@media (min-width: 64rem) {
+  .hiw-grid {
+    grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+    gap: var(--s-6);
+    align-items: start;
+  }
+
+  .hiw-rail {
+    position: sticky;
+    /* The 4.25rem bar, plus air. */
+    top: 6rem;
+  }
+}
+
+.hiw-kicker {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-muted);
+}
+
+.hiw-steps {
+  margin: var(--s-5) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Under the rail's breakpoint the panels carry their own number and title, so the rail would be
+   the same five titles printed twice. */
+@media (max-width: 63.999rem) {
+  .hiw-steps {
+    display: none;
+  }
+}
+
+.hiw-step {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--s-2);
+  padding-block: 0.6rem;
+  padding-inline-start: var(--s-3);
+  border-top: 1px solid var(--rule);
+  color: var(--ink-muted);
+  box-shadow: inset 2px 0 0 transparent;
+  transition:
+    color var(--t-quick) var(--ease-out),
+    box-shadow var(--t-quick) var(--ease-out);
+}
+
+.hiw-steps li:last-child .hiw-step {
+  border-bottom: 1px solid var(--rule);
+}
+
+.hiw-step:hover {
+  color: var(--ink);
+}
+
+/* Ink, not an accent colour. It reports which step is being read, which is information, so it is
+   drawn in the same ink as the text it belongs to rather than introducing a colour for it. */
+.hiw-step[data-active="true"] {
+  color: var(--ink);
+  box-shadow: inset 2px 0 0 var(--ink);
+}
+
+.hiw-step-num {
+  font-size: 0.75rem;
+}
+
+.hiw-step-title {
+  font-weight: 500;
+}
+
+.hiw-panels {
+  display: grid;
+  gap: var(--s-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hiw-panel {
+  padding: var(--s-5);
+  /* Cleared for the sticky bar when the rail's own links jump here. */
+  scroll-margin-top: 6rem;
+}
+
+/* The figure moves beside the prose once there is room. Stacked, the panel ran a 52ch paragraph
+   down the left of a card twice that wide and the right half was dead. */
+@media (min-width: 48rem) {
+  .hiw-panel {
+    display: grid;
+    /* 11rem, not 13: at 1024 the rail and a 13rem figure column together squeezed the prose to
+       312px, about forty characters. .read-row wraps, so a four-bubble figure folds rather than
+       overflows on the way down. */
+    grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+    gap: var(--s-5);
+    align-items: start;
+  }
+}
+
+.hiw-figure {
+  --slot-size: 2.25rem;
+  gap: 1.1rem;
+}
+
+.hiw-panel-num {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}
+
+@media (max-width: 47.999rem) {
+  .hiw-panel-num {
+    margin-top: var(--s-4);
+  }
+}
+
+.hiw-panel-title {
+  margin-top: var(--s-2);
+  font-size: 1.25rem;
+}
+
+/* The trust section's questions. Seven answers opened at once is a wall, and only one of them is
+   ever the reader's question; the facts that apply to everyone are in the section's lede above,
+   which the wall was burying. */
+.faq-list {
+  /* Held to a reading measure rather than the full wrap. Across 80rem the chevron ends up most of
+     a screen away from the question it belongs to, which reads as two columns of unrelated things. */
+  max-width: 52rem;
+  margin-top: var(--s-6);
+  border-top: 1px solid var(--rule);
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--rule);
+}
+
+.faq-q {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-5);
+  padding-block: var(--s-4);
+  cursor: pointer;
+  list-style: none;
+}
+
+/* Safari still draws its own triangle without this. */
+.faq-q::-webkit-details-marker {
+  display: none;
+}
+
+.faq-q::after {
+  content: "";
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: 0.15rem;
+  border-right: 1.5px solid var(--ink-muted);
+  border-bottom: 1.5px solid var(--ink-muted);
+  transform: rotate(45deg);
+  transition: transform var(--t-quick) var(--ease-out);
+}
+
+.faq-item[open] .faq-q::after {
+  transform: rotate(-135deg);
+}
+
+.faq-q:hover {
+  color: var(--ink);
+}
+
+.faq-a {
+  max-width: 68ch;
+  margin: 0;
+  padding-bottom: var(--s-4);
+  color: var(--ink-muted);
 }
 
 /* ---------------------------------------------------------------------------------------------
@@ -740,9 +933,6 @@ section[id] {
 .app-shell,
 .public-footer {
   --app-foot-h: 9.5rem;
-}
-
-.app-shell {
 }
 
 .app-rail {
