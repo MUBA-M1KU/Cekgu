@@ -234,7 +234,7 @@ export function NewCheck() {
         </label>
         {extracting ? (
           <p className="mt-2 type-caption text-ink-muted">
-            This can take a minute or two, and anything you type before it lands will be replaced.
+            This can take a minute or two, and anything you type before it lands would be replaced.
           </p>
         ) : null}
 
@@ -280,7 +280,8 @@ export function NewCheck() {
           <button
             type="button"
             onClick={fillWithDemo}
-            className="inline-flex h-9 shrink-0 items-center rounded-control border border-rule-strong px-4 font-medium"
+            disabled={extracting}
+            className="inline-flex h-9 shrink-0 items-center rounded-control border border-rule-strong px-4 font-medium disabled:opacity-60"
           >
             Fill With Demo Content
           </button>
@@ -290,12 +291,20 @@ export function NewCheck() {
       {/* Outside the guest block on purpose: an upload fills the form for any account, and the one
           control that empties it again cannot be the one behind a gate. */}
       {prefilled ? (
-        <button type="button" onClick={clearForm} className="type-label mt-4 underline">
+        <button
+          type="button"
+          onClick={clearForm}
+          disabled={extracting}
+          className="type-label mt-4 underline disabled:opacity-60"
+        >
           Clear the Form
         </button>
       ) : null}
 
-      <div className="mt-6 flex flex-col gap-5">
+      {/* Disabled while a paper is in flight, because the draft lands whole and would otherwise
+          overwrite whatever was typed during the wait. A disabled fieldset disables every control
+          in its subtree natively, including Select's button and BubbleRow's radios. */}
+      <fieldset className="disabled:opacity-60 mt-6 flex min-w-0 flex-col gap-5 border-0 p-0" disabled={extracting}>
         <Field label="Assessment Title" htmlFor="title" error={errorFor('title')}>
           <input id="title" className={inputClass} value={title} onChange={(e) => setTitle(e.target.value)} />
         </Field>
@@ -323,7 +332,7 @@ export function NewCheck() {
             onChange={(e) => setContext(e.target.value)}
           />
         </Field>
-      </div>
+      </fieldset>
 
       <h2 className="mt-8">Questions</h2>
       {errorFor('items') ? <p className="mt-2 type-caption text-pen">{errorFor('items')}</p> : null}
@@ -331,7 +340,7 @@ export function NewCheck() {
       {/* A card each, not a rule each. Twelve questions used to arrive as twelve hairlines down
           the sheet, which is the same device the guest hint above already declines. */}
       {items.map((item, index) => (
-        <fieldset key={item.id} className="mt-5 border-0 p-0">
+        <fieldset key={item.id} className="disabled:opacity-60 mt-5 border-0 p-0" disabled={extracting}>
           {/* The legend stays outside the card. A <legend> renders in the fieldset's border box,
               so putting the well on the fieldset itself hangs it over the card's top edge. */}
           <legend className="type-eyebrow text-ink-muted">Question {index + 1}</legend>
@@ -426,7 +435,10 @@ export function NewCheck() {
         </fieldset>
       ))}
 
-      <div className="mt-6 flex flex-wrap items-center gap-4">
+      <fieldset
+        className="disabled:opacity-60 mt-6 flex min-w-0 flex-wrap items-center gap-4 border-0 p-0"
+        disabled={extracting}
+      >
         <button
           type="button"
           className="inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium disabled:opacity-60"
@@ -441,7 +453,7 @@ export function NewCheck() {
         >
           Submit Check
         </button>
-      </div>
+      </fieldset>
 
       {errorFor('form') ? (
         <p role="alert" className="mt-4 type-ui text-pen">
