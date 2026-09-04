@@ -65,3 +65,25 @@ describe('glass surfaces', () => {
     expect(bare).toEqual([])
   })
 })
+
+describe('the rail opens on one condition', () => {
+  // Three rules make the rail open: its width, the backdrop behind it, and the labels' opacity.
+  // They are only correct together. #182 moved the first two off :focus-within, because a mouse
+  // click leaves focus on the link it followed and the rail stayed open after the pointer left.
+  // The third was missed, and the mismatch was worse than the original bug: the labels turned
+  // opaque while the rail stayed 4rem wide, so `overflow: hidden` sliced every one of them
+  // mid-word. Counted on the source rather than the rule parser above, which cannot see a
+  // selector list split across lines — which is exactly how all three of these are written.
+  const selectors = [...css.matchAll(/^\s*(\.app-rail[^,{\n]*)[,{]/gm)].map((match) => (match[1] ?? '').trim())
+
+  test('no rail selector opens on :focus-within', () => {
+    expect(selectors.filter((selector) => selector.includes(':focus-within'))).toEqual([])
+  })
+
+  test('hover and :has(:focus-visible) open the rail in the same places', () => {
+    const hover = selectors.filter((selector) => selector.startsWith('.app-rail:hover'))
+    const focus = selectors.filter((selector) => selector.startsWith('.app-rail:has(:focus-visible)'))
+    expect(hover.length).toBe(3)
+    expect(focus.length).toBe(hover.length)
+  })
+})
