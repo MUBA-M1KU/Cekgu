@@ -3,15 +3,26 @@ import { useParams } from 'react-router'
 import type { DispositionInput } from '../../shared/schemas'
 import type { ItemVerdict, RecordDetail } from '../../shared/types'
 import { getRecord, recordDisposition, retryItem, subscribeToRecord } from '../api'
+import { Card, CardBody, CardHead } from '../components/Card'
 import { ItemRow } from '../components/ItemRow'
-import { Sheet } from '../components/Sheet'
 import { StatusChip } from '../components/StatusChip'
 import { ATTENTION_VERDICTS, VerdictFilters } from '../components/VerdictFilters'
 import { Mascot } from '../mascot/Mascot'
 import { count } from '../plural'
 
-// Attention verdicts first and Clear last, so the filter row reads in the order the educator
-// should work through it. FR-RECORD-3, DESIGN.md Layout.
+/**
+ * The review document.
+ *
+ * It is the one screen in the product that is genuinely a document rather than a dashboard: a
+ * paper read top to bottom, its items in the order an educator should work through them. So the
+ * items keep the hairline rows DESIGN.md gives the sheet's own content, and the card grid is used
+ * only to put a rail beside them.
+ *
+ * THE RAIL IS THE POINT OF THE CHANGE. The summary, the filters and the count of what is still
+ * asking for a decision used to sit at the top of a page twelve items long, so by item four the
+ * reader had lost every one of them and could not tell how much work was left without scrolling
+ * back. They follow the reader down now.
+ */
 export function RecordWorkspace() {
   const { id = '' } = useParams()
   const [record, setRecord] = useState<RecordDetail | null>(null)
@@ -29,24 +40,30 @@ export function RecordWorkspace() {
 
   if (failed) {
     return (
-      <Sheet>
-        <h1>Record</h1>
-        <p className="mt-3 type-ui text-ink-muted">We could not open this record. It may have expired.</p>
-      </Sheet>
+      <Card>
+        <CardBody>
+          <h1 className="page-title">Record</h1>
+          <p className="type-ui text-ink-muted">We could not open this record. It may have expired.</p>
+        </CardBody>
+      </Card>
     )
   }
 
   if (!record) {
     return (
-      <Sheet>
-        <p className="type-ui text-ink-muted">Opening this record.</p>
-      </Sheet>
+      <Card>
+        <CardBody>
+          <div className="skeleton h-7 w-2/5" />
+          <div className="skeleton h-4 w-1/4" />
+          <div className="skeleton h-32 w-full" />
+        </CardBody>
+      </Card>
     )
   }
 
-  // Flagged and undecided, which is what the sentence beneath the chips says. The chips above it
-  // stay on the machine's own tallies: they are a filter over what Cekgu found, not over what is
-  // left to do, and the two numbers disagreeing after a decision is the point rather than a bug.
+  // Flagged and undecided, which is what the sentence beside the chips says. The chips stay on the
+  // machine's own tallies: they filter what Cekgu found, not what is left to do, and the two
+  // numbers disagreeing after a decision is the point rather than a bug.
   const attentionCount = record.items.filter(
     (item) => ATTENTION_VERDICTS.includes(item.verdict) && item.dispositions.length === 0
   ).length
@@ -55,6 +72,7 @@ export function RecordWorkspace() {
     return rank(a.verdict) - rank(b.verdict) || a.position - b.position
   })
   const shown = filter ? ordered.filter((item) => item.verdict === filter) : ordered
+  const decided = record.items.filter((item) => item.dispositions.length > 0).length
 
   async function onDisposition(itemId: string, input: DispositionInput) {
     setRecord(await recordDisposition(id, itemId, input))
@@ -65,60 +83,94 @@ export function RecordWorkspace() {
   }
 
   return (
-    <Sheet>
-      <header>
+    <>
+      <header className="page-head">
         {/* data-mascot-slot is where Mascot.tsx portals the compact badge. */}
-        <div data-mascot-slot className="flex flex-wrap items-center gap-3">
-          <h1 className="min-w-0">{record.title}</h1>
-          <StatusChip status={record.status} />
-          {record.isSample ? <span className="status-chip type-label">Sample</span> : null}
-        </div>
-        <p className="mt-2 type-caption text-ink-muted">
-          {record.subject} · {record.language === 'ms' ? 'Bahasa Malaysia' : 'English'} ·{' '}
-          {count(record.items.length, 'question')}
-        </p>
-        {record.isSample ? (
-          <p className="mt-2 max-w-[70ch] type-caption text-ink-muted">
-            This record is preserved benchmark evidence. Its questions, readings and verdicts cannot be edited or
-            deleted.
+        <div data-mascot-slot className="min-w-0">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="page-title min-w-0">{record.title}</h1>
+            <StatusChip status={record.status} />
+            {record.isSample ? <span className="status-chip type-caption">Sample</span> : null}
+          </div>
+          <p className="type-caption mt-2 text-ink-muted">
+            {record.subject} · {record.language === 'ms' ? 'Bahasa Malaysia' : 'English'} ·{' '}
+            {count(record.items.length, 'question')}
           </p>
-        ) : null}
+          {record.isSample ? (
+            <p className="page-sub type-caption">
+              This record is preserved benchmark evidence. Its questions, readings and verdicts cannot be edited or
+              deleted.
+            </p>
+          ) : null}
+        </div>
       </header>
 
-      <h2 className="mt-8">Summary</h2>
-      {/* The chips are both the summary counts and the filter, so the same numbers are never
-          printed twice. DESIGN.md Layout. */}
-      <div className="flex flex-wrap items-baseline gap-x-4">
-        <VerdictFilters counts={record.counts} active={filter} onChange={setFilter} />
-        {/* The number asking for a decision, so it is the one count in pen red. DESIGN.md Colour.
-            Left-aligned under the chips it counts: ml-auto made it the only right-aligned element
-            on the page, floating away from the row it belongs to. */}
-        <p className="type-label mt-3 text-pen">
-          {attentionCount} {attentionCount === 1 ? 'item needs' : 'items need'} attention
-        </p>
+      <div className="page-grid">
+        <div className="col-span-12 xl:col-span-9">
+          <Card flush>
+            <CardHead
+              title="Items"
+              description="Anything asking for a decision first, then the questions that came back Clear."
+              action={
+                filter ? (
+                  <button type="button" onClick={() => setFilter(null)} className="btn btn-ghost btn-sm">
+                    Show All Items
+                  </button>
+                ) : undefined
+              }
+            />
+            {shown.length === 0 ? (
+              <div className="state-block" data-centre="true">
+                <p className="type-ui">No item has that verdict.</p>
+                <button type="button" onClick={() => setFilter(null)} className="btn btn-outline btn-sm">
+                  Show All Items
+                </button>
+              </div>
+            ) : (
+              /* Hairlines, not tiles. DESIGN.md keeps level 0 for rows that are the sheet's own and
+                 names the review document's items among them: these are the paper, read in order,
+                 not a set of separate objects. */
+              <ul className="m-0 list-none border-t border-rule p-0 px-5 sm:px-6">
+                {shown.map((item) => (
+                  <ItemRow key={item.id} item={item} onDisposition={onDisposition} onRetry={onRetry} readOnly={false} />
+                ))}
+              </ul>
+            )}
+          </Card>
+        </div>
+
+        <div className="col-span-12 order-first xl:order-none xl:col-span-3">
+          <Card className="sticky-rail">
+            <CardHead title="Summary" />
+            <CardBody>
+              {/* The chips are both the counts and the filter, so the same numbers are never printed
+                  twice. DESIGN.md Layout. */}
+              <VerdictFilters counts={record.counts} active={filter} onChange={setFilter} />
+            </CardBody>
+            <div className="card-foot">
+              <div>
+                {/* The number asking for a decision, so it is the one count in pen red.
+                    DESIGN.md Colour.
+
+                    Figure and phrase stay in one element. The demo acceptance test reads this line
+                    as a single string, and it is also how a person reads it: "4 items need
+                    attention" is one fact, not a number with a caption under it. */}
+                <p className="attention-line" data-none={attentionCount === 0 ? 'true' : undefined}>
+                  <span className="attention-figure">{attentionCount}</span>{' '}
+                  {attentionCount === 1 ? 'item needs' : 'items need'} attention
+                </p>
+                {decided > 0 ? (
+                  <p className="type-caption mt-2 text-ink-muted">
+                    {count(decided, 'decision')} recorded. The verdicts above do not move when you decide.
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
 
-      <h2 className="mt-8">Items</h2>
-      {shown.length === 0 ? (
-        <div className="py-12">
-          <p className="type-ui text-ink-muted">No items match this filter.</p>
-          <button
-            type="button"
-            onClick={() => setFilter(null)}
-            className="mt-4 inline-flex h-9 items-center rounded-control bg-ink px-4 font-medium text-on-ink"
-          >
-            Show All Items
-          </button>
-        </div>
-      ) : (
-        <ul className="mt-4 m-0 list-none p-0">
-          {shown.map((item) => (
-            <ItemRow key={item.id} item={item} onDisposition={onDisposition} onRetry={onRetry} readOnly={false} />
-          ))}
-        </ul>
-      )}
-
       <Mascot record={record} />
-    </Sheet>
+    </>
   )
 }
