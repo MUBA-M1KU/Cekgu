@@ -78,3 +78,20 @@ slide never flashes a fallback face in front of a judge.
 
 Re-fetch them from the same Google Fonts URL the scaffold's `src/client/index.html` uses, keep only the `/* latin */`
 blocks, and base64 each file once.
+
+## Hero images the deck is waiting for
+
+Two slides carry an image slot that falls back to a painted wash until the file exists. Drop the PNG in this folder
+under the exact name and the deck picks it up on the next open; nothing else to run.
+
+| File               | Slide       | Size      | Prompt for Codex                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------ | ----------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hero-cover.png`   | 01, cover   | 1400x1400 | A watercolour and ink illustration of a single multiple-choice answer sheet, slightly curled at one corner, rows of small empty circular bubbles, one bubble filled in and circled in bright red ink, a red fountain pen resting diagonally across the sheet, warm off-white paper tones, soft cast shadow, isolated on a transparent background, no text, no letters, no logos, no people. |
+| `hero-problem.png` | 02, problem | 1920x1080 | A painterly, cinematic illustration, wide format, of a teacher seen from behind at a desk late at night, a warm desk lamp, a tall stack of exam papers, the top paper with one answer circled in red ink, muted dark navy tones that fade to near-black across the left half so text can sit there, the lamp and papers in the right half, no faces, no readable text, no logos.            |
+
+```bash
+codex exec --skip-git-repo-check "<prompt above>. Use your image generation tool. Save to C:/Users/User/Documents/MUBA-M1KU/dev/docs/demo/assets/hero-cover.png"
+```
+
+Resize to the listed size before committing. The cover slot is `.hero-obj`, the problem slot is `.hero-bg` with
+`.hero-shade` over it.
