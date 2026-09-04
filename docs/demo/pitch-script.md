@@ -530,21 +530,26 @@ directly whether the video should cover theme and architecture or just the syste
 system, the demonstration of it ([opening ceremony, 00:39](../source/opening-ceremony-transcript.md)). So the deck does
 not appear in it at all. This is a shot list only; recording is issue #47.
 
+**Two minutes exactly, and the landing page gets fifteen seconds of it.** [`../brief.md`](../brief.md#what-we-submit)
+asks for a 2-minute video and says to focus on the system demo, not slideware. Shots 2 to 8 are the running app.
+
 **Capture.** 1920x1080, the deployed URL in a clean browser window, no bookmarks bar, no notifications, cursor visible.
 Record the voice-over separately over the screen capture. Reset the sample before rolling, per
-[section 6](#6-live-demo-135-245--driver).
+[section 6](#6-live-demo-135-245--driver), so shot 7 starts with no decision on the item.
 
-| #   | Time      | On screen                                                                                                                        | Voice-over                                                                                                            |
-| --- | --------- | -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| 1   | 0:00-0:15 | Sign-in page. Cursor moves to **Sign In as Guest** and clicks. The banner appears and holds                                      | "We accept losing marks when we're wrong. We shouldn't lose them because the answer key was wrong."                   |
-| 2   | 0:15-0:30 | The records library. Open **Introductory computer science practice set**, the row with the **Sample** chip. The summary resolves | "Twelve computer science questions, already checked. Nine came back clear. Three need a human."                       |
-| 3   | 0:30-0:55 | Click the **Possible Key Error** filter, which reads **2**. **Show Evidence** on question 3. Hold on the three bubble rows       | "Both readers answered this blind. Neither saw the key. Both chose Queue. The key says Stack."                        |
-| 4   | 0:55-1:15 | **The receipt beat.** Zoom the evidence panel: two **Served Model** names, two **Request Id** values, two **Verified** chips     | "Two different models on the Gonka network. Two request ids, both receipts verified. You can check them."             |
-| 5   | 1:15-1:35 | **Key Corrected**, then bubble `B` under **Corrected Key**, then **Record Decision**. The machine verdict chip stays visible     | "Cekgu doesn't change anything. The educator does, and the record keeps both."                                        |
-| 6   | 1:35-1:50 | Clear the filter. **Show Evidence** on question 1, scroll to **All Attempts**. Hold on the six rows                              | "Six calls went out. Two rate limits, a timeout, a hedge that lost. Two came back with receipts. Only those counted." |
-| 7   | 1:50-2:00 | **New Check**, **Fill With Demo Content**, **Submit Check**. The record appears as **Queued**. Close the tab                     | "Start a check and walk away. It's a queue, not a spinner."                                                           |
+| #   | Time      | On screen                                                                                                                                                                                                                                   | Voice-over                                                                                                                                                                                                                    |
+| --- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | 0:00-0:15 | The landing hero, held. The `Cekgu` wordmark and **Two readers see your paper before your learners do.** Cursor moves to **Try Cekgu Free** and clicks                                                                                      | "A learner can understand a subject and still lose marks because the answer key is wrong, or because the question is unclear. Cekgu gives every question a second, independent reading."                                      |
+| 2   | 0:15-0:27 | Sign-in: two panes, no top bar, the warning under the button. Click **Sign In as Guest**. **Records** opens and the ink-black shared-workspace banner holds                                                                                 | "For this demonstration we use Cekgu's shared Guest workspace and a public sample paper. Confidential papers and learner data do not belong here."                                                                            |
+| 3   | 0:27-0:39 | Type `Introductory` into `Search`, open **Introductory computer science practice set**, the row with the **Sample** chip. Hold on **Summary**: `Possible Key Error 2`, `Possible Ambiguity 1`, `Split Opinion 0`, `Unverified 0`, `Clear 9` | "Twelve computer science questions, already checked. Nine came back clear. Three need attention, so the educator starts there instead of at question one."                                                                    |
+| 4   | 0:39-0:56 | Click the **Possible Key Error** chip, which reads `2`. Twelve rows collapse to two. **Show Evidence** on the first in, first out question. The bubble row fills `A` and rings `B` twice                                                    | "The supplied key says Stack. Both independent readers chose Queue, and neither of them was shown the key. Cekgu calls that a possible key error, and it says why on the row."                                                |
+| 5   | 0:56-1:16 | **The receipt beat.** Zoom the evidence panel: **Reader A** `moonshotai/Kimi-K2.6`, **Reader B** `MiniMaxAI/MiniMax-M2.7`, two different `Request Id` values, both `Receipt` fields reading `Verified`                                      | "To check a question, Cekgu sends its wording and options — never the key — through GonkaRouter to two different model families. You can read each reading, the model that served it, its Gonka request id, and its receipt." |
+| 6   | 1:16-1:30 | Scroll to **All Attempts** on the same item. Three rows: two `Admitted`, one `Timed Out` carrying **The call passed the 90 second evidence cutoff.**                                                                                        | "The review stays honest when a model cannot finish its reading. Without two verified readings, Cekgu returns Unverified instead of presenting a false consensus."                                                            |
+| 7   | 1:30-1:43 | **Key Corrected**, then the `B` bubble under **Corrected Key**, then **Record Decision**. The **Possible Key Error** chip stays exactly where it was                                                                                        | "Cekgu does not change an answer key automatically. The educator reads the evidence and makes the decision, and the record keeps both."                                                                                       |
+| 8   | 1:43-1:52 | **New Check** in the rail, **Fill With Demo Content**, **Submit Check**. The new record opens as **Queued**                                                                                                                                 | "Starting a check is three clicks, and then you can walk away. It's a queue, not a spinner."                                                                                                                                  |
+| 9   | 1:52-2:00 | Cut back to the landing hero. The `Cekgu` wordmark and `cekgu-op7lf5dspq-as.a.run.app` hold silently to the end                                                                                                                             | "Catch the wrong keys and the unclear questions before your learners do." _Then silence._                                                                                                                                     |
 
-**Literal inputs for shot 7**, so anyone can re-record it without asking. **Fill With Demo Content** writes all of this
+**Literal inputs for shot 8**, so anyone can re-record it without asking. **Fill With Demo Content** writes all of this
 in one click, and typing it by hand is the fallback, not the plan:
 
 - **Assessment Title:** `Week 6 networks and data structures quiz`
@@ -553,17 +558,30 @@ in one click, and typing it by hand is the fallback, not the plan:
 - **Options:** `Stack` · `Queue` · `Binary search tree` · `Hash table`
 - **Keyed Option:** `B`
 
-`NOTE:` Shot 4 is the one that cannot be cut. It is the track's proof obligation and the single frame that separates
+`NOTE:` Shot 5 is the one that cannot be cut. It is the track's proof obligation and the single frame that separates
 this entry from a prompt typed into a chat window. Hold it long enough to read an id off the screen.
 
-`NOTE:` **Shot 6 replaces an Unverified item, which this record does not contain.** Question 1's `All Attempts` table
-has six rows: two `Admitted`, two `Rate Limited` with the gateway's own error text, one `Timed Out` at ninety seconds,
-and a hedge recorded and discarded. Question 12 is the same shape if question 1 renders badly, with three rate limits
-and no cutoff. The table scrolls sideways, so frame the `Status` column and the reason text under it, and let the
-`Request Id` column sit off-frame — the ids are already in shot 4.
+`NOTE:` **Shoot on the signed-in record, not on the public Sample Report.** `/sample` renders the same twelve items and
+the same receipts, but it is read-only: `ItemRow` drops the whole decision group there, so shot 7 has nothing to click.
+The path in shot 2 lands on `/records`, and shots 3 to 7 all happen on one `/records/:id` page without a navigation.
+
+`NOTE:` **Shot 6 shows the mechanism, not the verdict.** This record has no Unverified item — the chip in shot 3 reads
+`Unverified 0` — so what is on screen is the one call that never came back, which is what the sentence is about. If the
+shot has seconds to spare, clear the filter and open question 1 instead: six rows that add up, two `Admitted`, two
+`Rate Limited` carrying the gateway's own words, one `Timed Out` at the cutoff, and a hedge that lost its own race. It
+costs a navigation back to the key error before shot 7. The table scrolls sideways either way, so frame the `Status`
+column and the reason under it and let `Request Id` sit off-frame — the ids are already in shot 5.
 
 `NOTE:` Do not speed up or cut around a slow model call. If a call takes forty seconds, cut to the queued state and say
 so. A video that pretends the gateway is instant contradicts slide 08 of our own deck.
+
+`NOTE:` **Do not claim certification, cryptographic proof, on-chain proof, automatic key changes, or guaranteed
+correctness.** The receipt is unsigned gateway metadata
+([TRD, request ids and provenance](../TRD.md#4-request-ids-and-provenance)): it makes the serving model publicly
+inspectable, and that is all. Shot 5 says which model served the reading; shot 7 says the human decided.
+
+`NOTE:` The shared-workspace banner in shot 2 is dismissible and the dismissal is remembered in `localStorage` under
+`cekgu.guestBannerDismissed`. Record in a fresh browser profile, or clear that key, or the strip will not be there.
 
 ## 15. Pre-flight
 
