@@ -1,5 +1,9 @@
 // FR-PUBLIC-2. The claims here are deliberately smaller than the product feels, because prompts
 // traverse a decentralised network and a receipt is metadata rather than proof.
+//
+// Each answer has to read cold. A disclosure can be deep linked open and a reader can expand one
+// question without touching the others, so no answer may lean on the one above it for its subject
+// or its qualifier.
 const FAQ = [
   {
     q: 'Where do my questions go?',

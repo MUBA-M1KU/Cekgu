@@ -45,7 +45,7 @@ export function GuestBanner() {
   return (
     <div className="bg-ink text-on-ink">
       <div className="mx-auto flex max-w-[55rem] items-start gap-4 px-4 py-3 sm:px-8">
-        <p className="min-w-0 flex-1 text-[0.9375rem]/[1.45]">{GUEST_WARNING}</p>
+        <p className="type-ui min-w-0 flex-1">{GUEST_WARNING}</p>
         <button
           type="button"
           onClick={dismissGuestBanner}
