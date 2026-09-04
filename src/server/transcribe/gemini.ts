@@ -1,8 +1,9 @@
 import { env } from '../env'
 
-// THE ONE CALL IN THIS PRODUCT THAT DOES NOT GO TO GONKAROUTER, and the only file allowed to name
-// another provider's host — src/server/gateway/only-gonkarouter.test.ts fails the build if the name
-// appears anywhere else, including in the reasoning path.
+// THE FIRST OF THE TWO CALLS IN THIS PRODUCT THAT DO NOT GO TO GONKAROUTER. This directory and
+// src/server/chat/ are the only ones allowed to name another provider's host —
+// src/server/gateway/only-gonkarouter.test.ts fails the build if the name appears anywhere else,
+// including in the reasoning path.
 //
 // The track's mandatory rule binds AI *reasoning and verification logic* to the Gonka Network. This
 // is neither. It turns pixels and PDF bytes into the words already printed on the page, and it is

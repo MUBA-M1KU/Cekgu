@@ -14,9 +14,9 @@ export class ApiError extends Error {
   }
 }
 
-// The records API is #29. Until it lands, VITE_MOCK_API=true answers the contract from
-// TRD section 15 so the screens can be built and looked at. import.meta.env is statically
-// replaced at build time, so none of this survives a production bundle.
+// VITE_MOCK_API=true answers the TRD section 15 contract from ./mock-record instead of the server,
+// so the screens can be looked at without a database or a gateway key. import.meta.env is
+// statically replaced at build time, so none of this survives a production bundle.
 const MOCK = import.meta.env.VITE_MOCK_API === 'true'
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {

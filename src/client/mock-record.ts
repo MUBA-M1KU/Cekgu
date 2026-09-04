@@ -4,7 +4,7 @@ import type { DispositionInput } from '../shared/schemas'
 import type { AccountStats, Attempt, Item, Reading, RecordDetail, RecordSummary, VerdictCounts } from '../shared/types'
 import { verdict } from '../shared/verdict'
 
-// A stand-in for GET /api/records/:id until #29 lands, shaped exactly like TRD section 15.
+// A stand-in for GET /api/records/:id behind VITE_MOCK_API, shaped exactly like TRD section 15.
 // The FIFO item is the demo's reveal: the supplied key says Stack and both readers chose Queue.
 //
 // EVERY REQUEST ID BELOW IS REAL. They are lifted verbatim from src/server/fixtures/benchmark-pass.json,
@@ -342,7 +342,7 @@ export function mockDisposition(itemId: string, input: DispositionInput): void {
   ]
 }
 
-// A stand-in library for GET /api/records and DELETE /api/records until #29 lands.
+// A stand-in library for GET /api/records and DELETE /api/records, behind the same flag.
 let library: RecordSummary[] = [
   {
     id: 'sample',
