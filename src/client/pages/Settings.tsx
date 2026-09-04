@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { RETENTION_DAYS, TRASH_DAYS } from '../../shared/schemas'
 import { deleteAllRecords, signOut } from '../api'
+import { Card } from '../components/Card'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { Field } from '../components/Field'
 import { GUEST_WARNING } from '../components/GuestBanner'
+import { TrashIcon } from '../components/icons'
 import { Select } from '../components/Select'
-import { Sheet } from '../components/Sheet'
 import { type MotionSetting, setMotionSetting, useMotionSetting } from '../mascot/preferences'
 import { count } from '../plural'
 import { useSession } from '../session'
@@ -16,6 +17,14 @@ const MOTION_OPTIONS = [
   { value: 'reduce', label: 'Never Animate' }
 ]
 
+/**
+ * Settings is a list of separate decisions, so it is laid out as one: what the section is on the
+ * left, the controls that change it on the right.
+ *
+ * Stacked in a single column, which is what this screen was, every heading reads as the next
+ * paragraph of the one above it and the destructive control sits in the same flow as a dropdown
+ * about animation.
+ */
 export function Settings() {
   const motion = useMotionSetting()
   const session = useSession()
@@ -55,123 +64,155 @@ export function Settings() {
   }
 
   return (
-    <Sheet>
-      <h1>Settings</h1>
+    <>
+      <header className="page-head">
+        <div className="min-w-0">
+          <h1 className="page-title">Settings</h1>
+          <p className="page-sub">
+            Who you are signed in as, how long this account keeps what it holds, and how much the product moves.
+          </p>
+        </div>
+      </header>
 
-      <h2 className="mt-8">Account</h2>
-      {session.status === 'in' ? (
-        <>
-          <dl className="mt-3 m-0 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1">
-            <dt className="type-caption text-ink-muted">Signed in as</dt>
-            <dd className="type-ui m-0">{session.isGuest ? 'Guest' : session.user.name || session.user.email}</dd>
-            {session.isGuest ? null : (
-              <>
-                <dt className="type-caption text-ink-muted">Email</dt>
-                <dd className="type-mono m-0">{session.user.email}</dd>
-              </>
-            )}
-          </dl>
-          {session.isGuest ? (
-            <p className="mt-3 max-w-[64ch] type-caption text-ink-muted">
-              {GUEST_WARNING} Records here are removed after 24 hours.
-            </p>
-          ) : null}
-
-          <button
-            type="button"
-            onClick={leave}
-            disabled={leaving}
-            className="mt-4 inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium disabled:opacity-60"
-          >
-            {leaving ? 'Signing Out' : 'Sign Out'}
-          </button>
-          {failed ? (
-            <p className="mt-2 type-caption text-pen">We could not sign you out, try again in a moment.</p>
-          ) : null}
-        </>
-      ) : (
-        <p className="mt-3 type-ui text-ink-muted">
-          {session.status === 'loading' ? 'Checking your session.' : 'You are not signed in.'}
-        </p>
-      )}
-
-      {session.status === 'in' ? (
-        <>
-          <h2 className="mt-10">Your Data</h2>
-          {/* Three deadlines as pairs rather than three paragraphs. The facts are the ones the
-              retention sweep and the account route actually enforce; what changed here is that a
-              reader can find the one they came for without reading the other two. */}
-          {isGuest ? (
-            <p className="type-ui mt-3 max-w-[64ch] text-ink-muted">
-              This is the shared Guest workspace. Records are removed 24 hours after they are created, and any guest can
-              read or delete them. Deleting everything clears the whole workspace; the protected sample is left alone.
-            </p>
+      <section className="settings-row">
+        <div>
+          <h2 className="settings-heading">Account</h2>
+          <p className="type-caption settings-desc">The identity every record on this workspace is filed under.</p>
+        </div>
+        <div className="settings-body">
+          {session.status === 'in' ? (
+            <Card>
+              <div>
+                <dl className="fact-list type-ui">
+                  <dt className="type-caption">Signed in as</dt>
+                  <dd>{session.isGuest ? 'Guest' : session.user.name || session.user.email}</dd>
+                  {session.isGuest ? null : (
+                    <>
+                      <dt className="type-caption">Email</dt>
+                      <dd className="type-mono">{session.user.email}</dd>
+                    </>
+                  )}
+                </dl>
+                {session.isGuest ? (
+                  <p className="type-caption mt-4 max-w-[64ch] text-ink-muted">
+                    {GUEST_WARNING} Records here are removed after 24 hours.
+                  </p>
+                ) : null}
+              </div>
+              <div className="card-foot">
+                <button type="button" onClick={leave} disabled={leaving} className="btn btn-outline">
+                  {leaving ? 'Signing Out' : 'Sign Out'}
+                </button>
+                {failed ? (
+                  <p role="alert" className="type-caption text-pen">
+                    We could not sign you out, try again in a moment.
+                  </p>
+                ) : null}
+              </div>
+            </Card>
           ) : (
-            <>
-              <dl className="mt-3 m-0 grid max-w-[64ch] grid-cols-[auto_1fr] gap-x-6 gap-y-2">
-                <dt className="type-label">Trash</dt>
-                <dd className="type-ui m-0 text-ink-muted">
-                  Deleted permanently {TRASH_DAYS} days after you delete a record
-                </dd>
-                <dt className="type-label">Inactivity</dt>
-                <dd className="type-ui m-0 text-ink-muted">
-                  Deleted permanently {RETENTION_DAYS} days after the last change. Opening a record is not a change
-                </dd>
-                <dt className="type-label">Delete All</dt>
-                <dd className="type-ui m-0 text-ink-muted">
-                  Immediate, including anything already in Trash. It does not use the {TRASH_DAYS} days
-                </dd>
-              </dl>
-              <p className="type-caption mt-3 max-w-[64ch] text-ink-muted">
-                The first two run automatically. None of the three can be undone.
-              </p>
-            </>
-          )}
-
-          <button
-            type="button"
-            onClick={() => setConfirming(true)}
-            disabled={erasing}
-            className="mt-4 inline-flex h-9 items-center rounded-control border border-pen px-4 font-medium text-pen disabled:opacity-60"
-          >
-            {erasing ? 'Deleting' : 'Delete All Records'}
-          </button>
-          {erased ? (
-            <p className="type-caption mt-2 text-ink-muted">
-              {erased.deleted === 0
-                ? 'There was nothing to delete.'
-                : `Deleted ${count(erased.deleted, 'record', 'records')}.`}
-              {erased.skipped > 0 ? ' The protected sample was left alone.' : ''}
+            <p className="type-ui text-ink-muted">
+              {session.status === 'loading' ? 'Checking your session.' : 'You are not signed in.'}
             </p>
-          ) : null}
-          {eraseFailed ? (
-            <p className="type-caption mt-2 text-pen">We could not delete your records, try again in a moment.</p>
-          ) : null}
-        </>
+          )}
+        </div>
+      </section>
+
+      {session.status === 'in' ? (
+        <section className="settings-row">
+          <div>
+            <h2 className="settings-heading">Your Data</h2>
+            <p className="type-caption settings-desc">
+              Three deadlines. The first two run on their own; the third is the button below them.
+            </p>
+          </div>
+          <div className="settings-body">
+            <Card>
+              <div>
+                {isGuest ? (
+                  <p className="type-ui max-w-[64ch] text-ink-muted">
+                    This is the shared Guest workspace. Records are removed 24 hours after they are created, and any
+                    guest can read or delete them. Deleting everything clears the whole workspace; the protected sample
+                    is left alone.
+                  </p>
+                ) : (
+                  <>
+                    <dl className="fact-list type-ui">
+                      <dt className="type-label">Trash</dt>
+                      <dd className="text-ink-muted">
+                        Deleted permanently {TRASH_DAYS} days after you delete a record
+                      </dd>
+                      <dt className="type-label">Inactivity</dt>
+                      <dd className="text-ink-muted">
+                        Deleted permanently {RETENTION_DAYS} days after the last change. Opening a record is not a
+                        change
+                      </dd>
+                      <dt className="type-label">Delete All</dt>
+                      <dd className="text-ink-muted">
+                        Immediate, including anything already in Trash. It does not use the {TRASH_DAYS} days
+                      </dd>
+                    </dl>
+                    <p className="type-caption mt-4 max-w-[64ch] text-ink-muted">
+                      The first two run automatically. None of the three can be undone.
+                    </p>
+                  </>
+                )}
+              </div>
+              <div className="card-foot">
+                <button type="button" onClick={() => setConfirming(true)} disabled={erasing} className="btn btn-danger">
+                  <TrashIcon size={15} />
+                  {erasing ? 'Deleting' : 'Delete All Records'}
+                </button>
+                {erased ? (
+                  <p className="type-caption text-ink-muted">
+                    {erased.deleted === 0
+                      ? 'There was nothing to delete.'
+                      : `Deleted ${count(erased.deleted, 'record', 'records')}.`}
+                    {erased.skipped > 0 ? ' The protected sample was left alone.' : ''}
+                  </p>
+                ) : null}
+                {eraseFailed ? (
+                  <p role="alert" className="type-caption text-pen">
+                    We could not delete your records, try again in a moment.
+                  </p>
+                ) : null}
+              </div>
+            </Card>
+          </div>
+        </section>
       ) : null}
 
-      <h2 className="mt-10">Accessibility</h2>
-      {/* Three choices, not a checkbox. A checkbox could only ever ask for less motion, so a
-          machine with animations switched off had no way back — and Windows reports that one
-          toggle whether it was thrown for motion sensitivity or for a faster desktop. */}
-      <div className="mt-3 max-w-[22rem]">
-        <Field label="Animation" htmlFor="motion">
-          <Select
-            id="motion"
-            label="Animation"
-            value={motion}
-            options={MOTION_OPTIONS}
-            onChange={(value) => setMotionSetting(value as MotionSetting)}
-          />
-        </Field>
-      </div>
-      <p className="type-caption mt-2 max-w-[60ch] text-ink-muted">
-        {motion === 'system'
-          ? 'Following your system setting. Choose Always Animate if your machine has animations switched off but you want them here.'
-          : motion === 'full'
-            ? 'Animating regardless of your system setting.'
-            : 'The mascot and every continuous animation are stopped.'}
-      </p>
+      <section className="settings-row">
+        <div>
+          <h2 className="settings-heading">Accessibility</h2>
+          <p className="type-caption settings-desc">
+            Three choices, not a checkbox. A checkbox could only ever ask for less motion, so a machine with animations
+            switched off had no way back.
+          </p>
+        </div>
+        <div className="settings-body">
+          <Card>
+            <div className="max-w-[22rem]">
+              <Field label="Animation" htmlFor="motion">
+                <Select
+                  id="motion"
+                  label="Animation"
+                  value={motion}
+                  options={MOTION_OPTIONS}
+                  onChange={(value) => setMotionSetting(value as MotionSetting)}
+                />
+              </Field>
+              <p className="type-caption mt-3 max-w-[60ch] text-ink-muted">
+                {motion === 'system'
+                  ? 'Following your system setting. Choose Always Animate if your machine has animations switched off but you want them here.'
+                  : motion === 'full'
+                    ? 'Animating regardless of your system setting.'
+                    : 'The mascot and every continuous animation are stopped.'}
+              </p>
+            </div>
+          </Card>
+        </div>
+      </section>
 
       <ConfirmDialog
         open={confirming}
@@ -190,6 +231,6 @@ export function Settings() {
         onCancel={() => setConfirming(false)}
         onConfirm={eraseEverything}
       />
-    </Sheet>
+    </>
   )
 }

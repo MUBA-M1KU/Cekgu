@@ -1,31 +1,89 @@
 import { type FormEvent, useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router'
-import type { VerdictCounts } from '../../shared/types'
+import { Link, useLocation, useNavigate } from 'react-router'
+import type { ItemVerdict, RecordDetail } from '../../shared/types'
 import { getSample } from '../api'
 import { Field, inputClass } from '../components/Field'
 import { GUEST_WARNING } from '../components/GuestBanner'
+import { admittedSeats } from '../components/ItemRow'
+import { ChevronLeftIcon } from '../components/icons'
+import { Mark } from '../components/Mark'
+import { ReadRow } from '../components/ReadRow'
+import { VerdictChip } from '../components/VerdictChip'
+import { count } from '../plural'
 
 type Mode = 'sign-in' | 'sign-up'
 
-// Two rings on one bubble is direction C's signature: the inner is one reader, the outer is the
-// other, and agreement is the two of them landing on the same circle. It is the only decoration
-// on this screen and it is the product's own shape rather than an illustration of nothing.
-function Figure({ counts }: { counts: VerdictCounts | null }) {
-  const total = counts ? Object.values(counts).reduce((sum, n) => sum + n, 0) : 0
-  const clear = counts?.clear ?? 0
+const ORDER: ItemVerdict[] = ['possible_key_error', 'possible_ambiguity', 'split_opinion', 'unverified', 'clear']
+
+/**
+ * The right-hand panel.
+ *
+ * It is the product's own components carrying the seeded sample's real counts, not an
+ * illustration of a product and not a picture of a dashboard built out of divs. A visitor who has
+ * never used Cekgu sees the five verdicts it can return and how many of each the sample earned,
+ * which is the shortest true answer to "what does this thing do".
+ */
+function SamplePanel({ record }: { record: RecordDetail | null }) {
+  if (!record) {
+    return (
+      <aside className="auth-aside">
+        <p className="type-ui text-ink-muted">Two independent readers sit every question before your learners do.</p>
+      </aside>
+    )
+  }
+
+  const total = Object.values(record.counts).reduce((sum, n) => sum + n, 0)
+  const attention = total - record.counts.clear
+  // The one item worth showing whole. A key error is the verdict a person can read off the row
+  // without being told the rule: the key filled on one letter, both readers ringed on another.
+  const shown = record.items.find((item) => item.verdict === 'possible_key_error')
+  const seats = shown ? admittedSeats(shown) : []
 
   return (
-    <div className="hidden flex-col items-center justify-center gap-8 lg:flex">
-      <svg viewBox="0 0 260 180" width="260" height="180" aria-hidden="true" focusable="false">
-        <circle cx="105" cy="90" r="66" fill="var(--well)" />
-        <circle cx="155" cy="90" r="66" fill="none" stroke="var(--rule-strong)" strokeWidth="1.5" />
-      </svg>
-      <p className="type-ui max-w-[30ch] text-center text-ink-muted">
-        {counts
-          ? `${clear} of ${total} questions on the sample paper came back Clear. The other ${total - clear} are waiting inside.`
-          : 'Two independent readers sit every question before your learners do.'}
-      </p>
-    </div>
+    <aside className="auth-aside">
+      <div className="mx-auto w-full max-w-[36rem]">
+        <p className="type-eyebrow text-ink-muted">From the public sample</p>
+        <h2 className="mt-3 text-[1.75rem] leading-[1.15] font-bold tracking-[-0.02em]">
+          {count(attention, 'question')} on this paper needed a second look.
+        </h2>
+        <p className="type-body mt-4 max-w-[52ch] text-ink-muted">
+          Two independent models answered all {total} without seeing the key. Where they disagreed with it, or with each
+          other, Cekgu says so and shows the Gonka request id behind each reading.
+        </p>
+
+        {shown ? (
+          <div className="card mt-7">
+            <div>
+              <VerdictChip verdict={shown.verdict} />
+              <p className="type-lead mt-4">{shown.stem}</p>
+              <div className="mt-3">
+                <ReadRow
+                  options={shown.options}
+                  keyLetter={shown.key}
+                  readerA={seats[0]?.reading?.answer ?? null}
+                  readerB={seats[1]?.reading?.answer ?? null}
+                />
+              </div>
+              <p className="type-caption mt-3 text-ink-muted">
+                The filled bubble is the supplied key. The rings are what each reader chose.
+              </p>
+            </div>
+          </div>
+        ) : null}
+
+        <ul className="mt-7 m-0 flex list-none flex-wrap gap-2 p-0">
+          {ORDER.filter((verdict) => record.counts[verdict] > 0).map((verdict) => (
+            <li key={verdict}>
+              <VerdictChip verdict={verdict} count={record.counts[verdict]} />
+            </li>
+          ))}
+        </ul>
+
+        <Link to="/sample" className="btn btn-outline mt-7">
+          Read the Sample Report
+        </Link>
+      </div>
+    </aside>
   )
 }
 
@@ -47,14 +105,14 @@ export function SignIn() {
   const [name, setName] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [counts, setCounts] = useState<VerdictCounts | null>(null)
+  const [sample, setSample] = useState<RecordDetail | null>(null)
 
-  // The figure states a fact about the seeded sample, so it reads the sample rather than carrying
-  // a number in the source that would drift the first time the seed changes.
+  // The panel states facts about the seeded sample, so it reads the sample rather than carrying
+  // numbers in the source that would drift the first time the seed changes.
   useEffect(() => {
     getSample()
-      .then((record) => setCounts(record.counts))
-      .catch(() => setCounts(null))
+      .then(setSample)
+      .catch(() => setSample(null))
   }, [])
 
   async function submit(event: FormEvent) {
@@ -98,83 +156,107 @@ export function SignIn() {
   }
 
   return (
-    <div className="wrap grid min-h-[calc(100dvh-11rem)] items-center justify-center gap-16 py-12 lg:grid-cols-[26rem_minmax(0,28rem)]">
-      <section className="card-soft mx-auto w-full max-w-[26rem] rounded-[1.5rem] p-7 sm:p-8">
-        <h1>{mode === 'sign-in' ? 'Sign In' : 'Create an Account'}</h1>
+    <div className="auth-screen">
+      <div className="auth-form-panel">
+        <div className="mx-auto w-full max-w-[24rem]">
+          <Link to="/" className="type-caption inline-flex items-center gap-1 text-ink-muted hover:text-ink">
+            <ChevronLeftIcon size={15} />
+            Back to the site
+          </Link>
 
-        <form onSubmit={submit} noValidate className="mt-6 flex flex-col gap-5">
-          {mode === 'sign-up' ? (
-            <Field label="Name" htmlFor="name">
-              <input id="name" className={inputClass} value={name} onChange={(e) => setName(e.target.value)} />
-            </Field>
-          ) : null}
-          <Field label="Email" htmlFor="email">
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              className={inputClass}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Field>
-          <Field
-            label="Password"
-            htmlFor="password"
-            helper={mode === 'sign-up' ? 'At least eight characters.' : undefined}
-          >
-            <input
-              id="password"
-              type="password"
-              autoComplete={mode === 'sign-in' ? 'current-password' : 'new-password'}
-              className={inputClass}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Field>
+          <div className="mt-8 flex items-center gap-2">
+            <Mark className="h-7 w-7" />
+            <span className="font-ui text-[1.25rem] font-bold tracking-[-0.02em]">Cekgu</span>
+          </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <h1 className="mt-6 text-[1.625rem] leading-[1.15] tracking-[-0.02em]">
+            {mode === 'sign-in' ? 'Sign In' : 'Create an Account'}
+          </h1>
+          <p className="type-ui mt-2 text-ink-muted">
+            {mode === 'sign-in'
+              ? 'Your records, and every request id behind them.'
+              : 'Your papers stay on your account. Your keys are never sent to a model.'}
+          </p>
+
+          {/* Two states of one choice, so a segmented control rather than a second button that
+              looks like it submits something. */}
+          <fieldset className="seg mt-6 m-0 border-0">
+            <legend className="sr-only">Account</legend>
             <button
-              type="submit"
-              disabled={busy}
-              className="inline-flex h-10 items-center rounded-bubble bg-ink px-5 font-medium text-on-ink disabled:opacity-60"
+              type="button"
+              aria-pressed={mode === 'sign-in'}
+              onClick={() => {
+                setMode('sign-in')
+                setError(null)
+              }}
             >
-              {mode === 'sign-in' ? 'Sign In' : 'Create Account'}
+              Existing Account
             </button>
             <button
               type="button"
+              aria-pressed={mode === 'sign-up'}
               onClick={() => {
-                setMode(mode === 'sign-in' ? 'sign-up' : 'sign-in')
+                setMode('sign-up')
                 setError(null)
               }}
-              className="inline-flex h-10 items-center rounded-bubble border border-rule-strong px-5 font-medium"
             >
-              {mode === 'sign-in' ? 'Create an Account' : 'Use an Existing Account'}
+              New Account
             </button>
+          </fieldset>
+
+          <form onSubmit={submit} noValidate className="mt-6 flex flex-col gap-4">
+            {mode === 'sign-up' ? (
+              <Field label="Name" htmlFor="name">
+                <input id="name" className={inputClass} value={name} onChange={(e) => setName(e.target.value)} />
+              </Field>
+            ) : null}
+            <Field label="Email" htmlFor="email">
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                className={inputClass}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Field>
+            <Field
+              label="Password"
+              htmlFor="password"
+              helper={mode === 'sign-up' ? 'At least eight characters.' : undefined}
+            >
+              <input
+                id="password"
+                type="password"
+                autoComplete={mode === 'sign-in' ? 'current-password' : 'new-password'}
+                className={inputClass}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </Field>
+
+            <button type="submit" disabled={busy} className="btn btn-primary mt-1 w-full">
+              {mode === 'sign-in' ? 'Sign In' : 'Create Account'}
+            </button>
+
+            {error ? (
+              <p role="alert" className="type-caption text-pen">
+                {error}
+              </p>
+            ) : null}
+          </form>
+
+          <div className="mt-7 border-t border-rule pt-6">
+            <button type="button" onClick={enterAsGuest} disabled={busy} className="btn btn-outline w-full">
+              Sign In as Guest
+            </button>
+            {/* FR-AUTH-3: the warning sits beside the button, word for word, and again as a banner inside. */}
+            <p className="type-caption mt-3 text-ink-muted">{GUEST_WARNING}</p>
           </div>
-
-          {error ? (
-            <p role="alert" className="type-ui text-pen">
-              {error}
-            </p>
-          ) : null}
-        </form>
-
-        <div className="mt-7 border-t border-rule pt-6">
-          <button
-            type="button"
-            onClick={enterAsGuest}
-            disabled={busy}
-            className="inline-flex h-10 w-full items-center justify-center rounded-bubble border border-rule-strong px-5 font-medium disabled:opacity-60"
-          >
-            Sign In as Guest
-          </button>
-          {/* FR-AUTH-3: the warning sits beside the button, word for word, and again as a banner inside. */}
-          <p className="type-caption mt-3 text-ink-muted">{GUEST_WARNING}</p>
         </div>
-      </section>
+      </div>
 
-      <Figure counts={counts} />
+      <SamplePanel record={sample} />
     </div>
   )
 }

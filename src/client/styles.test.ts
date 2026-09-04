@@ -55,7 +55,9 @@ describe('glass surfaces', () => {
   // review named, so every surface that asks for transparency has to also ask for the blur. Scrims
   // and gradients are exempt: their transparency is the composite, not a material.
   test('no surface is translucent without a blur', () => {
-    const exempt = /^\.hero-media$|^\.hero-scrim$|\[data-solid="true"\]$/
+    // Matched on the suffix rather than on the one scrim that existed when this was written: the
+    // shell grew a second one for the mobile sidebar, and a scrim is a scrim wherever it is.
+    const exempt = /^\.hero-media$|-scrim$|\[data-solid="true"\]$/
     const bare: string[] = []
     for (const { selector, body } of parse(withoutFallbacks)) {
       if (exempt.test(selector)) continue

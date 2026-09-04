@@ -32,13 +32,20 @@ export function PublicLayout() {
   const { pathname } = useLocation()
   // Only the landing has a hero behind the bar. Everywhere else it is solid immediately.
   const overHero = pathname === '/'
-  // Sign-in is a screen rather than a document: it composes its own two-column layout and needs
-  // the full width to do it. Everything else public is a document and keeps the 880 px measure.
-  const fullBleed = overHero || pathname === '/sign-in'
-  // Sign-in is a task, not a document. A footer under it is another set of exits on a screen whose
-  // whole job is one action, so it does not get one.
-  const showFooter = pathname !== '/sign-in'
+  // Sign-in is a task, not a document, and it is the only public route that composes a whole
+  // screen: two panels, its own lockup and its own way back to the site. The site bar and footer
+  // over it are a second set of exits on a screen whose whole job is one action, and the bar's
+  // Sign In button is a link to the page it is already on.
+  const bare = pathname === '/sign-in'
   const scrolled = useSolidNav(24)
+
+  if (bare) {
+    return (
+      <div className="min-h-dvh bg-paper">
+        <Outlet />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-dvh bg-paper">
@@ -68,16 +75,15 @@ export function PublicLayout() {
       </header>
 
       {/* The landing is full-bleed: its sections carry their own grounds and their own measure.
-          Every other public route is a document and keeps DESIGN.md's 880 px measure. */}
-      <main className={fullBleed ? undefined : 'mx-auto max-w-[880px] px-4 py-6 sm:px-8'}>
+          The sample report is a working surface with filters and evidence side by side, so it
+          takes the workspace measure rather than the prose one. */}
+      <main className={overHero ? undefined : 'mx-auto w-full max-w-[76rem] px-4 py-6 sm:px-6'}>
         <Outlet />
       </main>
 
-      {showFooter ? (
-        <footer className="public-footer" role="contentinfo">
-          <SiteFooter />
-        </footer>
-      ) : null}
+      <footer className="public-footer" role="contentinfo">
+        <SiteFooter />
+      </footer>
 
       <BackToTop />
     </div>

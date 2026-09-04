@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import type { Health, RecordSummary } from '../../shared/types'
 import { getHealth, listRecords } from '../api'
+import { Card, CardBody, CardHead } from '../components/Card'
+import { ArrowRightIcon } from '../components/icons'
 import { StatusChip } from '../components/StatusChip'
-import { count } from '../plural'
 
 const RECENT = 5
 
@@ -18,140 +19,228 @@ function family(model: string): string {
 }
 
 /**
+ * A figure and what it counts. No icon tile and no trend badge: this product has no week on week
+ * number to put in one, and a percentage nothing measured is the fastest way to tell a reader the
+ * screen is a template with the data still to come.
+ */
+function Stat({ label, value, note, pen }: { label: string; value: string; note?: string; pen?: boolean }) {
+  return (
+    <Card className="col-span-12 sm:col-span-6 xl:col-span-3">
+      <div>
+        <p className="type-eyebrow stat-label">{label}</p>
+        <p className="stat-value" data-pen={pen ? 'true' : undefined}>
+          {value}
+        </p>
+        {note ? <p className="type-caption stat-note">{note}</p> : null}
+      </div>
+    </Card>
+  )
+}
+
+function StatSkeleton() {
+  return (
+    <Card className="col-span-12 sm:col-span-6 xl:col-span-3">
+      <div>
+        <p className="type-eyebrow stat-label">Loading</p>
+        <div className="skeleton mt-2 h-7 w-20" />
+        <div className="skeleton mt-3 h-3 w-32" />
+      </div>
+    </Card>
+  )
+}
+
+/**
  * Where you land after signing in.
  *
- * A page header, a hero card, two CTA cards under it, and a rail down the right.
+ * Four figures across the top, then the two things that are actually happening: which readers are
+ * answering, and which records moved last. The New Check and All Records cards this page used to
+ * carry are gone because both destinations are now in the shell on every screen, and a card whose
+ * only job is to be a link is a card the reader has to read before they can ignore it.
  *
- * TWO CTA CARDS, NOT THREE. New Check and Records are the only other places this
- * dashboard sends anyone; Settings belongs to the account menu. A third card would be
- * a slot filled to balance a grid, which DESIGN.md names as a tell.
- *
- * THE HERO IS NOT A THIRD CTA, and it is deliberately not a link. It carries the reader
- * families and whether they are answering, because that is the one thing this product can
- * say on arrival that nothing else can, and it is the track requirement made visible. Every
- * line in it comes from /api/health; none is computed here and none is a placeholder.
+ * THE READER PANEL IS THE POINT OF THIS SCREEN. It carries the model families and whether they
+ * are answering, because that is the one thing this product can say on arrival that nothing else
+ * can, and it is the track requirement made visible. Every line in it comes from /api/health;
+ * none is computed here and none is a placeholder.
  */
 export function Dashboard() {
   const [records, setRecords] = useState<RecordSummary[] | null>(null)
   const [failed, setFailed] = useState(false)
   const [health, setHealth] = useState<Health | null>(null)
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setFailed(false)
     listRecords()
       .then(setRecords)
       // An empty library and an unreachable server are different facts, as on Records.
       .catch(() => setFailed(true))
+  }, [])
+
+  useEffect(() => {
+    load()
     // Status is supporting information. If it cannot be fetched the dashboard still works,
     // so a failure here leaves the section out rather than failing the page.
     getHealth()
       .then(setHealth)
       .catch(() => setHealth(null))
-  }, [])
+  }, [load])
 
   const working = records?.filter((record) => record.status === 'queued' || record.status === 'checking') ?? []
   const recent = records?.slice(0, RECENT) ?? []
   const held = records?.filter((record) => !record.isSample).length ?? 0
+  const attention = records?.reduce((sum, record) => sum + record.attentionCount, 0) ?? 0
+  // A family the health ring has never been asked to serve reports healthy with a null median, so
+  // answering is the pair of both, not the flag on its own.
+  const answering = health?.models.filter((model) => model.healthy && model.medianLatencyMs !== null).length ?? 0
 
   // "Back" needs evidence of having been here, and a session does not supply it: a visitor who
   // signed up a second ago has one. A record this account actually holds is the honest signal.
   const returning = held > 0
 
   return (
-    <div className="dash">
-      <header className="dash-head">
-        <h1 className="dash-title">{returning ? 'Good to have you back.' : 'Welcome to Cekgu.'}</h1>
-        {/* Only what is time-sensitive and not visible anywhere else. The line this replaces read
-            "5 items need your attention", which named neither which records nor where to go: the
-            counts belong beside the record they are about, and that is where they are now. */}
-        {working.length > 0 ? (
-          <p className="dash-sub">{count(working.length, 'check is', 'checks are')} still running.</p>
-        ) : null}
-        {failed ? <p className="dash-sub">We could not reach your records, try again in a moment.</p> : null}
+    <>
+      <header className="page-head">
+        <div className="min-w-0">
+          <h1 className="page-title">{returning ? 'Good to have you back.' : 'Welcome to Cekgu.'}</h1>
+          <p className="page-sub">
+            Cekgu never decides on one reading. Two independent models sit every question blind, and each reading
+            carries the Gonka request id of the call that produced it.
+          </p>
+        </div>
       </header>
 
-      <div className="dash-bento">
-        <div className="dash-col">
-          <section className="dash-hero">
-            <p className="dash-hero-lede">
-              Cekgu never decides on one reading. Two independent models sit every question blind, and each reading
-              carries the Gonka request id of the call that produced it.
-            </p>
-            {health ? (
-              <>
-                <dl className="dash-figures">
-                  {health.models.map((model) => (
-                    <div key={model.model}>
-                      <dt>{family(model.model)}</dt>
-                      {/* No data is its own state. The health ring reports successRate 1 and healthy
-                          true for a family nobody has called, and printing "Available" from that
-                          would be a claim with nothing behind it. */}
-                      <dd data-degraded={model.medianLatencyMs !== null && !model.healthy ? 'true' : undefined}>
+      <div className="page-grid">
+        {records === null && !failed ? (
+          <>
+            <StatSkeleton />
+            <StatSkeleton />
+            <StatSkeleton />
+            <StatSkeleton />
+          </>
+        ) : (
+          <>
+            <Stat
+              label="Needs Your Attention"
+              value={String(attention)}
+              pen={attention > 0}
+              note={attention > 0 ? 'questions waiting on a decision' : 'nothing is waiting on you'}
+            />
+            <Stat
+              label="Checks Running"
+              value={String(working.length)}
+              note={working.length > 0 ? 'still with the readers' : 'the queue is clear'}
+            />
+            <Stat
+              label="Records Held"
+              value={String(held)}
+              note={held > 0 ? 'plus the protected sample' : 'only the protected sample so far'}
+            />
+            <Stat
+              label="Readers Answering"
+              value={health ? `${answering} / ${health.models.length}` : '—'}
+              note={health ? `in the last ${health.windowMinutes} minutes` : 'checking the gateway'}
+            />
+          </>
+        )}
+
+        <Card className="col-span-12 xl:col-span-7">
+          <CardHead
+            title="The Two Readers"
+            description="A family that is struggling is demoted rather than dropped, because one reader cannot produce two independent readings."
+          />
+          <CardBody>
+            {health === null ? (
+              /* Not a skeleton pretending to be a status. Until /api/health answers there is
+                 nothing true to show, and a shimmering placeholder in the shape of one is a claim
+                 that a reader is there. */
+              <p className="type-ui text-ink-muted">Checking which readers are answering.</p>
+            ) : (
+              <ul className="m-0 list-none p-0">
+                {health.models.map((model) => (
+                  <li
+                    key={model.model}
+                    className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-t border-rule py-3 first:border-t-0 first:pt-0"
+                  >
+                    <div className="min-w-0">
+                      <p className="type-label">{family(model.model)}</p>
+                      <p className="type-mono mt-1 truncate text-ink-muted">{model.model}</p>
+                    </div>
+                    <div className="text-right">
+                      {/* Degraded is not red. Red is the human hand everywhere in this product, and a
+                          gateway having a slow afternoon is not a decision anyone made. */}
+                      <p className="type-label">
                         {model.medianLatencyMs === null ? 'Not Called Yet' : model.healthy ? 'Available' : 'Degraded'}
-                      </dd>
-                      <p className="dash-figure-note">
+                      </p>
+                      <p className="type-caption mt-1 text-ink-muted">
                         {model.medianLatencyMs === null
                           ? `no calls in the last ${health.windowMinutes} minutes`
                           : `${Math.round(model.successRate * 100)}% of calls, median ${(model.medianLatencyMs / 1000).toFixed(1)}s`}
                       </p>
                     </div>
-                  ))}
-                </dl>
-                <p className="dash-hero-note">
-                  A family that is struggling is demoted rather than dropped, because one reader cannot produce two
-                  independent readings.
-                </p>
-              </>
-            ) : (
-              /* Not a skeleton pretending to be a status. Until /api/health answers there is nothing
-                 true to show, and a shimmering placeholder in the shape of one is a claim that a
-                 reader is there. */
-              <p className="dash-figures-pending">Checking which readers are answering…</p>
+                  </li>
+                ))}
+              </ul>
             )}
-          </section>
+          </CardBody>
+        </Card>
 
-          <div className="dash-ctas">
-            <Link className="dash-card dash-card-check" to="/new-check">
-              <span className="dash-card-label">New Check</span>
-              <span className="dash-card-sub">Type or paste a paper and its key. The key stays behind.</span>
-            </Link>
-
-            <Link className="dash-card dash-card-records" to="/records">
-              <span className="dash-card-label">All Records</span>
-              <span className="dash-card-sub">
-                {records === null
-                  ? 'Everything this account holds.'
-                  : held > 0
-                    ? `${count(held, 'record')} held, and the protected sample.`
-                    : 'Only the protected sample so far.'}
-              </span>
-            </Link>
-          </div>
-        </div>
-
-        <aside className="dash-rail card-soft">
-          <h2 className="dash-rail-heading">Recent Records</h2>
-          {records !== null && recent.length === 0 ? (
-            <p className="dash-recent-empty">Nothing yet. Your checks will collect here.</p>
+        <Card className="col-span-12 xl:col-span-5" flush>
+          <CardHead
+            title="Recent Records"
+            action={
+              <Link to="/records" className="btn btn-ghost btn-sm">
+                View All
+                <ArrowRightIcon size={15} />
+              </Link>
+            }
+          />
+          {failed ? (
+            <div className="state-block">
+              <p className="type-ui">We could not reach your records, try again in a moment.</p>
+              <button type="button" onClick={load} className="btn btn-outline btn-sm">
+                Try Again
+              </button>
+            </div>
+          ) : records === null ? (
+            <ul className="m-0 list-none p-0">
+              {[0, 1, 2].map((row) => (
+                <li key={row} className="border-t border-rule px-6 py-3">
+                  <div className="skeleton h-4 w-2/3" />
+                  <div className="skeleton mt-2 h-3 w-1/3" />
+                </li>
+              ))}
+            </ul>
+          ) : recent.length === 0 ? (
+            <div className="state-block">
+              <p className="type-ui">Nothing yet. Your checks will collect here.</p>
+              <Link to="/new-check" className="btn btn-outline btn-sm">
+                Start One
+              </Link>
+            </div>
           ) : (
-            <ul className="dash-recent">
+            <ul className="m-0 list-none p-0">
               {recent.map((record) => (
-                <li key={record.id}>
-                  <Link to={`/records/${record.id}`} className="dash-recent-item">
-                    <span className="dash-recent-name">{record.title}</span>
-                    <span className="dash-recent-meta">
-                      <StatusChip status={record.status} />
-                      {record.attentionCount > 0 ? (
-                        <span className="text-pen">{record.attentionCount} to review</span>
-                      ) : null}
+                <li key={record.id} className="border-t border-rule">
+                  <Link
+                    to={`/records/${record.id}`}
+                    className="flex items-center gap-4 px-6 py-3 transition-colors hover:bg-well"
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="type-label block truncate">{record.title}</span>
+                      <span className="type-caption mt-1 block text-ink-muted">{updatedLabel(record.updatedAt)}</span>
                     </span>
-                    <span className="dash-recent-when">{updatedLabel(record.updatedAt)}</span>
+                    <span className="flex shrink-0 items-center gap-2">
+                      {record.attentionCount > 0 ? (
+                        <span className="type-mono text-pen">{record.attentionCount}</span>
+                      ) : null}
+                      <StatusChip status={record.status} />
+                    </span>
                   </Link>
                 </li>
               ))}
             </ul>
           )}
-        </aside>
+        </Card>
       </div>
-    </div>
+    </>
   )
 }

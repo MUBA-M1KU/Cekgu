@@ -5,8 +5,9 @@ import { signOut } from '../api'
 import { count } from '../plural'
 import { useSession } from '../session'
 import { setTheme, useTheme } from '../theme'
+import { BellIcon, MoonIcon, PlusIcon, SidebarIcon, SunIcon } from './icons'
 
-type Props = { records: RecordSummary[] | null }
+type Props = { records: RecordSummary[] | null; onToggleSidebar: () => void }
 
 const CRUMBS: Record<string, string> = {
   dashboard: 'Dashboard',
@@ -84,7 +85,7 @@ function writeCleared(cleared: Cleared): void {
   }
 }
 
-export function AppTopbar({ records }: Props) {
+export function AppTopbar({ records, onToggleSidebar }: Props) {
   const { pathname } = useLocation()
   const session = useSession()
   const theme = useTheme()
@@ -126,187 +127,169 @@ export function AppTopbar({ records }: Props) {
 
   return (
     <header className="app-topbar">
-      <nav aria-label="Breadcrumb" className="min-w-0 flex-1">
-        <ol className="m-0 flex min-w-0 list-none items-center gap-2 p-0">
-          <li className="truncate">
-            {segments.length > 1 ? (
-              <Link
-                to={CRUMBS[first] ? `/${first}` : '/dashboard'}
-                className="type-label text-ink-muted hover:text-ink"
-              >
-                {CRUMBS[first] ?? 'Dashboard'}
-              </Link>
-            ) : (
-              // On a section root this crumb is the page you are already on. A link here went to
-              // /dashboard while reading "Records", and collided with the rail's own Records link:
-              // two links, one name, two destinations. Plain text says the same thing truthfully.
-              <span className="type-label text-ink-muted">{CRUMBS[first] ?? 'Dashboard'}</span>
-            )}
-          </li>
-          {segments.length > 1 ? (
-            <>
-              <li aria-hidden="true" className="type-label text-ink-muted">
-                /
-              </li>
-              <li className="type-label min-w-0 truncate" aria-current="page">
-                Record
-              </li>
-            </>
-          ) : null}
-        </ol>
-      </nav>
-
-      <div className="flex shrink-0 items-center gap-1">
+      <div className="app-topbar-inner">
         <button
           type="button"
-          className="app-icon-button"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          aria-label={theme === 'dark' ? 'Switch to the light theme' : 'Switch to the dark theme'}
+          className="app-icon-button shrink-0"
+          onClick={onToggleSidebar}
+          aria-label="Toggle the sidebar"
         >
-          {theme === 'dark' ? (
-            <svg viewBox="0 0 20 20" width="17" height="17" fill="none" aria-hidden="true" focusable="false">
-              <circle cx="10" cy="10" r="3.5" fill="currentColor" />
-              <path
-                d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.7 4.7l1.4 1.4M13.9 13.9l1.4 1.4M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-              />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 20 20" width="17" height="17" fill="none" aria-hidden="true" focusable="false">
-              <path
-                d="M16 12.3A6.5 6.5 0 0 1 7.7 4a6.5 6.5 0 1 0 8.3 8.3z"
-                fill="currentColor"
-                stroke="currentColor"
-                strokeWidth="1.2"
-                strokeLinejoin="round"
-              />
-            </svg>
-          )}
+          <SidebarIcon size={17} />
         </button>
+        <span className="app-topbar-divider hidden sm:block" aria-hidden="true" />
 
-        <div ref={bellRef} className="relative">
+        <nav aria-label="Breadcrumb" className="min-w-0 flex-1">
+          <ol className="m-0 flex min-w-0 list-none items-center gap-2 p-0">
+            <li className="truncate">
+              {segments.length > 1 ? (
+                <Link
+                  to={CRUMBS[first] ? `/${first}` : '/dashboard'}
+                  className="type-label text-ink-muted hover:text-ink"
+                >
+                  {CRUMBS[first] ?? 'Dashboard'}
+                </Link>
+              ) : (
+                // On a section root this crumb is the page you are already on. A link here went to
+                // /dashboard while reading "Records", and collided with the rail's own Records link:
+                // two links, one name, two destinations. Plain text says the same thing truthfully.
+                <span className="type-label text-ink-muted">{CRUMBS[first] ?? 'Dashboard'}</span>
+              )}
+            </li>
+            {segments.length > 1 ? (
+              <>
+                <li aria-hidden="true" className="type-label text-ink-muted">
+                  /
+                </li>
+                <li className="type-label min-w-0 truncate" aria-current="page">
+                  Record
+                </li>
+              </>
+            ) : null}
+          </ol>
+        </nav>
+
+        <div className="flex shrink-0 items-center gap-1">
+          {/* The product's primary verb, reachable from every screen. It goes where the reference
+            puts its command palette, and unlike a palette it does something this build has. */}
+          <Link to="/new-check" className="btn btn-primary btn-sm mr-2 max-sm:hidden">
+            <PlusIcon size={15} />
+            New Check
+          </Link>
           <button
             type="button"
             className="app-icon-button"
-            aria-expanded={open === 'bell'}
-            aria-haspopup="true"
-            onClick={() => setOpen(open === 'bell' ? null : 'bell')}
-            aria-label={total > 0 ? `Waiting on you, ${total}` : 'Nothing waiting on you'}
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label={theme === 'dark' ? 'Switch to the light theme' : 'Switch to the dark theme'}
           >
-            <svg viewBox="0 0 20 20" width="17" height="17" fill="none" aria-hidden="true" focusable="false">
-              <path
-                d="M5.5 8.5a4.5 4.5 0 0 1 9 0v3l1.2 2.2H4.3L5.5 11.5z"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeLinejoin="round"
-              />
-              <path d="M8.3 15.8a1.9 1.9 0 0 0 3.4 0" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-            </svg>
-            {total > 0 ? <span className="app-badge type-caption">{total}</span> : null}
+            {theme === 'dark' ? <SunIcon size={17} /> : <MoonIcon size={17} />}
           </button>
 
-          {open === 'bell' ? (
-            <div className="app-pop">
-              <div className="app-pop-head">
-                <p className="type-label">All Notifications</p>
-                {total > 0 ? (
-                  <button type="button" onClick={clearNotifications} className="app-pop-action type-label">
-                    Clear
-                  </button>
-                ) : null}
-              </div>
-              {total === 0 ? (
-                <div className="app-pop-empty">
-                  <svg viewBox="0 0 20 20" width="26" height="26" fill="none" aria-hidden="true" focusable="false">
-                    <path
-                      d="M5.5 8.5a4.5 4.5 0 0 1 9 0v3l1.2 2.2H4.3L5.5 11.5z"
-                      stroke="currentColor"
-                      strokeWidth="1.2"
-                      strokeLinejoin="round"
-                      opacity="0.4"
-                    />
-                  </svg>
-                  <p className="type-ui">
-                    {outstanding === 0 ? 'Nothing is waiting on you.' : 'Cleared. Anything still open is in Records.'}
-                  </p>
+          <div ref={bellRef} className="relative">
+            <button
+              type="button"
+              className="app-icon-button"
+              aria-expanded={open === 'bell'}
+              aria-haspopup="true"
+              onClick={() => setOpen(open === 'bell' ? null : 'bell')}
+              aria-label={total > 0 ? `Waiting on you, ${total}` : 'Nothing waiting on you'}
+            >
+              <BellIcon size={17} />
+              {total > 0 ? <span className="app-badge type-caption">{total}</span> : null}
+            </button>
+
+            {open === 'bell' ? (
+              <div className="app-pop">
+                <div className="app-pop-head">
+                  <p className="type-label">All Notifications</p>
+                  {total > 0 ? (
+                    <button type="button" onClick={clearNotifications} className="app-pop-action type-label">
+                      Clear
+                    </button>
+                  ) : null}
                 </div>
-              ) : (
-                <ul className="app-pop-list m-0 list-none p-0">
-                  {[...running.map((r) => [r, 'Running'] as const), ...flagged.map((r) => [r, null] as const)].map(
-                    ([record, running_]) => (
-                      <li key={record.id}>
-                        <Link to={`/records/${record.id}`} className="app-pop-row" onClick={() => setOpen(null)}>
-                          <span
-                            className="app-pop-dot"
-                            data-running={running_ ? 'true' : undefined}
-                            aria-hidden="true"
-                          />
-                          <span className="min-w-0 flex-1">
-                            <span className="type-label block truncate">{record.title}</span>
-                            <span className="type-caption mt-1 block text-ink-muted">
-                              {running_ ?? `${record.attentionCount} to review`}
+                {total === 0 ? (
+                  <div className="app-pop-empty">
+                    <BellIcon size={24} className="opacity-45" />
+                    <p className="type-ui">
+                      {outstanding === 0 ? 'Nothing is waiting on you.' : 'Cleared. Anything still open is in Records.'}
+                    </p>
+                  </div>
+                ) : (
+                  <ul className="app-pop-list m-0 list-none p-0">
+                    {[...running.map((r) => [r, 'Running'] as const), ...flagged.map((r) => [r, null] as const)].map(
+                      ([record, running_]) => (
+                        <li key={record.id}>
+                          <Link to={`/records/${record.id}`} className="app-pop-row" onClick={() => setOpen(null)}>
+                            <span
+                              className="app-pop-dot"
+                              data-running={running_ ? 'true' : undefined}
+                              aria-hidden="true"
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="type-label block truncate">{record.title}</span>
+                              <span className="type-caption mt-1 block text-ink-muted">
+                                {running_ ?? `${record.attentionCount} to review`}
+                              </span>
                             </span>
-                          </span>
-                        </Link>
-                      </li>
-                    )
-                  )}
-                </ul>
-              )}
-            </div>
-          ) : null}
-        </div>
-
-        <div ref={userRef} className="relative">
-          <button
-            type="button"
-            className="app-avatar"
-            aria-expanded={open === 'user'}
-            aria-haspopup="true"
-            onClick={() => setOpen(open === 'user' ? null : 'user')}
-            aria-label="Your account"
-          >
-            {session.status === 'in' ? (session.isGuest ? 'G' : (session.user.email[0]?.toUpperCase() ?? 'A')) : '·'}
-          </button>
-
-          {open === 'user' ? (
-            <div className="app-pop">
-              <div className="app-pop-head">
-                <p className="type-label">Account</p>
+                          </Link>
+                        </li>
+                      )
+                    )}
+                  </ul>
+                )}
               </div>
-              {session.status === 'in' ? (
-                <div className="app-pop-account">
-                  {/* The identity is the content of this menu, so it is set at the same size as the
+            ) : null}
+          </div>
+
+          <div ref={userRef} className="relative">
+            <button
+              type="button"
+              className="app-avatar"
+              aria-expanded={open === 'user'}
+              aria-haspopup="true"
+              onClick={() => setOpen(open === 'user' ? null : 'user')}
+              aria-label="Your account"
+            >
+              {session.status === 'in' ? (session.isGuest ? 'G' : (session.user.email[0]?.toUpperCase() ?? 'A')) : '·'}
+            </button>
+
+            {open === 'user' ? (
+              <div className="app-pop">
+                <div className="app-pop-head">
+                  <p className="type-label">Account</p>
+                </div>
+                {session.status === 'in' ? (
+                  <div className="app-pop-account">
+                    {/* The identity is the content of this menu, so it is set at the same size as the
                       controls below it rather than under them. The address is mono because Settings
                       already sets an address in mono and an email is a machine string either way. */}
-                  {session.isGuest ? (
-                    <p className="type-ui">Guest</p>
-                  ) : (
-                    <p className="type-mono truncate">{session.user.email}</p>
-                  )}
-                  {session.isGuest ? (
-                    <p className="type-caption text-ink-muted">
-                      {/* Not the shared-workspace sentence: FR-AUTH-3 requires that one word for word
+                    {session.isGuest ? (
+                      <p className="type-ui">Guest</p>
+                    ) : (
+                      <p className="type-mono truncate">{session.user.email}</p>
+                    )}
+                    {session.isGuest ? (
+                      <p className="type-caption text-ink-muted">
+                        {/* Not the shared-workspace sentence: FR-AUTH-3 requires that one word for word
                           and copy.test.ts holds it to a single home in GuestBanner. This is the fact a
                           person actually needs in a menu, and it is not a second phrasing of it. */}
-                      Records removed after 24 hours
-                    </p>
-                  ) : null}
-                  {/* A count, never an allowance: nothing in the product caps it, so nothing here
+                        Records removed after 24 hours
+                      </p>
+                    ) : null}
+                    {/* A count, never an allowance: nothing in the product caps it, so nothing here
                       may imply a ceiling by printing one. */}
-                  {held === null ? null : <p className="type-caption text-ink-muted">{count(held, 'record')} held</p>}
-                </div>
-              ) : null}
-              <Link to="/settings" className="app-pop-row border-t border-rule" onClick={() => setOpen(null)}>
-                <span className="type-ui">Settings</span>
-              </Link>
-              <button type="button" onClick={leave} disabled={leaving} className="app-pop-row w-full text-left">
-                <span className="type-ui text-pen">{leaving ? 'Signing Out' : 'Sign Out'}</span>
-              </button>
-            </div>
-          ) : null}
+                    {held === null ? null : <p className="type-caption text-ink-muted">{count(held, 'record')} held</p>}
+                  </div>
+                ) : null}
+                <Link to="/settings" className="app-pop-row border-t border-rule" onClick={() => setOpen(null)}>
+                  <span className="type-ui">Settings</span>
+                </Link>
+                <button type="button" onClick={leave} disabled={leaving} className="app-pop-row w-full text-left">
+                  <span className="type-ui text-pen">{leaving ? 'Signing Out' : 'Sign Out'}</span>
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </header>

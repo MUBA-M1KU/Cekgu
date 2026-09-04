@@ -18,7 +18,7 @@ const FAIL_CLOSED = 'Two independent, receipt-verified readings are required bef
 
 // Distinctness is proven by the receipt, so the two seats are chosen on served model. EvidencePanel
 // below applies the same rule, and the row and the panel must name the same reader B.
-function admittedSeats(item: Item): Attempt[] {
+export function admittedSeats(item: Item): Attempt[] {
   const seats: Attempt[] = []
   for (const attempt of item.attempts) {
     if (!attempt.admitted || !attempt.reading) continue
