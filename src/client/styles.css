@@ -170,13 +170,20 @@
 }
 
 /* NFR-UX-5: product-wide, not only the mascot. !important is deliberate here: this reset has to
-   beat component-level transitions, which is the whole point of the block. The attribute carries
-   the user's own Reduce Motion setting, which the system query cannot see. */
+   beat component-level transitions, which is the whole point of the block.
+   
+   The system query is honoured unless the reader has explicitly asked for animation. Before
+   4 September this block was unconditional, so a machine with animations switched off killed every
+   animation in the product and nothing in Settings could bring them back — Windows reports its
+   "show animations" toggle through this query, and that switch is thrown for a faster desktop as
+   often as for motion sensitivity. Following the system is still the default; :not([data-motion])
+   is the reader overruling it, in the one direction the old boolean could not express. */
 /* biome-ignore-start lint/complexity/noImportantStyles: a reduced-motion reset must win the cascade */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  :root:not([data-motion="full"]),
+  :root:not([data-motion="full"]) *,
+  :root:not([data-motion="full"]) *::before,
+  :root:not([data-motion="full"]) *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -184,10 +191,10 @@
   }
 }
 
-:root[data-reduce-motion="true"],
-:root[data-reduce-motion="true"] *,
-:root[data-reduce-motion="true"] *::before,
-:root[data-reduce-motion="true"] *::after {
+:root[data-motion="reduce"],
+:root[data-motion="reduce"] *,
+:root[data-motion="reduce"] *::before,
+:root[data-motion="reduce"] *::after {
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
@@ -1638,9 +1645,13 @@ section[id] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dash-card:hover {
+  :root:not([data-motion="full"]) .dash-card:hover {
     transform: none;
   }
+}
+
+:root[data-motion="reduce"] .dash-card:hover {
+  transform: none;
 }
 
 /* No blend mode and no mask. The motifs carry a real alpha channel and an opaque white sheet, so
