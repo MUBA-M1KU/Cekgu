@@ -583,6 +583,36 @@
         border-radius: var(--r-sheet);
         background: var(--well);
       }
+      .tiers {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+      }
+      .tier .kx {
+        display: block;
+      }
+      .tier-n {
+        margin: 18px 0 0;
+        font-size: 92px;
+        font-weight: 700;
+        line-height: 0.9;
+        letter-spacing: -0.03em;
+        color: var(--ink);
+      }
+      .tier-u {
+        margin: 12px 0 0;
+        font-size: 22px;
+        line-height: 1.35;
+        color: var(--ink-muted);
+      }
+      .tier-p {
+        margin: 22px 0 0;
+        padding-top: 18px;
+        border-top: 1px solid var(--rule-strong);
+        font-family: var(--font-mono);
+        font-size: 24px;
+        color: var(--ink);
+      }
       .card .val {
         margin: 14px 0 0;
         font-family: var(--font-mono);
@@ -986,7 +1016,7 @@
         color: var(--ink);
         font-weight: 600;
       }
-      .band {
+      .stamp {
         margin-top: 44px;
         padding: 24px 30px;
         border-radius: var(--r-sheet);
@@ -995,7 +1025,7 @@
         font-size: 26px;
         color: var(--ink-muted);
       }
-      .band b {
+      .stamp b {
         color: var(--ink);
         font-weight: 600;
       }
@@ -1406,7 +1436,7 @@
                   <li><b>Two defensible answers.</b> Both are arguable; only one scores.</li>
                   <li><b>A missing word.</b> The stem no longer asks what it meant to.</li>
                 </ul>
-                <div class="band">The paper was vetted. <b>The defect survived.</b></div>
+                <div class="stamp">The paper was vetted. <b>The defect survived.</b></div>
               </div>
 
               <svg viewBox="0 0 880 690" role="img" aria-label="A vetted exam paper whose supplied key is wrong">
@@ -2130,53 +2160,29 @@
           </div>
 
           <div class="body">
-            <div class="duo chart-left">
-              <svg
-                viewBox="0 0 900 430"
-                role="img"
-                aria-label="Three pilot plans on a logarithmic axis of questions checked per month: Free at 20 for RM0, Cekgu Plus at 300 for RM29 a month, and Cekgu Studio at 1500 for RM79 a month"
-              >
-                <text class="label f-muted" x="0" y="18" font-size="19">QUESTIONS CHECKED PER MONTH</text>
-
-                <!-- Each plan is a bubble on the axis. The axis is logarithmic and
-                     prints its own ticks, so nothing is encoded by a length that
-                     would misread 20 against 1500. -->
-                <text class="figure f-ink" x="136" y="118" font-size="52" text-anchor="middle">20</text>
-                <text x="136" y="166" font-size="27" font-weight="500" text-anchor="middle" class="f-ink">Free</text>
-                <text class="mono f-muted" x="136" y="202" font-size="23" text-anchor="middle">RM0</text>
-                <circle cx="136" cy="278" r="19" class="s-strong" />
-
-                <text class="figure f-ink" x="530" y="118" font-size="52" text-anchor="middle">300</text>
-                <text x="530" y="166" font-size="27" font-weight="500" text-anchor="middle" class="f-ink">
-                  Cekgu Plus
-                </text>
-                <text class="mono f-muted" x="530" y="202" font-size="23" text-anchor="middle">RM29 / month</text>
-                <circle cx="530" cy="278" r="19" class="f-ink" />
-
-                <text class="figure f-ink" x="765" y="118" font-size="52" text-anchor="middle">1500</text>
-                <text x="765" y="166" font-size="27" font-weight="500" text-anchor="middle" class="f-ink">
-                  Cekgu Studio
-                </text>
-                <text class="mono f-muted" x="765" y="202" font-size="23" text-anchor="middle">RM79 / month</text>
-                <circle cx="765" cy="278" r="19" class="s-strong" />
-
-                <line x1="18" y1="278" x2="882" y2="278" class="s-rule" stroke="var(--rule-strong)" />
-                <g class="s-rule" stroke="var(--rule-strong)">
-                  <line x1="36" y1="278" x2="36" y2="294" />
-                  <line x1="377" y1="278" x2="377" y2="294" />
-                  <line x1="719" y1="278" x2="719" y2="294" />
-                </g>
-                <g class="mono f-muted" font-size="21" text-anchor="middle">
-                  <text x="36" y="330">10</text>
-                  <text x="377" y="330">100</text>
-                  <text x="719" y="330">1000</text>
-                </g>
-              </svg>
-
-              <div data-stagger>
-                <p class="lead">The educator never sees a model bill.</p>
-                <p class="lead"><strong>Pilot pricing.</strong> No buyer has paid yet.</p>
+            <div class="tiers" data-stagger>
+              <div class="card tier">
+                <span class="kx">Free</span>
+                <p class="tier-n">20</p>
+                <p class="tier-u">questions checked per month</p>
+                <p class="tier-p">RM0</p>
               </div>
+              <div class="card tier">
+                <span class="kx">Cekgu Plus</span>
+                <p class="tier-n">300</p>
+                <p class="tier-u">questions checked per month</p>
+                <p class="tier-p">RM29 / month</p>
+              </div>
+              <div class="card tier">
+                <span class="kx">Cekgu Studio</span>
+                <p class="tier-n">1500</p>
+                <p class="tier-u">questions checked per month</p>
+                <p class="tier-p">RM79 / month</p>
+              </div>
+            </div>
+
+            <div class="stamp" style="margin-top: 46px">
+              The educator never sees a model bill. <b>Pilot pricing, and no buyer has paid yet.</b>
             </div>
           </div>
 
@@ -2242,6 +2248,10 @@
                 >
                   <rect width="41" height="41" fill="#ffffff" />
                   <g fill="#14181f"><rect x="4" y="4" width="7" height="1"/><rect x="13" y="4" width="1" height="1"/><rect x="15" y="4" width="1" height="1"/><rect x="18" y="4" width="1" height="1"/><rect x="27" y="4" width="2" height="1"/><rect x="30" y="4" width="7" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="10" y="5" width="1" height="1"/><rect x="14" y="5" width="1" height="1"/><rect x="16" y="5" width="4" height="1"/><rect x="22" y="5" width="3" height="1"/><rect x="30" y="5" width="1" height="1"/><rect x="36" y="5" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="6" y="6" width="3" height="1"/><rect x="10" y="6" width="1" height="1"/><rect x="12" y="6" width="1" height="1"/><rect x="14" y="6" width="1" height="1"/><rect x="18" y="6" width="5" height="1"/><rect x="24" y="6" width="5" height="1"/><rect x="30" y="6" width="1" height="1"/><rect x="32" y="6" width="3" height="1"/><rect x="36" y="6" width="1" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="6" y="7" width="3" height="1"/><rect x="10" y="7" width="1" height="1"/><rect x="17" y="7" width="1" height="1"/><rect x="19" y="7" width="1" height="1"/><rect x="21" y="7" width="1" height="1"/><rect x="25" y="7" width="4" height="1"/><rect x="30" y="7" width="1" height="1"/><rect x="32" y="7" width="3" height="1"/><rect x="36" y="7" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/><rect x="6" y="8" width="3" height="1"/><rect x="10" y="8" width="1" height="1"/><rect x="12" y="8" width="3" height="1"/><rect x="16" y="8" width="2" height="1"/><rect x="19" y="8" width="1" height="1"/><rect x="23" y="8" width="1" height="1"/><rect x="25" y="8" width="1" height="1"/><rect x="27" y="8" width="1" height="1"/><rect x="30" y="8" width="1" height="1"/><rect x="32" y="8" width="3" height="1"/><rect x="36" y="8" width="1" height="1"/><rect x="4" y="9" width="1" height="1"/><rect x="10" y="9" width="1" height="1"/><rect x="12" y="9" width="8" height="1"/><rect x="21" y="9" width="2" height="1"/><rect x="24" y="9" width="1" height="1"/><rect x="26" y="9" width="1" height="1"/><rect x="28" y="9" width="1" height="1"/><rect x="30" y="9" width="1" height="1"/><rect x="36" y="9" width="1" height="1"/><rect x="4" y="10" width="7" height="1"/><rect x="12" y="10" width="1" height="1"/><rect x="14" y="10" width="1" height="1"/><rect x="16" y="10" width="1" height="1"/><rect x="18" y="10" width="1" height="1"/><rect x="20" y="10" width="1" height="1"/><rect x="22" y="10" width="1" height="1"/><rect x="24" y="10" width="1" height="1"/><rect x="26" y="10" width="1" height="1"/><rect x="28" y="10" width="1" height="1"/><rect x="30" y="10" width="7" height="1"/><rect x="15" y="11" width="1" height="1"/><rect x="18" y="11" width="2" height="1"/><rect x="21" y="11" width="5" height="1"/><rect x="27" y="11" width="1" height="1"/><rect x="5" y="12" width="1" height="1"/><rect x="8" y="12" width="1" height="1"/><rect x="10" y="12" width="1" height="1"/><rect x="12" y="12" width="1" height="1"/><rect x="14" y="12" width="1" height="1"/><rect x="16" y="12" width="4" height="1"/><rect x="21" y="12" width="1" height="1"/><rect x="24" y="12" width="3" height="1"/><rect x="29" y="12" width="1" height="1"/><rect x="31" y="12" width="2" height="1"/><rect x="34" y="12" width="1" height="1"/><rect x="4" y="13" width="1" height="1"/><rect x="6" y="13" width="1" height="1"/><rect x="9" y="13" width="1" height="1"/><rect x="11" y="13" width="2" height="1"/><rect x="14" y="13" width="4" height="1"/><rect x="21" y="13" width="1" height="1"/><rect x="25" y="13" width="1" height="1"/><rect x="27" y="13" width="1" height="1"/><rect x="29" y="13" width="1" height="1"/><rect x="33" y="13" width="3" height="1"/><rect x="4" y="14" width="5" height="1"/><rect x="10" y="14" width="2" height="1"/><rect x="15" y="14" width="1" height="1"/><rect x="19" y="14" width="2" height="1"/><rect x="22" y="14" width="1" height="1"/><rect x="24" y="14" width="1" height="1"/><rect x="27" y="14" width="2" height="1"/><rect x="33" y="14" width="1" height="1"/><rect x="35" y="14" width="1" height="1"/><rect x="5" y="15" width="1" height="1"/><rect x="11" y="15" width="4" height="1"/><rect x="16" y="15" width="2" height="1"/><rect x="24" y="15" width="1" height="1"/><rect x="26" y="15" width="1" height="1"/><rect x="28" y="15" width="1" height="1"/><rect x="30" y="15" width="1" height="1"/><rect x="35" y="15" width="1" height="1"/><rect x="4" y="16" width="2" height="1"/><rect x="7" y="16" width="2" height="1"/><rect x="10" y="16" width="1" height="1"/><rect x="12" y="16" width="1" height="1"/><rect x="16" y="16" width="2" height="1"/><rect x="23" y="16" width="1" height="1"/><rect x="26" y="16" width="1" height="1"/><rect x="30" y="16" width="4" height="1"/><rect x="5" y="17" width="2" height="1"/><rect x="8" y="17" width="2" height="1"/><rect x="11" y="17" width="1" height="1"/><rect x="13" y="17" width="1" height="1"/><rect x="17" y="17" width="2" height="1"/><rect x="20" y="17" width="6" height="1"/><rect x="27" y="17" width="1" height="1"/><rect x="31" y="17" width="1" height="1"/><rect x="34" y="17" width="1" height="1"/><rect x="5" y="18" width="2" height="1"/><rect x="10" y="18" width="1" height="1"/><rect x="12" y="18" width="1" height="1"/><rect x="14" y="18" width="2" height="1"/><rect x="17" y="18" width="1" height="1"/><rect x="24" y="18" width="1" height="1"/><rect x="27" y="18" width="5" height="1"/><rect x="35" y="18" width="1" height="1"/><rect x="6" y="19" width="2" height="1"/><rect x="9" y="19" width="1" height="1"/><rect x="11" y="19" width="1" height="1"/><rect x="13" y="19" width="1" height="1"/><rect x="15" y="19" width="2" height="1"/><rect x="18" y="19" width="3" height="1"/><rect x="25" y="19" width="1" height="1"/><rect x="27" y="19" width="1" height="1"/><rect x="29" y="19" width="2" height="1"/><rect x="4" y="20" width="2" height="1"/><rect x="10" y="20" width="3" height="1"/><rect x="14" y="20" width="2" height="1"/><rect x="21" y="20" width="3" height="1"/><rect x="25" y="20" width="2" height="1"/><rect x="28" y="20" width="1" height="1"/><rect x="30" y="20" width="1" height="1"/><rect x="32" y="20" width="2" height="1"/><rect x="35" y="20" width="1" height="1"/><rect x="4" y="21" width="5" height="1"/><rect x="11" y="21" width="2" height="1"/><rect x="14" y="21" width="3" height="1"/><rect x="18" y="21" width="3" height="1"/><rect x="22" y="21" width="1" height="1"/><rect x="24" y="21" width="1" height="1"/><rect x="26" y="21" width="2" height="1"/><rect x="29" y="21" width="1" height="1"/><rect x="33" y="21" width="3" height="1"/><rect x="4" y="22" width="1" height="1"/><rect x="6" y="22" width="2" height="1"/><rect x="10" y="22" width="2" height="1"/><rect x="14" y="22" width="1" height="1"/><rect x="18" y="22" width="1" height="1"/><rect x="22" y="22" width="1" height="1"/><rect x="25" y="22" width="5" height="1"/><rect x="31" y="22" width="1" height="1"/><rect x="33" y="22" width="1" height="1"/><rect x="6" y="23" width="1" height="1"/><rect x="11" y="23" width="1" height="1"/><rect x="13" y="23" width="3" height="1"/><rect x="17" y="23" width="1" height="1"/><rect x="19" y="23" width="1" height="1"/><rect x="21" y="23" width="5" height="1"/><rect x="29" y="23" width="1" height="1"/><rect x="31" y="23" width="1" height="1"/><rect x="35" y="23" width="1" height="1"/><rect x="7" y="24" width="1" height="1"/><rect x="10" y="24" width="2" height="1"/><rect x="14" y="24" width="2" height="1"/><rect x="18" y="24" width="2" height="1"/><rect x="21" y="24" width="1" height="1"/><rect x="23" y="24" width="2" height="1"/><rect x="27" y="24" width="2" height="1"/><rect x="30" y="24" width="1" height="1"/><rect x="32" y="24" width="2" height="1"/><rect x="35" y="24" width="2" height="1"/><rect x="4" y="25" width="1" height="1"/><rect x="6" y="25" width="1" height="1"/><rect x="8" y="25" width="1" height="1"/><rect x="11" y="25" width="1" height="1"/><rect x="13" y="25" width="2" height="1"/><rect x="17" y="25" width="1" height="1"/><rect x="19" y="25" width="2" height="1"/><rect x="22" y="25" width="2" height="1"/><rect x="26" y="25" width="2" height="1"/><rect x="29" y="25" width="1" height="1"/><rect x="34" y="25" width="2" height="1"/><rect x="7" y="26" width="2" height="1"/><rect x="10" y="26" width="1" height="1"/><rect x="13" y="26" width="1" height="1"/><rect x="15" y="26" width="2" height="1"/><rect x="18" y="26" width="1" height="1"/><rect x="20" y="26" width="1" height="1"/><rect x="22" y="26" width="2" height="1"/><rect x="25" y="26" width="3" height="1"/><rect x="32" y="26" width="1" height="1"/><rect x="34" y="26" width="2" height="1"/><rect x="6" y="27" width="2" height="1"/><rect x="9" y="27" width="1" height="1"/><rect x="11" y="27" width="1" height="1"/><rect x="13" y="27" width="1" height="1"/><rect x="16" y="27" width="1" height="1"/><rect x="18" y="27" width="2" height="1"/><rect x="21" y="27" width="1" height="1"/><rect x="23" y="27" width="4" height="1"/><rect x="28" y="27" width="6" height="1"/><rect x="35" y="27" width="1" height="1"/><rect x="4" y="28" width="2" height="1"/><rect x="10" y="28" width="2" height="1"/><rect x="13" y="28" width="2" height="1"/><rect x="16" y="28" width="2" height="1"/><rect x="19" y="28" width="2" height="1"/><rect x="22" y="28" width="1" height="1"/><rect x="24" y="28" width="2" height="1"/><rect x="27" y="28" width="6" height="1"/><rect x="36" y="28" width="1" height="1"/><rect x="12" y="29" width="2" height="1"/><rect x="16" y="29" width="2" height="1"/><rect x="20" y="29" width="1" height="1"/><rect x="25" y="29" width="2" height="1"/><rect x="28" y="29" width="1" height="1"/><rect x="32" y="29" width="1" height="1"/><rect x="34" y="29" width="1" height="1"/><rect x="4" y="30" width="7" height="1"/><rect x="13" y="30" width="3" height="1"/><rect x="17" y="30" width="2" height="1"/><rect x="22" y="30" width="1" height="1"/><rect x="28" y="30" width="1" height="1"/><rect x="30" y="30" width="1" height="1"/><rect x="32" y="30" width="2" height="1"/><rect x="35" y="30" width="1" height="1"/><rect x="4" y="31" width="1" height="1"/><rect x="10" y="31" width="1" height="1"/><rect x="14" y="31" width="1" height="1"/><rect x="17" y="31" width="1" height="1"/><rect x="20" y="31" width="3" height="1"/><rect x="24" y="31" width="1" height="1"/><rect x="26" y="31" width="1" height="1"/><rect x="28" y="31" width="1" height="1"/><rect x="32" y="31" width="1" height="1"/><rect x="4" y="32" width="1" height="1"/><rect x="6" y="32" width="3" height="1"/><rect x="10" y="32" width="1" height="1"/><rect x="12" y="32" width="2" height="1"/><rect x="18" y="32" width="2" height="1"/><rect x="21" y="32" width="1" height="1"/><rect x="26" y="32" width="1" height="1"/><rect x="28" y="32" width="6" height="1"/><rect x="35" y="32" width="2" height="1"/><rect x="4" y="33" width="1" height="1"/><rect x="6" y="33" width="3" height="1"/><rect x="10" y="33" width="1" height="1"/><rect x="13" y="33" width="2" height="1"/><rect x="17" y="33" width="1" height="1"/><rect x="19" y="33" width="1" height="1"/><rect x="21" y="33" width="4" height="1"/><rect x="27" y="33" width="2" height="1"/><rect x="30" y="33" width="4" height="1"/><rect x="35" y="33" width="1" height="1"/><rect x="4" y="34" width="1" height="1"/><rect x="6" y="34" width="3" height="1"/><rect x="10" y="34" width="1" height="1"/><rect x="13" y="34" width="2" height="1"/><rect x="16" y="34" width="1" height="1"/><rect x="19" y="34" width="2" height="1"/><rect x="22" y="34" width="1" height="1"/><rect x="24" y="34" width="1" height="1"/><rect x="30" y="34" width="5" height="1"/><rect x="4" y="35" width="1" height="1"/><rect x="10" y="35" width="1" height="1"/><rect x="12" y="35" width="1" height="1"/><rect x="15" y="35" width="3" height="1"/><rect x="19" y="35" width="1" height="1"/><rect x="21" y="35" width="2" height="1"/><rect x="25" y="35" width="1" height="1"/><rect x="27" y="35" width="4" height="1"/><rect x="4" y="36" width="7" height="1"/><rect x="13" y="36" width="1" height="1"/><rect x="16" y="36" width="2" height="1"/><rect x="20" y="36" width="1" height="1"/><rect x="23" y="36" width="4" height="1"/><rect x="28" y="36" width="2" height="1"/><rect x="36" y="36" width="1" height="1"/></g>
+                  <rect x="15" y="15" width="11" height="11" fill="#ffffff" />
+                  <g color="#14181f" transform="translate(16.25 16.25) scale(0.1328)">
+                    <use href="#cekgu-mark" />
+                  </g>
                 </svg>
                 <p class="qr-cap">Scan to open the public sample record</p>
               </div>
