@@ -4,6 +4,7 @@ import type { RecordSummary } from '../../shared/types'
 import { listRecords } from '../api'
 import { AppSidebar } from '../components/AppSidebar'
 import { AppTopbar } from '../components/AppTopbar'
+import { GuestDrawer } from '../components/GuestBanner'
 import { useSession } from '../session'
 
 // Whether the sidebar is wide or narrow is a preference a person sets once and expects to find
@@ -98,6 +99,10 @@ export function AppLayout() {
 
       <div className="app-body">
         <AppTopbar records={records} onToggleSidebar={toggle} />
+
+        {/* Nothing sits between the bar and this, which is what makes it above the fold on every
+            Guest page at 375 px. FR-AUTH-3. */}
+        <GuestDrawer />
 
         <main className="app-content">
           <Outlet />

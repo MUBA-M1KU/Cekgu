@@ -59,19 +59,19 @@ export function ExternalLink({ href, children, className, 'aria-label': label }:
         tone="neutral"
         title="You Are Leaving Cekgu"
         confirmLabel="Open in a New Tab"
-        // The host and the path are set in mono, because they are the two strings a person reads
-        // character by character before deciding, and prose type is the wrong face for that. The
-        // path gets its own line: at this width a receipt id wrapped mid-token when it ran on from
-        // the sentence, which is the one place a break is unreadable.
+        // The host and the path carry the same recessed mono treatment the receipt viewer gives
+        // the full URL, because they are two halves of the string a person compares between these
+        // two screens and it should not change face on the way. The path takes the block form: a
+        // receipt id is long enough to wrap, and a wrap mid-token is the one break that costs a
+        // reader the ability to check it.
         body={[
           <>
-            This link opens <code className="type-mono">{host}</code>, which is not run by us.
+            This link opens <code className="code-inline">{host}</code>, which is not run by us.
           </>,
           path ? (
             <>
               It goes to
-              <br />
-              <code className="type-mono break-all">{path}</code>
+              <code className="code-block mt-2">{path}</code>
             </>
           ) : (
             'Nothing you have typed into Cekgu is sent with it.'

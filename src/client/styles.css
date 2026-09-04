@@ -2207,54 +2207,112 @@ section[id] {
     filter: drop-shadow(0 0 14px color-mix(in oklab, var(--ink) 22%, transparent));
   }
 
-  /* The shared-workspace disclosure. An ink chip, because the strip this replaces was the one
-     place the product used ink as a ground and that inversion is what made it read as a stamp
-     rather than as another card. The chip keeps the inversion; the panel under it keeps the
-     readability a paragraph needs. */
-  /* The spacing sits on the wrapper, not the chip, so the dropover positioned against the wrapper
-     lines up with the chip's own right edge rather than 8px past it. */
-  .guest-notice {
-    margin-right: var(--s-2);
+  /* A machine string a person is about to act on: a URL they are being sent to, an id they are
+     about to check. Recessed rather than raised, because it is something to read rather than
+     something to press, and mono because every character in it counts.
+
+     One class, two places. The receipt viewer shows the gateway URL in it and the leaving-site
+     dialog shows the same URL split into its host and its path, so the string a person compares
+     across those two screens is set the same way in both. */
+  .code-block {
+    display: block;
+    padding: var(--s-3);
+    border-radius: var(--r-control);
+    background: var(--well);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums slashed-zero;
+    overflow-wrap: anywhere;
   }
 
-  .guest-chip {
-    display: inline-flex;
-    height: 1.625rem;
-    align-items: center;
-    padding-inline: 0.625rem;
-    border-radius: var(--r-bubble);
-    background: var(--ink);
-    color: var(--on-ink);
-    white-space: nowrap;
-    transition: opacity var(--t-quick) var(--ease-out);
+  /* The same string inside a sentence. No chip: the receipt viewer sets its own fields as bare
+     mono for the same reason, and a padded background immediately before a comma renders as
+     "api.gonkarouter.io , which", which reads as a typo rather than as emphasis. The face is the
+     emphasis. */
+  .code-inline {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    font-variant-numeric: tabular-nums slashed-zero;
+    color: var(--ink);
+    overflow-wrap: anywhere;
   }
 
-  .guest-chip:hover {
-    opacity: 0.86;
+  /* The shared-workspace disclosure: a drawer pulled out from under the topbar card.
+
+     It was a full-width inverted strip below the bar, then briefly a chip with a popover. The
+     strip read as a separate stamp laid across the page; the chip was something a person had to
+     find. This shares the card's width and its corner and hides its own top edge behind it, so the
+     two read as one surface that was pulled downward.
+
+     In flow rather than inside the sticky header: the header staying pinned is right for a bar and
+     wrong for a paragraph, and nothing may sit between the bar and this (FR-AUTH-3). */
+  .guest-drawer {
+    position: relative;
+    /* Under the topbar's 30 so the card hides this one's top edge, over the page below it. */
+    z-index: 20;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s-4);
+    margin-inline: var(--s-4);
+    /* Exactly the card's corner, so the overlap is the radius and no straight top edge shows. */
+    margin-top: calc(var(--r-card) * -1);
+    padding: calc(var(--r-card) + var(--s-3)) var(--s-4) var(--s-3);
+    border: 1px solid var(--rule);
+    border-top: 0;
+    border-radius: 0 0 var(--r-card) var(--r-card);
+    background: var(--sheet);
+    box-shadow: var(--shadow-sheet);
+    animation: guest-drawer-in var(--t-panel) var(--ease-out) both;
   }
 
-  /* Wider than the notification popover, because this one holds a paragraph rather than rows. */
-  .guest-pop {
-    width: min(24rem, calc(100vw - 2rem));
-    max-height: none;
+  /* Slides out from behind the bar rather than fading in place, because the whole idea is that it
+     came from there. */
+  @keyframes guest-drawer-in {
+    from {
+      transform: translateY(-0.5rem);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 
-  .guest-pop-head {
-    padding: var(--s-3) var(--s-4);
-    border-bottom: 1px solid var(--rule);
+  .guest-drawer-text {
+    min-width: 0;
+    flex: 1;
+    max-width: 92ch;
   }
 
-  .guest-pop-body {
+  .guest-drawer-close {
     display: grid;
-    gap: var(--s-2);
-    padding: var(--s-4);
+    width: 2rem;
+    height: 2rem;
+    flex: none;
+    place-items: center;
+    /* auto on the left pins it to the drawer's trailing edge rather than to the end of the
+       sentence, which is where the text's own max-width would otherwise leave it. The rest is
+       pulled back over padding that is already there, so a 32 px target does not grow the drawer
+       by its own height. */
+    margin: -0.375rem -0.5rem -0.375rem auto;
+    border-radius: var(--r-control);
+    color: var(--ink-muted);
+    font-size: 1.125rem;
+    line-height: 1;
+    transition:
+      background-color var(--t-quick) var(--ease-out),
+      color var(--t-quick) var(--ease-out);
   }
 
-  .guest-pop-foot {
-    display: grid;
-    gap: var(--s-2);
-    padding: var(--s-4);
-    border-top: 1px solid var(--rule);
-    justify-items: start;
+  .guest-drawer-close:hover {
+    background: var(--well);
+    color: var(--ink);
+  }
+
+  @media (max-width: 47.99rem) {
+    .guest-drawer {
+      margin-inline: var(--s-3);
+    }
   }
 }

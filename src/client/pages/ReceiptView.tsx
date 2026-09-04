@@ -135,9 +135,7 @@ export function ReceiptView() {
             <p className="type-ui text-ink-muted">
               The endpoint is public and needs no key. Open it and compare it against the fields on the left.
             </p>
-            <div className="rounded-control bg-well p-3">
-              <p className="type-mono break-all">{raw}</p>
-            </div>
+            <code className="code-block">{raw}</code>
             <ExternalLink href={raw} className="btn btn-outline">
               Open the Gateway Receipt
             </ExternalLink>
