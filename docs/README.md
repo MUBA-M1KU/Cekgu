@@ -1,429 +1,263 @@
 <a id="readme-top"></a>
 
-<!-- PROJECT LOGO -->
+# Cekgu
 
-<br />
 <div align="center">
-  <a href="https://github.com/MUBA-M1KU/Cekgu">
-    <img src="../public/brand/cekgu-mark.svg" alt="Cekgu" width="120" height="120">
-  </a>
 
-  <h3>Cekgu</h3>
+<img src="img/banner.svg" alt="Cekgu — review multiple-choice papers before learners see them" width="100%">
 
-  <p>
-    Two blind AI readers check every practice question before learners see it.
-    <br />
-    <a href="https://cekgu-op7lf5dspq-as.a.run.app"><strong>Live Demo »</strong></a>
-    &middot;
-    <a href="https://cekgu-op7lf5dspq-as.a.run.app/sample">Sample Report</a>
-    &middot;
-    <a href="TRD.md">Technical Reference</a>
-    &middot;
-    <a href="https://github.com/MUBA-M1KU/Cekgu/issues">Issues</a>
-    <br />
-  </p>
+<p>
+  <strong>Review a practice paper before learners depend on it.</strong><br>
+  Cekgu gives an educator two independent blind readings, a fixed verdict, and
+  the evidence needed to make the final call.
+</p>
 
-[![Bun][Bun.sh]][Bun-url] [![TypeScript][TypeScript.org]][TypeScript-url] [![React][React.js]][React-url]
-[![Hono][Hono.dev]][Hono-url] [![Tailwind][Tailwind.com]][Tailwind-url] [![Postgres][Postgres.org]][Postgres-url]
-[![Drizzle][Drizzle.team]][Drizzle-url] [![Cloud Run][CloudRun.dev]][CloudRun-url]
+![Bun](https://img.shields.io/badge/Bun-14151A?style=for-the-badge&logo=bun&logoColor=white)
+![Hono](https://img.shields.io/badge/Hono-E36002?style=for-the-badge&logo=hono&logoColor=white)
+![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Postgres](https://img.shields.io/badge/Neon_Postgres-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![Cloud Run](https://img.shields.io/badge/Cloud_Run-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)
+![GonkaRouter](https://img.shields.io/badge/GonkaRouter-B3202F?style=for-the-badge)
+
+[Live demo](https://cekgu-op7lf5dspq-as.a.run.app) · [Sample report](https://cekgu-op7lf5dspq-as.a.run.app/sample) ·
+[GitHub](https://github.com/MUBA-M1KU/Cekgu) · [X](https://x.com/Cekgu0903)
+
+<sub>Built by Team M1KU for the MUBA Blockchain Hackathon 2026, GonkaRouter — AI for Society track.</sub>
 
 </div>
 
-<!-- TABLE OF CONTENTS -->
+Cekgu is a pre-publication review tool for educators writing multiple-choice practice papers. It flags disagreement,
+possible key errors, and reader-declared ambiguity without replacing subject expertise or making the decision for them.
 
-## Table of Contents
+[TOC]
 
-<details>
-  <summary>Expand</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#screenshots">Screenshots</a></li>
-        <li><a href="#how-it-works">How It Works</a></li>
-        <li><a href="#architecture">Architecture</a></li>
-        <li><a href="#repository-layout">Repository Layout</a></li>
-        <li><a href="#limitations-and-notices">Limitations And Notices</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#team">Team</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
+## About the project
 
-<!-- ABOUT THE PROJECT -->
+A wrong answer key can reward a guess and penalise a learner who understood the subject. A question with two defensible
+answers can do the same. Both problems are often noticed only after learners have seen the paper.
 
-## About The Project
+Cekgu puts an evidence step before publication. The educator supplies a small multiple-choice paper and its answer key.
+Two model families independently solve each item without seeing that key. Cekgu compares the readings with each other,
+then with the key, and presents the applicable verdict and evidence for the educator to inspect.
 
-A wrong answer key marks correct learners wrong. Two defensible options reward whoever guessed the setter's intent. Both
-defects are usually found after publication, when an educator has to investigate complaints, publish a correction and
-remark work. Self-review is anchored to the author's own intended answer, and asking a colleague to re-solve every item
-spends the scarcest thing a department has.
+The product is for practice papers and synthetic examples, not confidential final examinations. It does not certify
+correctness, prove a question is unambiguous, or replace institutional assessment review.
 
-Cekgu is the pass before publication. Each multiple-choice question is sent — **without the educator's answer key** — to
-two distinct model families through [GonkaRouter](https://api.gonkarouter.io). A fixed rule in
-[`src/shared/verdict.ts`](../src/shared/verdict.ts) compares the two readings against each other and against the
-supplied key, and returns one of five verdicts with the evidence attached: every attempt, the model that actually served
-it, and the gateway request id that proves it. The educator decides what to do, and their decision is appended to the
-record rather than overwriting the machine's.
+<p align="right"><a href="#readme-top">back to top</a></p>
 
-Built for the **GonkaRouter — AI for Society** track of the MUBA Blockchain Hackathon 2026. The track's four
-requirements are load-bearing here, not decorations:
+## Screenshots
 
-| Requirement                             | Where it lives                                                                                                                                                                                                                                           |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| All reasoning and verification on Gonka | [`src/server/gateway/client.ts`](../src/server/gateway/client.ts) is the only code path that calls a model. [`only-gonkarouter.test.ts`](../src/server/gateway/only-gonkarouter.test.ts) fails the build if a provider host or SDK appears anywhere else |
-| At least two models cross-verify        | [`runRound`](../src/server/queue/round.ts) fills two seats from three families and refuses a pair whose receipts name the same served model                                                                                                              |
-| Gonka Request IDs surfaced in the UI    | `x-request-id` is read off the response headers, stored on every `attempts` row, listed in the evidence panel, and resolvable at `/receipt/:requestId` against the public gateway endpoint                                                               |
-| Explicit consensus logic                | [`verdict()`](../src/shared/verdict.ts) — five outcomes, evaluated in a fixed order, each carrying the sentence that explains it                                                                                                                         |
+<table>
+  <tr>
+    <td width="50%"><img src="img/shot-landing.webp" alt="Cekgu landing page" width="100%"></td>
+    <td width="50%"><img src="img/shot-sample.webp" alt="Cekgu public sample report" width="100%"></td>
+  </tr>
+  <tr>
+    <td><sub>The public explanation and entry point.</sub></td>
+    <td><sub>A signed-out, inspectable benchmark report.</sub></td>
+  </tr>
+</table>
 
-**Cekgu fails closed.** If two distinct, receipt-verified readings do not survive, the item is **Unverified** and no
-verdict is offered. It never certifies a paper, never proves an item correct, and never replaces subject expertise.
+<img src="img/shot-evidence.webp" alt="Item evidence showing two served models, request IDs, receipt states, and a timed-out attempt" width="100%">
 
-<p align="right"><a href="#readme-top">&uarr;</a></p>
+The item-evidence view keeps the two readings, served-model identities, Gonka Request IDs, public-receipt links, and
+rejected attempts together. A timed-out or rejected reading is recorded; it does not silently count toward a verdict.
 
-### Screenshots
+<p align="right"><a href="#readme-top">back to top</a></p>
 
-> Placeholders. Replace the SVG in `docs/img/shots/` with a real capture of the same screen, keeping the filename.
+## How it works
 
-|                                                                                     |                                                                                                  |
-| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| ![Landing](img/shots/landing.svg)<br>**Landing** `/`                                | ![Dashboard](img/shots/dashboard.svg)<br>**Dashboard** `/dashboard`                              |
-| ![New Check](img/shots/new-check.svg)<br>**New Check** `/new-check`                 | ![Records](img/shots/records.svg)<br>**Records** `/records`                                      |
-| ![Record Workspace](img/shots/workspace.svg)<br>**Record Workspace** `/records/:id` | ![Evidence Panel](img/shots/evidence.svg)<br>**Evidence Panel** — every attempt, admitted or not |
-| ![Receipt View](img/shots/receipt.svg)<br>**Receipt View** `/receipt/:requestId`    | ![Sample Report](img/shots/sample.svg)<br>**Sample Report** `/sample`, readable signed out       |
+1. **Prepare a paper.** Type a small multiple-choice set with its answer key, or upload a scan or photograph and correct
+   the generated draft.
+1. **Read independently.** The key stays hidden while two distinct model families solve each item through GonkaRouter.
+1. **Admit evidence.** A reading counts only after its request succeeds, identifies a valid option, has no fallback
+   signal, and matches its public Gonka receipt.
+1. **Apply one rule.** Cekgu evaluates the first two admitted readings from distinct served models against the supplied
+   key.
+1. **Make the human decision.** The educator records whether to correct the key, revise wording, confirm the key,
+   dismiss the flag, or retry.
 
-<p align="right"><a href="#readme-top">&uarr;</a></p>
+<img src="img/diagram-check-path.svg" alt="Cekgu check path from paper to human decision" width="100%">
 
-### How It Works
+| Verdict                | Meaning                                                               |
+| ---------------------- | --------------------------------------------------------------------- |
+| **Unverified**         | Fewer than two distinct receipt-verified readings survived.           |
+| **Split Opinion**      | The two readers chose different options.                              |
+| **Possible Ambiguity** | Both readers declare more than one defensible option.                 |
+| **Clear**              | Both readers chose the supplied key after earlier rules did not fire. |
+| **Possible Key Error** | Both readers chose the same non-key option.                           |
 
-**1. A paper goes in.** Type the questions on `/new-check`, or upload a PNG, JPEG, WebP or PDF up to 10 MB and let
-`POST /api/extract` turn it into a draft. The draft is never submitted for you — an extraction nobody read must not
-carry the product's name.
+The verdict is an attention signal, not a mark. In particular, Cekgu detects reader disagreement and ambiguity a reader
+declares; it never detects ambiguity directly.
 
-**2. The queue claims one item at a time.** `POST /api/records` returns as soon as the rows exist. A worker loop inside
-the server process claims the next queued item with `FOR UPDATE SKIP LOCKED`, so a second instance — or the same one
-after a crash — never takes an item somebody is already working.
+<p align="right"><a href="#readme-top">back to top</a></p>
 
-**3. Two seats, three families, no key.** The solver prompt carries the stem, the lettered options, the subject and the
-language. It never carries the supplied key, and it never carries the other reader's output; a reader told the key would
-confirm it. Each seat takes a family nobody else holds and nobody has already produced a reading from.
+## GonkaRouter integration
 
-**4. Every reading has to pass admission before it counts.** Five conditions, in order, from
-[`admitReading`](../src/server/gateway/reading.ts): no transport or gateway error, a receipt whose `model` equals the
-model that was requested, a body that parses as the requested JSON, a serving model named by that receipt, and an answer
-whose letters are all real options on the item. A reading is labelled with the model **the receipt names**, never with
-the one we asked for — otherwise two calls to one model could pose as two readers and cross-verification becomes
-fiction.
+The MUBA track requires all AI reasoning and verification to run through [GonkaRouter](https://api.gonkarouter.io),
+cross-verification by at least two models, visible Gonka Request IDs, and explicit consensus logic. Cekgu provides each
+of those requirements in the product, not only in its source code.
 
-**5. The rule decides, and says why.** Order matters and the order is a decision: disagreement before ambiguity, so two
-readers who both hedge but commit differently are a split; ambiguity before the key, so an item both answered
-"correctly" while each saw two defensible options is still flagged.
+- **Reasoning and verification:** every question-solving, structuring, evidence admission, and verdict-related inference
+  goes through the GonkaRouter gateway.
+- **Cross-verification:** a verdict needs two admitted readings from distinct served models. Fewer than two produces
+  **Unverified**, never a guess.
+- **Visible provenance:** every admitted reading displays its Gonka Request ID and a link to its public receipt. The
+  receipt confirms gateway metadata such as the served model; it is not cryptographic or on-chain proof.
+- **Consensus:** the fixed five-verdict rule above compares two blind readings before the educator's key. The rule that
+  fired is displayed with the result.
 
-| Verdict                | The rule that produced it                                                          |
-| ---------------------- | ---------------------------------------------------------------------------------- |
-| **Split Opinion**      | The two verified readings commit to different answers                              |
-| **Possible Ambiguity** | Each verified reading names more than one defensible option                        |
-| **Possible Key Error** | Both verified readings agree on an option that is not the supplied key             |
-| **Clear**              | Both verified readings agree, and they agree with the supplied key                 |
-| **Unverified**         | Fewer than two distinct receipt-verified readings survived, so no verdict is given |
+<img src="img/diagram-round.svg" alt="Two model families read one item in parallel, with retries and failed attempts recorded" width="100%">
 
-**6. The educator closes the loop.** Key Corrected, Wording Revised, Key Confirmed, Flag Dismissed or Retry Requested.
-Dispositions are append-only: one never overwrites the machine verdict or an earlier decision, and a retry is a round
-boundary, so an earlier reading is never counted twice.
+### The upload boundary
 
-**What the shipped sample actually shows.** [`benchmark-pass.json`](../src/server/fixtures/benchmark-pass.json) is a
-recorded pass captured 3 September 2026 over a 12-item synthetic paper: **42 attempts, 24 of them admitted**, served by
-`MiniMaxAI/MiniMax-M2.7` and `moonshotai/Kimi-K2.6`. It returns 9 Clear, 2 Possible Key Error, 1 Possible Ambiguity and
-0 Unverified. Both deliberately mis-keyed items were caught. One of the two deliberately ambiguous items was not — see
-[Limitations And Notices](#limitations-and-notices).
+An uploaded image or PDF is first sent to Google's Gemini API to transcribe the words printed on it. That is the sole
+non-reasoning boundary: it creates a draft only, cannot answer questions or invent an answer key, and does not create a
+record. GonkaRouter then structures the transcription and handles every later reasoning or verification step.
 
-<p align="right"><a href="#readme-top">&uarr;</a></p>
+This boundary is documented and guarded in the repository. See
+[TRD section 20](TRD.md#20-reading-a-paper-from-an-upload) for the measured rationale and
+[`only-gonkarouter.test.ts`](../src/server/gateway/only-gonkarouter.test.ts) for the enforcement test.
 
-### Architecture
+<p align="right"><a href="#readme-top">back to top</a></p>
 
-One Bun process serves the API, the React bundle and the queue worker. Postgres is the only state. The gateway is the
-only egress that reaches a model, apart from the single transcription boundary drawn below.
+## Architecture
 
-```mermaid
-flowchart TB
-  subgraph browser["Browser"]
-    ui["React 19 · react-router<br/>Dashboard · Records · Workspace · Receipt"]
-  end
+<img src="img/diagram-topology.svg" alt="Cekgu architecture showing browser, application server, database, GonkaRouter, Gemini transcription boundary, and public receipts" width="100%">
 
-  subgraph process["Cloud Run · one Bun process"]
-    api["Hono API<br/>/api/records · /api/extract · /api/receipts · /api/stats"]
-    worker["Queue worker<br/>claim · round · verdict"]
-    sem["Semaphore, 4 concurrent"]
-    rule["verdict rule<br/>src/shared/verdict.ts"]
-  end
+The browser talks to a Hono application hosted on Cloud Run. The application stores accounts, records, review decisions,
+and attempt evidence in PostgreSQL. A bounded worker queue requests independent readings through GonkaRouter, retrieves
+receipts, and fails closed when valid evidence is insufficient.
 
-  db[("Postgres · Neon<br/>records · items · attempts<br/>dispositions · model_health")]
-  gonka["GonkaRouter<br/>api.gonkarouter.io/v1<br/>DeepSeek · MiniMax · Kimi"]
-  vision["Vision transcription<br/>src/server/transcribe/ only"]
+Checks are asynchronous because the decentralised network can be slow or unavailable. The educator can return to a saved
+record, inspect recorded attempts, and decide what to do with an **Unverified** item rather than receiving a
+manufactured answer.
 
-  ui -- "fetch · SSE" --> api
-  api --> db
-  worker -- "FOR UPDATE SKIP LOCKED" --> db
-  worker --> sem --> gonka
-  gonka -- "content + x-request-id + receipt" --> worker
-  worker --> rule --> db
-  api -- "upload bytes" --> vision
-  vision -- "plain text, decides nothing" --> api
-  api -- "structuring call" --> sem
-  api -- "receipt read-through" --> gonka
-```
+<p align="right"><a href="#readme-top">back to top</a></p>
 
-**Provenance is collected before anything else.** The client is hand-rolled `fetch` rather than an OpenAI SDK, because
-the SDK returns a parsed body and throws away the headers that carry `x-request-id` — the one thing the attempts table
-exists to record. Headers are read before the body, and a call that fails still returns a provenance record.
+## Tech stack
 
-Four measured behaviours the gateway forced, each of which would silently corrupt the evidence if dropped:
+| Layer                | Technology                               | Purpose                                          |
+| -------------------- | ---------------------------------------- | ------------------------------------------------ |
+| Client               | React 19, React Router, Vite, TypeScript | Review, evidence, and public pages               |
+| Server               | Bun, Hono, Zod                           | API, validation, and queue orchestration         |
+| Data                 | PostgreSQL, Drizzle ORM                  | Accounts, records, and review history            |
+| AI                   | GonkaRouter                              | Blind reads, structuring, verification, receipts |
+| Upload transcription | Google Gemini API                        | Printed-text transcription only                  |
+| Hosting              | Google Cloud Run                         | Deployed application                             |
+| Testing              | Bun test, Playwright, Biome, Prettier    | Unit, browser, lint, and document checks         |
 
-- **`X-Gonka-No-Fallback: true` on every request.** Without it the gateway substitutes another model and says so only in
-  a header, so a two-model pair quietly becomes one model twice. A response carrying `x-gonka-fallback` is rejected even
-  though its body is a perfectly good completion.
-- **A UUID nonce is appended to every prompt.** Byte-identical bodies are served from the gateway cache, which would
-  make two samples of one item into one inference wearing two request ids.
-- **Receipts are polled, not fetched once.** They are written asynchronously and every measured call 404'd on the first
-  try, so the wait comes before the first fetch: 250 ms intervals inside a 5 second budget, each request under its own
-  abort signal.
-- **`<think>` blocks are stripped.** MiniMax emits raw `<think>` inside the content and Kimi leaks an orphaned closing
-  tag; comparing an answer against another model's internal monologue is the failure this prevents.
+The detailed integration, API contracts, model measurements, queue policy, and test evidence live in [TRD](TRD.md). The
+product decisions and business-model hypotheses live in [PRODUCT](PRODUCT.md).
 
-**The round is built for a network that is slow and sometimes down.** Three attempts per family, a call abandoned at 90
-s by the client and 120 s by the round, and a deferred hedge that fires at 45 s — raised from 25 s on measurement,
-because at 25 s nearly every call was doubling and the doubling itself produced the account-level 429s. A 15-minute
-health ring ranks the families and excludes one at three failures with nothing successful behind it; when fewer than two
-families remain healthy the unhealthy ones are **demoted rather than removed**, because a round with one candidate
-returns Unverified without a single call being attempted.
+<p align="right"><a href="#readme-top">back to top</a></p>
 
-**The upload boundary is the one documented exception**, and it is one directory wide.
-[`src/server/transcribe/`](../src/server/transcribe/) may reach a vision provider to turn pixels and PDF bytes into the
-words printed on the page. That step is forbidden by its own prompt from deciding anything: which text is a question,
-which strings are its options, which option the key names is decided afterwards by a Gonka model carrying a request id.
-Of the three families the gateway serves, only Kimi reports vision and it is the slowest of them, and a single reader
-cannot cross-verify anything in any case. `only-gonkarouter.test.ts` asserts that the boundary never imports the verdict
-rule, the schema or the queue — and that the reasoning path names no provider host at all. Without `GEMINI_API_KEY`,
-`POST /api/extract` answers 503 and every other route is unchanged.
-
-<p align="right"><a href="#readme-top">&uarr;</a></p>
-
-### Repository Layout
-
-```text
-.
-├── src/
-│   ├── client/            React 19 SPA. pages/, components/, layouts/, mascot/, styles.css
-│   ├── server/
-│   │   ├── gateway/       The only code that calls a model. client.ts, reading.ts, models.ts
-│   │   ├── queue/         claim.ts, round.ts, worker.ts, health.ts, semaphore.ts
-│   │   ├── extract/       Turns transcribed text into a draft record, on Gonka
-│   │   ├── transcribe/    THE one non-Gonka call. Vision to plain text, decides nothing
-│   │   ├── records/       Read queries behind the record routes
-│   │   ├── routes/        Hono routes: records, extract, receipts, stats, health, sample, auth
-│   │   ├── fixtures/      benchmark-pass.json, evaluation-set.json
-│   │   └── db/            Drizzle schema and Better Auth tables
-│   └── shared/            verdict.ts, types.ts, schemas.ts, api.ts — used by both halves
-├── e2e/                   Playwright, run against a deployment: smoke, flow, demo
-├── drizzle/               Generated migrations
-├── docs/                  PRODUCT.md, PRD.md, TRD.md, DESIGN.md, brief.md, legal/, source/
-├── public/                brand/, mascots/, live2d/, hero/
-├── scripts/               check-anchors.ts, capture-benchmark-pass.ts
-└── .github/workflows/     ci.yml (checks + tagged preview), deploy.yml (Cloud Run + smoke)
-```
-
-<p align="right"><a href="#readme-top">&uarr;</a></p>
-
-### Limitations And Notices
-
-**It is a triage pass, not a certification.** Cekgu directs attention. It does not prove any item correct, does not
-approve confidential final examinations, does not grade learners and does not replace institutional moderation.
-
-**Two model opinions are not truth.** A Clear verdict means two readers agreed with the key, and nothing more. Question
-6 of the shipped sample — "Which layer of the TCP/IP model does HTTP belong to?" — is labelled `ambiguous` in
-[`evaluation-set.json`](../src/server/fixtures/evaluation-set.json) with B and C both defensible, and the recorded pass
-returned **Clear** on it. That is a characterised miss, not a fixed one.
-
-**A verdict is not reproducible run to run.** The same item can be Clear in one pass and Unverified in the next.
-Unverified is load-driven: a long paper sustains account-level rate limiting that a twelve-item paper never reaches, and
-the round then cannot assemble two distinct verified readings.
-
-**Preview deployments share the production database.** PR previews serve no traffic and run with `MIGRATE_ON_START` and
-`WORKER_ENABLED` set to `false` for that reason.
-
-**The Guest workspace is shared and temporary.** Everything created there is visible to every other guest and is hard
-deleted 24 hours after creation. Private records go to Trash for 30 days, and are retired 90 days after last activity.
-
-**Legal notices** live beside this file: [Terms](legal/terms.md), [Privacy](legal/privacy.md) and
-[Acceptable use](legal/acceptable-use.md).
-
-<p align="right"><a href="#readme-top">&uarr;</a></p>
-
-<!-- GETTING STARTED -->
-
-## Getting Started
-
-The app runs as one Bun process. In development the Vite dev server sits in front of it and proxies `/api` through, so
-two commands are one `bun run dev`.
+## Getting started
 
 ### Prerequisites
 
-- **Bun 1.4 or newer** — package manager, runtime and test runner. `curl -fsSL https://bun.sh/install | bash`
-- **A Postgres database.** The deployment uses Neon in `ap-southeast-1`. Any Postgres with
-  `SELECT ... FOR UPDATE SKIP LOCKED` and a pooled connection string works
-- **A GonkaRouter API key** from the GonkaRouter dashboard. Nothing that decides anything runs without it
-- **Optional: a Gemini API key.** Only `POST /api/extract` uses it. Absent, uploads are switched off and the rest of the
-  product is unchanged
-- **Optional: a Google OAuth client.** Absent, email and Guest sign-in still work
+- [Bun](https://bun.sh) 1.x
+- PostgreSQL and the environment configuration described in [TRD section 8](TRD.md#8-configuration-contract)
+- A GonkaRouter API key for live model calls
 
-### Installation
+### Install and run
 
-```bash
-git clone https://github.com/MUBA-M1KU/Cekgu.git
-cd Cekgu
-bun install                 # dependencies, and wires the husky hooks
-cp .env.example .env        # then fill it in; .env is gitignored and must stay that way
-bun run db:migrate          # applies drizzle/ to DATABASE_URL
-bun run dev                 # api on :8080, client on :5173
+```sh
+bun install
+bun run dev
 ```
 
-Every name in `.env.example` is required unless marked otherwise there:
+The client dev server is served by Vite and the API server runs through Bun. Use the deployed
+[live demo](https://cekgu-op7lf5dspq-as.a.run.app) when a local database or gateway key is not available.
 
-| Variable                                    | What it is                                                                  |
-| ------------------------------------------- | --------------------------------------------------------------------------- |
-| `GONKA_API_KEY`                             | Server only. Never reaches the client bundle                                |
-| `GONKA_BASE_URL_OPENAI`                     | Defaults to `https://api.gonkarouter.io/v1`. The `/v1` belongs in the value |
-| `DATABASE_URL`                              | Pooled Postgres connection string, `sslmode=require`                        |
-| `BETTER_AUTH_SECRET` / `BETTER_AUTH_URL`    | 32+ random bytes, and the public origin with no trailing slash              |
-| `GUEST_EMAIL` / `GUEST_PASSWORD`            | The one seeded Guest account behind `POST /api/auth/guest`                  |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Optional. Google sign-in                                                    |
-| `GEMINI_API_KEY` / `GEMINI_MODEL`           | Optional. Transcription for Upload a Paper, and nothing else                |
-| `MASCOT_ENABLED`                            | `true` turns the Live2D reader mascots on                                   |
+### Verify
 
-<p align="right"><a href="#readme-top">&uarr;</a></p>
-
-<!-- USAGE EXAMPLES -->
-
-## Usage
-
-```bash
-bun run dev            # api :8080 + vite :5173, watched
-bun run build          # vite build into dist/client
-bun run start          # production: one process serving api and bundle on :8080
-bun test               # the unit suite
-bun run e2e            # Playwright, against the DEPLOYMENT by default — see below
-bun run e2e:local      # Playwright, against http://localhost:8080
-bun run lint           # biome check . && prettier --check on md/yaml
-bun run format         # biome format --write . && prettier --write on md/yaml
-bun run typecheck      # tsc --noEmit
-bun run check:anchors  # every markdown anchor link in the repo, against its heading
-bun run db:generate    # drizzle-kit generate, after a schema change
+```sh
+bun run lint
+bun run typecheck
+bun test
+bun run e2e
+bun run check:anchors
 ```
 
-> `bun run e2e` targets the deployed URL, not your working tree. It prints its target on every run. Use
-> `bun run e2e:local`, or `E2E_BASE_URL=<url> bun run e2e`, to point it somewhere else.
+`bun run e2e` covers deterministic browser paths. The live external-model flow is deliberately opt-in because gateway
+latency and availability vary; run it only with an authorised environment and treat **Unverified** as a valid result.
 
-**Walk the product in about a minute.** Open the [live demo](https://cekgu-op7lf5dspq-as.a.run.app), press **Sign In as
-Guest** — no account, no email — and you land on the dashboard. Cross to **Records**, open _Introductory computer
-science practice set_, and work down it. Questions 3 and 9 come back **Possible Key Error** — both are deliberately
-mis-keyed — and question 11 **Possible Ambiguity**. Press **Show Evidence** on any of them: two readers, two served
-model names, two Gonka request ids, and every attempt that did not make it into the verdict listed beside the ones that
-did. Click a request id to resolve it at `/receipt/:requestId` against the gateway's own public endpoint. Then record a
-disposition — Key Corrected on question 3 — and watch the record move to In Review.
+<p align="right"><a href="#readme-top">back to top</a></p>
 
-**The API**, all under `/api`. Everything needs a session cookie except where noted.
+## Submission links
 
-| Route                                         | Does                                                                       |
-| --------------------------------------------- | -------------------------------------------------------------------------- |
-| `POST /auth/guest`                            | Signs into the shared Guest workspace. Public                              |
-| `GET /session`                                | Who the caller is, and whether this is the Guest account. Public           |
-| `POST /records`                               | Creates a record and queues its items. Returns before any checking happens |
-| `GET /records`                                | The library, filtered by `status`, `subject`, `attention` and `q`          |
-| `GET /records/:id`                            | One record with its items, attempts and dispositions                       |
-| `GET /records/:id/events`                     | Server-sent events while a record is checking                              |
-| `POST /records/:id/duplicate`                 | Copies a record. The sample may be copied by anyone                        |
-| `POST /records/:id/items/:itemId/disposition` | Appends the educator's decision                                            |
-| `POST /records/:id/items/:itemId/retry`       | Re-queues an Unverified item as a fresh round                              |
-| `DELETE /records`                             | Trash for a private account, hard delete for Guest                         |
-| `DELETE /account/records`                     | Hard delete of everything this account owns, Trash included                |
-| `POST /extract`                               | Upload to draft. 503 when no transcription key is configured               |
-| `GET /receipts/:requestId`                    | Read-through to the gateway's public receipt. Public                       |
-| `GET /stats`                                  | Account aggregates, including verified readings against total readings     |
-| `GET /health`                                 | Per-family success rate and median latency over 15 minutes. Public         |
-| `GET /sample` · `POST /sample/reset`          | The shipped sample; reset is Guest only                                    |
+| Deliverable        | Link or status                                                         |
+| ------------------ | ---------------------------------------------------------------------- |
+| Project repository | [github.com/MUBA-M1KU/Cekgu](https://github.com/MUBA-M1KU/Cekgu)       |
+| Deployed app       | [cekgu-op7lf5dspq-as.a.run.app](https://cekgu-op7lf5dspq-as.a.run.app) |
+| Public evidence    | [Sample report](https://cekgu-op7lf5dspq-as.a.run.app/sample)          |
+| Project social     | [X: @Cekgu0903](https://x.com/Cekgu0903)                               |
+| Pitch deck         | [`demo/pitch-deck.pdf`](demo/pitch-deck.pdf)                           |
+| MVP demo video     | Pending [#47](https://github.com/MUBA-M1KU/Cekgu/issues/47)            |
+| Track              | MUBA Blockchain Hackathon 2026 — GonkaRouter, AI for Society           |
 
-<p align="right"><a href="#readme-top">&uarr;</a></p>
+The pitch deck covers the problem, objective, motivation and challenges, commercialisation and business model,
+technology stack and track, and the overall concept. The MVP video is deliberately marked pending until the final
+deployed flow is recorded; this README does not substitute a draft for it.
 
-<!-- ROADMAP -->
+The business model is a hypothesis, not revenue evidence: a free tier and pilot plans are designed around questions
+checked, while no checkout is represented as implemented. See [PRODUCT business model](PRODUCT.md#business-model).
 
-## Roadmap
+<p align="right"><a href="#readme-top">back to top</a></p>
 
-See the [open issues](https://github.com/MUBA-M1KU/Cekgu/issues) for a full list of proposed features (and known
-issues).
+## Responsible use and notices
 
-<p align="right"><a href="#readme-top">&uarr;</a></p>
+Do not submit confidential final papers, unreleased examination content, personal data, learner identifiers, marks,
+passwords, or any material you do not have permission to share. This applies to private accounts and to Guest access.
 
-<!-- CONTRIBUTING -->
+Guest access is one shared workspace: other guests can view and delete what a guest adds, and guest-created records are
+scheduled to expire after 24 hours. Private-record deletion hides a record and schedules app-database removal after 30
+days; external processors may retain content under their own policies.
 
-## Team
+The following concise demo notices are part of this submission branch and need owner re-review against the deployed
+release before publication:
 
-<a href="https://github.com/MUBA-M1KU/Cekgu/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=MUBA-M1KU/Cekgu" alt="Team" />
-</a>
+- [Terms](legal/terms.md)
+- [Privacy](legal/privacy.md)
+- [Acceptable use](legal/acceptable-use.md)
 
-<p align="right"><a href="#readme-top">&uarr;</a></p>
+Tororo and Hijiki are Live2D sample characters, not Cekgu originals. The full attribution and release-review requirement
+appear in the [terms](legal/terms.md).
 
-<!-- LICENSE -->
+<p align="right"><a href="#readme-top">back to top</a></p>
 
-## License
+## Repository layout
 
-No open-source licence is granted. This is a private hackathon repository, and all rights are reserved by the team
-pending a decision after judging. The product's own user-facing terms are in [`docs/legal/`](legal/).
+```text
+docs/
+├── README.md          Judge-facing project overview, setup, links, and limits
+├── PRODUCT.md         Product direction, users, business model, and scope
+├── PRD.md             Product requirements and acceptance criteria
+├── TRD.md             Canonical technical reference and GonkaRouter details
+├── DESIGN.md          Visual system and interaction design
+├── brief.md           Hackathon rules and submission requirements
+├── demo/              Pitch and demonstration materials
+├── img/               README diagrams and screenshots
+├── legal/             Draft demo terms, privacy, and acceptable-use notices
+├── source/            Organizer material and research sources
+└── submission/        Devfolio field draft and submission assets index
 
-Third-party assets carry their own terms. The Live2D sample characters **Tororo** and **Hijiki** are used under the
-Live2D Free Material License Agreement and are Live2D Inc.'s own sample assets, not Cekgu's; the runtime is the Live2D
-Cubism SDK, under Live2D's SDK licence.
+src/
+├── client/            React application
+└── server/            Hono API, worker queue, gateway, and persistence
 
-<p align="right"><a href="#readme-top">&uarr;</a></p>
+drizzle/               Database schema and migrations
+e2e/                   Playwright browser tests
+.github/workflows/     CI and deployment workflows
+Dockerfile             Cloud Run container build
+```
 
-<!-- ACKNOWLEDGMENTS -->
+## Further reading
 
-## Acknowledgments
-
-- [GonkaRouter](https://api.gonkarouter.io) — the decentralised inference gateway every verdict in this product rests on
-- [MUBA Blockchain Hackathon 2026](https://muba.my) — the AI for Society track this was built for
-- [Live2D](https://www.live2d.com) — Cubism SDK, and the Tororo & Hijiki sample characters
-- [Shields.io](https://shields.io) — the badges above
-- [contrib.rocks](https://contrib.rocks) — the contributor image
-
-<p align="right"><a href="#readme-top">&uarr;</a></p>
-
-<!-- MARKDOWN LINKS & IMAGES -->
-
-[Bun.sh]: https://img.shields.io/badge/Bun-000000?style=for-the-badge&logo=bun&logoColor=white
-[Bun-url]: https://bun.sh
-[TypeScript.org]: https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
-[TypeScript-url]: https://www.typescriptlang.org
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://react.dev
-[Hono.dev]: https://img.shields.io/badge/Hono-E36002?style=for-the-badge&logo=hono&logoColor=white
-[Hono-url]: https://hono.dev
-[Tailwind.com]: https://img.shields.io/badge/Tailwind-0B1120?style=for-the-badge&logo=tailwindcss&logoColor=38BDF8
-[Tailwind-url]: https://tailwindcss.com
-[Postgres.org]: https://img.shields.io/badge/Postgres-4169E1?style=for-the-badge&logo=postgresql&logoColor=white
-[Postgres-url]: https://www.postgresql.org
-[Drizzle.team]: https://img.shields.io/badge/Drizzle-C5F74F?style=for-the-badge&logo=drizzle&logoColor=000000
-[Drizzle-url]: https://orm.drizzle.team
-[CloudRun.dev]: https://img.shields.io/badge/Cloud%20Run-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white
-[CloudRun-url]: https://cloud.google.com/run
+- [Product](PRODUCT.md) — audience, scope, decisions, and business model
+- [Product requirements](PRD.md) — user stories and acceptance criteria
+- [Technical reference](TRD.md) — integration details and measured behaviour
+- [Design](DESIGN.md) — visual and interaction decisions
+- [Hackathon brief](brief.md) — event and track source of truth
