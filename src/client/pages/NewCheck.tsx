@@ -234,7 +234,7 @@ export function NewCheck() {
         </label>
         {extracting ? (
           <p className="mt-2 type-caption text-ink-muted">
-            A photo takes a few seconds and a PDF can take up to a minute. You can keep typing while it runs.
+            This can take a minute or two, and anything you type before it lands will be replaced.
           </p>
         ) : null}
 
