@@ -209,6 +209,11 @@ export async function signOut(): Promise<void> {
 // server rebuilds every citation from the record it loads, so an edited request id in a client's
 // history buys nothing.
 export async function askRecord(id: string, question: string, history: ChatMessage[]): Promise<ChatMessage[]> {
+  if (MOCK) {
+    const { mockAnswer } = await import('./mock-record')
+    return mockAnswer(id)
+  }
+
   const body = await request<{ messages: ChatMessage[] }>(`/api/records/${encodeURIComponent(id)}/chat`, {
     method: 'POST',
     body: JSON.stringify({ question, history })

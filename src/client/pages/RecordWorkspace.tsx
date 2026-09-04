@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import type { ChatMessage } from '../../shared/chat'
+import type { ChatMessage, Citation } from '../../shared/chat'
 import type { DispositionInput } from '../../shared/schemas'
 import type { ItemVerdict, RecordDetail } from '../../shared/types'
 import { askRecord, getRecord, recordDisposition, retryItem, subscribeToRecord } from '../api'
@@ -85,6 +85,22 @@ export function RecordWorkspace() {
 
   async function onRetry(itemId: string) {
     setRecord(await retryItem(id, itemId))
+  }
+
+  // A citation pill is the claim that an answer came from THIS record, so following one has to land
+  // on the item itself. The modal closes first: the item is behind it, and a scroll under an open
+  // dialog moves something the reader cannot see.
+  function onCite(citation: Citation) {
+    if (citation.kind === 'receipt') return
+
+    setChatOpen(false)
+    setFilter(null)
+
+    // After the close has painted, or the row is still under the backdrop when it is scrolled to.
+    requestAnimationFrame(() => {
+      const row = document.querySelector(`[data-item-position="${citation.position}"]`)
+      row?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    })
   }
 
   async function onAsk(question: string) {
@@ -217,6 +233,7 @@ export function RecordWorkspace() {
         pending={pending}
         onClose={() => setChatOpen(false)}
         onSend={onAsk}
+        onCite={onCite}
       />
     </>
   )

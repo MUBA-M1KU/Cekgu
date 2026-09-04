@@ -1,11 +1,14 @@
-import { useEffect, useId, useRef } from 'react'
-import type { ChatMessage } from '../../shared/chat'
+import { useEffect, useId, useRef, useState } from 'react'
+import type { ChatMessage, Citation } from '../../shared/chat'
 import { STAGE_HEIGHT, STAGE_WIDTH } from '../mascot/motions'
 import { useReduceMotion } from '../mascot/preferences'
 import { Stage } from '../mascot/Stage'
 import { Composer } from './Composer'
 import { EmptyState } from './EmptyState'
 import { Transcript } from './Transcript'
+
+const STAGE_SCALE = 0.6
+const STAGE_SCALED = { w: Math.round(STAGE_WIDTH * STAGE_SCALE), h: Math.round(STAGE_HEIGHT * STAGE_SCALE) }
 
 type Props = {
   open: boolean
@@ -14,6 +17,8 @@ type Props = {
   pending: boolean
   onSend: (question: string) => void
   onClose: () => void
+  /** Wired by the record page: an item pill jumps to its item, a reading pill opens its evidence. */
+  onCite?: (citation: Citation) => void
 }
 
 /**
@@ -23,18 +28,24 @@ type Props = {
  * does, so none of those are reimplemented. Initial focus lands in the composer, because a person
  * who opened this came to type.
  */
-export function ChatModal({ open, messages, pending, onSend, onClose }: Props) {
+export function ChatModal({ open, messages, pending, onSend, onClose, onCite }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const composerRef = useRef<HTMLTextAreaElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
   const reduceMotion = useReduceMotion()
+  // Stage builds its runtime and loads its models on mount, whatever its visibility, so rendering
+  // one behind a closed <dialog> would pull the Live2D chunk onto the record page for cats nobody
+  // has asked to see. Once opened it stays mounted, so closing and reopening does not tear the
+  // runtime down and build it again.
+  const [everOpened, setEverOpened] = useState(false)
 
   useEffect(() => {
     const dialog = dialogRef.current
     if (!dialog) return
 
     if (open && !dialog.open) {
+      setEverOpened(true)
       dialog.showModal()
       composerRef.current?.focus()
     }
@@ -68,7 +79,7 @@ export function ChatModal({ open, messages, pending, onSend, onClose }: Props) {
       }}
       // m-auto restores the centring a modal <dialog> gets from the UA sheet; Tailwind's reset
       // zeroes margin on every element and drops it into the top-left corner.
-      className="m-auto flex h-[38rem] max-h-[calc(100dvh-2rem)] w-[36rem] max-w-[calc(100vw-2rem)] flex-col rounded-sheet border border-rule-strong bg-sheet p-6 text-ink shadow-[var(--shadow-overlay)] backdrop:bg-[var(--shadow-overlay-tint)]"
+      className="m-auto flex h-[38rem] max-h-[calc(100dvh-2rem)] w-[36rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-sheet border border-rule-strong bg-sheet p-6 text-ink shadow-[var(--shadow-overlay)] backdrop:bg-[var(--shadow-overlay-tint)]"
     >
       <header className="flex shrink-0 items-start justify-between gap-4">
         <h2 id={titleId} className="card-title">
@@ -80,25 +91,36 @@ export function ChatModal({ open, messages, pending, onSend, onClose }: Props) {
       </header>
 
       {/* The cats keep the place they hold on the record page, at the trailing edge, so opening the
-          modal moves them rather than introducing a second pair somewhere new. */}
-      <div className="mt-3 flex shrink-0 items-end justify-between gap-4" style={{ height: `${STAGE_HEIGHT}px` }}>
-        <p className="type-caption max-w-[28ch] text-ink-muted">
+          modal moves them rather than introducing a second pair somewhere new.
+
+          Scaled to 60%, because at full size the 160 px stage took a quarter of a 608 px modal and
+          left the transcript about 250 px — which truncated the one sentence in here that states
+          the product's position. The cats are the second thing in this modal, not the first. */}
+      <div className="mt-3 flex shrink-0 items-end justify-between gap-4" style={{ height: `${STAGE_SCALED.h}px` }}>
+        <p className="type-caption max-w-[30ch] text-ink-muted">
           About this record only. Every answer names the reading it came from.
         </p>
-        <div data-chat-stage aria-hidden="true" className="pointer-events-none shrink-0">
-          {reduceMotion ? (
-            <img src="/brand/mascot-still.png" alt="" width={STAGE_WIDTH} height={STAGE_HEIGHT} />
-          ) : (
-            <Stage state={pending ? 'checking' : 'idle'} />
-          )}
+        <div
+          data-chat-stage
+          aria-hidden="true"
+          className="pointer-events-none shrink-0 overflow-hidden"
+          style={{ width: `${STAGE_SCALED.w}px`, height: `${STAGE_SCALED.h}px` }}
+        >
+          <div style={{ transform: `scale(${STAGE_SCALE})`, transformOrigin: 'top left' }}>
+            {everOpened && !reduceMotion ? (
+              <Stage state={pending ? 'checking' : 'idle'} />
+            ) : (
+              <img src="/brand/mascot-still.png" alt="" width={STAGE_WIDTH} height={STAGE_HEIGHT} />
+            )}
+          </div>
         </div>
       </div>
 
-      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto py-5">
+      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto py-4">
         {messages.length === 0 && !pending ? (
           <EmptyState onSend={onSend} />
         ) : (
-          <Transcript messages={messages} pending={pending} />
+          <Transcript messages={messages} pending={pending} onCite={onCite} />
         )}
       </div>
 

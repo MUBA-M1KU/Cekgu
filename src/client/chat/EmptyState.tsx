@@ -21,13 +21,16 @@ export function EmptyState({ onSend }: { onSend: (question: string) => void }) {
     <div>
       <p className="type-eyebrow text-ink-muted">Start Here</p>
 
-      <ul className="m-0 mt-3 flex list-none flex-col gap-2 p-0">
+      {/* Chips that wrap, not full-width rows. Stacked at full width each one read as an empty text
+          input waiting to be filled in, which is exactly the wrong affordance for a thing you press
+          — and four of them cost the height the closing line below needs. */}
+      <ul className="m-0 mt-3 flex list-none flex-wrap gap-2 p-0">
         {SUGGESTIONS.map((question) => (
           <li key={question}>
             <button
               type="button"
               onClick={() => onSend(question)}
-              className="type-ui w-full rounded-control border border-rule-strong bg-sheet px-3 py-2 text-left transition-colors hover:bg-well"
+              className="status-chip type-ui border border-rule-strong bg-sheet text-left transition-colors hover:bg-well"
             >
               {question}
             </button>

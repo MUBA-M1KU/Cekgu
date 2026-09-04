@@ -1,6 +1,6 @@
 import type { ChatMessage } from '../../shared/chat'
 import { SEAT_CAT, SEAT_LABEL } from '../../shared/chat'
-import { CitationPills, ProvenancePill } from './CitationPills'
+import { CitationPills, type CiteAction, ProvenancePill } from './CitationPills'
 
 /**
  * Who is speaking, named above the line rather than implied by which side of the modal it sits on.
@@ -31,7 +31,7 @@ function Speaker({ message }: { message: ChatMessage }) {
   )
 }
 
-function Turn({ message }: { message: ChatMessage }) {
+function Turn({ message, onCite }: { message: ChatMessage; onCite: CiteAction }) {
   const isUser = message.role === 'user'
 
   return (
@@ -45,7 +45,7 @@ function Turn({ message }: { message: ChatMessage }) {
         <p className={`${isUser ? 'type-ui' : 'type-body'} whitespace-pre-wrap`}>{message.text}</p>
       </div>
 
-      <CitationPills citations={message.citations} />
+      <CitationPills citations={message.citations} onCite={onCite} />
       {message.provenance ? <ProvenancePill provenance={message.provenance} /> : null}
     </li>
   )
@@ -55,11 +55,19 @@ function Turn({ message }: { message: ChatMessage }) {
  * The message list. The server hands over prose with the citation tokens already stripped and the
  * citations already resolved, so nothing here parses: it renders what it was given.
  */
-export function Transcript({ messages, pending }: { messages: ChatMessage[]; pending: boolean }) {
+export function Transcript({
+  messages,
+  pending,
+  onCite
+}: {
+  messages: ChatMessage[]
+  pending: boolean
+  onCite?: CiteAction
+}) {
   return (
     <ol role="log" className="m-0 flex list-none flex-col gap-5 p-0">
       {messages.map((message) => (
-        <Turn key={message.id} message={message} />
+        <Turn key={message.id} message={message} onCite={onCite} />
       ))}
 
       {/* The cats tapping on the stage are the other half of this signal. A line of text carries it
