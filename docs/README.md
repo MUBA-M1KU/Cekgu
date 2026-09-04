@@ -242,7 +242,8 @@ docs/
 ├── img/               README diagrams and screenshots
 ├── legal/             Draft demo terms, privacy, and acceptable-use notices
 ├── source/            Organizer material and research sources
-└── submission/        Devfolio field draft and submission assets index
+├── submission/        Devfolio field draft and submission assets index
+└── testing/           Desktop acceptance evidence for the deployed product
 
 src/
 ├── client/            React application
