@@ -46,8 +46,22 @@ Contents:
 **Registration was extended** from 25 Aug to 5 Sept 11:59 PM, announced at the ceremony and not yet reflected on the
 website.
 
-**Demo Day run sheet:** 08:00 registration · 09:00 opening · 10:00 pitching 1 · 13:00 lunch · 14:00 pitching 2 · 17:00
-results · 17:30 closing and winners · 18:00 end.
+**Demo Day agenda** — "D-DAY AGENDA", 6th September (Sunday), announced on Discord, venue **Auditorium 1 @ Level 7, Asia
+Pacific University**:
+
+| Time     | Programme                              |
+| -------- | -------------------------------------- |
+| 08:00 AM | Registration Start                     |
+| 09:00 AM | Opening Speech                         |
+| 10:00 AM | Pitching Session 1                     |
+| 01:00 PM | Lunch                                  |
+| 02:00 PM | Pitching Session 2                     |
+| 05:00 PM | Result Finalise                        |
+| 05:30 PM | Closing Ceremony & Winner Announcement |
+| 06:00 PM | Event End                              |
+
+Programme names are the organizer's card reproduced as printed. Alongside it the announcement noted: "If you are unable
+to come for first pitching session, you can opt for the second session slots by coming before the session starts!"
 
 ## Live sessions
 
