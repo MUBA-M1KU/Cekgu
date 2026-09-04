@@ -2,7 +2,15 @@
      because currentColor does not inherit into an <img>-loaded SVG. The in-app mark is inline in
      src/client/components/Mark.tsx and does follow the theme. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="Cekgu">
-  <path fill="#17202b" fill-rule="evenodd" d="M7 36a17 17 0 1 0 34 0a17 17 0 1 0-34 0M20.5 28a19.5 19.5 0 1 0 39 0a19.5 19.5 0 1 0-39 0M25.5 28a14.5 14.5 0 1 0 29 0a14.5 14.5 0 1 0-29 0"/>
-  <path fill="none" stroke="#B3202F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M16 36l11 12q13-20 27-33"/>
-  <text x="76" y="46" fill="#17202b" font-family="'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="-0.8">Cekgu</text>
+  <!-- Same 19.4 shift as cekgu-lockup-dark.svg, and the same value rather than a separately
+       measured one: the two files carry identical geometry and differ only in fill, so a twin that
+       centres differently is the defect this fixes. The art is drawn from x=7 and the wordmark ends
+       near x=194, leaving 7 units of padding on the left and 45.8 on the right. Measured off a
+       render rather than from getBBox, because getBBox returns the text layout box including side
+       bearings, and what reads as off-centre is the painted ink. -->
+  <g transform="translate(19.4 0)">
+    <path fill="#17202b" fill-rule="evenodd" d="M7 36a17 17 0 1 0 34 0a17 17 0 1 0-34 0M20.5 28a19.5 19.5 0 1 0 39 0a19.5 19.5 0 1 0-39 0M25.5 28a14.5 14.5 0 1 0 29 0a14.5 14.5 0 1 0-29 0"/>
+    <path fill="none" stroke="#B3202F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M16 36l11 12q13-20 27-33"/>
+    <text x="76" y="46" fill="#17202b" font-family="'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="-0.8">Cekgu</text>
+  </g>
 </svg>
