@@ -220,33 +220,41 @@ export function NewCheck() {
       </p>
 
       <div className="mt-6 rounded-sheet bg-well p-4">
-        <p className="type-label">Upload a Paper</p>
-        <p className="mt-1 max-w-[62ch] type-caption text-ink-muted">
-          A photo or a PDF of a printed paper fills the fields below for you to read and correct before you submit it.
-        </p>
-        {/* The split is stated rather than buried. Requirement 1 binds reasoning and verification to
-            Gonka, and reading pixels into text decides nothing, but a judge who works that out for
-            themselves reads silence as concealment. */}
-        <p className="mt-1 max-w-[62ch] type-caption text-ink-muted">
-          The file is read by a vision model. Every judgement about what it says is made by two Gonka models. Both steps
-          are receipted below, and the receipts say which is which.
-        </p>
+        {/* Same arrangement as the guest block below: copy holds its measure on the left, the one
+            action anchors the right. The stateful tail sits under both, because a receipt panel
+            belongs to the whole card and not to the column the button is in. */}
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+          <div className="min-w-0 flex-1">
+            <p className="type-label">Upload a Paper</p>
+            <p className="mt-1 max-w-[62ch] type-caption text-ink-muted">
+              A photo or a PDF of a printed paper fills the fields below for you to read and correct before you submit
+              it.
+            </p>
+            {/* The split is stated rather than buried. Requirement 1 binds reasoning and verification
+                to Gonka, and reading pixels into text decides nothing, but a judge who works that
+                out for themselves reads silence as concealment. */}
+            <p className="mt-1 max-w-[62ch] type-caption text-ink-muted">
+              The file is read by a vision model. Every judgement about what it says is made by two Gonka models. Both
+              steps are receipted below, and the receipts say which is which.
+            </p>
+          </div>
 
-        <label className="mt-3 inline-flex h-9 cursor-pointer items-center rounded-control border border-rule-strong px-4 font-medium focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink has-disabled:cursor-default has-disabled:opacity-60">
-          <input
-            type="file"
-            className="sr-only"
-            accept={UPLOAD_TYPES.join(',')}
-            disabled={extracting}
-            onChange={(event) => {
-              const file = event.target.files?.[0]
-              // Cleared so choosing the same file twice after a failure still fires a change.
-              event.target.value = ''
-              if (file) void uploadPaper(file)
-            }}
-          />
-          {extracting ? 'Reading the Paper' : 'Choose a File'}
-        </label>
+          <label className="inline-flex h-9 shrink-0 cursor-pointer items-center rounded-control border border-rule-strong px-4 font-medium focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink has-disabled:cursor-default has-disabled:opacity-60">
+            <input
+              type="file"
+              className="sr-only"
+              accept={UPLOAD_TYPES.join(',')}
+              disabled={extracting}
+              onChange={(event) => {
+                const file = event.target.files?.[0]
+                // Cleared so choosing the same file twice after a failure still fires a change.
+                event.target.value = ''
+                if (file) void uploadPaper(file)
+              }}
+            />
+            {extracting ? 'Reading the Paper' : 'Choose a File'}
+          </label>
+        </div>
         {extracting ? (
           <p className="mt-2 type-caption text-ink-muted">
             This can take a minute or two, and anything you type before it lands would be replaced.
