@@ -14,8 +14,9 @@ import { ACCEPTED_TYPES, MAX_BYTES, transcribe, transcriptionUnavailable } from 
 // reads what came back, corrects it, and submits it themselves. A wrong extraction that submits
 // itself would put the product's name on a claim nobody read.
 // A ceiling on the whole structuring step, not on one call. callGonka already stops a single call
-// at 90 s, so three families in sequence can spend four and a half minutes before anyone is told
-// anything — and a teacher watching an upload has given up long before that.
+// at 90 s, and structurePaper races the families two at a time, so an order of three can still spend
+// three minutes across two waves before anyone is told anything — and a teacher watching an upload
+// has given up long before that.
 //
 // Set just above one complete attempt, 90 s for the call and 5 s for its receipt, rather than at
 // a round number. A ceiling below that can cut off a call that was about to succeed, which is the
@@ -23,7 +24,8 @@ import { ACCEPTED_TYPES, MAX_BYTES, transcribe, transcriptionUnavailable } from 
 // thing being refused is a SECOND family, and by then the wait is already indefensible.
 //
 // Measured end to end through this route on 4 September: a PNG answered in 35 s and the same paper
-// as a PDF in 74 s, both correct, both on MiniMax. The spread is the gateway's, not the file's.
+// as a PDF in 74 s, both correct, both on MiniMax. The spread is the gateway's, not the file's. Later
+// that day the same PNG hit this ceiling twice running, which is what put the race in structurePaper.
 const STRUCTURE_CEILING_MS = 100_000
 
 export const extractRoutes = new Hono<AppEnv>()
