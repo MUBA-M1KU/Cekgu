@@ -2,14 +2,22 @@ import { useState } from 'react'
 import { RETENTION_DAYS, TRASH_DAYS } from '../../shared/schemas'
 import { deleteAllRecords, signOut } from '../api'
 import { ConfirmDialog } from '../components/ConfirmDialog'
+import { Field } from '../components/Field'
 import { GUEST_WARNING } from '../components/GuestBanner'
+import { Select } from '../components/Select'
 import { Sheet } from '../components/Sheet'
-import { setReduceMotion, useReduceMotionSetting } from '../mascot/preferences'
+import { type MotionSetting, setMotionSetting, useMotionSetting } from '../mascot/preferences'
 import { count } from '../plural'
 import { useSession } from '../session'
 
+const MOTION_OPTIONS = [
+  { value: 'system', label: 'Follow System' },
+  { value: 'full', label: 'Always Animate' },
+  { value: 'reduce', label: 'Never Animate' }
+]
+
 export function Settings() {
-  const reduceMotion = useReduceMotionSetting()
+  const motion = useMotionSetting()
   const session = useSession()
   const [leaving, setLeaving] = useState(false)
   const [failed, setFailed] = useState(false)
@@ -143,24 +151,27 @@ export function Settings() {
       ) : null}
 
       <h2 className="mt-10">Accessibility</h2>
-      <div className="mt-3">
-        {/* The label wraps the control so the whole row is the target, as DispositionGroup does. */}
-        <label className="flex max-w-[60ch] cursor-pointer items-start gap-3">
-          <input
-            type="checkbox"
-            checked={reduceMotion}
-            onChange={(event) => setReduceMotion(event.target.checked)}
-            aria-describedby="reduce-motion-helper"
-            className="check-box mt-0.5"
+      {/* Three choices, not a checkbox. A checkbox could only ever ask for less motion, so a
+          machine with animations switched off had no way back — and Windows reports that one
+          toggle whether it was thrown for motion sensitivity or for a faster desktop. */}
+      <div className="mt-3 max-w-[22rem]">
+        <Field label="Animation" htmlFor="motion">
+          <Select
+            id="motion"
+            label="Animation"
+            value={motion}
+            options={MOTION_OPTIONS}
+            onChange={(value) => setMotionSetting(value as MotionSetting)}
           />
-          <span className="min-w-0">
-            <span className="type-label block">Reduce Motion</span>
-            <span id="reduce-motion-helper" className="mt-1 block type-caption text-ink-muted">
-              Stops the mascot and every continuous animation. Your system setting is respected either way.
-            </span>
-          </span>
-        </label>
+        </Field>
       </div>
+      <p className="type-caption mt-2 max-w-[60ch] text-ink-muted">
+        {motion === 'system'
+          ? 'Following your system setting. Choose Always Animate if your machine has animations switched off but you want them here.'
+          : motion === 'full'
+            ? 'Animating regardless of your system setting.'
+            : 'The mascot and every continuous animation are stopped.'}
+      </p>
 
       <ConfirmDialog
         open={confirming}
