@@ -1113,9 +1113,10 @@ section[id] {
 }
 
 /* SolarSim's popover, matched: w-[min(20rem,calc(100vw-2rem))], max-h-[400px] with its own
-   scroll, a 0.75rem radius, one border, a deep shadow, a header row above divided rows, and an
-   entrance that scales up from 95% while rising 10px. Solid, never translucent — it sits over a
-   flat page and there is nothing for a blur to act on. */
+   scroll, one border, a deep shadow, a header row above divided rows, and an entrance that scales
+   up from 95% while rising 10px. Solid, never translucent — it sits over a flat page and there is
+   nothing for a blur to act on. The radius is --r-sheet rather than a value of its own: a popover
+   is a panel, and DESIGN.md gives a panel the sheet's corner. */
 .app-pop {
   position: absolute;
   top: calc(100% + 0.5rem);
@@ -1126,7 +1127,7 @@ section[id] {
   overflow-x: hidden;
   overflow-y: auto;
   border: 1px solid var(--rule);
-  border-radius: 0.75rem;
+  border-radius: var(--r-sheet);
   background: var(--sheet);
   box-shadow: var(--shadow-overlay);
   transform-origin: top right;
@@ -1151,6 +1152,25 @@ section[id] {
   gap: var(--s-4);
   padding: var(--s-4);
   border-bottom: 1px solid var(--rule);
+}
+
+/* The head's one action. A text button rather than a row, because it acts on the list rather
+   than being an item in it. */
+.app-pop-action {
+  color: var(--ink-muted);
+  transition: color var(--t-quick) var(--ease-out);
+}
+
+.app-pop-action:hover {
+  color: var(--ink);
+}
+
+/* The account block carries the same --s-4 as the head above it and the rows below it, so the
+   identity sits on the popover's own rhythm rather than a padding of its own. */
+.app-pop-account {
+  display: grid;
+  gap: var(--s-1);
+  padding: var(--s-4);
 }
 
 /* divide-y: rows are separated from each other, not boxed individually. */
