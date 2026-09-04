@@ -1,5 +1,5 @@
 import type { CreateRecordInput, DispositionInput } from '../shared/schemas'
-import type { Health, RecordDetail, RecordSummary } from '../shared/types'
+import type { Health, ReceiptStatus, RecordDetail, RecordSummary } from '../shared/types'
 
 export type CreateRecordResponse = { id: string; status: string; itemCount: number; expiresAt: string | null }
 
@@ -35,6 +35,22 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   }
 
   return (await response.json()) as T
+}
+
+export type ExtractResponse = {
+  draft: CreateRecordInput
+  provenance: { requestId: string; servedModel: string; receiptStatus: ReceiptStatus }
+  warnings: string[]
+}
+
+// headers is undefined on purpose. The shared helper stamps application/json whenever there is a
+// body, and a multipart body must carry the boundary the browser generates, which it only does when
+// nothing has set content-type. The spread below the header line is what lets this override it.
+export async function extractPaper(file: File): Promise<ExtractResponse> {
+  const body = new FormData()
+  body.append('file', file)
+
+  return request<ExtractResponse>('/api/extract', { method: 'POST', body, headers: undefined })
 }
 
 export async function createRecord(input: CreateRecordInput): Promise<CreateRecordResponse> {
