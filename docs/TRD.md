@@ -1547,7 +1547,7 @@ may yet be the only one to answer.
 
 **This is confined to the upload's structuring step and touches no part of the verification path.** Structuring is a
 single-model draft for a human to correct; the two-model consensus of [section 5](#5-verified-gotchas) and the verdict
-rules of [section 12](#12-verdict-rules) are untouched, so no track requirement moves.
+rules of [section 14](#14-consensus-rule) are untouched, so no track requirement moves.
 
 ### Configuration
 
