@@ -167,7 +167,7 @@ test('one evidence panel shows two model names and two request ids', async ({ pa
   await page.getByRole('button', { name: /^Possible Key Error/ }).click()
   await page.getByRole('button', { name: EVIDENCE }).first().click()
 
-  await expect(page.locator('a[href*="/v1/receipts/"]').first()).toBeVisible()
+  await expect(page.locator('a[href*="/receipt/"]').first()).toBeVisible()
 
   const panel = await page.locator('body').innerText()
   const requestIds = [...new Set([...panel.matchAll(/req-\d+-\d+/g)].map((match) => match[0]))]
@@ -178,11 +178,17 @@ test('one evidence panel shows two model names and two request ids', async ({ pa
   expect(requestIds.length).toBeGreaterThanOrEqual(2)
   expect(models.length).toBeGreaterThanOrEqual(2)
 
-  // NFR-PROV-3: every id shown is checkable by the person reading it.
+  // NFR-PROV-3: every id shown is checkable by the person reading it. The link goes to the viewer,
+  // and the viewer offers the gateway URL, so the second hop is walked here rather than assumed.
   const links = await page
-    .locator('a[href*="/v1/receipts/"]')
-    .evaluateAll((all) => all.map((a) => (a as HTMLAnchorElement).href))
+    .locator('a[href*="/receipt/"]')
+    .evaluateAll((all) => all.map((a) => (a as HTMLAnchorElement).getAttribute('href') ?? ''))
   for (const id of requestIds) expect(links.some((href) => href.endsWith(id))).toBe(true)
+
+  const first = requestIds[0] as string
+  await page.goto(`/receipt/${first}`)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Gonka Receipt/i)
+  await expect(page.locator(`a[href="https://api.gonkarouter.io/v1/receipts/${first}"]`)).toBeVisible()
 })
 
 // Reported by c3638: navigating away from a record blanked the whole app. Cause was a teardown
