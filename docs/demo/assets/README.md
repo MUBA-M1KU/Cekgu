@@ -25,7 +25,8 @@ Three details in that command matter:
 - **Expect ~800 KB at 1254x1254.** That is a source file, not a deck asset. Resize before committing.
 - **Keep the destination inside the workspace.** Under a `workspace-write` sandbox it has to be.
 
-Use the `brandkit` skill for art direction rather than hand-writing a prompt.
+Art direction comes from the identity section of [`DESIGN.md`](../../DESIGN.md); the `brandkit` skill was deliberately
+not vendored.
 
 ## Resize before committing
 
