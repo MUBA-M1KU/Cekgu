@@ -21,7 +21,7 @@
         - The public sample record, capture-2026-09-03, is the current product.
           Slides 03, 05 and 06 and the "12 of 12" on slide 08 are read from it:
           9 Clear, 2 Possible Key Error, 1 Possible Ambiguity, 0 Unverified.
-          Every request id on slide 06 is in that record and resolves against
+          Every request ID on slide 06 is in that record and resolves against
           GET api.gonkarouter.io/v1/receipts/{id}.
         - The 3 September mechanism benchmark, in
           docs/superpowers/research/three-day-rescore.md, is history. It is on
@@ -37,7 +37,7 @@
           that needs a spoken sentence beside it, and the script carries it.
 
       DIAGRAMS, NOT SCREENSHOTS. Every product surface below is drawn from
-      DESIGN.md. The literal option letters, stems, model ids, request ids and
+      DESIGN.md. The literal option letters, stems, model IDs, request IDs and
       verdict sentences inside them are the record's own, so a judge who lifts a
       string off a slide finds it in the app. Nothing here may be presented as a
       screenshot until it is one.
@@ -60,7 +60,7 @@
 
       1. THE ACCENT IS TONE, NOT RED. DESIGN.md legislates that ink is the paper
          and the machine, and red is the human hand: machine verdicts, model
-         names, request ids and status text are never red. So the headline
+         names, request IDs and status text are never red. So the headline
          payload device (.title em) is carried by tone, muted lead into
          full-strength ink, and it flips with the ground class rather than
          picking a second colour. The only red on this deck is the pen: the
@@ -75,7 +75,7 @@
          because they are TitleCase and DESIGN.md ties positive tracking to
          text-transform: uppercase; the product agrees, with type-label for a
          verdict chip and type-eyebrow for a label. Machine strings are Spline
-         Sans Mono with tabular numerals (request ids, model ids, counts,
+         Sans Mono with tabular numerals (request IDs, model IDs, counts,
          receipt fields). Body prose is untracked; anything that came off the
          exam paper is set in Source Serif 4. That last split is DESIGN.md's
          whole structure: a reader can tell whether text came from the paper,
@@ -108,8 +108,8 @@
 
       THE 30/70 RULE
       Every slide: one headline of at most eight words, at most three supporting
-      lines of at most twelve words. Everything else is the visual. Request ids,
-      model ids and chart values are evidence, and they live inside the visual.
+      lines of at most twelve words. Everything else is the visual. Request IDs,
+      model IDs and chart values are evidence, and they live inside the visual.
 
       GENERATED, NOT TYPED
       The NN / 10 counter, the progress bar and the speaker-note index are all
@@ -146,8 +146,8 @@
       /* ======================================================================
          FONTS - the three DESIGN.md families, latin subset, served from disk
          All three are embedded, mono included. Leaving mono to a system stack
-         is how a deck ends up showing request ids in Consolas on somebody
-         else's machine, and the request ids are the track's proof obligation.
+         is how a deck ends up showing request IDs in Consolas on somebody
+         else's machine, and the request IDs are the track's proof obligation.
          font-display is block, not swap, so a slide never flashes a fallback
          face on a projector. Licences and byte counts: assets/README.md.
          ====================================================================== */
@@ -230,7 +230,7 @@
       }
 
       /* The browser surfaces belong to the design too. A judge who drags across
-         a request id to copy it should get the pen, because selecting text is a
+         a request ID to copy it should get the pen, because selecting text is a
          human marking a page, which is the one thing red means here. */
       ::selection {
         background: var(--pen);
@@ -244,7 +244,7 @@
          is set entirely in Schibsted Grotesk, so Source Serif 4 and Spline Sans
          Mono stayed "unloaded". @media print then reveals all ten slides at once
          and Chromium took the print snapshot before those two decoded, so every
-         serif question stem and every request id was dropped out of the PDF with
+         serif question stem and every request ID was dropped out of the PDF with
          no error anywhere. This element renders one glyph in each face at load,
          so all three are in document.fonts before anything prints. It is a real
          rendered box, not display:none, because a face nothing renders is a face
@@ -2270,7 +2270,7 @@
         class="slide"
         data-section="User"
         data-budget="20"
-        data-speaker-notes="This is who we built it for. Not a university, not a student: one tutor who writes the paper and answers for it when a learner pushes back. She is a composite of the primary operator in PRODUCT.md, so do not name a real person. The right side is the whole product in three rows. She types the paper in, stem, options, key. The record exists before any model runs and she can walk away, because a verdict takes minutes, not seconds. What comes back is one record with a verdict on every item, the risky ones first, two readings each with a model name and a request id, and her own decision kept beside the verdict, never over it. Land on never over it. The rows are FR-CHECK-1 and 2, NFR-PERF-1 and 2, FR-RECORD-3 and 4 and FR-EVIDENCE-1 if a judge asks."
+        data-speaker-notes="This is who we built it for. Not a university, not a student: one tutor who writes the paper and answers for it when a learner pushes back. She is a composite of the primary operator in PRODUCT.md, so do not name a real person. The right side is the whole product in three rows. She types the paper in, stem, options, key. The record exists before any model runs and she can walk away, because a verdict takes minutes, not seconds. What comes back is one record with a verdict on every item, the risky ones first, two readings each with a model name and a request ID, and her own decision kept beside the verdict, never over it. Land on never over it. The rows are FR-CHECK-1 and 2, NFR-PERF-1 and 2, FR-RECORD-3 and 4 and FR-EVIDENCE-1 if a judge asks."
       >
         <div class="pad">
           <div class="chrome">
@@ -2745,7 +2745,7 @@
         class="slide ink"
         data-section="Proof"
         data-budget="30"
-        data-speaker-notes="That is the part this track is actually about. Every reading carries a Gonka request id. These two are from question nine on the record you just had open. Different models, different ids, both receipts verified. Paste either id into that receipts URL and the gateway tells you which model served it. That is what proves this reasoning did not come out of our server. If a judge reaches for a phone here, stop and let them; it is the best thing that can happen in this pitch and both ids were re-verified against the public receipts endpoint on the fourth of September, HTTP two hundred, outcome success, served model matching the slide. Be precise about what the receipt is: it is gateway metadata, not cryptographic proof and not an on-chain transaction, and our own product copy says so. On a centralised API I can tell you I used two models. Here you can check that I did."
+        data-speaker-notes="That is the part this track is actually about. Every reading carries a Gonka request ID. These two are from question nine on the record you just had open. Different models, different ids, both receipts verified. Paste either id into that receipts URL and the gateway tells you which model served it. That is what proves this reasoning did not come out of our server. If a judge reaches for a phone here, stop and let them; it is the best thing that can happen in this pitch and both ids were re-verified against the public receipts endpoint on the fourth of September, HTTP two hundred, outcome success, served model matching the slide. Be precise about what the receipt is: it is gateway metadata, not cryptographic proof and not an on-chain transaction, and our own product copy says so. On a centralised API I can tell you I used two models. Here you can check that I did."
       >
         <div class="pad">
           <div class="chrome">
@@ -2757,7 +2757,7 @@
 
           <div class="head">
             <p class="eyebrow">3. Overall concept &middot; the proof</p>
-            <h2 class="title">Every answer comes with <em>a GonkaRouter request id.</em></h2>
+            <h2 class="title">Every answer comes with <em>a GonkaRouter request ID.</em></h2>
             <p class="sub">Each answer has a GonkaRouter receipt anyone can open. An answer without a receipt is not counted.</p>
           </div>
 
@@ -2765,7 +2765,7 @@
             <p class="kx" style="margin: 0 0 26px">PUBLIC SAMPLE RECORD &middot; QUESTION 9</p>
 
             <!-- Field order is the product's own. In EvidencePanel.tsx a reader
-                 column runs Served Model over a mono model id, then Request Id,
+                 column runs Served Model over a mono model id, then Request ID,
                  then Receipt with Verified as its value. Verified belongs to
                  Receipt, never to Served Model, which is always followed by an
                  id and nothing else. -->
@@ -2773,7 +2773,7 @@
               <div class="card">
                 <p class="kx" style="margin: 0">Served Model</p>
                 <p class="val">MiniMaxAI/MiniMax-M2.7</p>
-                <p class="kx" style="margin: 30px 0 0">Request Id</p>
+                <p class="kx" style="margin: 30px 0 0">Request ID</p>
                 <p class="val">req-1788427238422211326-414866</p>
                 <div class="row" style="margin-top: 30px">
                   <span class="kx">Receipt</span>
@@ -2784,7 +2784,7 @@
               <div class="card">
                 <p class="kx" style="margin: 0">Served Model</p>
                 <p class="val">moonshotai/Kimi-K2.6</p>
-                <p class="kx" style="margin: 30px 0 0">Request Id</p>
+                <p class="kx" style="margin: 30px 0 0">Request ID</p>
                 <p class="val">req-1788427238422211356-414867</p>
                 <div class="row" style="margin-top: 30px">
                   <span class="kx">Receipt</span>
@@ -2808,7 +2808,7 @@
             </div>
           </div>
 
-          <p class="foot">Both ids are on the public sample record.</p>
+          <p class="foot">Both IDs are on the public sample record.</p>
         </div>
       </section>
 
@@ -2817,7 +2817,7 @@
         class="slide"
         data-section="Build"
         data-budget="30"
-        data-speaker-notes="One Bun process. Hono serves the API, the queue worker runs inside it, Postgres holds the records. Every inference call leaves from one file, and it goes to GonkaRouter. There is no other AI provider in this repository, and you can grep for it. In fact a test asserts it on every run, which is the line on the diagram. The four things this track requires are the four things this product needs to work. We did not bolt them on. Three of the four track requirements land here and should be said out loud: all inference through GonkaRouter, at least two models cross-verifying, and a Gonka request id shown for every step. The fourth, the printed rule, was slide four, so refer back to it rather than repeating it. Do not read the band across the bottom word for word; name the four and move on, because the clock is tighter here than it feels."
+        data-speaker-notes="One Bun process. Hono serves the API, the queue worker runs inside it, Postgres holds the records. Every inference call leaves from one file, and it goes to GonkaRouter. There is no other AI provider in this repository, and you can grep for it. In fact a test asserts it on every run, which is the line on the diagram. The four things this track requires are the four things this product needs to work. We did not bolt them on. Three of the four track requirements land here and should be said out loud: all inference through GonkaRouter, at least two models cross-verifying, and a Gonka request ID shown for every step. The fourth, the printed rule, was slide four, so refer back to it rather than repeating it. Do not read the band across the bottom word for word; name the four and move on, because the clock is tighter here than it feels."
       >
         <div class="pad">
           <div class="chrome">
@@ -2840,7 +2840,7 @@
               <li><span class="ico"><svg aria-hidden="true"><use href="#i-blind" /></svg></span><span class="n">3</span><b>Two models</b><p>Both through GonkaRouter, neither shown the answer key, no fallback allowed on any call.</p></li>
               <li><span class="ico"><svg aria-hidden="true"><use href="#i-receipt" /></svg></span><span class="n">4</span><b>Receipt check</b><p><code>GET /v1/receipts/{id}</code>. The served model must equal the one asked for, within 5 s.</p></li>
               <li><span class="ico"><svg aria-hidden="true"><use href="#i-rule" /></svg></span><span class="n">5</span><b>Fixed rule</b><p>Five verdicts, in a fixed order. Fewer than two verified answers means Unverified.</p></li>
-              <li><span class="ico"><svg aria-hidden="true"><use href="#i-record" /></svg></span><span class="n">6</span><b>Record</b><p>Verdict, every attempt, every request id. Her decision is saved next to it, not instead of it.</p></li>
+              <li><span class="ico"><svg aria-hidden="true"><use href="#i-record" /></svg></span><span class="n">6</span><b>Record</b><p>Verdict, every attempt, every request ID. Her decision is saved next to it, not instead of it.</p></li>
             </ol>
 
             <div class="build-grid">
@@ -2854,7 +2854,7 @@
               <div class="card">
                 <span class="panel-head"><span class="ico"><svg aria-hidden="true"><use href="#i-clock" /></svg></span><span class="kx">When the gateway is slow</span></span>
                 <div class="kv"><b>Hedge at 45 s</b><span>a duplicate call to the same model, first answer wins</span></div>
-                <div class="kv"><b>Cutoff at 90 s</b><span>the call is aborted and recorded with no request id</span></div>
+                <div class="kv"><b>Cutoff at 90 s</b><span>the call is aborted and recorded with no request ID</span></div>
                 <div class="kv"><b>3 attempts per family</b><span>then the question is marked Unverified</span></div>
               </div>
               <div class="card ink-card">
@@ -2874,7 +2874,7 @@
                 receipts</span
               >
               <span class="t"
-                ><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#tick" /></svg>A request id per step</span
+                ><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#tick" /></svg>A request ID per step</span
               >
               <span class="t"
                 ><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#tick" /></svg>The rule printed on screen</span
