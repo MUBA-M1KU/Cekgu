@@ -2059,4 +2059,95 @@ section[id] {
       background-position: -200% 0;
     }
   }
+
+  /* -------------------------------------------------------------------------------------------
+     Charts. Three forms, no library, and every one of them built so the numbers are readable as
+     text with the colour switched off.
+
+     THE VERDICT MIX IS FACETED, NOT STACKED, and that is not a style choice. Run the five verdict
+     colours through a CVD validator against either ground and the adjacent pair Split Opinion
+     (ink blue) and Possible Ambiguity (violet) separate by dE 9.9 in light and 6.6 in dark for
+     normal vision, against a floor of 15. In a five-segment stacked bar those two segments touch
+     and nothing but hue tells them apart. The palette cannot move, because a verdict colour is
+     semantic and PRODUCT.md owns it, so the chart moves instead: one labelled row per verdict,
+     where the label carries the identity and the colour only reinforces it. */
+
+  .chart-rows {
+    display: grid;
+    gap: 0.625rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chart-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: var(--s-2) var(--s-3);
+  }
+
+  .chart-row-label {
+    min-width: 0;
+    color: var(--ink);
+  }
+
+  .chart-row-value {
+    color: var(--ink-muted);
+  }
+
+  /* The track is one step off the surface, not a box: a bar chart with a filled background behind
+     every row is dashboard clutter. */
+  .chart-track {
+    grid-column: 1 / -1;
+    height: 0.5rem;
+    border-radius: var(--r-tick);
+    background: var(--well);
+    overflow: hidden;
+  }
+
+  /* 4px rounded data-end, anchored flat to the baseline so the bar starts where the axis is. */
+  .chart-fill {
+    height: 100%;
+    min-width: 2px;
+    border-radius: 0 var(--r-tick) var(--r-tick) 0;
+    background: var(--fill, var(--ink));
+  }
+
+  /* A single ratio against a limit. The fill is ink because verification is a machine fact, and
+     red in this product is the human's hand. */
+  .meter {
+    height: 0.625rem;
+    border-radius: var(--r-tick);
+    background: var(--well);
+    overflow: hidden;
+  }
+
+  .meter-fill {
+    height: 100%;
+    min-width: 2px;
+    border-radius: 0 var(--r-tick) var(--r-tick) 0;
+    background: var(--ink);
+  }
+
+  /* The panel the admin reference calls an illustrated stat: a title, a period chip, one large
+     figure and a second one under it. The graphic in the corner there is a stock illustration;
+     here the space carries the meter, because a figure about proportion has a proportion to draw
+     and a drawing of a person does not. */
+  .panel-figure {
+    font-family: var(--font-mono);
+    font-size: 2.5rem;
+    line-height: 1;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+  }
+
+  .panel-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem var(--s-3);
+    border-radius: var(--r-bubble);
+    background: var(--well);
+    color: var(--ink-muted);
+  }
 }

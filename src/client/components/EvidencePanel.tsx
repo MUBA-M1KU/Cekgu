@@ -1,7 +1,7 @@
+import { Link } from 'react-router'
 import type { Attempt, Item, ReceiptStatus } from '../../shared/types'
+import { receiptPath } from '../pages/ReceiptView'
 import { BubbleRow } from './BubbleRow'
-
-const RECEIPT_BASE = 'https://api.gonkarouter.io/v1/receipts/'
 
 const RECEIPT_LABEL: Record<ReceiptStatus, string> = {
   verified: 'Verified',
@@ -73,14 +73,9 @@ function ReaderColumn({ item, attempt, seat }: { item: Item; attempt: Attempt; s
       </dl>
 
       {attempt.requestId ? (
-        <a
-          href={`${RECEIPT_BASE}${attempt.requestId}`}
-          target="_blank"
-          rel="noreferrer"
-          className="type-label mt-3 inline-block underline"
-        >
+        <Link to={receiptPath(attempt.requestId)} className="type-label mt-3 inline-block underline">
           View Receipt
-        </a>
+        </Link>
       ) : null}
     </div>
   )
@@ -150,14 +145,9 @@ export function EvidencePanel({ item }: { item: Item }) {
                   {attempt.requestId ? (
                     <>
                       {attempt.requestId}{' '}
-                      <a
-                        href={`${RECEIPT_BASE}${attempt.requestId}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="type-label underline"
-                      >
+                      <Link to={receiptPath(attempt.requestId)} className="type-label underline">
                         View Receipt
-                      </a>
+                      </Link>
                     </>
                   ) : (
                     <span className="type-caption text-ink-muted">No request id was returned.</span>

@@ -6,13 +6,23 @@ type Props = {
   title: string
   /** Two sentences: what happens, then the recovery behaviour for this account (FR-RECORD-7). */
   body: string[]
+  /**
+   * The confirm button. Defaults to repeating the title, which is right for a destructive verb
+   * and wrong for a statement: 'You Are Leaving Cekgu' is not something a button can say.
+   */
+  confirmLabel?: string
+  /**
+   * Pen is the human deleting something. A dialog that only asks a person to confirm where they
+   * are going is not that, and colouring it red would spend the product's one alarm on a link.
+   */
+  tone?: 'danger' | 'neutral'
   onCancel: () => void
   onConfirm: () => void
 }
 
 // A level-2 overlay. Native <dialog> gives the focus trap, Escape and the backdrop, so none of
 // those are reimplemented here. Initial focus lands on Cancel. DESIGN.md Destructive confirmations.
-export function ConfirmDialog({ open, title, body, onCancel, onConfirm }: Props) {
+export function ConfirmDialog({ open, title, body, confirmLabel, tone = 'danger', onCancel, onConfirm }: Props) {
   const ref = useRef<HTMLDialogElement>(null)
   const cancelRef = useRef<HTMLButtonElement>(null)
 
@@ -52,20 +62,19 @@ export function ConfirmDialog({ open, title, body, onCancel, onConfirm }: Props)
         </p>
       ))}
       <div className="mt-6 flex justify-end gap-3">
-        <button
-          ref={cancelRef}
-          type="button"
-          onClick={onCancel}
-          className="inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium"
-        >
+        <button ref={cancelRef} type="button" onClick={onCancel} className="btn btn-outline">
           Cancel
         </button>
         <button
           type="button"
           onClick={onConfirm}
-          className="inline-flex h-9 items-center rounded-control bg-pen px-4 font-medium text-pen-ink"
+          className={
+            tone === 'danger'
+              ? 'inline-flex h-9 items-center rounded-control bg-pen px-4 font-medium text-pen-ink'
+              : 'btn btn-primary'
+          }
         >
-          {title}
+          {confirmLabel ?? title}
         </button>
       </div>
     </dialog>

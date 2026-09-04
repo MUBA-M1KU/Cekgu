@@ -2,8 +2,7 @@ import { Link } from 'react-router'
 import type { Attempt, Item, RecordDetail } from '../../../shared/types'
 import { ReadRow } from '../../components/ReadRow'
 import { VerdictChip } from '../../components/VerdictChip'
-
-const RECEIPT_BASE = 'https://api.gonkarouter.io/v1/receipts/'
+import { receiptPath } from '../ReceiptView'
 
 // The cats are the two SEATS, never a particular model: which family serves a seat varies per
 // item, so a fixed cat-to-model mapping would be a lie.
@@ -54,9 +53,12 @@ function Reading({ item, index }: { item: Item; index: number }) {
       <p className="type-body mt-3 italic text-ink-muted">{attempt.reading.reason}</p>
       {attempt.requestId ? (
         <p className="type-mono mt-3 truncate border-t border-rule pt-3 text-ink-muted">
-          <a href={`${RECEIPT_BASE}${attempt.requestId}`} target="_blank" rel="noreferrer" className="underline">
+          {/* The viewer, not the raw JSON. A judge following this during Q&A used to land on a
+              wall of snake_case with nothing naming the fields; the page it lands on now offers
+              the same gateway URL so they can still check it against us. */}
+          <Link to={receiptPath(attempt.requestId)} className="underline">
             {attempt.requestId}
-          </a>
+          </Link>
         </p>
       ) : null}
     </div>
