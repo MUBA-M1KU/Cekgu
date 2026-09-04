@@ -88,7 +88,10 @@ confirm the roster in the final preview.
 
 ## Team LinkedIn URLs
 
-Store the two members' public LinkedIn URLs in the team Drive folder, not this repository. Both are still required.
+Three team-member LinkedIn URLs have been collected outside this repository. Store them in the team Drive folder, not in
+Git.
+
+They are stored and confirmed in the team Drive folder.
 
 ## Cover image
 
@@ -113,6 +116,6 @@ The images are direct Playwright captures, not generated stand-ins. Preserve thi
 - Owner: `@AlaskanTuna`, final submission in issue #43
 - Deadline: 5 September 2026 at 23:59 MYT; do not rely on Devfolio's later countdown
 - Drive folder: <https://drive.google.com/drive/folders/1MxznywqLC6gTLZecfbg5HO9vPxwtFDKg?usp=sharing>
-- Collected: final cover and five exported product screenshots in Drive
-- Missing: demo video URL and two LinkedIn URLs
+- Collected: final cover, five exported product screenshots and three LinkedIn URLs in Drive
+- Missing: demo video URL
 - Final check: links open, assets render, track is selected, team roster is correct and no placeholder text remains
