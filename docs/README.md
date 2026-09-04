@@ -159,11 +159,11 @@ There is no other AI provider anywhere in the code, which a search for provider 
   off the raw response before parsing the body, stores it with the attempt, and the evidence view shows it beside the
   reading it belongs to, as selectable text with a link to the public receipt. Detail:
   [Request IDs and provenance](TRD.md#4-request-ids-and-provenance)
-- **How the receipt check works.** The client asks the gateway not to substitute models, rejects any response that says
-  it did, then fetches `GET /v1/receipts/<id>` and requires the receipt's model to match the one requested. A reading
-  that fails any step is kept, marked rejected with the reason, and never counts. Two readings count as independent only
-  when their receipts name different models. Detail:
-  [Cross-verification validity contract](TRD.md#cross-verification-validity-contract) and
+- **How the receipt check works.** The client sends `X-Gonka-No-Fallback: true`, and rejects any response carrying
+  `x-gonka-fallback`, the header by which the gateway reports a substitution it made regardless. It then fetches
+  `GET /v1/receipts/<id>` and requires the receipt's model to match the one requested. A reading that fails any step is
+  kept, marked rejected with the reason, and never counts. Two readings count as independent only when their receipts
+  name different models. Detail: [Cross-verification validity contract](TRD.md#cross-verification-validity-contract) and
   [Consensus rule](TRD.md#14-consensus-rule)
 - **What the consensus rule is.** A pure function over the first two admitted readings from distinct models: fewer than
   two gives Unverified; different answers give Split Opinion; both listing several defensible options gives Possible
