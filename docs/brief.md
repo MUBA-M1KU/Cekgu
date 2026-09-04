@@ -183,8 +183,8 @@ The four GonkaRouter requirements below still bind. Everything else about the pr
 
 Any of these missed disqualifies the entry:
 
-1. **All** AI reasoning runs through GonkaRouter (`api.gonkarouter.io`). A direct OpenAI or Anthropic call disqualifies
-   us.
+1. **All** AI reasoning and verification runs through GonkaRouter (`api.gonkarouter.io`). A direct OpenAI or Anthropic
+   call in that path disqualifies us. One non-reasoning step sits outside it, and only one — see below.
 1. **Two or more models** cross-verifying, for multi-model consensus.
 1. **Gonka Request IDs displayed** per inference step, the on-chain proof.
 1. **Consensus logic** for model disagreement, called out as "a major plus".
@@ -192,6 +192,13 @@ Any of these missed disqualifies the entry:
 **Third-party AI providers are allowed for additional features**, answered by mrJiang on Discord on 3 September to a
 direct question from our own team. Once the mandatory requirements above are satisfied through GonkaRouter, a feature
 outside that path may use another provider such as Gemini or Qwen. His full answer was "Yes, that's fine."
+
+`TO FILL:` a screenshot of that exchange, in [`source/`](source/). The permission is load-bearing for
+[TRD section 20](TRD.md#20-reading-a-paper-from-an-upload), and a judge who asks for it should be handed the message
+rather than our account of it. **The qualifier "as long as every mandatory requirement is met" is the team's
+characterisation of the ruling rather than a quoted clause**, and it is recorded that way on purpose: the scoping it
+describes is one we hold ourselves to regardless, stated in requirement 1 above and enforced by
+`src/server/gateway/only-gonkarouter.test.ts`.
 
 This relaxes requirement 1, which is written here and in [`../AGENTS.md`](../AGENTS.md) as though any third-party call
 disqualifies. It does not; only the mandatory reasoning and verification path is constrained.

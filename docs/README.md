@@ -101,11 +101,28 @@ id into the receipts endpoint during Q&amp;A.</sub>
 
 ## The two rules that govern everything
 
-**One, every inference call goes through GonkaRouter.** This is the track's hard requirement and it is enforced by there
-being exactly one client:
+**One, every call that reasons goes through GonkaRouter.** This is the track's hard requirement, in the organizers' own
+words:
 
-> **All AI reasoning must run through GonkaRouter** (`https://api.gonkarouter.io`). A direct call to OpenAI, Anthropic
-> or Gemini anywhere in the product path disqualifies the entry.
+> All AI **reasoning and verification logic** MUST run on the Gonka Network via the official inference gateway
+> (gonkarouter.io).
+
+Reasoning and verification, which is narrower than every call a model ever serves, and the difference matters exactly
+once in this product. **Uploading a paper instead of typing it puts one non-reasoning call outside the gateway:** a
+vision model turns the photograph or PDF into the words printed on it, and decides nothing. Everything that then decides
+what those words mean — which passage is a question, which strings are its options, which option the key names — runs on
+GonkaRouter and carries a request id, like every other inference here.
+
+The organizers' own reference architecture draws the same line: their mandatory list separates **Claim Extraction**,
+"accept a URL, tweet, or text snippet as input", from **Decentralised Verification**, where "Gonka-hosted models analyse
+the claim". Input acquisition sits before and outside the reasoning step. Our transcription step is that first item
+generalised from text to pixels.
+
+**The fence is a test, not a promise.** `src/server/gateway/only-gonkarouter.test.ts` fails the build if a provider
+hostname appears anywhere outside `src/server/transcribe/`, if that directory imports the verdict rule or the record
+schema, or if the reasoning path names a provider host at all. No provider SDK is installed. So the grep still works —
+it returns one directory and a stated reason. The decision and its measurements are in
+[`TRD.md` section 20](TRD.md#20-reading-a-paper-from-an-upload).
 
 **Two, fewer than two receipt-verified readings from distinct models gives Unverified, never a guess.** A reading is
 admitted only if the response was a 200, carried no fallback header, parsed, chose a real option, and its public receipt

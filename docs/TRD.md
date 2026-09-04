@@ -1374,6 +1374,12 @@ words. Copying printed words off a page is neither, and step 2 — every judgeme
 `x-request-id` like any other inference in the product. mrJiang's ruling permitting a third-party provider outside the
 mandatory path is recorded in [`brief.md`](brief.md#non-negotiable-requirements).
 
+**The organizers' own reference architecture draws the same line**, which is worth more than our reading of it. Their
+mandatory list separates item 1, **Claim Extraction**, "accept a URL, tweet, or text snippet as input", from item 2,
+**Decentralised Verification**, where "Gonka-hosted models analyse the claim"
+([challenge doc](source/gonkarouter-challenge.md)). Input acquisition sits before and outside the reasoning step in
+their structure, not only in ours. Step 1 here is that first item generalised from text to pixels.
+
 ### Why step 1 cannot be on the gateway
 
 Two measured reasons, not a preference:
@@ -1388,7 +1394,7 @@ Two measured reasons, not a preference:
 `POST /api/extract`, session required, so the default gate in `src/server/routes/index.ts` covers it. Request is
 `multipart/form-data` with one `file` field.
 
-|             |                                                                                                                                                                     |
+| Field       | Value                                                                                                                                                               |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Accepts** | `image/png`, `image/jpeg`, `image/webp`, `application/pdf`, 10 MB cap                                                                                               |
 | **200**     | `{ draft, provenance: { requestId, servedModel, receiptStatus }, warnings: string[] }`                                                                              |

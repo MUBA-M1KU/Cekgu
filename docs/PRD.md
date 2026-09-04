@@ -138,7 +138,9 @@ inside the Guest workspace, word for word as [PRODUCT.md](PRODUCT.md#the-shared-
 **FR-CHECK-1.** **New Check** captures assessment title, subject, language and optional context, then one or more
 multiple-choice items as structured typed input: stem, two to six options and one keyed option.
 
-- Given the educator fills the form, then no free-text paste, file upload, PDF or OCR path is offered
+- Given the educator fills the form, then the questions are stored as structured fields rather than as pasted prose
+- An upload may prefill those fields (FR-CHECK-5), but it never submits them and never bypasses
+  [FR-CHECK-2](#starting-a-check): the educator reviews and edits a draft like any other typed input
 - The language value is stored on the record and passed to the reading prompt as metadata
 
 **FR-CHECK-2.** Local validation rejects a malformed set before any inference request is spent.
@@ -163,6 +165,25 @@ action. A demo on a projector must not open with typing.
   filled, and the form is submittable without another keystroke
 - A second control reverses it, so a presenter can go back to an empty form on stage
 - The copy says what is in the paper, never what the readers will decide about it
+
+**FR-CHECK-5.** An educator may upload a photograph or a PDF of a paper instead of typing it, and the fields are
+prefilled from what it says.
+
+- Accepts `image/png`, `image/jpeg`, `image/webp` and `application/pdf`, to 10 MB. Anything else is refused before a
+  request is spent
+- **It prefills and stops.** No record is created and no check is queued: the educator reviews and edits the draft, and
+  [FR-CHECK-2](#starting-a-check) still applies to it exactly as to typed input
+- The draft lands whole or not at all. Given any failure, then the form is unchanged and the reason is shown in a
+  sentence the educator can act on
+- Given a request is in flight, then the form's fields are locked, so nothing typed during the wait can be replaced by
+  the draft when it arrives
+- The Gonka request id for the structuring step is displayed with the result, per
+  [NFR-PROV-3](#non-functional-requirements)
+- Given `GEMINI_API_KEY` is unset, then the control reports that uploads are off and every other route is unaffected
+
+**The transcription step is the product's one call outside GonkaRouter**, and it is bounded by
+[NFR-SEC-1](#non-functional-requirements). It copies printed words and decides nothing; every judgement about what they
+mean is made by Gonka models afterwards.
 
 ### The queue
 
@@ -510,7 +531,8 @@ Verbatim from [Explicitly outside version one](PRODUCT.md#explicitly-outside-ver
 - Essay, code-execution or mathematical-proof marking
 - Question generation as a substitute for authoring
 - Automatic key changes or automatic paper approval
-- PDF/OCR ingestion on the demo's critical path
+- PDF or image ingestion **on the demo's critical path**. It exists as an affordance beside typed input, not as a step
+  the demo depends on
 - Plagiarism detection, proctoring or learner surveillance
 - Claims that consensus is truth, cryptographic proof or an on-chain transaction
 - A full animated mascot if the review loop and receipt trail are not already stable
