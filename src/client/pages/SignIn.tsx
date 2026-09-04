@@ -91,7 +91,8 @@ function SamplePanel({ record }: { record: RecordDetail | null }) {
 // Where to land after signing in. AppLayout sends the path a visitor was refused, so a shared
 // record link survives the detour. Only an internal path is followed: the value arrives through
 // router state rather than the URL, but a destination we did not write is still not one to
-// navigate to unchecked.
+// navigate to unchecked. With no such path the landing is the dashboard, not the records list:
+// the list is one table with nothing above it, and a first-time account's is empty.
 function internalPath(state: unknown): string | null {
   const from = (state as { from?: unknown } | null)?.from
   return typeof from === 'string' && from.startsWith('/') && !from.startsWith('//') ? from : null
@@ -99,7 +100,7 @@ function internalPath(state: unknown): string | null {
 
 export function SignIn() {
   const navigate = useNavigate()
-  const destination = internalPath(useLocation().state) ?? '/records'
+  const destination = internalPath(useLocation().state) ?? '/dashboard'
   const [mode, setMode] = useState<Mode>('sign-in')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

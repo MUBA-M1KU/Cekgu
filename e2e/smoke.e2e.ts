@@ -64,7 +64,7 @@ test('sign in as guest lands in the guest workspace with the warning banner', as
 
   await page.getByRole('button', { name: 'Sign In as Guest' }).click()
 
-  await expect(page).toHaveURL(/\/records$/)
+  await expect(page).toHaveURL(/\/dashboard$/)
   await expect(page.getByText(GUEST_WARNING)).toBeVisible()
 })
 
@@ -77,7 +77,7 @@ test('the public bar offers the app to a signed-in visitor and sign-in to everyo
 
   await page.goto('/sign-in')
   await page.getByRole('button', { name: 'Sign In as Guest' }).click()
-  await expect(page).toHaveURL(/\/records$/)
+  await expect(page).toHaveURL(/\/dashboard$/)
 
   await page.goto('/')
   const openApp = page.getByRole('link', { name: 'Open App' })
@@ -92,7 +92,7 @@ test('the public bar offers the app to a signed-in visitor and sign-in to everyo
 test('signing out from the account menu returns the visitor to the signed-out site', async ({ page }) => {
   await page.goto('/sign-in')
   await page.getByRole('button', { name: 'Sign In as Guest' }).click()
-  await expect(page).toHaveURL(/\/records$/)
+  await expect(page).toHaveURL(/\/dashboard$/)
 
   await page.locator('.app-avatar').click()
   await page.getByRole('button', { name: /^Sign Out/ }).click()
@@ -203,8 +203,11 @@ test('one evidence panel shows two model names and two request ids', async ({ pa
 test('navigating away from a record with the mascot mounted keeps the app rendered', async ({ page }) => {
   await page.goto('/sign-in')
   await page.getByRole('button', { name: 'Sign In as Guest' }).click()
-  await expect(page).toHaveURL(/\/records$/)
+  await expect(page).toHaveURL(/\/dashboard$/)
 
+  // Reached explicitly rather than by landing on it. The Guest workspace is shared, so the sample
+  // drops off the dashboard's Recent Records as soon as another guest adds anything.
+  await page.goto('/records')
   await page
     .getByText(/practice set/i)
     .first()
@@ -260,7 +263,8 @@ test('navigating away from a record with the mascot mounted keeps the app render
 test('no two links in the workspace share a name and lead somewhere different', async ({ page }) => {
   await page.goto('/sign-in')
   await page.getByRole('button', { name: 'Sign In as Guest' }).click()
-  await expect(page).toHaveURL(/\/records$/)
+  await expect(page).toHaveURL(/\/dashboard$/)
+  await page.goto('/records')
 
   const collisions = await page.$$eval('a', (links) => {
     const byName = new Map()
