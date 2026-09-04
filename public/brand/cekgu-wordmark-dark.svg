@@ -1,5 +1,10 @@
-<!-- Light-ground variant, ink #eceae4 from docs/DESIGN.md. Written literally for the same reason
-     as cekgu-mark.svg: currentColor does not inherit into an <img>-loaded SVG. -->
+<!-- Dark-ground variant, ink #eceae4 from docs/DESIGN.md. Written literally for the same reason
+     as cekgu-mark-dark.svg: currentColor does not inherit into an SVG loaded through an img
+     element. The comment here used to say light-ground, which was wrong: #eceae4 is the ink that
+     goes on a dark ground. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 48" role="img" aria-label="Cekgu">
-  <text x="0" y="38" fill="#eceae4" font-family="'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="-0.8">Cekgu</text>
+  <!-- Same shift as cekgu-wordmark.svg, which carries identical geometry. -->
+  <g transform="translate(20.06 -3.31)">
+    <text x="0" y="38" fill="#eceae4" font-family="'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="-0.8">Cekgu</text>
+  </g>
 </svg>
