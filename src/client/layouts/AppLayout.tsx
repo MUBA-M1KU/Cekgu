@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, Outlet } from 'react-router'
+import { Link, Navigate, Outlet, useLocation } from 'react-router'
 import type { RecordSummary } from '../../shared/types'
 import { listRecords } from '../api'
 import { AppRail } from '../components/AppRail'
@@ -10,15 +10,29 @@ import { useSession } from '../session'
 
 export function AppLayout() {
   const session = useSession()
+  const { pathname, search } = useLocation()
   const [records, setRecords] = useState<RecordSummary[] | null>(null)
 
   // Read once for the shell, so the topbar's bell counts real work rather than decorating the
-  // corner. A failure leaves the bell empty rather than breaking the page around it.
+  // corner. A failure leaves the bell empty rather than breaking the page around it. Not asked
+  // for at all without a session: the answer would be a 401 in the console and nothing else.
   useEffect(() => {
+    if (session.status !== 'in') return
     listRecords()
       .then(setRecords)
       .catch(() => setRecords(null))
-  }, [])
+  }, [session.status])
+
+  // Decide nothing until the session is known. Redirecting while it loads would throw a signed-in
+  // visitor off their own deep link on every cold load.
+  if (session.status === 'loading') return null
+
+  // An unauthenticated visitor gets sign-in, not a furnished workspace that cannot load and an
+  // account menu claiming they are signed in. The path travels with them, so a shared record link
+  // survives the detour. Issue #161.
+  if (session.status === 'out') {
+    return <Navigate to="/sign-in" replace state={{ from: `${pathname}${search}` }} />
+  }
 
   return (
     <div className="app-shell min-h-dvh bg-paper">

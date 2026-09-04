@@ -227,3 +227,27 @@ test('no two links in the workspace share a name and lead somewhere different', 
 
   expect(collisions).toEqual([])
 })
+
+// Issue #161 and c3638's report: an unauthenticated visitor was served the whole authenticated
+// shell — rail, topbar and an account menu reading "Signed In" over an em dash — on a URL whose
+// data could only ever 401. These assert the redirect and the absence of that chrome.
+const APP_ROUTES = ['/dashboard', '/records', '/new-check', '/settings']
+
+for (const route of APP_ROUTES) {
+  test(`an unauthenticated visitor to ${route} is sent to sign in`, async ({ page }) => {
+    await page.goto(route)
+
+    await expect(page).toHaveURL(/\/sign-in$/)
+    // The account menu is the specific thing that lied, so assert it is not on the page at all.
+    await expect(page.locator('.app-avatar')).toHaveCount(0)
+  })
+}
+
+test('signing in returns the visitor to the page they were refused', async ({ page }) => {
+  await page.goto('/settings')
+  await expect(page).toHaveURL(/\/sign-in$/)
+
+  await page.getByRole('button', { name: /guest/i }).first().click()
+
+  await expect(page).toHaveURL(/\/settings$/, { timeout: 20000 })
+})
