@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" role="img" aria-label="Dashboard screenshot placeholder">
+  <rect width="1200" height="750" fill="#edeff1"/>
+  <rect x="40" y="40" width="1120" height="670" rx="10" fill="#ffffff" stroke="#d7dbe0" stroke-width="2"/>
+  <path d="M40 104h1120" stroke="#d7dbe0" stroke-width="2"/>
+  <circle cx="74" cy="72" r="6" fill="#d7dbe0"/>
+  <circle cx="96" cy="72" r="6" fill="#d7dbe0"/>
+  <circle cx="118" cy="72" r="6" fill="#d7dbe0"/>
+  <rect x="146" y="60" width="470" height="24" rx="12" fill="#edeff1"/>
+  <text x="162" y="77" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#4d5560">/dashboard</text>
+  <rect x="100" y="300" width="1000" height="150" rx="8" fill="none" stroke="#d7dbe0" stroke-width="2" stroke-dasharray="10 8"/>
+  <text x="600" y="360" text-anchor="middle" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="34" font-weight="600" fill="#14181f">Dashboard</text>
+  <text x="600" y="400" text-anchor="middle" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="17" fill="#4d5560">Screenshot pending — replace docs/img/shots/dashboard.svg</text>
+</svg>
