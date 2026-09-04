@@ -420,7 +420,7 @@ section[id] {
 
 /* The clip carries the generator's own sparkle mark at 91% across and 83% down its frame. Scaling
    from the top left carries that corner past the right edge at every viewport this page supports.
-   Verified at sixty viewport sizes; see docs/redesign/README.md. */
+   Verified at sixty viewport sizes. */
 .hero-media video,
 .hero-media img {
   width: 100%;

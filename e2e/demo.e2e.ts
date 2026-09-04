@@ -42,12 +42,18 @@ test.describe('the live demo walk', () => {
 
     // 1. The shared-workspace banner appears and stays put.
     await page.getByRole('button', { name: 'Sign In as Guest' }).click()
-    await expect(page).toHaveURL(/\/records$/)
+    await expect(page).toHaveURL(/\/dashboard$/)
     await expect(page.getByText(/Shared demo workspace/)).toBeVisible()
 
     expect(await resetSample()).toEqual({ reset: true })
 
-    // 2. The Guest workspace is shared and holds other people's records, so the script says to
+    // 2. Signing in lands on the dashboard, so the walk crosses to Records the way a presenter
+    // does, through the rail. Scoped to it because the dashboard's own All Records card matches
+    // the same accessible name and an unscoped getByRole would fail strict mode on the pair.
+    await page.getByLabel('Workspace', { exact: true }).getByRole('link', { name: 'Records' }).click()
+    await expect(page).toHaveURL(/\/records$/)
+
+    // The Guest workspace is shared and holds other people's records, so the script says to
     // search rather than scroll hunting for it on stage.
     await page.locator('#q').fill('Introductory')
     await page

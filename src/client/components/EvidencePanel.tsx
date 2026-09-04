@@ -94,19 +94,6 @@ export function EvidencePanel({ item }: { item: Item }) {
 
   const unadmitted = item.attempts.filter((attempt) => !readers.includes(attempt))
 
-  // Distinct status-and-reason pairs, in the order the attempts happened. A Map keyed on the pair
-  // keeps the first occurrence and drops every repeat.
-  const reasons = [
-    ...new Map(
-      unadmitted
-        .filter((attempt) => attempt.rejectionReason !== null)
-        .map((attempt) => [
-          `${attemptStatus(attempt)}:${attempt.rejectionReason}`,
-          [attemptStatus(attempt), attempt.rejectionReason as string] as const
-        ])
-    ).values()
-  ]
-
   return (
     <div className="mt-4 rounded-control bg-well p-4 sm:p-6">
       <h3 className="type-eyebrow text-ink-muted">Evidence</h3>
@@ -174,26 +161,16 @@ export function EvidencePanel({ item }: { item: Item }) {
         </table>
       </div>
 
+      {/* One line, and no rule of its own: the last row of the table already closes on a hairline,
+          so a second one under it drew two parallel edges 16 px apart. The per-status reasons that
+          used to hang here are gone at the owner's request. The Status chip is what names a failed
+          attempt now; the reason string itself is still on the record the API returns, but nothing
+          renders it. */}
       {unadmitted.length > 0 ? (
-        <div className="mt-4 border-t border-rule pt-3">
-          <p className="type-caption max-w-[76ch] text-ink-muted">
-            Every attempt is listed, admitted or not, because the ones that failed are part of the record. A reading
-            enters the verdict only when its receipt names the model that was requested.
-          </p>
-          {/* One line per reason rather than a paragraph under every Status chip. The reasons
-              repeat across rows far more often than they differ, so the table was printing the
-              same sentence three times and pushing the request ids off the screen to do it. */}
-          {reasons.length > 0 ? (
-            <dl className="mt-3 m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
-              {reasons.map(([status, reason]) => (
-                <div key={`${status}:${reason}`} className="contents">
-                  <dt className="type-label whitespace-nowrap">{status}</dt>
-                  <dd className="type-caption m-0 max-w-[70ch] text-ink-muted">{reason}</dd>
-                </div>
-              ))}
-            </dl>
-          ) : null}
-        </div>
+        <p className="type-caption mt-4 text-ink-muted">
+          Every attempt is listed, admitted or not; a reading enters the verdict only when its receipt names the model
+          that was requested.
+        </p>
       ) : null}
     </div>
   )
