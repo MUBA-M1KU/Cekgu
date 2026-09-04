@@ -314,6 +314,65 @@
   padding-inline: var(--s-5);
 }
 
+/* Sign-in is a screen rather than a document, so it is built as two panes that each own their
+   ground instead of a card and a caption sharing one. The bar and the footer are both suppressed on
+   this route, which is what lets the panes run the full height.
+
+   Below lg the figure pane is gone rather than stacked: stacking it would push the form under the
+   fold on a phone, and the form is the only thing this screen is for. The left pane carries the
+   lockup, so nothing the figure pane holds is load-bearing when it goes. */
+.auth-split {
+  display: grid;
+  min-height: 100dvh;
+}
+
+.auth-pane-form {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: var(--s-6);
+  padding: var(--s-6) var(--s-5);
+  background: var(--paper);
+}
+
+.auth-pane-form > * {
+  width: 100%;
+  max-width: 26rem;
+}
+
+.auth-pane-figure {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .auth-split {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .auth-pane-form {
+    justify-items: end;
+    padding-inline: var(--s-7);
+  }
+
+  /* The seam between the panes, not a card edge: one hairline, the same one every row divider
+     in the product uses. */
+  .auth-pane-figure {
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: var(--s-6);
+    padding: var(--s-7);
+    border-left: 1px solid var(--rule);
+    background: var(--well);
+  }
+}
+
+.auth-figure-mark {
+  width: 100%;
+  max-width: 20rem;
+  height: auto;
+}
+
 /* Every fragment target clears the sticky bar plus a little air. */
 section[id] {
   scroll-margin-top: 5.5rem;
