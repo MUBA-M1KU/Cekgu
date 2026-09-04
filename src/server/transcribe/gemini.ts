@@ -15,11 +15,13 @@ import { env } from '../env'
 // could not be cross-verified in any case, so putting it on the gateway would spend the demo path's
 // slowest model on the one job that needs no judgement.
 
-// The model id is verified against GET /v1beta/models, the same rule the TRD sets for Gonka ids and
-// for the same reason: measured 4 September, `gemini-3-flash-preview` answered 503 "experiencing
-// high demand", `gemini-flash-latest` took 33.9 s, and `gemini-2.5-flash` returned a correct
-// transcription of a three-question paper in 5.9 s. An id that is not in that list does not fail
-// cleanly — it hangs until the timeout.
+// Pick the id on measured availability, not on the docs. Every candidate below is a real id present
+// in GET /v1beta/models; being listed is not the same as answering. Measured 4 September against a
+// three-question paper: `gemini-2.5-flash` 200 in 5.9 s and correct, `gemini-3.5-flash` 200 and
+// correct, `gemini-flash-latest` 200 but 33.9 s, `gemini-3-flash-preview` 503 "experiencing high
+// demand", `gemini-3.5-flash-lite` no response at all across three attempts — a 60 s timeout, a
+// 503, and a 90 s timeout. An unavailable model does not fail fast, so the route's own ceiling is
+// what turns it into a sentence rather than a hang.
 const HOST = 'https://generativelanguage.googleapis.com'
 const TIMEOUT_MS = 60_000
 

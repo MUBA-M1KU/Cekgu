@@ -1440,10 +1440,20 @@ Two names, both optional, added to the [section 8](#8-configuration-contract) co
 - **`GEMINI_API_KEY`** — absent, the route answers 503 and the rest of the product is unchanged
 - **`GEMINI_MODEL`** — defaults to `gemini-2.5-flash`
 
-**Verify the id against `GET /v1beta/models` before changing it**, the same rule [section 3](#3-models-measured) sets
-for Gonka ids and for a sharper reason: an id that is not on that list does not `404`. Measured the same day,
-`gemini-3-flash-preview` answered `503`, `gemini-flash-latest` took 33.9 s, and `gemini-2.5-flash` returned a correct
-transcription in 5.9 s.
+**Choose the id on measured availability, not on the documentation.** Listing is not answering: every id below is real
+and present in `GET /v1beta/models`, and they behaved very differently on the same paper on the same afternoon.
+
+| Model                    | Result                                                                              |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| `gemini-2.5-flash`       | 200 in **5.9 s**, correct — the default                                             |
+| `gemini-3.5-flash`       | 200, correct                                                                        |
+| `gemini-flash-latest`    | 200 but **33.9 s**; an alias, so what it points at can move under us                |
+| `gemini-3-flash-preview` | `503`, "experiencing high demand"                                                   |
+| `gemini-3.5-flash-lite`  | **No response across three attempts** — a 60 s timeout, a `503`, and a 90 s timeout |
+
+An unavailable model does not fail fast, which is why the route carries its own ceiling rather than trusting the
+provider to answer or refuse. Verify against `GET /v1beta/models` as [section 3](#3-models-measured) requires for Gonka
+ids, then verify it actually answers.
 
 ### How the boundary is enforced
 

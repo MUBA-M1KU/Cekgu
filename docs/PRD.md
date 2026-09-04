@@ -182,8 +182,8 @@ prefilled from what it says.
 - Given `GEMINI_API_KEY` is unset, then the control reports that uploads are off and every other route is unaffected
 
 **The transcription step is the product's one call outside GonkaRouter**, and it is bounded by
-[NFR-SEC-1](#non-functional-requirements). It copies printed words and decides nothing; every judgement about what they
-mean is made by Gonka models afterwards.
+[NFR-SEC-1](#non-functional-requirements). Its instructions forbid it answering a question, marking an option correct or
+supplying a key that is not printed, so every judgement about what the words mean is made by Gonka models afterwards.
 
 ### The queue
 
@@ -449,9 +449,10 @@ before comparison or display.
 
 **NFR-SEC-1.** Every call that reasons or verifies goes to `api.gonkarouter.io`. Exactly one non-reasoning call may go
 elsewhere: the transcription step in `src/server/transcribe/`, which turns an uploaded image or PDF into the words
-printed on it and decides nothing. No provider SDK is installed anywhere. Checkable by searching the repository for
-provider hostnames and SDK imports, and asserted by `src/server/gateway/only-gonkarouter.test.ts`, which fails the build
-if a hostname appears outside that one directory or if that directory imports the verdict rule or the record schema.
+printed on it under instructions forbidding it to answer, to mark an option correct or to supply an absent key. No
+provider SDK is installed anywhere. Checkable by searching the repository for provider hostnames and SDK imports, and
+asserted by `src/server/gateway/only-gonkarouter.test.ts`, which fails the build if a hostname appears outside that one
+directory or if that directory imports the verdict rule or the record schema.
 [`TRD.md` section 20](TRD.md#20-reading-a-paper-from-an-upload) holds the decision and its measurements.
 
 **NFR-SEC-2.** The GonkaRouter key lives only on the server; it never appears in a client bundle, a URL or a repository

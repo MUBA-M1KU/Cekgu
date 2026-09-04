@@ -109,19 +109,25 @@ words:
 
 Reasoning and verification, which is narrower than every call a model ever serves, and the difference matters exactly
 once in this product. **Uploading a paper instead of typing it puts one non-reasoning call outside the gateway:** a
-vision model turns the photograph or PDF into the words printed on it, and decides nothing. Everything that then decides
-what those words mean — which passage is a question, which strings are its options, which option the key names — runs on
+vision model turns the photograph or PDF into the words printed on it. Its instructions are the claim, not our adjective
+— it is told to "copy the words that are there", to "never answer a question, never mark an option correct, and never
+supply a key that is not printed", and to write `[unreadable]` rather than guess. Everything that then decides what
+those words mean — which passage is a question, which strings are its options, which option the key names — runs on
 GonkaRouter and carries a request id, like every other inference here.
 
 The organizers' own reference architecture draws the same line: their mandatory list separates **Claim Extraction**,
 "accept a URL, tweet, or text snippet as input", from **Decentralised Verification**, where "Gonka-hosted models analyse
 the claim". Input acquisition sits before and outside the reasoning step. Our transcription step is that first item
-generalised from text to pixels.
+generalised from text to pixels — **and the generalisation is a real extension, not a like-for-like mapping.** Accepting
+a tweet needs no model at all; reading a photograph does. That gap is the whole of the extension, and it is why the
+step's instructions and the test below carry the argument rather than the analogy alone.
 
 **The fence is a test, not a promise.** `src/server/gateway/only-gonkarouter.test.ts` fails the build if a provider
 hostname appears anywhere outside `src/server/transcribe/`, if that directory imports the verdict rule or the record
-schema, or if the reasoning path names a provider host at all. No provider SDK is installed. So the grep still works —
-it returns one directory and a stated reason. The decision and its measurements are in
+schema, or if the reasoning path names a provider host at all. No provider SDK is installed.
+
+**Grep the repository, which is the check this section exists to survive.** You will find one directory holding one
+hostname, and the reason it is there. The decision and its measurements are in
 [`TRD.md` section 20](TRD.md#20-reading-a-paper-from-an-upload).
 
 **Two, fewer than two receipt-verified readings from distinct models gives Unverified, never a guess.** A reading is
