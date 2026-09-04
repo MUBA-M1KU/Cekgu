@@ -534,36 +534,25 @@ not appear in it at all. This is a shot list only; recording is issue #47.
 Record the voice-over separately over the screen capture. Reset the sample before rolling, per
 [section 6](#6-live-demo-135-245--driver).
 
-| #   | Time      | On screen                                                                                                                        | Voice-over                                                                                                            |
-| --- | --------- | -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| 1   | 0:00-0:15 | Sign-in page. Cursor moves to **Sign In as Guest** and clicks. The banner appears and holds                                      | "We accept losing marks when we're wrong. We shouldn't lose them because the answer key was wrong."                   |
-| 2   | 0:15-0:30 | The records library. Open **Introductory computer science practice set**, the row with the **Sample** chip. The summary resolves | "Twelve computer science questions, already checked. Nine came back clear. Three need a human."                       |
-| 3   | 0:30-0:55 | Click the **Possible Key Error** filter, which reads **2**. **Show Evidence** on question 3. Hold on the three bubble rows       | "Both readers answered this blind. Neither saw the key. Both chose Queue. The key says Stack."                        |
-| 4   | 0:55-1:15 | **The receipt beat.** Zoom the evidence panel: two **Served Model** names, two **Request Id** values, two **Verified** chips     | "Two different models on the Gonka network. Two request ids, both receipts verified. You can check them."             |
-| 5   | 1:15-1:35 | **Key Corrected**, then bubble `B` under **Corrected Key**, then **Record Decision**. The machine verdict chip stays visible     | "Cekgu doesn't change anything. The educator does, and the record keeps both."                                        |
-| 6   | 1:35-1:50 | Clear the filter. **Show Evidence** on question 1, scroll to **All Attempts**. Hold on the six rows                              | "Six calls went out. Two rate limits, a timeout, a hedge that lost. Two came back with receipts. Only those counted." |
-| 7   | 1:50-2:00 | **New Check**, **Fill With Demo Content**, **Submit Check**. The record appears as **Queued**. Close the tab                     | "Start a check and walk away. It's a queue, not a spinner."                                                           |
+| #   | Time      | On screen                                                                                                                         | Voice-over                                                                                                                                                                                                                                            |
+| --- | --------- | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | 0:00-0:13 | The landing page. Hold on the Cekgu name and hero section.                                                                        | "A learner can understand a subject and still lose marks because an answer key is wrong, or because a question is unclear. These mistakes are small, but their impact begins the moment a practice paper is published."                               |
+| 2   | 0:13-0:26 | Move through the homepage explanation, then open **New Check**.                                                                   | "Cekgu helps educators review multiple-choice practice papers before learners see them. It gives every question an independent second look, so educators can focus on the ones that need attention."                                                  |
+| 3   | 0:26-0:39 | Open sign in, click **Sign In as Guest**, and pause on the Guest warning.                                                         | "For this demonstration, we use Cekgu's shared Guest workspace and a public sample paper. Confidential final papers and learner personal data do not belong here."                                                                                    |
+| 4   | 0:39-0:52 | Open the Sample Report. Show the twelve-question sample and **3 items need attention**.                                           | "This sample contains twelve Computer Science questions. Most are clear, but three need attention. Instead of reviewing every question from the beginning, the educator can go directly to the potential risks."                                      |
+| 5   | 0:52-1:09 | Click the **Possible Key Error** filter, which reads **2**, then open the FIFO question. Keep Stack, Queue, and the rule visible. | "Here, the supplied key says Stack. But both independent readers selected Queue. Cekgu identifies this as a possible key error and explains why the question was flagged."                                                                            |
+| 6   | 1:09-1:29 | Click **Show Evidence**. Zoom in on Reader A and Reader B, served models, request IDs, and **Verified** receipts.                 | "To review a question, Cekgu sends its wording and options — without the supplied key — through GonkaRouter to two distinct model families. The educator can inspect each reading, the served model, the gateway request ID, and its receipt status." |
+| 7   | 1:29-1:43 | Open **All Attempts**. Show a non-admitted or timed-out attempt.                                                                  | "The review stays honest when a model cannot complete its reading. Without two verified readings, Cekgu returns Unverified rather than presenting a false consensus."                                                                                 |
+| 8   | 1:43-1:56 | Select **Key Corrected**, set the revised key to `B` / Queue, and click **Record Decision**.                                      | "Cekgu does not change an answer key automatically. The educator reviews the evidence and makes the final decision."                                                                                                                                  |
+| 9   | 1:56-2:09 | Let the corrected question remain visible briefly. Begin a slow dissolve to the homepage hero.                                    | "With Cekgu, educators can catch possible key errors and ambiguous questions before learners see them — making every practice paper easier to review and explain."                                                                                    |
+| 10  | 2:09-2:15 | The homepage hero, Cekgu logo, and deployed URL remain silently on screen.                                                        | No narration.                                                                                                                                                                                                                                         |
 
-**Literal inputs for shot 7**, so anyone can re-record it without asking. **Fill With Demo Content** writes all of this
-in one click, and typing it by hand is the fallback, not the plan:
+`NOTE:` Shot 6 is the one that cannot be cut. It is the track's proof obligation and the single frame that separates
+this entry from a prompt typed into a chat window. Hold it long enough to read the served model and receipt status.
 
-- **Assessment Title:** `Week 6 networks and data structures quiz`
-- **Subject:** `Computer Science`
-- **Question 3:** `Which data structure removes elements in first in, first out order?`
-- **Options:** `Stack` · `Queue` · `Binary search tree` · `Hash table`
-- **Keyed Option:** `B`
-
-`NOTE:` Shot 4 is the one that cannot be cut. It is the track's proof obligation and the single frame that separates
-this entry from a prompt typed into a chat window. Hold it long enough to read an id off the screen.
-
-`NOTE:` **Shot 6 replaces an Unverified item, which this record does not contain.** Question 1's `All Attempts` table
-has six rows: two `Admitted`, two `Rate Limited` with the gateway's own error text, one `Timed Out` at ninety seconds,
-and a hedge recorded and discarded. Question 12 is the same shape if question 1 renders badly, with three rate limits
-and no cutoff. The table scrolls sideways, so frame the `Status` column and the reason text under it, and let the
-`Request Id` column sit off-frame — the ids are already in shot 4.
-
-`NOTE:` Do not speed up or cut around a slow model call. If a call takes forty seconds, cut to the queued state and say
-so. A video that pretends the gateway is instant contradicts slide 08 of our own deck.
+`NOTE:` The sample does not contain an Unverified item. Shot 7 uses a non-admitted or timed-out attempt to show the same
+fail-closed rule one layer down: an incomplete attempt does not become a reader. The `All Attempts` table scrolls
+sideways, so frame the `Status` column and the reason text under it. The request IDs are already visible in shot 6.
 
 ## 15. Pre-flight
 
