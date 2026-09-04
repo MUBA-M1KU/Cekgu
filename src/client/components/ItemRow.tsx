@@ -53,7 +53,7 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
           type="button"
           onClick={() => setOpen(true)}
           aria-expanded={false}
-          className="flex w-full items-center gap-3 py-3 text-left sm:gap-4"
+          className="flex w-full items-center gap-3 py-4 text-left sm:gap-4"
         >
           <span className="type-mono w-7 shrink-0 text-ink-muted sm:w-10">{item.position}</span>
           <ReadRow

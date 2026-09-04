@@ -47,62 +47,47 @@ ${text}
 </paper>`
 }
 
-export async function structurePaper(
-  text: string,
-  deps: { call: (model: string, prompt: string) => Promise<Provenance>; order: () => string[] }
-): Promise<StructureResult> {
+type Attempt = Extract<StructureResult, { ok: true }> | { ok: false; reason: string | null }
+
+type Deps = { call: (model: string, prompt: string) => Promise<Provenance>; order: () => string[] }
+
+// Two families at once rather than one after another. Sequential was the first shape, and it made
+// the slowest working family the entire budget: healthyOrder puts the only healthy family first, and
+// on 4 September that was MiniMax, which needs 35-74 s for a structuring prompt against DeepSeek's
+// 10 s. Two uploads in a row then failed on the deployed app at the route's 100 s ceiling without a
+// second family ever being called. Racing returns the first VERIFIED receipt instead of the first
+// name in the list, which turns the sum of the latencies into the smallest of them.
+//
+// Two is not an arbitrary width. gatewaySemaphore caps every gateway call at four concurrent, so a
+// wave of two cannot reach the account level 429s of gotcha 10, and it still leaves half the budget
+// for the checks already queued. The family that loses a wave keeps its slot until callGonka's own
+// 90 s timeout releases it; that is the price of not cancelling a call that may yet be the only one
+// to answer.
+const WAVE = 2
+
+export async function structurePaper(text: string, deps: Deps): Promise<StructureResult> {
   const prompt = structuringPrompt(text)
+  const models = deps.order()
   let rejectionReason: string | null = null
 
-  for (const model of deps.order()) {
-    let provenance: Provenance
+  for (let index = 0; index < models.length; index += WAVE) {
+    const failures: { reason: string | null }[] = []
+
     try {
-      provenance = await deps.call(model, prompt)
+      return await Promise.any(
+        models.slice(index, index + WAVE).map(async (model) => {
+          const result = await attempt(model, prompt, deps)
+          if (!result.ok) {
+            failures.push(result)
+            throw new Error('The model did not return a usable draft.')
+          }
+          return result
+        })
+      )
     } catch {
-      continue
-    }
-
-    if (
-      provenance.error !== null ||
-      !provenance.requestId ||
-      provenance.receiptStatus !== 'verified' ||
-      !provenance.servedModel
-    ) {
-      continue
-    }
-
-    let parsed: unknown
-    try {
-      parsed = JSON.parse(extractJson(provenance.content))
-    } catch {
-      rejectionReason = 'The paper could not be structured because the model did not return valid JSON.'
-      continue
-    }
-
-    const candidate = readCandidate(parsed)
-    if (!candidate) {
-      rejectionReason = 'The paper could not be structured because the model did not return a draft and warnings.'
-      continue
-    }
-
-    const draft = createRecordSchema.safeParse(candidate.draft)
-    if (!draft.success) {
-      const detail = draft.error.issues[0]?.message ?? 'The draft did not match the required form.'
-      rejectionReason = detail.startsWith('Invalid input:')
-        ? 'The extracted paper is missing required information. Please check its title, subject, language, and questions.'
-        : `The extracted paper needs attention: ${detail}`
-      continue
-    }
-
-    return {
-      ok: true,
-      draft: draft.data,
-      provenance: {
-        requestId: provenance.requestId,
-        servedModel: provenance.servedModel,
-        receiptStatus: provenance.receiptStatus
-      },
-      warnings: candidate.warnings
+      // Every family in this wave failed. A reason one of them gave is more use to a teacher than
+      // the generic line, so it survives into the next wave and into the final answer.
+      rejectionReason = failures.find((failure) => failure.reason !== null)?.reason ?? rejectionReason
     }
   }
 
@@ -110,6 +95,61 @@ export async function structurePaper(
     ok: false,
     reason:
       rejectionReason ?? 'The paper could not be structured because no model returned a verified Gonka Request ID.'
+  }
+}
+
+async function attempt(model: string, prompt: string, deps: Deps): Promise<Attempt> {
+  let provenance: Provenance
+  try {
+    provenance = await deps.call(model, prompt)
+  } catch {
+    return { ok: false, reason: null }
+  }
+
+  if (
+    provenance.error !== null ||
+    !provenance.requestId ||
+    provenance.receiptStatus !== 'verified' ||
+    !provenance.servedModel
+  ) {
+    return { ok: false, reason: null }
+  }
+
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(extractJson(provenance.content))
+  } catch {
+    return { ok: false, reason: 'The paper could not be structured because the model did not return valid JSON.' }
+  }
+
+  const candidate = readCandidate(parsed)
+  if (!candidate) {
+    return {
+      ok: false,
+      reason: 'The paper could not be structured because the model did not return a draft and warnings.'
+    }
+  }
+
+  const draft = createRecordSchema.safeParse(candidate.draft)
+  if (!draft.success) {
+    const detail = draft.error.issues[0]?.message ?? 'The draft did not match the required form.'
+    return {
+      ok: false,
+      reason: detail.startsWith('Invalid input:')
+        ? 'The extracted paper is missing required information. Please check its title, subject, language, and questions.'
+        : `The extracted paper needs attention: ${detail}`
+    }
+  }
+
+  return {
+    ok: true,
+    draft: draft.data,
+    provenance: {
+      requestId: provenance.requestId,
+      servedModel: provenance.servedModel,
+      receiptStatus: provenance.receiptStatus
+    },
+    warnings: candidate.warnings
   }
 }
 

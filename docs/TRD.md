@@ -1529,10 +1529,25 @@ correct answers to the same three-question paper minutes apart, and the second i
 The interface promises "a minute or two" and locks the form while it waits, which is the honest shape for a step whose
 duration nobody can predict.
 
-**The real fix, when there is time for it, is to race two families rather than try them in sequence.** The semaphore
-admits four concurrent calls and this step uses one; taking the first valid reply of two would make the wait the fastest
-family's rather than the sum of a slow refusal and a slow answer. That is a change to the inference path and not one to
-make the day before a submission.
+**That fix was written as "not one to make the day before a submission", and then the day before the submission the
+feature stopped working.** Measured on the deployed app on 4 September, after #197: two uploads in a row of the same PNG
+returned `422 not_structured` at 105.9 s and 107.2 s, the ceiling in both cases. `GET /api/health` on that instance
+explained it — `deepseek-ai/DeepSeek-V4-Flash-0731` at `successRate 0`, `moonshotai/Kimi-K2.6` at `successRate 0`, and
+only `MiniMaxAI/MiniMax-M2.7` healthy at a 33 s median. A direct gateway ping the same minute confirmed the picture from
+outside: DeepSeek `200`, MiniMax `200`, **Kimi no answer at all, cut off at 95 s**. So `healthyOrder()` correctly put
+the one healthy family first, that family is also the slowest at this prompt, and one attempt consumed the entire
+budget.
+
+**The structuring step now races the first two families of the order and takes the first verified receipt**, in waves of
+two until the order is exhausted. The wait becomes the smallest of the latencies instead of their sum. Two is the width
+because `gatewaySemaphore` admits four concurrent calls: a wave of two cannot reach the account-level `429`s of
+[gotcha 10](#5-verified-gotchas) and still leaves half the budget to the checks already queued. The family that loses a
+wave keeps its slot until `callGonka`'s own 90 s timeout releases it, which is the price of not cancelling a call that
+may yet be the only one to answer.
+
+**This is confined to the upload's structuring step and touches no part of the verification path.** Structuring is a
+single-model draft for a human to correct; the two-model consensus of [section 5](#5-verified-gotchas) and the verdict
+rules of [section 12](#12-verdict-rules) are untouched, so no track requirement moves.
 
 ### Configuration
 
