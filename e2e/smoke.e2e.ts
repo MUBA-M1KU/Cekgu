@@ -201,3 +201,53 @@ test('navigating away from a record with the mascot mounted keeps the app render
   await expect(page.getByRole('link', { name: 'Records' })).toBeVisible()
   expect(errors).toEqual([])
 })
+
+// Third instance of one bug: #143 was two Sample Report links, and the breadcrumb read "Records"
+// while navigating to /dashboard. A link whose name does not say where it goes is a defect whether
+// or not anyone clicks it, and it makes getByRole ambiguous for whoever writes the next test. This
+// asserts the class rather than either instance.
+test('no two links in the workspace share a name and lead somewhere different', async ({ page }) => {
+  await page.goto('/sign-in')
+  await page.getByRole('button', { name: 'Sign In as Guest' }).click()
+  await expect(page).toHaveURL(/\/records$/)
+
+  const collisions = await page.$$eval('a', (links) => {
+    const byName = new Map()
+    for (const el of links) {
+      const name = (el.getAttribute('aria-label') ?? el.textContent ?? '').trim().toLowerCase()
+      if (!name) continue
+      const seen = byName.get(name) ?? new Set()
+      seen.add(el.getAttribute('href') ?? '')
+      byName.set(name, seen)
+    }
+    return [...byName.entries()]
+      .filter(([, hrefs]) => hrefs.size > 1)
+      .map(([name, hrefs]) => `${name} -> ${[...hrefs].join(' | ')}`)
+  })
+
+  expect(collisions).toEqual([])
+})
+
+// Issue #161 and c3638's report: an unauthenticated visitor was served the whole authenticated
+// shell — rail, topbar and an account menu reading "Signed In" over an em dash — on a URL whose
+// data could only ever 401. These assert the redirect and the absence of that chrome.
+const APP_ROUTES = ['/dashboard', '/records', '/new-check', '/settings']
+
+for (const route of APP_ROUTES) {
+  test(`an unauthenticated visitor to ${route} is sent to sign in`, async ({ page }) => {
+    await page.goto(route)
+
+    await expect(page).toHaveURL(/\/sign-in$/)
+    // The account menu is the specific thing that lied, so assert it is not on the page at all.
+    await expect(page.locator('.app-avatar')).toHaveCount(0)
+  })
+}
+
+test('signing in returns the visitor to the page they were refused', async ({ page }) => {
+  await page.goto('/settings')
+  await expect(page).toHaveURL(/\/sign-in$/)
+
+  await page.getByRole('button', { name: /guest/i }).first().click()
+
+  await expect(page).toHaveURL(/\/settings$/, { timeout: 20000 })
+})

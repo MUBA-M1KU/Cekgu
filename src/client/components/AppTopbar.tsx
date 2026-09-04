@@ -76,9 +76,19 @@ export function AppTopbar({ records }: Props) {
       <nav aria-label="Breadcrumb" className="min-w-0 flex-1">
         <ol className="m-0 flex min-w-0 list-none items-center gap-2 p-0">
           <li className="truncate">
-            <Link to="/dashboard" className="type-label text-ink-muted hover:text-ink">
-              {CRUMBS[first] ?? 'Dashboard'}
-            </Link>
+            {segments.length > 1 ? (
+              <Link
+                to={CRUMBS[first] ? `/${first}` : '/dashboard'}
+                className="type-label text-ink-muted hover:text-ink"
+              >
+                {CRUMBS[first] ?? 'Dashboard'}
+              </Link>
+            ) : (
+              // On a section root this crumb is the page you are already on. A link here went to
+              // /dashboard while reading "Records", and collided with the rail's own Records link:
+              // two links, one name, two destinations. Plain text says the same thing truthfully.
+              <span className="type-label text-ink-muted">{CRUMBS[first] ?? 'Dashboard'}</span>
+            )}
           </li>
           {segments.length > 1 ? (
             <>
@@ -201,20 +211,20 @@ export function AppTopbar({ records }: Props) {
           {open === 'user' ? (
             <div className="app-pop">
               <div className="app-pop-head">
-                <p className="type-label">{session.status === 'in' && session.isGuest ? 'Guest' : 'Signed In'}</p>
-              </div>
-              <div className="px-4 pt-3">
-                <p className="type-caption truncate text-ink-muted">
-                  {/* Not the shared-workspace sentence: FR-AUTH-3 requires that one word for word
-                      and copy.test.ts holds it to a single home in GuestBanner. This is the fact a
-                      person actually needs in a menu, and it is not a second phrasing of it. */}
-                  {session.status === 'in'
-                    ? session.isGuest
-                      ? 'Records removed after 24 hours'
-                      : session.user.email
-                    : '—'}
+                <p className="type-label">
+                  {session.status === 'in' ? (session.isGuest ? 'Guest' : 'Signed In') : 'Account'}
                 </p>
               </div>
+              {session.status === 'in' ? (
+                <div className="px-4 pt-3">
+                  <p className="type-caption truncate text-ink-muted">
+                    {/* Not the shared-workspace sentence: FR-AUTH-3 requires that one word for word
+                        and copy.test.ts holds it to a single home in GuestBanner. This is the fact a
+                        person actually needs in a menu, and it is not a second phrasing of it. */}
+                    {session.isGuest ? 'Records removed after 24 hours' : session.user.email}
+                  </p>
+                </div>
+              ) : null}
               <Link to="/settings" className="app-pop-row border-t border-rule" onClick={() => setOpen(null)}>
                 <span className="type-ui">Settings</span>
               </Link>

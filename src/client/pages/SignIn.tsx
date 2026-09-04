@@ -1,5 +1,5 @@
 import { type FormEvent, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import type { VerdictCounts } from '../../shared/types'
 import { getSample } from '../api'
 import { Field, inputClass } from '../components/Field'
@@ -29,8 +29,18 @@ function Figure({ counts }: { counts: VerdictCounts | null }) {
   )
 }
 
+// Where to land after signing in. AppLayout sends the path a visitor was refused, so a shared
+// record link survives the detour. Only an internal path is followed: the value arrives through
+// router state rather than the URL, but a destination we did not write is still not one to
+// navigate to unchecked.
+function internalPath(state: unknown): string | null {
+  const from = (state as { from?: unknown } | null)?.from
+  return typeof from === 'string' && from.startsWith('/') && !from.startsWith('//') ? from : null
+}
+
 export function SignIn() {
   const navigate = useNavigate()
+  const destination = internalPath(useLocation().state) ?? '/records'
   const [mode, setMode] = useState<Mode>('sign-in')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -63,7 +73,7 @@ export function SignIn() {
         body: JSON.stringify(body)
       })
       if (!response.ok) throw new Error('rejected')
-      navigate('/records')
+      navigate(destination)
     } catch {
       setError(
         mode === 'sign-in'
@@ -80,7 +90,7 @@ export function SignIn() {
     try {
       const response = await fetch('/api/auth/guest', { method: 'POST', credentials: 'include' })
       if (!response.ok) throw new Error('guest sign-in failed')
-      navigate('/records')
+      navigate(destination)
     } catch {
       setError('We could not open the Guest workspace, try again in a moment.')
       setBusy(false)

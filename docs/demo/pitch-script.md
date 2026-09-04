@@ -37,7 +37,8 @@ Contents:
 
 - **Slot** — 5 minutes presentation plus 5 minutes Q&A. Source:
   [`../source/opening-ceremony-transcript.md`](../source/opening-ceremony-transcript.md).
-- **Budget** — 3:35 deck · 1:00 live demo · last word by **4:45**. The final 15 seconds is buffer, never content.
+- **Budget** — 3:45 deck · 1:00 live demo · last word by **4:45**. The final 15 seconds is buffer, never content. The
+  ten seconds on slide 05 are deck time: the speaker hands over from that slide, and the demo clock starts at 1:45.
 - **Deck** — [`pitch-deck.html`](pitch-deck.html), 10 slides. PDF backup: [`pitch-deck.pdf`](pitch-deck.pdf). Arrow keys
   or click to advance. `N` speaker notes, `T` rehearsal timer, `R` reset — all off by default and never in the PDF.
 - **Speakers** — **SPEAKER** narrates and owns the deck and the clock. **DRIVER** owns the keyboard and the app.
@@ -213,8 +214,8 @@ _SPEAKER stops talking. DRIVER Alt+Tabs to the app and narrates only the numbere
    sentence above the button reads_ **"Both readers chose Queue. The supplied key is Stack."** _A judge sees the
    disagreement before anyone explains it._
 1. **Point at:** the two `Served Model` names, `moonshotai/Kimi-K2.6` and `MiniMaxAI/MiniMax-M2.7`, and the **two
-   distinct `Request Id` values** beneath them, each with `Receipt Verified`. _Say this one out loud: this is what
-   proves the reasoning ran on the network and not on our server._
+   distinct `Request Id` values** beneath them. Each column's last field is `Receipt`, and each one reads `Verified`.
+   _Say this one out loud: this is what proves the reasoning ran on the network and not on our server._
 1. **Scroll to:** `All Attempts`, still on question 3. _Three rows. Two are `Admitted`. The third is `Timed Out`, and
    the reason beside it reads_ **"The call passed the 90 second evidence cutoff."** _Say it: a reading with no verified
    receipt is not a second reader. Cekgu keeps it and refuses to count it._
@@ -332,6 +333,11 @@ ONE-OFF.**
 
 `NOTE:` Saying the pricing is untested **before** a judge says it is worth more than the pricing is. If the clock is
 tight, cut the plan list, not the last sentence.
+
+`NOTE:` The slide shows a third plan the spoken line does not name, because 49 words will not carry three of them. If a
+judge asks what **Cekgu Studio** is: it is the same product at 1500 questions a month for RM79, priced for a tuition
+centre or a department that checks several papers a term rather than one teacher checking their own. It is one row on a
+pricing page, not a separate build, and **NOBODY IS ON ANY OF THE THREE PLANS. All three prices are untested.**
 
 ## 11. Close (4:35-4:45 · 20 words · SPEAKER)
 
@@ -509,7 +515,7 @@ Decide this before you need it. Venue wifi will be bad.
 | The gateway is slow or rate-limited     | Say so out loud. The sample record is stored evidence and needs no gateway. Stay on it and offer a live receipt lookup instead |
 | A live check does not finish on stage   | Do not wait in silence. It is **Queued**, and the design says you may leave. Move to slide 06                                  |
 | The record list is full of other guests | Type `Introductory` into `Search`. The Guest workspace is shared and other guests' records sit in it                           |
-| The venue network is down               | Slides 05 and 06 carry the whole demo, both real request ids included. Say "this is the deck, not the app" before you start    |
+| The venue network is down               | Slides 05 and 06 carry the whole demo. **Both request ids are on slide 06, not 05.** Say "this is the deck, not the app" first |
 | The deployed app is down                | Run locally on the demo laptop against the seeded sample record, and say that is what you are doing                            |
 | The laptop dies                         | [`pitch-deck.pdf`](pitch-deck.pdf) on the second machine and on a USB stick. It is self-contained and needs no network         |
 
