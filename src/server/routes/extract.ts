@@ -90,5 +90,13 @@ extractRoutes.post('/extract', async (c) => {
     return c.json({ error: { code: 'not_structured', message: structured.reason } }, 422)
   }
 
-  return c.json({ draft: structured.draft, provenance: structured.provenance, warnings: structured.warnings })
+  // Two provenances, named apart on purpose. `provenance` is the Gonka receipt for the step that
+  // decided something; `transcription` is the non-Gonka step's own id, carried so the UI can say
+  // which is which rather than leaving the reader to notice one call has no receipt.
+  return c.json({
+    draft: structured.draft,
+    provenance: structured.provenance,
+    transcription: read.provenance,
+    warnings: structured.warnings
+  })
 })

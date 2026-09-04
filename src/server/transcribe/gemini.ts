@@ -40,7 +40,15 @@ Rules:
 - If a passage is unreadable, write [unreadable] in its place rather than guessing.
 - Output plain text only. No commentary, no markdown, no explanation of what you did.`
 
-export type Transcription = { ok: true; text: string } | { ok: false; reason: string }
+// The transcriber's own receipt. It is not a Gonka request id and must never be displayed as one —
+// this step is outside the gateway by decision, and naming its provenance is how that decision stays
+// visible rather than becoming an unexplained gap. Requirement 4 asks for an id per inference step;
+// this is the honest answer for the one step that has no Gonka call to have one.
+export type TranscriptionProvenance = { provider: 'gemini'; responseId: string | null; model: string | null }
+
+export type Transcription =
+  | { ok: true; text: string; provenance: TranscriptionProvenance }
+  | { ok: false; reason: string }
 
 export function transcriptionUnavailable(): boolean {
   return env.gemini === null
@@ -87,12 +95,20 @@ export async function transcribe(bytes: Uint8Array, mimeType: string): Promise<T
     return { ok: false, reason: `We could not read that file. The reader answered ${response.status}.` }
 
   let text: string
+  let provenance: TranscriptionProvenance
   try {
-    const body = (await response.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] }
+    const body = (await response.json()) as {
+      candidates?: { content?: { parts?: { text?: string }[] } }[]
+      responseId?: string
+      modelVersion?: string
+    }
     text = (body.candidates?.[0]?.content?.parts ?? [])
       .map((part) => part.text ?? '')
       .join('')
       .trim()
+    // modelVersion is what actually served, which need not be the id we asked for — the same
+    // distinction the gateway's receipt draws between requested and served.
+    provenance = { provider: 'gemini', responseId: body.responseId ?? null, model: body.modelVersion ?? gemini.model }
   } catch {
     return { ok: false, reason: 'We could not read that file.' }
   }
@@ -101,5 +117,5 @@ export async function transcribe(bytes: Uint8Array, mimeType: string): Promise<T
   // letting the Gonka step spend an inference producing an empty draft.
   if (text.length === 0) return { ok: false, reason: 'We could not find any text on that page.' }
 
-  return { ok: true, text }
+  return { ok: true, text, provenance }
 }
