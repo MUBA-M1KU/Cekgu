@@ -3,7 +3,6 @@ import { Link } from 'react-router'
 import { GUEST_MAX_ITEMS, GUEST_MAX_RECORDS } from '../../shared/schemas'
 import type { Health, RecordSummary } from '../../shared/types'
 import { getHealth, listRecords } from '../api'
-import { Sheet } from '../components/Sheet'
 import { StatusChip } from '../components/StatusChip'
 import { count } from '../plural'
 import { useSession } from '../session'
@@ -20,6 +19,20 @@ function family(model: string): string {
   return model.split('/')[1]?.split('-')[0] ?? model
 }
 
+/**
+ * Where you land after signing in.
+ *
+ * A page header, a hero card, two CTA cards under it, and a rail down the right.
+ *
+ * TWO CTA CARDS, NOT THREE. New Check and Records are the only other places this
+ * dashboard sends anyone; Settings belongs to the account menu. A third card would be
+ * a slot filled to balance a grid, which DESIGN.md names as a tell.
+ *
+ * THE HERO IS NOT A THIRD CTA, and it is deliberately not a link. It carries the reader
+ * families and whether they are answering, because that is the one thing this product can
+ * say on arrival that nothing else can, and it is the track requirement made visible. Every
+ * line in it comes from /api/health; none is computed here and none is a placeholder.
+ */
 export function Dashboard() {
   const session = useSession()
   const isGuest = session.status === 'in' && session.isGuest
@@ -45,106 +58,120 @@ export function Dashboard() {
   const recent = records?.slice(0, RECENT) ?? []
   const held = records?.filter((record) => !record.isSample).length ?? 0
 
+  // "Back" needs evidence of having been here, and a session does not supply it: a visitor who
+  // signed up a second ago has one. A record this account actually holds is the honest signal.
+  const returning = held > 0
+
   return (
-    <Sheet>
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1>Dashboard</h1>
-          <p className="type-ui mt-2 text-ink-muted">
-            {records === null
-              ? 'Loading your workspace.'
-              : working.length > 0
-                ? `${count(working.length, 'check is', 'checks are')} still running. You can leave and come back.`
-                : attention > 0
-                  ? `${count(attention, 'item needs', 'items need')} your attention.`
-                  : 'Nothing is waiting on you.'}
-          </p>
+    <div className="dash">
+      <header className="dash-head">
+        <h1 className="dash-title">{returning ? 'Good to have you back.' : 'Welcome to Cekgu.'}</h1>
+        <p className="dash-sub">
+          {records === null
+            ? 'Loading your workspace.'
+            : working.length > 0
+              ? `${count(working.length, 'check is', 'checks are')} still running. You can leave and come back.`
+              : attention > 0
+                ? `${count(attention, 'item needs', 'items need')} your attention.`
+                : 'Nothing is waiting on you.'}
+        </p>
+        {failed ? <p className="dash-sub">We could not reach your records, try again in a moment.</p> : null}
+      </header>
+
+      <div className="dash-bento">
+        <div className="dash-col">
+          <section className="dash-hero">
+            <p className="dash-hero-lede">
+              Cekgu never decides on one reading. Two independent models sit every question blind, and each reading
+              carries the Gonka request id of the call that produced it.
+            </p>
+            {health ? (
+              <>
+                <dl className="dash-figures">
+                  {health.models.map((model) => (
+                    <div key={model.model}>
+                      <dt>{family(model.model)}</dt>
+                      {/* No data is its own state. The health ring reports successRate 1 and healthy
+                          true for a family nobody has called, and printing "Available" from that
+                          would be a claim with nothing behind it. */}
+                      <dd data-degraded={model.medianLatencyMs !== null && !model.healthy ? 'true' : undefined}>
+                        {model.medianLatencyMs === null ? 'Not Called Yet' : model.healthy ? 'Available' : 'Degraded'}
+                      </dd>
+                      <p className="dash-figure-note">
+                        {model.medianLatencyMs === null
+                          ? `no calls in the last ${health.windowMinutes} minutes`
+                          : `${Math.round(model.successRate * 100)}% of calls, median ${(model.medianLatencyMs / 1000).toFixed(1)}s`}
+                      </p>
+                    </div>
+                  ))}
+                </dl>
+                <p className="dash-hero-note">
+                  A family that is struggling is demoted rather than dropped, because one reader cannot produce two
+                  independent readings.
+                </p>
+              </>
+            ) : (
+              /* Not a skeleton pretending to be a status. Until /api/health answers there is nothing
+                 true to show, and a shimmering placeholder in the shape of one is a claim that a
+                 reader is there. */
+              <p className="dash-figures-pending">Checking which readers are answering…</p>
+            )}
+          </section>
+
+          <div className="dash-ctas">
+            <Link className="dash-card dash-card-check" to="/new-check">
+              <span className="dash-card-label">New Check</span>
+              <span className="dash-card-sub">Type or paste a paper and its key. The key stays behind.</span>
+            </Link>
+
+            <Link className="dash-card dash-card-records" to="/records">
+              <span className="dash-card-label">All Records</span>
+              <span className="dash-card-sub">
+                {records === null
+                  ? 'Everything this account holds.'
+                  : held > 0
+                    ? `${count(held, 'record')} held, and the protected sample.`
+                    : 'Only the protected sample so far.'}
+              </span>
+            </Link>
+          </div>
         </div>
-        <Link
-          to="/new-check"
-          className="inline-flex h-9 items-center rounded-sheet bg-ink px-4 font-medium text-on-ink"
-        >
-          New Check
-        </Link>
+
+        <aside className="dash-rail">
+          <h2 className="dash-rail-heading">Recent Records</h2>
+          {records !== null && recent.length === 0 ? (
+            <p className="dash-recent-empty">Nothing yet. Your checks will collect here.</p>
+          ) : (
+            <ul className="dash-recent">
+              {recent.map((record) => (
+                <li key={record.id}>
+                  <Link to={`/records/${record.id}`} className="dash-recent-item">
+                    <span className="dash-recent-name">{record.title}</span>
+                    <span className="dash-recent-meta">
+                      <StatusChip status={record.status} />
+                      {record.attentionCount > 0 ? (
+                        <span className="text-pen">{record.attentionCount} to review</span>
+                      ) : null}
+                    </span>
+                    <span className="dash-recent-when">{updatedLabel(record.updatedAt)}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {isGuest ? (
+            <div className="dash-rail-note">
+              <h2 className="dash-rail-heading">Guest Allowance</h2>
+              <p className="dash-recent-empty">
+                {held} of {GUEST_MAX_RECORDS} records held, up to {GUEST_MAX_ITEMS} questions in one check. The
+                protected sample does not count against this. Guest records are removed after 24 hours, and the shared
+                workspace is visible to everyone.
+              </p>
+            </div>
+          ) : null}
+        </aside>
       </div>
-
-      {failed ? (
-        <p className="type-ui mt-6 text-ink-muted">We could not reach your records, try again in a moment.</p>
-      ) : null}
-
-      <h2 className="mt-8">Recent Records</h2>
-      {records !== null && recent.length === 0 ? (
-        <div className="mt-4">
-          <p className="type-ui text-ink-muted">No records yet.</p>
-          <Link
-            to="/new-check"
-            className="mt-4 inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium"
-          >
-            Check Your First Paper
-          </Link>
-        </div>
-      ) : (
-        <ul className="mt-4 m-0 list-none p-0">
-          {recent.map((record) => (
-            <li key={record.id} className="border-t border-rule">
-              <Link to={`/records/${record.id}`} className="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-3">
-                <span className="type-ui min-w-0 flex-1">{record.title}</span>
-                {record.attentionCount > 0 ? (
-                  <span className="type-caption text-pen">{record.attentionCount} to review</span>
-                ) : null}
-                <StatusChip status={record.status} />
-                <span className="type-caption text-ink-muted">{updatedLabel(record.updatedAt)}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-      {records !== null && recent.length > 0 ? (
-        <Link to="/records" className="mt-4 inline-block type-label underline">
-          All Records
-        </Link>
-      ) : null}
-
-      {isGuest ? (
-        <>
-          <h2 className="mt-10">Guest Allowance</h2>
-          <p className="type-ui mt-3 text-ink-muted">
-            {held} of {GUEST_MAX_RECORDS} records held, up to {GUEST_MAX_ITEMS} questions in one check. The protected
-            sample does not count against this. Guest records are removed after 24 hours, and the shared workspace is
-            visible to everyone.
-          </p>
-        </>
-      ) : null}
-
-      {health ? (
-        <>
-          <h2 className="mt-10">Model Availability</h2>
-          <p className="type-ui mt-3 text-ink-muted">
-            Success rate over the last {health.windowMinutes} minutes, per family. A family that is struggling is
-            demoted rather than dropped, because one reader cannot produce two independent readings.
-          </p>
-          <ul className="mt-4 m-0 list-none p-0">
-            {health.models.map((model) => (
-              <li key={model.model} className="flex flex-wrap items-baseline gap-x-4 border-t border-rule py-2">
-                <span className="type-mono min-w-0 flex-1">{family(model.model)}</span>
-                <span className="type-caption text-ink-muted">
-                  {model.medianLatencyMs === null
-                    ? 'no calls in the window'
-                    : `${Math.round(model.successRate * 100)}% of calls, median ${(model.medianLatencyMs / 1000).toFixed(1)}s`}
-                </span>
-                {/* No data is its own state. The health ring reports successRate 1 and healthy
-                    true for a family nobody has called, and printing "Available" from that would
-                    be a claim with nothing behind it. */}
-                <span
-                  className={`type-label ${model.medianLatencyMs === null ? 'text-ink-muted' : model.healthy ? 'text-ink-muted' : 'text-pen'}`}
-                >
-                  {model.medianLatencyMs === null ? 'Not Called Yet' : model.healthy ? 'Available' : 'Degraded'}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : null}
-    </Sheet>
+    </div>
   )
 }

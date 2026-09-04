@@ -1462,3 +1462,252 @@ section[id] {
 .check-box:checked::before {
   transform: scale(1);
 }
+
+/* ---------------------------------------------------------------------------------------------
+   The dashboard: a page header, a hero card, two CTA cards under it, and a rail down the right.
+   It is deliberately not a Sheet. DESIGN.md allows one sheet per page and says a sheet never
+   contains another, so on this page the bento's own cards are the surfaces rather than panels
+   sitting inside a single document. */
+.dash-head {
+  margin-bottom: var(--s-6);
+}
+
+.dash-title {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+.dash-sub {
+  margin-top: var(--s-3);
+  color: var(--ink-muted);
+}
+
+.dash-bento {
+  display: grid;
+  gap: var(--s-5);
+}
+
+@media (min-width: 64rem) {
+  .dash-bento {
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    gap: var(--s-6);
+    align-items: start;
+  }
+}
+
+.dash-col {
+  display: grid;
+  gap: var(--s-5);
+  min-width: 0;
+}
+
+/* The hero states what the product does and then prints the readers behind it. Not a link: the
+   two cards under it are the actions, and a hero that is also a button makes them look like
+   alternatives to it rather than the way on. */
+.dash-hero {
+  padding: var(--s-5);
+  border-radius: 1.25rem;
+  background: var(--sheet);
+  box-shadow: 0 1px 2px var(--shadow-tint);
+}
+
+@media (min-width: 48rem) {
+  .dash-hero {
+    padding: var(--s-6);
+  }
+}
+
+.dash-hero-lede {
+  max-width: 54ch;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+/* Families and their state, not a scoreboard. The big-number-small-label row is the SaaS hero
+   cliche and there is no number here worth setting in 48px: what matters is which readers are
+   answering, which is a word. */
+.dash-figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--s-5);
+  margin: var(--s-5) 0 0;
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--rule);
+}
+
+.dash-figures dt {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}
+
+.dash-figures dd {
+  margin: var(--s-2) 0 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.dash-figures dd[data-degraded="true"] {
+  color: var(--pen);
+}
+
+.dash-figure-note,
+.dash-hero-note {
+  color: var(--ink-muted);
+  font-size: 0.8125rem;
+}
+
+.dash-figure-note {
+  margin-top: var(--s-2);
+}
+
+.dash-hero-note {
+  max-width: 62ch;
+  margin-top: var(--s-5);
+}
+
+.dash-figures-pending {
+  margin-top: var(--s-5);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--rule);
+  color: var(--ink-muted);
+}
+
+.dash-ctas {
+  display: grid;
+  gap: var(--s-5);
+}
+
+@media (min-width: 40rem) {
+  .dash-ctas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.dash-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  align-content: start;
+  gap: var(--s-2);
+  min-height: 9.5rem;
+  padding: var(--s-5);
+  /* Reserved for the motif, so the copy never runs under it. */
+  padding-inline-end: 7.5rem;
+  border-radius: 1.25rem;
+  background: var(--sheet);
+  box-shadow: 0 1px 2px var(--shadow-tint);
+  color: inherit;
+  transition:
+    box-shadow var(--t-quick) var(--ease-out),
+    transform var(--t-quick) var(--ease-out);
+}
+
+.dash-card:hover {
+  box-shadow: 0 6px 20px var(--shadow-tint);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-card:hover {
+    transform: none;
+  }
+}
+
+/* No blend mode and no mask. The motifs carry a real alpha channel and an opaque white sheet, so
+   they sit on either ground as drawn: ink on paper in the light theme, a lit page on a dark desk
+   in the other. Compositing tricks would only be needed if the art had a ground of its own. */
+.dash-card::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  width: 7rem;
+  height: 7rem;
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-size: contain;
+  pointer-events: none;
+}
+
+.dash-card-check::after {
+  background-image: url("/brand/motif-new-check.webp");
+}
+
+.dash-card-records::after {
+  background-image: url("/brand/motif-records.webp");
+}
+
+.dash-card-label {
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.dash-card-sub {
+  color: var(--ink-muted);
+}
+
+.dash-rail {
+  display: grid;
+  gap: var(--s-4);
+  align-content: start;
+}
+
+.dash-rail-heading {
+  font-size: 1rem;
+}
+
+.dash-recent {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.dash-recent li {
+  border-bottom: 1px solid var(--rule);
+}
+
+.dash-recent-item {
+  display: grid;
+  gap: var(--s-2);
+  padding-block: var(--s-3);
+  color: inherit;
+}
+
+.dash-recent-name {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.dash-recent-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: 0.8125rem;
+}
+
+.dash-recent-when {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}
+
+.dash-recent-empty {
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+}
+
+.dash-rail-note {
+  display: grid;
+  gap: var(--s-2);
+  margin-top: var(--s-4);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--rule);
+}
