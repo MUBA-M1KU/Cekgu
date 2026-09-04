@@ -3,6 +3,10 @@
 The spoken script for Demo Day at APU, 6 September 2026, in Auditorium 1 on Level 7. Owned by the `pitch-smith` subagent
 ([`.claude/agents/pitch-smith.md`](../../.claude/agents/pitch-smith.md)).
 
+> **Archived, and retained rather than deleted.** [`docs/demo/pitch-script.md`](../demo/pitch-script.md) is now the
+> 2-minute demo video script. This file is the five-minute stage script and its Q&A, kept whole, including the shot list
+> in [section 14](#14-the-two-minute-video-shot-list) that the video script replaces.
+
 > **4 September 2026, written against the frozen build.** The app is live at `cekgu-op7lf5dspq-as.a.run.app` and its
 > sample record is public at `/api/sample`, signed out. Every count, model id, request id and literal button label below
 > was read off the running app and the record today, not planned against a design. The one exception is
@@ -39,8 +43,9 @@ Contents:
   [`../source/opening-ceremony-transcript.md`](../source/opening-ceremony-transcript.md).
 - **Budget** — 3:45 deck · 1:00 live demo · last word by **4:45**. The final 15 seconds is buffer, never content. The
   ten seconds on slide 05 are deck time: the speaker hands over from that slide, and the demo clock starts at 1:45.
-- **Deck** — [`pitch-deck.html`](pitch-deck.html), 10 slides. PDF backup: [`pitch-deck.pdf`](pitch-deck.pdf). Arrow keys
-  or click to advance. `N` speaker notes, `T` rehearsal timer, `R` reset — all off by default and never in the PDF.
+- **Deck** — [`pitch-deck.html`](../demo/pitch-deck.html), 10 slides. PDF backup:
+  [`pitch-deck.pdf`](../demo/pitch-deck.pdf). Arrow keys or click to advance. `N` speaker notes, `T` rehearsal timer,
+  `R` reset — all off by default and never in the PDF.
 - **Speakers** — **SPEAKER** narrates and owns the deck and the clock. **DRIVER** owns the keyboard and the app.
 - **Notation** — plain text is **spoken**, _italics_ are on-stage action, `NOTE:` is internal and never spoken.
 - **Team** — Team M1KU. `TO FILL:` the four member names, in the **Devfolio submission**. The deck carries the four
@@ -518,10 +523,10 @@ Decide this before you need it. Venue wifi will be bad.
 | The record list is full of other guests | Type `Introductory` into `Search`. The Guest workspace is shared and other guests' records sit in it                           |
 | The venue network is down               | Slides 05 and 06 carry the whole demo. **Both request ids are on slide 06, not 05.** Say "this is the deck, not the app" first |
 | The deployed app is down                | Run locally on the demo laptop against the seeded sample record, and say that is what you are doing                            |
-| The laptop dies                         | [`pitch-deck.pdf`](pitch-deck.pdf) on the second machine and on a USB stick. It is self-contained and needs no network         |
+| The laptop dies                         | [`pitch-deck.pdf`](../demo/pitch-deck.pdf) on the second machine and on a USB stick. It is self-contained and needs no network |
 
-`TO FILL:` a recorded MP4 of the two-minute flow, kept offline at `assets/cekgu-demo.mp4`. That is issue #47, and it is
-not in this ladder until it is on disk. **If it is ever played on stage, say the word "recording" first.**
+`TO FILL:` a recorded MP4 of the two-minute flow, kept offline at `docs/demo/assets/cekgu-demo.mp4`. That is issue #47,
+and it is not in this ladder until it is on disk. **If it is ever played on stage, say the word "recording" first.**
 
 ## 14. The two-minute video, shot list
 
