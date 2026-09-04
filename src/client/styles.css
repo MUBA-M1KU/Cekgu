@@ -1597,9 +1597,12 @@ section[id] {
 
 @media (min-width: 64rem) {
   .dash-bento {
-    grid-template-columns: minmax(0, 1fr) 20rem;
+    grid-template-columns: minmax(0, 1fr) 22rem;
     gap: var(--s-6);
-    align-items: start;
+    /* stretch, not start: the rail is a column beside the hero and the two cards, so its bottom
+       edge belongs on the same line as theirs. align-items: start left it floating short and the
+       page read as three unrelated blocks rather than one bento. */
+    align-items: stretch;
   }
 }
 
@@ -1613,6 +1616,8 @@ section[id] {
    two cards under it are the actions, and a hero that is also a button makes them look like
    alternatives to it rather than the way on. */
 .dash-hero {
+  display: flex;
+  flex-direction: column;
   padding: var(--s-5);
   border-radius: var(--r-sheet);
   background: var(--sheet);
@@ -1635,13 +1640,20 @@ section[id] {
 /* Families and their state, not a scoreboard. The big-number-small-label row is the SaaS hero
    cliche and there is no number here worth setting in 48px: what matters is which readers are
    answering, which is a word. */
+/* The three readers were a ruled-off block under the lede. The rule and the card border were
+   drawing the same boundary twice, so the rule went and each reader took the well instead: the
+   figures now read as three things rather than one paragraph split into columns. */
 .dash-figures {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-  gap: var(--s-5);
+  gap: var(--s-3);
   margin: var(--s-5) 0 0;
-  padding-top: var(--s-5);
-  border-top: 1px solid var(--rule);
+}
+
+.dash-figures > div {
+  padding: var(--s-4);
+  border-radius: var(--r-control);
+  background: var(--well);
 }
 
 .dash-figures dt {
@@ -1675,15 +1687,20 @@ section[id] {
   margin-top: var(--s-2);
 }
 
+/* Pinned to the bottom of the card rather than sitting under the tiles: the hero stretches to
+   the rail's height, and the spare space reads as a margin under the caveat instead of a hole
+   between it and the card's edge. */
 .dash-hero-note {
   max-width: 62ch;
-  margin-top: var(--s-5);
+  margin-top: auto;
+  padding-top: var(--s-5);
 }
 
 .dash-figures-pending {
   margin-top: var(--s-5);
-  padding-top: var(--s-5);
-  border-top: 1px solid var(--rule);
+  padding: var(--s-4);
+  border-radius: var(--r-control);
+  background: var(--well);
   color: var(--ink-muted);
 }
 
@@ -1703,10 +1720,10 @@ section[id] {
   display: grid;
   align-content: start;
   gap: var(--s-2);
-  min-height: 9.5rem;
+  min-height: 11.5rem;
   padding: var(--s-5);
   /* Reserved for the motif, so the copy never runs under it. */
-  padding-inline-end: 6.5rem;
+  padding-inline-end: 8rem;
   border-radius: var(--r-sheet);
   background: var(--sheet);
   box-shadow: 0 1px 2px var(--shadow-tint);
@@ -1740,8 +1757,8 @@ section[id] {
   right: 0;
   bottom: 0;
   z-index: -1;
-  width: 6rem;
-  height: 6rem;
+  width: 7.5rem;
+  height: 7.5rem;
   background-repeat: no-repeat;
   background-position: right bottom;
   background-size: contain;
@@ -1757,7 +1774,8 @@ section[id] {
 }
 
 .dash-card-label {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
+  line-height: 1.25;
   font-weight: 600;
   letter-spacing: -0.02em;
 }
@@ -1776,25 +1794,33 @@ section[id] {
 }
 
 .dash-rail-heading {
-  font-size: 1rem;
+  font-size: 1.25rem;
+  line-height: 1.25;
 }
 
 .dash-recent {
+  display: grid;
+  gap: var(--s-2);
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--rule);
 }
 
-.dash-recent li {
-  border-bottom: 1px solid var(--rule);
-}
-
+/* Tiles, not a ruled list. Five records separated by six hairlines inside a bordered card is
+   three nested line weights doing the same job, and the card was the one that already worked.
+   Each record now sits in the well instead, so the separation is a gap and a ground change. */
 .dash-recent-item {
   display: grid;
   gap: var(--s-2);
-  padding-block: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-control);
+  background: var(--well);
   color: inherit;
+  transition: background var(--t-quick) var(--ease-out);
+}
+
+.dash-recent-item:hover {
+  background: color-mix(in oklab, var(--well) 84%, var(--ink));
 }
 
 .dash-recent-name {
@@ -1816,14 +1842,6 @@ section[id] {
 }
 
 .dash-recent-empty {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   color: var(--ink-muted);
-}
-
-.dash-rail-note {
-  display: grid;
-  gap: var(--s-2);
-  margin-top: var(--s-4);
-  padding-top: var(--s-4);
-  border-top: 1px solid var(--rule);
 }

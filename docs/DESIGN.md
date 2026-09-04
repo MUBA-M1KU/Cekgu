@@ -286,6 +286,13 @@ Separation is spent by role. Three levels exist and nothing invents a fourth:
 Recessed areas use `--well` with no border at all: the evidence panel, code, the guest banner's inner note. Inputs use a
 1 px `--rule-strong` border and no fill. No surface uses a left-hand colour rail, a gradient border or a glass effect.
 
+**A hairline inside a bordered card draws the same boundary twice.** Level 0 assumes rows sitting directly on the sheet,
+where the hairline is the only separation available. Inside a card that already has its own border, a stack of rules
+reads as clutter, so the separation moves to a gap plus a `--well` ground and the rows become tiles at `--r-control`:
+the dashboard's Recent Records list, its three reader figures, and the Settings panels' facts. The hairline stays
+wherever the rows are the sheet's own — the bubble row, attempt rows, the records table, the option list and the review
+document's items are all still level 0.
+
 ## Layout
 
 ### The review document
