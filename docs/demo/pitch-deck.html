@@ -1227,7 +1227,7 @@
         background: var(--sheet);
         border: 1px solid var(--rule);
         border-radius: var(--r-sheet);
-        padding: 20px 20px 18px;
+        padding: 18px 18px 16px;
       }
       .flow li + li::before {
         content: '';
@@ -1259,7 +1259,7 @@
       }
       .flow p {
         margin: 0;
-        font-size: 18.5px;
+        font-size: 18px;
         line-height: 1.4;
         color: var(--ink-muted);
       }
@@ -1273,14 +1273,13 @@
         display: grid;
         grid-template-columns: 1fr 1.15fr 0.95fr;
         gap: 18px;
-        margin-top: 22px;
+        margin-top: 16px;
       }
       .build-grid .card {
         padding: 22px 26px 20px;
       }
       .build-grid .kx {
         display: block;
-        margin-bottom: 10px;
       }
       .kv {
         display: grid;
@@ -1529,6 +1528,47 @@
         font-size: 20px;
         line-height: 1.4;
         color: var(--ink-muted);
+      }
+      .ico {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: var(--r-bubble);
+        background: rgb(179 32 47 / 0.08);
+        box-shadow: inset 0 0 0 1.5px rgb(179 32 47 / 0.3);
+        color: var(--pen);
+        flex-shrink: 0;
+      }
+      .ico svg {
+        width: 22px;
+        height: 22px;
+        display: block;
+      }
+      .flow li .ico {
+        display: flex;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 12px;
+      }
+      .flow li .ico svg {
+        width: 24px;
+        height: 24px;
+      }
+      .panel-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .panel-head .kx {
+        margin: 0;
+      }
+      .ink-card .ico {
+        background: rgb(240 112 121 / 0.14);
+        box-shadow: inset 0 0 0 1.5px rgb(240 112 121 / 0.4);
+        color: #f07079;
       }
       .links {
         margin-top: 56px;
@@ -1796,6 +1836,16 @@
          the four ink slides and land at 2.8:1 on --paper. -->
     <svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
       <defs>
+      <symbol id="i-submit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /><path d="M12 18v-6" /><path d="M9.5 14.5 12 12l2.5 2.5" /></symbol>
+      <symbol id="i-queue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="4" rx="1.2" /><rect x="3" y="10" width="18" height="4" rx="1.2" /><rect x="3" y="15.5" width="11" height="4" rx="1.2" /><path d="m18 17.5 3 0" /><path d="m19.5 16 1.5 1.5-1.5 1.5" /></symbol>
+      <symbol id="i-blind" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18" /><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" /><path d="M9.9 5.1A10.5 10.5 0 0 1 12 5c5 0 9 4.5 10 7a13 13 0 0 1-2.6 3.7" /><path d="M6.6 6.6C4.4 8 2.8 10 2 12c1 2.5 5 7 10 7 1.5 0 2.9-.4 4.1-1" /></symbol>
+      <symbol id="i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z" /><path d="m9 10 2 2 4-4" /><path d="M9 16h6" /></symbol>
+      <symbol id="i-rule" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2" /><path d="M9 2h6v4H9z" /><path d="M9 11h6" /><path d="M9 15h4" /><path d="M9 18h3" /></symbol>
+      <symbol id="i-record" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3" /><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5" /><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" /></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z" /><path d="m2 14 10 5 10-5" /></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5z" /><path d="m9 12 2 2 4-4" /></symbol>
+      
       <symbol id="sdg4" viewBox="0 0 100 100">
         <rect width="100" height="100" fill="#C5192D" />
         <text x="8" y="30" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="24" fill="#fff">4</text>
@@ -2425,30 +2475,30 @@
 
           <div class="body">
             <ol class="flow" data-stagger>
-              <li><span class="n">1</span><b>Submit</b><p>Validated locally. The record exists in under a second, before any model runs.</p></li>
-              <li><span class="n">2</span><b>Queue</b><p>Postgres. One item claimed at a time with <code>SKIP LOCKED</code>. Four gateway calls in flight.</p></li>
-              <li><span class="n">3</span><b>Two blind readers</b><p>Two model families through GonkaRouter. Key withheld. <code>X-Gonka-No-Fallback</code> on every call.</p></li>
-              <li><span class="n">4</span><b>Receipt check</b><p><code>GET /v1/receipts/{id}</code>. The served model must equal the one asked for, within 5 s.</p></li>
-              <li><span class="n">5</span><b>Fixed rule</b><p>Five verdicts, checked in order. Fewer than two distinct verified readings is Unverified.</p></li>
-              <li><span class="n">6</span><b>Record</b><p>Verdict, every attempt, every request id. The human decision is stored beside it, never over it.</p></li>
+              <li><span class="ico"><svg aria-hidden="true"><use href="#i-submit" /></svg></span><span class="n">1</span><b>Submit</b><p>Validated locally. The record exists in under a second, before any model runs.</p></li>
+              <li><span class="ico"><svg aria-hidden="true"><use href="#i-queue" /></svg></span><span class="n">2</span><b>Queue</b><p>Postgres. One item claimed at a time with <code>SKIP LOCKED</code>. Four gateway calls in flight.</p></li>
+              <li><span class="ico"><svg aria-hidden="true"><use href="#i-blind" /></svg></span><span class="n">3</span><b>Two blind readers</b><p>Two model families through GonkaRouter. Key withheld. <code>X-Gonka-No-Fallback</code> on every call.</p></li>
+              <li><span class="ico"><svg aria-hidden="true"><use href="#i-receipt" /></svg></span><span class="n">4</span><b>Receipt check</b><p><code>GET /v1/receipts/{id}</code>. The served model must equal the one asked for, within 5 s.</p></li>
+              <li><span class="ico"><svg aria-hidden="true"><use href="#i-rule" /></svg></span><span class="n">5</span><b>Fixed rule</b><p>Five verdicts, checked in order. Fewer than two distinct verified readings is Unverified.</p></li>
+              <li><span class="ico"><svg aria-hidden="true"><use href="#i-record" /></svg></span><span class="n">6</span><b>Record</b><p>Verdict, every attempt, every request id. The human decision is stored beside it, never over it.</p></li>
             </ol>
 
             <div class="build-grid">
               <div class="card">
-                <span class="kx">Stack</span>
+                <span class="panel-head"><span class="ico"><svg aria-hidden="true"><use href="#i-layers" /></svg></span><span class="kx">Stack</span></span>
                 <div class="kv"><b>Browser</b><span>React 19, Vite</span></div>
                 <div class="kv"><b>Server</b><span>Bun, Hono, worker in the same process</span></div>
                 <div class="kv"><b>Data</b><span>Postgres on Neon, Drizzle</span></div>
                 <div class="kv"><b>Host</b><span>Cloud Run</span></div>
               </div>
               <div class="card">
-                <span class="kx">When the gateway is slow</span>
+                <span class="panel-head"><span class="ico"><svg aria-hidden="true"><use href="#i-clock" /></svg></span><span class="kx">When the gateway is slow</span></span>
                 <div class="kv"><b>Hedge at 45 s</b><span>a duplicate call to the same model, first answer wins</span></div>
                 <div class="kv"><b>Cutoff at 90 s</b><span>the call is aborted and recorded with no request id</span></div>
                 <div class="kv"><b>3 attempts per family</b><span>then the item is Unverified, never guessed</span></div>
               </div>
               <div class="card ink-card">
-                <span class="kx">Asserted every run</span>
+                <span class="panel-head"><span class="ico"><svg aria-hidden="true"><use href="#i-shield" /></svg></span><span class="kx">Asserted every run</span></span>
                 <p class="mono-line">only-gonkarouter.test.ts</p>
                 <p class="ink-p">No other AI provider exists anywhere in the code. A judge can grep for it.</p>
               </div>
