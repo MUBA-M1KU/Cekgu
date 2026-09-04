@@ -117,6 +117,7 @@ export function NewCheck() {
       )
       // Errors on screen were about the form before this paper landed in it.
       setErrors({})
+      setPrefilled(true)
       setExtraction({
         requestId: response.provenance.requestId,
         servedModel: response.provenance.servedModel,
@@ -137,6 +138,10 @@ export function NewCheck() {
     setItems([emptyItem()])
     setErrors({})
     setPrefilled(false)
+    // The receipt goes with the draft it belongs to. A request id left on screen would be
+    // provenance for questions that are no longer in any field.
+    setExtraction(null)
+    setExtractError(null)
   }
 
   function patchItem(index: number, patch: Partial<DraftItem>) {
@@ -279,12 +284,15 @@ export function NewCheck() {
           >
             Fill With Demo Content
           </button>
-          {prefilled ? (
-            <button type="button" onClick={clearForm} className="type-label shrink-0 underline">
-              Clear the Form
-            </button>
-          ) : null}
         </div>
+      ) : null}
+
+      {/* Outside the guest block on purpose: an upload fills the form for any account, and the one
+          control that empties it again cannot be the one behind a gate. */}
+      {prefilled ? (
+        <button type="button" onClick={clearForm} className="type-label mt-4 underline">
+          Clear the Form
+        </button>
       ) : null}
 
       <div className="mt-6 flex flex-col gap-5">
