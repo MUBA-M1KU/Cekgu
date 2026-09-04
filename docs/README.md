@@ -152,8 +152,9 @@ additional interface locales remain future work.
 
 ## GonkaRouter integration
 
-Every inference call goes to `https://api.gonkarouter.io` from one server-side client, `src/server/gateway/client.ts`.
-There is no other AI provider anywhere in the code, which a search for provider hostnames confirms.
+Every product inference call goes to `https://api.gonkarouter.io` from one server-side client,
+`src/server/gateway/client.ts`. Product source under `src/` and runtime dependencies contain no direct provider client;
+vendored development-agent skills are outside the product path. The guard test enforces that boundary.
 
 - **Where the request ids come from.** When a GonkaRouter response supplies an `x-request-id` header, the client reads
   it off the raw response before parsing the body, stores it with the attempt, and the evidence view shows it beside the
@@ -410,7 +411,7 @@ bun run e2e:local                                                 # local server
 
 Browsers are not installed by `bun install`; run `bunx playwright install chromium` once. The same pass runs
 automatically after every production deploy, so a deploy that serves a broken build fails the run rather than waiting
-for someone to open the URL. Measured on 3 September: **9 passed, 1 skipped**.
+for someone to open the URL. Measured on 4 September against production: **13 passed, 1 skipped**.
 
 It asserts **rendered content, never that the root element is attached**: an attached root passes against a blank page,
 against a failed fetch shown as an empty state, and against a React error boundary, so it proves the bundle parsed
