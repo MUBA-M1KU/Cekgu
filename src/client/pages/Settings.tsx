@@ -206,15 +206,6 @@ export function Settings() {
           <Card>
             <div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Theme" htmlFor="theme">
-                  <Select
-                    id="theme"
-                    label="Theme"
-                    value={theme}
-                    options={THEME_OPTIONS}
-                    onChange={(value) => setTheme(value as Theme)}
-                  />
-                </Field>
                 {/* Three choices, not a checkbox. A checkbox could only ever ask for less motion, so
                     a machine with animations switched off had no way back, and Windows reports that
                     one toggle whether it was thrown for motion sensitivity or for a faster desktop. */}
@@ -225,6 +216,15 @@ export function Settings() {
                     value={motion}
                     options={MOTION_OPTIONS}
                     onChange={(value) => setMotionSetting(value as MotionSetting)}
+                  />
+                </Field>
+                <Field label="Theme" htmlFor="theme">
+                  <Select
+                    id="theme"
+                    label="Theme"
+                    value={theme}
+                    options={THEME_OPTIONS}
+                    onChange={(value) => setTheme(value as Theme)}
                   />
                 </Field>
               </div>
