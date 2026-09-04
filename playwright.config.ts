@@ -24,7 +24,13 @@ export default defineConfig({
   // .e2e.ts, not .spec.ts: bun test's default glob claims *.spec.ts and *.test.ts, and it
   // cannot run Playwright's test(). Keeping the extensions disjoint keeps both runners honest.
   testMatch: '**/*.e2e.ts',
-  fullyParallel: true,
+  // One worker, deliberately. Every test drives one deployment through the single shared Guest
+  // account, and demo.e2e.ts POSTs /api/sample/reset, which clears dispositions on the one sample
+  // record that smoke.e2e.ts is asserting the counts of. Run in parallel those race: four workers
+  // failed 6 of 14 and left 2 unrun, while the same suite serially passes 13 in 11 seconds. The
+  // shared state is the product's design, not the suite's mistake, so the suite yields.
+  fullyParallel: false,
+  workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? [['github'], ['list']] : [['list']],
