@@ -36,36 +36,41 @@ export function PublicLayout() {
   // the full width to do it. Everything else public is a document and keeps the 880 px measure.
   const fullBleed = overHero || pathname === '/sign-in'
   // Sign-in is a task, not a document. A footer under it is another set of exits on a screen whose
-  // whole job is one action, so it does not get one.
+  // whole job is one action, so it does not get one, and neither does the bar: its own Sign In
+  // button would point at the page it is already on. SignIn carries the lockup instead, so the
+  // route home survives the bar going away.
   const showFooter = pathname !== '/sign-in'
+  const showNav = pathname !== '/sign-in'
   const scrolled = useSolidNav(24)
 
   return (
     <div className="min-h-dvh bg-paper">
       {/* data-glass only where there is media behind the bar for the blur to act on. Everywhere
           else it is solid: a translucent bar over a flat ground is not glass, it is see-through. */}
-      <header
-        className="nav-sticky"
-        data-solid={!overHero || scrolled ? 'true' : 'false'}
-        data-glass={overHero ? 'true' : 'false'}
-      >
-        <div className="wrap flex h-[4.25rem] items-center gap-8">
-          <Lockup to="/" />
-          <nav aria-label="Primary" className="ml-auto hidden items-center gap-7 md:flex">
-            {PUBLIC_NAV.map((item) => (
-              <a key={item.href} href={item.href} className="text-ink-muted transition-colors hover:text-ink">
-                {item.label}
-              </a>
-            ))}
-          </nav>
-          <Link
-            to="/sign-in"
-            className="ml-auto inline-flex h-9 shrink-0 items-center rounded-bubble bg-ink px-5 font-medium text-on-ink md:ml-0"
-          >
-            Sign In
-          </Link>
-        </div>
-      </header>
+      {showNav ? (
+        <header
+          className="nav-sticky"
+          data-solid={!overHero || scrolled ? 'true' : 'false'}
+          data-glass={overHero ? 'true' : 'false'}
+        >
+          <div className="wrap flex h-[4.25rem] items-center gap-8">
+            <Lockup to="/" />
+            <nav aria-label="Primary" className="ml-auto hidden items-center gap-7 md:flex">
+              {PUBLIC_NAV.map((item) => (
+                <a key={item.href} href={item.href} className="text-ink-muted transition-colors hover:text-ink">
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+            <Link
+              to="/sign-in"
+              className="ml-auto inline-flex h-9 shrink-0 items-center rounded-bubble bg-ink px-5 font-medium text-on-ink md:ml-0"
+            >
+              Sign In
+            </Link>
+          </div>
+        </header>
+      ) : null}
 
       {/* The landing is full-bleed: its sections carry their own grounds and their own measure.
           Every other public route is a document and keeps DESIGN.md's 880 px measure. */}
