@@ -1643,7 +1643,7 @@
         border-top: 1px solid rgb(255 255 255 / 0.14);
       }
       .facts div {
-        padding: 10px 0;
+        padding: 14px 0;
         border-bottom: 1px solid rgb(255 255 255 / 0.14);
       }
       .facts dt {
@@ -1656,7 +1656,7 @@
       }
       .facts dd {
         margin: 0;
-        font-size: 19px;
+        font-size: 21px;
         line-height: 1.35;
         color: rgb(255 255 255 / 0.84);
       }
@@ -1666,7 +1666,7 @@
         border-left: 3px solid #f07079;
         font-family: var(--font-paper);
         font-style: italic;
-        font-size: 22px;
+        font-size: 26px;
         line-height: 1.35;
         color: var(--on-ink);
       }
@@ -1683,9 +1683,9 @@
       }
       .io-row {
         display: grid;
-        grid-template-columns: 96px 1fr;
-        gap: 18px;
-        padding: 15px 0;
+        grid-template-columns: 104px 1fr;
+        gap: 20px;
+        padding: 26px 0;
         border-bottom: 1px solid var(--rule);
         align-items: start;
       }
@@ -1694,7 +1694,7 @@
       }
       .io-tag {
         font-family: var(--font-mono);
-        font-size: 19px;
+        font-size: 21px;
         font-weight: 500;
         letter-spacing: 0.1em;
         text-transform: uppercase;
@@ -1703,7 +1703,7 @@
       }
       .io-row p {
         margin: 0;
-        font-size: 21px;
+        font-size: 25px;
         line-height: 1.4;
         color: var(--ink-muted);
       }
@@ -1712,9 +1712,9 @@
         font-weight: 600;
       }
       .io-note {
-        margin-top: 8px !important;
+        margin-top: 10px !important;
         font-family: var(--font-mono);
-        font-size: 15px !important;
+        font-size: 17px !important;
         letter-spacing: 0.06em;
         color: var(--ink-muted);
       }
@@ -2167,7 +2167,7 @@
         class="slide"
         data-section="User"
         data-budget="20"
-        data-speaker-notes="This is who we built it for. Not a university, not a student: one tutor who writes the paper and answers for it when a learner pushes back. She is a composite of the primary operator in PRODUCT.md, so do not name a real person. The right side is the whole product in three rows. She types the paper in, stem, options, key. The record exists before any model runs and she can walk away, because a verdict takes minutes, not seconds. What comes back is one record with a verdict on every item, the risky ones first, two readings each with a model name and a request id, and her own decision kept beside the verdict, never over it. Land on never over it."
+        data-speaker-notes="This is who we built it for. Not a university, not a student: one tutor who writes the paper and answers for it when a learner pushes back. She is a composite of the primary operator in PRODUCT.md, so do not name a real person. The right side is the whole product in three rows. She types the paper in, stem, options, key. The record exists before any model runs and she can walk away, because a verdict takes minutes, not seconds. What comes back is one record with a verdict on every item, the risky ones first, two readings each with a model name and a request id, and her own decision kept beside the verdict, never over it. Land on never over it. The rows are FR-CHECK-1 and 2, NFR-PERF-1 and 2, FR-RECORD-3 and 4 and FR-EVIDENCE-1 if a judge asks."
       >
         <div class="pad">
           <div class="chrome">
@@ -2180,7 +2180,7 @@
           <div class="head">
             <p class="eyebrow">1. Problem statement &middot; the user</p>
             <h2 class="title">Meet Cikgu Farah. <em>She answers for the paper.</em></h2>
-            <p class="sub">Independent tutor, publishes a practice set several times a month. A composite of the primary operator in PRODUCT.md, not a named person.</p>
+            <p class="sub" style="max-width: 90ch">Independent tutor. Publishes a practice set several times a month. A composite, not a real person.</p>
           </div>
 
           <div class="body">
@@ -2197,38 +2197,34 @@
                   </div>
                 </div>
                 <dl class="facts">
-                  <div><dt>Publishes</dt><dd>A twelve-item practice set, several times a month.</dd></div>
-                  <div><dt>Device</dt><dd>A laptop to write the paper. A phone to check progress.</dd></div>
-                  <div><dt>Accountable for</dt><dd>Every item a learner challenges. Investigate, remark, communicate.</dd></div>
-                  <div><dt>Wants</dt><dd>A second pair of eyes and a short list of risks. Not an AI author.</dd></div>
-                  <div><dt>Not served first</dt><dd>Students, universities buying site-wide, licensing bodies, essay markers.</dd></div>
-                  <div><dt>Content</dt><dd>Practice sets. Never a confidential final paper in version one.</dd></div>
+                  <div><dt>Publishes</dt><dd>Twelve items, several times a month.</dd></div>
+                  <div><dt>Accountable for</dt><dd>Every item a learner challenges.</dd></div>
+                  <div><dt>Wants</dt><dd>A second pair of eyes. Not an AI author.</dd></div>
+                  <div><dt>Device</dt><dd>Laptop to write. Phone to check.</dd></div>
                 </dl>
-                <blockquote class="persona-quote">&ldquo;I do not want an AI writing my paper. I want to know which three questions to look at again, and why.&rdquo;</blockquote>
+                <blockquote class="persona-quote">&ldquo;Which three questions should I look at again, and why?&rdquo;</blockquote>
               </div>
 
               <div class="io-col">
-                <p class="lead" style="margin: 0 0 18px">Cekgu is a pre-publication check for multiple-choice papers. <strong>Two models sit each item blind, and she reads only what came back different.</strong></p>
                 <div class="io" data-stagger>
                   <div class="io-row">
                     <span class="io-tag">In &rarr;</span>
                     <div>
-                      <p>Title, subject, language. Then each item, typed: <b>the stem, two to six options, one keyed answer.</b></p>
-                      <p class="io-note">Validated before any model runs &middot; paste and CSV import after submission</p>
+                      <p>Each item, typed. <b>Stem, options, keyed answer.</b></p>
+                      <p class="io-note">Checked for a missing key or option before any model runs</p>
                     </div>
                   </div>
                   <div class="io-row">
                     <span class="io-tag">&#9201;</span>
                     <div>
-                      <p><b>The record exists in under a second.</b> A verdict on each item within five minutes at the 95th percentile. Minutes, not seconds; she can leave.</p>
-                      <p class="io-note">NFR-PERF-1 &middot; NFR-PERF-2</p>
+                      <p><b>Her record exists in under a second.</b> She closes the laptop. It keeps checking.</p>
+                      <p class="io-note">Every item verdicted within five minutes, nineteen times in twenty</p>
                     </div>
                   </div>
                   <div class="io-row">
                     <span class="io-tag">Out &rarr;</span>
                     <div>
-                      <p>One record. <b>A verdict on every item, attention first.</b> Two readings each, with the served model and its request id. Her decision stored beside the verdict, never over it.</p>
-                      <p class="io-note">FR-RECORD-3 &middot; FR-EVIDENCE-1 &middot; FR-RECORD-4</p>
+                      <p><b>Every item with a verdict, the risky ones first.</b> Two readings each, with a request id. Her decision beside the verdict, never over it.</p>
                     </div>
                   </div>
                 </div>
