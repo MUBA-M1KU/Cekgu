@@ -2121,8 +2121,8 @@
                   <h1 class="title" style="font-size: 68px; max-width: 21ch">
                     The answer key is wrong. <em>Nobody checked.</em>
                   </h1>
-                  <p class="lead" style="margin-top: 26px; max-width: 36ch">
-                    Cekgu reviews a quiz before learners sit it.
+                  <p class="lead" style="margin-top: 26px; max-width: 44ch">
+                    Cekgu reviews a quiz for teachers and tutors, before students lose marks to a mistake in the answer key.
                   </p>
                 </div>
 
@@ -2334,7 +2334,7 @@
                 role="img"
                 aria-label="Twelve items on the public sample record reduced to three that need a human decision, with nine clear"
               >
-                <text class="label f-muted" x="0" y="20" font-size="20">ALL 12 QUESTIONS, ANSWERED WITHOUT THE ANSWER KEY</text>
+                <text class="label f-muted" x="0" y="20" font-size="20">ALL 12 QUESTIONS, NO ANSWER KEY</text>
                 <text class="figure f-muted" x="700" y="26" font-size="46" text-anchor="end">12</text>
                 <g>
                   <rect x="0" y="52" width="700" height="34" rx="4" class="card-s" />
@@ -2790,12 +2790,12 @@
 
           <div class="body">
             <ol class="flow" data-stagger>
-              <li><span class="ico"><svg aria-hidden="true"><use href="#i-submit" /></svg></span><span class="n">1</span><b>Submit</b><p>Validated locally. The record exists in under a second, before any model runs.</p></li>
+              <li><span class="ico"><svg aria-hidden="true"><use href="#i-submit" /></svg></span><span class="n">1</span><b>Submit</b><p>Checked locally. The record exists in under a second, before any model runs.</p></li>
               <li><span class="ico"><svg aria-hidden="true"><use href="#i-queue" /></svg></span><span class="n">2</span><b>Queue</b><p>Postgres. One item claimed at a time with <code>SKIP LOCKED</code>. Four gateway calls in flight.</p></li>
-              <li><span class="ico"><svg aria-hidden="true"><use href="#i-blind" /></svg></span><span class="n">3</span><b>Two models, no answer key</b><p>Two model families through GonkaRouter. Answer key withheld. <code>X-Gonka-No-Fallback</code> on every call.</p></li>
+              <li><span class="ico"><svg aria-hidden="true"><use href="#i-blind" /></svg></span><span class="n">3</span><b>Two models</b><p>Both through GonkaRouter, neither shown the answer key, no fallback allowed on any call.</p></li>
               <li><span class="ico"><svg aria-hidden="true"><use href="#i-receipt" /></svg></span><span class="n">4</span><b>Receipt check</b><p><code>GET /v1/receipts/{id}</code>. The served model must equal the one asked for, within 5 s.</p></li>
-              <li><span class="ico"><svg aria-hidden="true"><use href="#i-rule" /></svg></span><span class="n">5</span><b>Fixed rule</b><p>Five verdicts, checked in order. Fewer than two verified answers from different models means Unverified.</p></li>
-              <li><span class="ico"><svg aria-hidden="true"><use href="#i-record" /></svg></span><span class="n">6</span><b>Record</b><p>Verdict, every attempt, every request id. The teacher&rsquo;s decision is saved alongside and does not overwrite the verdict.</p></li>
+              <li><span class="ico"><svg aria-hidden="true"><use href="#i-rule" /></svg></span><span class="n">5</span><b>Fixed rule</b><p>Five verdicts, in a fixed order. Fewer than two verified answers means Unverified.</p></li>
+              <li><span class="ico"><svg aria-hidden="true"><use href="#i-record" /></svg></span><span class="n">6</span><b>Record</b><p>Verdict, every attempt, every request id. Her decision is saved next to it, not instead of it.</p></li>
             </ol>
 
             <div class="build-grid">
