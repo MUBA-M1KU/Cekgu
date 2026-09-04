@@ -284,8 +284,10 @@ Recessed areas use `--well` with no border at all: the evidence panel, code, the
 
 ### The review document
 
-The record workspace is one sheet, at most 880 px wide, centred on the paper ground with `--s-6` padding. It reads top
-to bottom like the paper it reviews:
+The record workspace is one sheet, at most **1144 px** wide, centred on the paper ground with `--s-6` padding. That is
+the post-authentication measure, widened from 880 px on 4 September because these are working surfaces carrying tables,
+filter rows and evidence rather than prose. The public side keeps the 880 px measure, which is where prose wants to be.
+It reads top to bottom like the paper it reviews:
 
 1. **Header.** Record title (heading 1), subject and language as a caption line, the record status chip, and for Guest
    records the expiry. The **Sample** label from FR-SAMPLE-2 sits here as a status chip in ink, not a banner

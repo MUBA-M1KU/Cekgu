@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react'
+
 // Each step leads with the glyph it produces, so the sequence is legible before a word of it is
 // read: four bare options, then a letter both readers ringed, then one reading admitted and one
 // discarded, then the key beside what the readers actually said, then the mark only you can make.
@@ -53,43 +55,97 @@ const STEPS: { title: string; detail: string; figure: Slot[] }[] = [
 ]
 
 export function HowItWorksSection() {
+  // The rail marks where the reader is, so it needs the panel currently under the reading line
+  // rather than the first one on screen. Nothing animates: the attribute only moves emphasis.
+  const [active, setActive] = useState(0)
+  const panels = useRef<(HTMLLIElement | null)[]>([])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const onScreen = entries.filter((entry) => entry.isIntersecting)
+        if (onScreen.length === 0) return
+        const highest = onScreen.reduce((a, b) => (a.boundingClientRect.top <= b.boundingClientRect.top ? a : b))
+        const index = panels.current.indexOf(highest.target as HTMLLIElement)
+        if (index !== -1) setActive(index)
+      },
+      // A narrow band near the top rather than across the middle. Mid-viewport looks right while
+      // scrolling and is wrong the moment a rail link is used: the panel jumped to sits at the top,
+      // so the middle of the screen is already showing the step after it, and the rail marks the
+      // wrong one at the exact moment the reader is watching it.
+      { rootMargin: '-15% 0px -75% 0px' }
+    )
+    for (const panel of panels.current) if (panel) observer.observe(panel)
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <section id="how-it-works" className="wrap py-[clamp(4rem,8vw,7rem)]">
-      <div className="max-w-[46rem]">
-        <h2 className="text-[clamp(2rem,3.4vw,2.75rem)]/[1.1] tracking-[-0.025em]">
-          Five steps, and you make the last one.
-        </h2>
-        <p className="type-ui mt-5 text-[1.0625rem]/[1.6] text-ink-muted">
-          Cekgu is a first pass, not a vetting committee. It never changes a key, edits a question or approves a paper.
-          It does not certify a paper, change a key, or grade anyone. Every decision on this page is yours.
-        </p>
-      </div>
+      <div className="hiw-grid">
+        <div className="hiw-rail">
+          <p className="hiw-kicker type-mono">How It Works</p>
+          <h2 className="mt-4 text-[clamp(2rem,3.4vw,2.75rem)]/[1.1] tracking-[-0.025em]">
+            Five steps, and you make the last one.
+          </h2>
+          <p className="type-ui mt-5 text-[1.0625rem]/[1.6] text-ink-muted">
+            Cekgu is a first pass, not a vetting committee. It never changes a key, edits a question or approves a
+            paper. It does not certify a paper, change a key, or grade anyone. Every decision on this page is yours.
+          </p>
 
-      {/* An ordered list because these genuinely happen in order, not because numbers look tidy. */}
-      <ol className="mt-12 m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
-        {STEPS.map((step, index) => (
-          <li key={step.title} className="card-soft p-6">
-            <div className="read-row" aria-hidden="true">
-              {step.figure.map((slot) => (
-                <span
-                  key={slot.id}
-                  className="slot"
-                  data-key={slot.key}
-                  data-reader-a={slot.a}
-                  data-reader-b={slot.b}
-                  data-void={slot.void}
-                  data-pen={slot.pen}
+          {/* Links rather than labels: the rail is a table of contents that also reports position,
+              which is the only thing that earns a numbered list of five items down the side. */}
+          <ol className="hiw-steps">
+            {STEPS.map((step, index) => (
+              <li key={step.title}>
+                <a
+                  href={`#how-step-${index + 1}`}
+                  className="hiw-step"
+                  data-active={index === active ? 'true' : undefined}
+                  aria-current={index === active ? 'step' : undefined}
                 >
-                  {slot.letter}
-                </span>
-              ))}
-            </div>
-            <p className="type-mono mt-3 text-ink-muted">{String(index + 1).padStart(2, '0')}</p>
-            <h3 className="mt-3 text-[1.125rem]">{step.title}</h3>
-            <p className="type-ui mt-2 text-ink-muted">{step.detail}</p>
-          </li>
-        ))}
-      </ol>
+                  <span className="hiw-step-num type-mono">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="hiw-step-title">{step.title}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* An ordered list because these genuinely happen in order, not because numbers look tidy. */}
+        <ol className="hiw-panels">
+          {STEPS.map((step, index) => (
+            <li
+              key={step.title}
+              id={`how-step-${index + 1}`}
+              className="hiw-panel card-soft"
+              ref={(element) => {
+                panels.current[index] = element
+              }}
+            >
+              <div className="read-row hiw-figure" aria-hidden="true">
+                {step.figure.map((slot) => (
+                  <span
+                    key={slot.id}
+                    className="slot"
+                    data-key={slot.key}
+                    data-reader-a={slot.a}
+                    data-reader-b={slot.b}
+                    data-void={slot.void}
+                    data-pen={slot.pen}
+                  >
+                    {slot.letter}
+                  </span>
+                ))}
+              </div>
+              <div className="hiw-panel-text">
+                <p className="hiw-panel-num type-mono">{String(index + 1).padStart(2, '0')}</p>
+                <h3 className="hiw-panel-title">{step.title}</h3>
+                <p className="type-ui mt-3 max-w-[52ch] text-ink-muted">{step.detail}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
 
       <div className="mt-14 grid gap-8 lg:grid-cols-2">
         <div>

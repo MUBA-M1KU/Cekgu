@@ -1,6 +1,6 @@
 # Pitch script
 
-The spoken script for Demo Day at APU, 6 September 2026. Owned by the `pitch-smith` subagent
+The spoken script for Demo Day at APU, 6 September 2026, in Auditorium 1 on Level 7. Owned by the `pitch-smith` subagent
 ([`.claude/agents/pitch-smith.md`](../../.claude/agents/pitch-smith.md)).
 
 > **4 September 2026, written against the frozen build.** The app is live at `cekgu-op7lf5dspq-as.a.run.app` and its
@@ -43,8 +43,8 @@ Contents:
   or click to advance. `N` speaker notes, `T` rehearsal timer, `R` reset — all off by default and never in the PDF.
 - **Speakers** — **SPEAKER** narrates and owns the deck and the clock. **DRIVER** owns the keyboard and the app.
 - **Notation** — plain text is **spoken**, _italics_ are on-stage action, `NOTE:` is internal and never spoken.
-- **Team** — Team M1KU. `TO FILL:` the four member names, in the **Devfolio submission**. Slide 01 carries the team name
-  and nothing else, deliberately: a deck should not advertise an unfinished state to a judge.
+- **Team** — Team M1KU. `TO FILL:` the four member names, in the **Devfolio submission**. The deck carries the four
+  handles already, as a grid of areas on slide 01 and as one line on slide 10, so nobody has to be introduced aloud.
 
 **Never present a recording as live.** If something fails, say so out loud and take the
 [fallback ladder](#13-fallback-ladder).
@@ -241,9 +241,10 @@ cutoff, and a hedge that lost its own race. It is the stronger picture and it co
 disposition on it. There is no button: signed in as Guest, open the browser console on the app and run
 `await fetch('/api/sample/reset', { method: 'POST' })`. It answers `{"reset":true}`.
 
-`NOTE:` **The Guest workspace is shared and it will have other people's records in it.** On 4 September the list held
-four besides the sample. Identify the row by its title and its `Sample` chip, or type `Introductory` into `Search`
-first. Do not scroll hunting for it on stage.
+`NOTE:` **The Guest workspace is shared and it will have other people's records in it.** How many is not knowable in
+advance, because a Guest record expires 24 hours after it is made and the list is different at every rehearsal. Identify
+the row by its title and its `Sample` chip, or type `Introductory` into `Search` first. Do not scroll hunting for it on
+stage.
 
 `NOTE:` The "submit a new check and walk away" beat is **cut from the stage demo** and lives in
 [the video](#14-the-two-minute-video-shot-list) instead. It costs twenty seconds and proves less than the receipt does.
@@ -566,8 +567,10 @@ so. A video that pretends the gateway is instant contradicts slide 08 of our own
 
 ## 15. Pre-flight
 
-- [ ] Four member names entered in the **Devfolio submission**. They are deliberately not on the deck; slide 01 carries
-      the team name only, and slide 10 already carries the live demo URL and its QR
+- [ ] Four member names entered in the **Devfolio submission**. The four handles are already on the deck, slide 01 and
+      slide 10, so this box is about the submission form and nothing else
+- [ ] Slide 10's QR scanned with a phone off the rendered deck, and it lands on the public sample record, not the app
+      root
 - [ ] Section 6 rehearsed with a clock against the running app, and every literal label in it re-checked against the
       screen. Issue #42
 - [ ] Every claim in this script is demonstrable on screen inside the time budget
