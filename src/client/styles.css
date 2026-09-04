@@ -1128,8 +1128,13 @@ section[id] {
   transition: opacity var(--t-quick) var(--ease-out);
 }
 
+/* :has(:focus-visible), matching the width and backdrop rules above rather than differing from
+   them. #182 moved those two off :focus-within and left this one behind, and the mismatch had a
+   visible cost: clicking a rail link leaves focus on it, so the labels turned opaque while the
+   rail stayed 4rem wide, and overflow: hidden sliced every one of them mid-word. Three rules, one
+   condition. */
 .app-rail:hover .app-rail-text,
-.app-rail:focus-within .app-rail-text {
+.app-rail:has(:focus-visible) .app-rail-text {
   opacity: 1;
 }
 
