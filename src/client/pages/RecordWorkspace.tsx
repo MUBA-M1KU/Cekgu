@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
+import type { ChatMessage } from '../../shared/chat'
 import type { DispositionInput } from '../../shared/schemas'
 import type { ItemVerdict, RecordDetail } from '../../shared/types'
-import { getRecord, recordDisposition, retryItem, subscribeToRecord } from '../api'
+import { askRecord, getRecord, recordDisposition, retryItem, subscribeToRecord } from '../api'
+import { ChatModal } from '../chat/ChatModal'
 import { Card, CardBody, CardHead } from '../components/Card'
 import { ItemRow } from '../components/ItemRow'
 import { StatusChip } from '../components/StatusChip'
@@ -28,6 +30,9 @@ export function RecordWorkspace() {
   const [record, setRecord] = useState<RecordDetail | null>(null)
   const [failed, setFailed] = useState(false)
   const [filter, setFilter] = useState<ItemVerdict | null>(null)
+  const [chatOpen, setChatOpen] = useState(false)
+  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [pending, setPending] = useState(false)
 
   const load = useCallback(() => {
     getRecord(id)
@@ -80,6 +85,40 @@ export function RecordWorkspace() {
 
   async function onRetry(itemId: string) {
     setRecord(await retryItem(id, itemId))
+  }
+
+  async function onAsk(question: string) {
+    const asked: ChatMessage = {
+      id: crypto.randomUUID(),
+      role: 'user',
+      seat: null,
+      text: question,
+      citations: [],
+      provenance: null
+    }
+    const history = [...messages, asked]
+    setMessages(history)
+    setPending(true)
+
+    try {
+      setMessages([...history, ...(await askRecord(id, question, history))])
+    } catch (error) {
+      // The failure belongs in the transcript rather than in a toast: it is a turn in the
+      // conversation, and a person needs to see which question did not get answered.
+      setMessages([
+        ...history,
+        {
+          id: crypto.randomUUID(),
+          role: 'agent',
+          seat: null,
+          text: error instanceof Error ? error.message : 'The assistant could not answer that.',
+          citations: [],
+          provenance: null
+        }
+      ])
+    } finally {
+      setPending(false)
+    }
   }
 
   return (
@@ -170,7 +209,15 @@ export function RecordWorkspace() {
         </div>
       </div>
 
-      <Mascot record={record} />
+      <Mascot record={record} onOpenChat={() => setChatOpen(true)} />
+
+      <ChatModal
+        open={chatOpen}
+        messages={messages}
+        pending={pending}
+        onClose={() => setChatOpen(false)}
+        onSend={onAsk}
+      />
     </>
   )
 }
