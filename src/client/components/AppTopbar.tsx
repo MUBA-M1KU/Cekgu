@@ -76,9 +76,19 @@ export function AppTopbar({ records }: Props) {
       <nav aria-label="Breadcrumb" className="min-w-0 flex-1">
         <ol className="m-0 flex min-w-0 list-none items-center gap-2 p-0">
           <li className="truncate">
-            <Link to="/dashboard" className="type-label text-ink-muted hover:text-ink">
-              {CRUMBS[first] ?? 'Dashboard'}
-            </Link>
+            {segments.length > 1 ? (
+              <Link
+                to={CRUMBS[first] ? `/${first}` : '/dashboard'}
+                className="type-label text-ink-muted hover:text-ink"
+              >
+                {CRUMBS[first] ?? 'Dashboard'}
+              </Link>
+            ) : (
+              // On a section root this crumb is the page you are already on. A link here went to
+              // /dashboard while reading "Records", and collided with the rail's own Records link:
+              // two links, one name, two destinations. Plain text says the same thing truthfully.
+              <span className="type-label text-ink-muted">{CRUMBS[first] ?? 'Dashboard'}</span>
+            )}
           </li>
           {segments.length > 1 ? (
             <>
