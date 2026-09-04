@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router'
 import { BackToTop } from '../components/BackToTop'
 import { Lockup } from '../components/Lockup'
+import { SiteFooter } from '../components/SiteFooter'
 
 // Plain anchors rather than Link, so a fragment on the current path scrolls and a fragment on
 // another path navigates. Both are the browser's own behaviour and neither needs a scroll handler.
@@ -12,10 +13,10 @@ const PUBLIC_NAV = [
   { href: '/#trust', label: 'Trust and Privacy' }
 ]
 
-const FOOTER_LINKS = [
-  { href: '/#how-it-works', label: 'How It Works' },
-  { href: '/#sample', label: 'Sample Report' },
-  { href: '/#trust', label: 'Trust and Privacy' },
+// The three notices this branch adds. The other footer links this list used to carry are now in
+// SiteFooter, which the app shell shows too; these are public-only, so they are passed in rather
+// than baked into the shared block.
+const LEGAL_LINKS = [
   { href: '/terms', label: 'Terms' },
   { href: '/privacy', label: 'Privacy' },
   { href: '/acceptable-use', label: 'Acceptable Use' }
@@ -43,6 +44,9 @@ export function PublicLayout() {
   // Sign-in is a screen rather than a document: it composes its own two-column layout and needs
   // the full width to do it. Everything else public is a document and keeps the 880 px measure.
   const fullBleed = overHero || pathname === '/sign-in'
+  // Sign-in is a task, not a document. A footer under it is another set of exits on a screen whose
+  // whole job is one action, so it does not get one.
+  const showFooter = pathname !== '/sign-in'
   const scrolled = useSolidNav(24)
 
   return (
@@ -78,20 +82,11 @@ export function PublicLayout() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-rule">
-        <div className="wrap flex flex-wrap items-center justify-between gap-x-8 gap-y-4 py-8">
-          <p className="type-caption text-ink-muted">
-            Cekgu · Pre-publication review for multiple-choice papers · Every reading routed through GonkaRouter
-          </p>
-          <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2">
-            {FOOTER_LINKS.map((item) => (
-              <a key={item.href} href={item.href} className="type-caption text-ink-muted hover:text-ink">
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </div>
-      </footer>
+      {showFooter ? (
+        <footer className="public-footer" role="contentinfo">
+          <SiteFooter legal={LEGAL_LINKS} />
+        </footer>
+      ) : null}
 
       <BackToTop />
     </div>

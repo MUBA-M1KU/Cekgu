@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Link, Navigate, Outlet, useLocation } from 'react-router'
+import { Navigate, Outlet, useLocation } from 'react-router'
 import type { RecordSummary } from '../../shared/types'
 import { listRecords } from '../api'
 import { AppRail } from '../components/AppRail'
 import { AppTopbar } from '../components/AppTopbar'
 import { GuestBanner } from '../components/GuestBanner'
-import { Mark } from '../components/Mark'
+import { SiteFooter } from '../components/SiteFooter'
 import { useSession } from '../session'
 
 export function AppLayout() {
@@ -56,16 +56,7 @@ export function AppLayout() {
           uncovers it at the end. MakanLah's pattern, and the reason its blur has anything to act
           on. Right aligned and stacked: mark, name, one line, one link. */}
       <footer className="app-footer" role="contentinfo">
-        <div className="app-footer-inner">
-          <Link to="/" className="app-footer-brand" aria-label="Cekgu home">
-            <Mark className="h-7 w-7 shrink-0" />
-            <span className="app-footer-name">Cekgu</span>
-          </Link>
-          <p className="type-ui text-ink-muted">Two readers, and the receipts to prove it.</p>
-          <Link to="/#trust" className="app-footer-link type-caption">
-            Trust and Privacy
-          </Link>
-        </div>
+        <SiteFooter />
       </footer>
     </div>
   )

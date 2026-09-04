@@ -216,7 +216,7 @@ export function AppTopbar({ records }: Props) {
                 </p>
               </div>
               {session.status === 'in' ? (
-                <div className="px-4 pt-3">
+                <div className="px-4 py-3">
                   <p className="type-caption truncate text-ink-muted">
                     {/* Not the shared-workspace sentence: FR-AUTH-3 requires that one word for word
                         and copy.test.ts holds it to a single home in GuestBanner. This is the fact a

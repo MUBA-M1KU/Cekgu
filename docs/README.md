@@ -159,11 +159,11 @@ There is no other AI provider anywhere in the code, which a search for provider 
   off the raw response before parsing the body, stores it with the attempt, and the evidence view shows it beside the
   reading it belongs to, as selectable text with a link to the public receipt. Detail:
   [Request IDs and provenance](TRD.md#4-request-ids-and-provenance)
-- **How the receipt check works.** The client asks the gateway not to substitute models, rejects any response that says
-  it did, then fetches `GET /v1/receipts/<id>` and requires the receipt's model to match the one requested. A reading
-  that fails any step is kept, marked rejected with the reason, and never counts. Two readings count as independent only
-  when their receipts name different models. Detail:
-  [Cross-verification validity contract](TRD.md#cross-verification-validity-contract) and
+- **How the receipt check works.** The client sends `X-Gonka-No-Fallback: true`, and rejects any response carrying
+  `x-gonka-fallback`, the header by which the gateway reports a substitution it made regardless. It then fetches
+  `GET /v1/receipts/<id>` and requires the receipt's model to match the one requested. A reading that fails any step is
+  kept, marked rejected with the reason, and never counts. Two readings count as independent only when their receipts
+  name different models. Detail: [Cross-verification validity contract](TRD.md#cross-verification-validity-contract) and
   [Consensus rule](TRD.md#14-consensus-rule)
 - **What the consensus rule is.** A pure function over the first two admitted readings from distinct models: fewer than
   two gives Unverified; different answers give Split Opinion; both listing several defensible options gives Possible
@@ -364,12 +364,12 @@ curl -s https://api.gonkarouter.io/v1/messages \
 | `bun run check:anchors` | Resolve every Markdown anchor link |
 | `gh issue list`         | The TODO board                     |
 
-A default `bun test` needs nothing but the repo: on 3 September it read **194 pass, 72 skip, 0 fail** — 266 tests across
-24 files, 890 `expect()` calls. The 72 skips are the six database-backed suites, which take `TEST_DATABASE_URL` and
+A default `bun test` needs nothing but the repo: on 4 September it read **205 pass, 73 skip, 0 fail** — 278 tests across
+27 files, 902 `expect()` calls. The 73 skips are the six database-backed suites, which take `TEST_DATABASE_URL` and
 refuse any host but localhost, because they truncate what they connect to.
 
 Each of those suites **truncates** the database it connects to, so running them together in one process makes them clear
-each other's fixtures mid-run: `bun test src/server` with `TEST_DATABASE_URL` set gives **97 pass and 27 fail**. They
+each other's fixtures mid-run: `bun test src/server` with `TEST_DATABASE_URL` set gives **113 pass and 36 fail**. They
 must be run one file at a time:
 
 ```bash
@@ -380,11 +380,11 @@ bun test src/server/sample.test.ts                    # 17 pass
 bun test src/server/guest.sweep.test.ts               # 5 pass
 bun test src/server/retention.sweep.test.ts           # 5 pass
 bun test src/server/queue/claim.concurrency.test.ts   # 8 pass
-bun test src/server/routes/records.test.ts            # 23 pass
+bun test src/server/routes/records.test.ts            # 24 pass
 bun test src/server/routes/account.test.ts            # 6 pass
 ```
 
-Those six counts were produced by actually running the commands.
+Those six counts were produced by actually running the commands, against `postgres:18-alpine` on 4 September.
 
 ### The smoke pass
 
@@ -398,7 +398,7 @@ E2E_BASE_URL=https://pr-42---cekgu-op7lf5dspq-as.a.run.app bun run e2e   # a pre
 
 Browsers are not installed by `bun install`; run `bunx playwright install chromium` once. The same pass runs
 automatically after every production deploy, so a deploy that serves a broken build fails the run rather than waiting
-for someone to open the URL. Measured on 3 September: **9 passed, 1 skipped**.
+for someone to open the URL. Measured against production on 4 September: **19 passed, 1 skipped**.
 
 It asserts **rendered content, never that the root element is attached**: an attached root passes against a blank page,
 against a failed fetch shown as an empty state, and against a React error boundary, so it proves the bundle parsed
@@ -411,6 +411,12 @@ rather than that the product works. It covers:
 - an unknown API path answering JSON once signed in
 - **Sign In as Guest landing in the Guest workspace with the FR-AUTH-3 warning banner**, asserted word for word because
   that sentence is fixed by the requirement rather than being ordinary product copy
+- **an unauthenticated visitor to `/dashboard`, `/records`, `/new-check` or `/settings` being sent to `/sign-in`**, and
+  signing in returning them to the page they were refused. The shell used to render for them instead, over an account
+  menu that read `Signed In` for a session that did not exist
+- no two links in the workspace sharing a name while leading somewhere different, which is a class rather than an
+  instance: the same bug appeared twice, as two `Sample Report` links and as a breadcrumb naming a different destination
+- the record view surviving navigation with the animated stage mounted
 
 The three demo-path steps from [TRD section 18](TRD.md#18-testing) — the sample record and its counts, the Possible Key
 Error filter and the two request ids in an evidence panel — are part of that passing run. They need the seeded sample
