@@ -8,7 +8,7 @@ import { env } from '../env'
 // is neither. It turns pixels and PDF bytes into the words already printed on the page, and it is
 // forbidden by its own prompt from deciding anything about them. Every judgement — which text is a
 // question, which strings are its options, which option the key names — is made afterwards by two
-// Gonka models that each carry a request id. See docs/TRD.md section 16.
+// Gonka models that each carry a request id. See docs/TRD.md section 20.
 //
 // The reason it exists at all is measured: of the three families the gateway serves, only Kimi-K2.6
 // reports vision, and it is the slowest of them (TRD section 3). A one-model transcription step

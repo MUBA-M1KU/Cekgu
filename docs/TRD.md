@@ -38,6 +38,7 @@ Contents:
 1. [Mascot runtime](#17-mascot-runtime)
 1. [Testing](#18-testing)
 1. [Decided](#19-decided)
+1. [Reading a paper from an upload](#20-reading-a-paper-from-an-upload) — the one non-Gonka call
 
 ## 1. Gateway, base URLs and auth
 
@@ -1330,18 +1331,19 @@ gets a preview URL.
 
 Every decision that was open on 2 September is now a section above.
 
-| Decision                                                  | Section                              |
-| --------------------------------------------------------- | ------------------------------------ |
-| Application framework, repository layout                  | [9](#9-application-architecture)     |
-| Hosting, CI/CD, secrets                                   | [10](#10-hosting-and-cicd)           |
-| Record persistence                                        | [11](#11-data-model)                 |
-| Private sign-in mechanism, the Guest account              | [12](#12-auth-and-the-guest-account) |
-| Queue shape, concurrency, hedging, retry budget           | [13](#13-queue-and-worker)           |
-| Exact consensus algorithm, gateway client, reading schema | [14](#14-consensus-rule)             |
-| API surface                                               | [15](#15-api-contracts)              |
-| How provenance is displayed                               | [16](#16-provenance-display)         |
-| Mascot runtime and state mapping                          | [17](#17-mascot-runtime)             |
-| What is tested and where                                  | [18](#18-testing)                    |
+| Decision                                                  | Section                                  |
+| --------------------------------------------------------- | ---------------------------------------- |
+| Application framework, repository layout                  | [9](#9-application-architecture)         |
+| Hosting, CI/CD, secrets                                   | [10](#10-hosting-and-cicd)               |
+| Record persistence                                        | [11](#11-data-model)                     |
+| Private sign-in mechanism, the Guest account              | [12](#12-auth-and-the-guest-account)     |
+| Queue shape, concurrency, hedging, retry budget           | [13](#13-queue-and-worker)               |
+| Exact consensus algorithm, gateway client, reading schema | [14](#14-consensus-rule)                 |
+| API surface                                               | [15](#15-api-contracts)                  |
+| How provenance is displayed                               | [16](#16-provenance-display)             |
+| Mascot runtime and state mapping                          | [17](#17-mascot-runtime)                 |
+| What is tested and where                                  | [18](#18-testing)                        |
+| The one non-Gonka call, and its fence                     | [20](#20-reading-a-paper-from-an-upload) |
 
 **What was fixed before any of this and still is:** the gateway, the model ids returned by `GET /v1/models`, the two
 base URLs, the no-fallback contract, receipt verification, and the requirement that every call returns its
@@ -1356,3 +1358,95 @@ real runs. Two things in this half are still design rather than description, and
   ([section 13](#13-queue-and-worker))
 
 Both are deliberate, and both are cheaper to state than to change two days before a submission.
+
+## 20. Reading a paper from an upload
+
+An educator photographs or scans a paper and New Check fills itself in. `POST /api/extract` is two steps, and the split
+between them is the whole design.
+
+| Step          | Runs on                     | Job                                                                 | May it decide anything? |
+| ------------- | --------------------------- | ------------------------------------------------------------------- | ----------------------- |
+| 1. Transcribe | Gemini, **not** the gateway | Pixels and PDF bytes to the words printed on them                   | **No**                  |
+| 2. Structure  | **GonkaRouter**             | Those words to title, subject, language, questions, options and key | Yes                     |
+
+The track's mandatory rule binds AI **reasoning and verification logic** to the Gonka Network, in the organizers' own
+words. Copying printed words off a page is neither, and step 2 — every judgement in the feature — carries an
+`x-request-id` like any other inference in the product. mrJiang's ruling permitting a third-party provider outside the
+mandatory path is recorded in [`brief.md`](brief.md#non-negotiable-requirements).
+
+### Why step 1 cannot be on the gateway
+
+Two measured reasons, not a preference:
+
+- **Only one family can see an image.** `moonshotai/Kimi-K2.6` is the sole model in [section 3](#3-models-measured)
+  reporting vision, and at an 8.6 s median it is the slowest of the three
+- **One reader cannot cross-verify itself.** A transcription step on the gateway would be a single-model inference by
+  construction, so it would spend the demo path's slowest reader on the one job in the product that needs no judgement
+
+### The route
+
+`POST /api/extract`, session required, so the default gate in `src/server/routes/index.ts` covers it. Request is
+`multipart/form-data` with one `file` field.
+
+|             |                                                                                                                                                                     |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Accepts** | `image/png`, `image/jpeg`, `image/webp`, `application/pdf`, 10 MB cap                                                                                               |
+| **200**     | `{ draft, provenance: { requestId, servedModel, receiptStatus }, warnings: string[] }`                                                                              |
+| **Errors**  | `{ error: { code, message } }` — 400 `no_file` / `bad_upload`, 413 `too_large`, 415 `unsupported_type`, 422 `unreadable` / `not_structured`, 503 `uploads_disabled` |
+
+`draft` matches `createRecordSchema` in `src/shared/schemas.ts` exactly. **It prefills the form and stops.** No record
+is created and no check is queued: a wrong extraction that submitted itself would put the product's name on a claim
+nobody read. The route holds the same `gatewaySemaphore` the queue holds rather than a second one beside it, because
+[gotcha 10](#5-verified-gotchas) measured account-level `429`s above four concurrent calls and an upload taking its own
+slots would steal them from checks already running.
+
+**Gemini accepts `application/pdf` as inline data**, so images and PDFs take one identical path. That is why there is no
+PDF library and no native canvas in the container, and the absence is deliberate rather than missing.
+
+### Measured, 4 September
+
+End to end through the route with a session and a real three-question paper:
+
+| Path       | Result            | Served                                                      |
+| ---------- | ----------------- | ----------------------------------------------------------- |
+| PNG, 45 KB | 200 in **35.3 s** | MiniMax, receipt verified, `req-1788534284315774569-844912` |
+| PDF, 27 KB | 200 in **73.8 s** | MiniMax, receipt verified, `req-1788534328793024120-845199` |
+
+**The file type is almost none of the cost.** Transcription alone was 6.1 s for the PNG and 8.0 s for the PDF; the
+spread above is the gateway's. Structuring the same text, one family each:
+
+| Family                               | Time   | Outcome                              |
+| ------------------------------------ | ------ | ------------------------------------ |
+| `MiniMaxAI/MiniMax-M2.7`             | 31.2 s | Correct, verified receipt            |
+| `deepseek-ai/DeepSeek-V4-Flash-0731` | 0.5 s  | `429`, no request id, so unusable    |
+| `moonshotai/Kimi-K2.6`               | 90.0 s | Cut off at `callGonka`'s own timeout |
+
+`healthyOrder()` puts MiniMax first once the health ring has seen a window; on a cold instance the static order costs
+half a second on DeepSeek before reaching it. **The route caps the structuring step at 100 s**, which sits just above
+one complete attempt — 90 s for the call plus 5 s for its receipt. A lower ceiling can cut off a call that was about to
+succeed, which is the worst outcome available: the reader waits the whole time and gets nothing.
+
+### Configuration
+
+Two names, both optional, added to the [section 8](#8-configuration-contract) contract and to
+`.github/scripts/render-env-vars.sh`:
+
+- **`GEMINI_API_KEY`** — absent, the route answers 503 and the rest of the product is unchanged
+- **`GEMINI_MODEL`** — defaults to `gemini-2.5-flash`
+
+**Verify the id against `GET /v1beta/models` before changing it**, the same rule [section 3](#3-models-measured) sets
+for Gonka ids and for a sharper reason: an id that is not on that list does not `404`. Measured the same day,
+`gemini-3-flash-preview` answered `503`, `gemini-flash-latest` took 33.9 s, and `gemini-2.5-flash` returned a correct
+transcription in 5.9 s.
+
+### How the boundary is enforced
+
+`src/server/gateway/only-gonkarouter.test.ts` asserts three things rather than one:
+
+1. A provider hostname may appear in `src/server/transcribe/` and **nowhere else** in `src/`
+1. That directory may not import the verdict rule, the record schema, the round or the database
+1. `gateway/`, `queue/`, `extract/` and `shared/` name **no** provider host at all, so widening the directory rule alone
+   cannot move a decision across the line
+
+Proven against the defect it names: planting the Gemini hostname in `src/server/queue/round.ts` fails assertion 3 by
+file name. **Widening that exemption is a track requirement decision, not a refactor.**

@@ -37,8 +37,8 @@ Non-negotiable, from [`docs/source/gonkarouter-challenge.md`](docs/source/gonkar
    verification, which is the organizers' own wording — see [`docs/brief.md`](docs/brief.md). One non-reasoning
    exception is permitted and it is exactly one: `src/server/transcribe/` turns an uploaded image or PDF into the text
    printed on it, because only Kimi has vision and a single reader cannot cross-verify anything.
-   [`docs/TRD.md` section 16](docs/TRD.md) holds the decision; `src/server/gateway/only-gonkarouter.test.ts` fails the
-   build if a provider host appears anywhere else
+   [`docs/TRD.md` section 20](docs/TRD.md#20-reading-a-paper-from-an-upload) holds the decision;
+   `src/server/gateway/only-gonkarouter.test.ts` fails the build if a provider host appears anywhere else
 1. **At least two models cross-verify.** Multi-model consensus
 1. **Gonka Request IDs are surfaced in the UI** for every inference step. This is the on-chain proof: wire it through
    from the first commit, not at the end

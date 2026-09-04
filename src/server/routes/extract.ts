@@ -6,7 +6,7 @@ import { gatewaySemaphore } from '../queue/semaphore'
 import type { AppEnv } from '../session'
 import { ACCEPTED_TYPES, MAX_BYTES, transcribe, transcriptionUnavailable } from '../transcribe/gemini'
 
-// TRD section 16. Two steps, and the order of them is the design: a vision model turns the upload
+// TRD section 20. Two steps, and the order of them is the design: a vision model turns the upload
 // into the words printed on it, then a Gonka model turns those words into questions, options and a
 // key. Only the second step decides anything, and it is the one that carries a request id.
 //
