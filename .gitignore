@@ -52,3 +52,6 @@ docs/source/*.m4a
 docs/source/*.webm
 test-results/
 playwright-report/
+
+# Playwright MCP scratch output, machine-local
+.playwright-mcp/
