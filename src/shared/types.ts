@@ -90,4 +90,42 @@ export type HealthModel = {
 
 export type Health = { models: HealthModel[]; windowMinutes: number; mascotEnabled: boolean }
 
+/** One family's share of the work, keyed on the served model the receipt names. */
+export type ReaderShare = { model: string; readings: number; verified: number }
+
+/** Account-wide aggregates for the dashboard. Every figure is a count of rows this account owns. */
+export type AccountStats = {
+  records: number
+  items: number
+  counts: VerdictCounts
+  readings: number
+  verifiedReadings: number
+  families: ReaderShare[]
+}
+
+/** The gateway's public receipt body, as `GET /v1/receipts/{id}` returns it. */
+export type Receipt = {
+  x_request_id: string
+  x_devshard_id: string | null
+  model: string
+  created_at: string
+  outcome: string
+  status_code: number
+  stream: boolean
+  total_tokens: number | null
+  ttft_ms: number | null
+  duration_ms: number | null
+}
+
+/**
+ * What our own read-through found. `not_found` and `unreachable` are different facts and the
+ * viewer says which: a receipt that was never written is the gateway answering, a gateway we could
+ * not reach is not an answer at all.
+ */
+export type ReceiptLookup = {
+  requestId: string
+  status: 'found' | 'not_found' | 'unreachable' | 'invalid'
+  receipt: Receipt | null
+}
+
 export type ApiError = { error: { code: string; message: string } }

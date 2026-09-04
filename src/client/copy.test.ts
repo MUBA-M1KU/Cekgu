@@ -62,6 +62,36 @@ describe('the pages', () => {
     expect(offences).toEqual([])
   })
 
+  test('state the retention windows in Settings from the constants the sweep enforces', () => {
+    const settings = read('pages/Settings.tsx')
+
+    expect(settings).toContain("import { RETENTION_DAYS, TRASH_DAYS } from '../../shared/schemas'")
+    // Interpolated either way round, because the copy moved from a template literal to JSX when the
+    // paragraphs became a definition list. What matters is that the number on screen comes from the
+    // constant the sweep compares against, not that it is written with a dollar sign.
+    expect(settings).toMatch(/[${{]RETENTION_DAYS} days/)
+    expect(settings).toMatch(/[${{]TRASH_DAYS} days/)
+  })
+
+  // The page printed Math.round(RETENTION_DAYS / 30) as "3 months". Three calendar months is 89 to
+  // 92 days and retention.ts compares against RETENTION_DAYS * 86_400_000, so the unit on screen was
+  // one the sweep never enforces.
+  test('state those windows in days, never converted to months', () => {
+    expect(read('pages/Settings.tsx')).not.toMatch(/\bmonths?\b/)
+  })
+
+  // sweepRetiredRecords keys on records.updatedAt, and GET /api/records/:id writes nothing, so
+  // reading a record does not move its clock. The page claimed the window was "counted from the
+  // last time you opened or changed one", which is wrong in the account holder's disfavour.
+  test('do not claim that opening a record postpones its deletion', () => {
+    // Matched on the claim rather than one phrasing of it: the sentence was reworded when the
+    // section was compressed, and pinning the old words would have failed on copy that is still
+    // correct. What must survive is that the page says opening is not a change.
+    expect(unwrapSource(read('pages/Settings.tsx')).toLowerCase()).toMatch(
+      /opening a record (is not|does not count as) a change/
+    )
+  })
+
   test('price the four plans as pilot plans', () => {
     const pricing = read('pages/home/PricingSection.tsx')
     const plans: [string, string][] = [

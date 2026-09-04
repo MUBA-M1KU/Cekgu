@@ -68,6 +68,43 @@ test('sign in as guest lands in the guest workspace with the warning banner', as
   await expect(page.getByText(GUEST_WARNING)).toBeVisible()
 })
 
+// The public bar offered Sign In to people who were already signed in, which is a link back to a
+// decision they had made and the only way back into the app from the landing page. Guest counts as
+// signed in: the shared workspace is a session like any other.
+test('the public bar offers the app to a signed-in visitor and sign-in to everyone else', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByRole('link', { name: 'Sign In' })).toBeVisible()
+
+  await page.goto('/sign-in')
+  await page.getByRole('button', { name: 'Sign In as Guest' }).click()
+  await expect(page).toHaveURL(/\/records$/)
+
+  await page.goto('/')
+  const openApp = page.getByRole('link', { name: 'Open App' })
+  await expect(openApp).toBeVisible()
+  await expect(openApp).toHaveAttribute('href', '/dashboard')
+  await expect(page.getByRole('link', { name: 'Sign In' })).toHaveCount(0)
+})
+
+// Sign out failed in silence from the account menu: the button went back to reading "Sign Out" and
+// nothing said why, which is indistinguishable from a control that does nothing. This asserts the
+// path a person actually takes to leave, and that leaving is what happens.
+test('signing out from the account menu returns the visitor to the signed-out site', async ({ page }) => {
+  await page.goto('/sign-in')
+  await page.getByRole('button', { name: 'Sign In as Guest' }).click()
+  await expect(page).toHaveURL(/\/records$/)
+
+  await page.locator('.app-avatar').click()
+  await page.getByRole('button', { name: /^Sign Out/ }).click()
+
+  await expect(page).toHaveURL(/\/$/, { timeout: 20000 })
+  await expect(page.getByRole('link', { name: 'Sign In' })).toBeVisible()
+
+  // And the session is really gone, not just the chrome.
+  await page.goto('/dashboard')
+  await expect(page).toHaveURL(/\/sign-in$/)
+})
+
 // The last three steps of the demo acceptance test, run signed out because that is the state a
 // judge arrives in (FR-SAMPLE-4). Each asserts rendered content rather than chrome: the summary
 // filters name all five verdicts from page load, so matching a verdict label proves nothing.
@@ -130,7 +167,7 @@ test('one evidence panel shows two model names and two request ids', async ({ pa
   await page.getByRole('button', { name: /^Possible Key Error/ }).click()
   await page.getByRole('button', { name: EVIDENCE }).first().click()
 
-  await expect(page.locator('a[href*="/v1/receipts/"]').first()).toBeVisible()
+  await expect(page.locator('a[href*="/receipt/"]').first()).toBeVisible()
 
   const panel = await page.locator('body').innerText()
   const requestIds = [...new Set([...panel.matchAll(/req-\d+-\d+/g)].map((match) => match[0]))]
@@ -141,11 +178,17 @@ test('one evidence panel shows two model names and two request ids', async ({ pa
   expect(requestIds.length).toBeGreaterThanOrEqual(2)
   expect(models.length).toBeGreaterThanOrEqual(2)
 
-  // NFR-PROV-3: every id shown is checkable by the person reading it.
+  // NFR-PROV-3: every id shown is checkable by the person reading it. The link goes to the viewer,
+  // and the viewer offers the gateway URL, so the second hop is walked here rather than assumed.
   const links = await page
-    .locator('a[href*="/v1/receipts/"]')
-    .evaluateAll((all) => all.map((a) => (a as HTMLAnchorElement).href))
+    .locator('a[href*="/receipt/"]')
+    .evaluateAll((all) => all.map((a) => (a as HTMLAnchorElement).getAttribute('href') ?? ''))
   for (const id of requestIds) expect(links.some((href) => href.endsWith(id))).toBe(true)
+
+  const first = requestIds[0] as string
+  await page.goto(`/receipt/${first}`)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Gonka Receipt/i)
+  await expect(page.locator(`a[href="https://api.gonkarouter.io/v1/receipts/${first}"]`)).toBeVisible()
 })
 
 // Reported by c3638: navigating away from a record blanked the whole app. Cause was a teardown
@@ -197,8 +240,16 @@ test('navigating away from a record with the mascot mounted keeps the app render
   await page.getByRole('link', { name: 'Dashboard' }).first().click()
 
   // Rendered content, not #root: the point is that the tree survived, and a heading proves it.
-  await expect(page.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Records' })).toBeVisible()
+  // The heading is matched by role rather than by its words. #175 made the dashboard's h1
+  // state-aware — "Good to have you back." once the account holds a record, "Welcome to Cekgu."
+  // before that — and the Guest workspace's records expire after 24 hours, so pinning either
+  // string would make this test depend on the age of a fixture rather than on the tree surviving.
+  await expect(page).toHaveURL(/\/dashboard$/)
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  // Scoped to the rail. #175 added an All Records card to the dashboard, and getByRole matches the
+  // accessible name as a substring, so an unscoped 'Records' now resolves to both and fails strict
+  // mode. The rail is what this line was always checking: the shell around the page, still there.
+  await expect(page.getByLabel('Workspace', { exact: true }).getByRole('link', { name: 'Records' })).toBeVisible()
   expect(errors).toEqual([])
 })
 
@@ -231,7 +282,16 @@ test('no two links in the workspace share a name and lead somewhere different', 
 // Issue #161 and c3638's report: an unauthenticated visitor was served the whole authenticated
 // shell — rail, topbar and an account menu reading "Signed In" over an em dash — on a URL whose
 // data could only ever 401. These assert the redirect and the absence of that chrome.
-const APP_ROUTES = ['/dashboard', '/records', '/new-check', '/settings']
+const APP_ROUTES = [
+  '/dashboard',
+  '/records',
+  '/new-check',
+  '/settings',
+  // The deep link is the one people actually share, and it is the one c3638 reported: a record
+  // they had deleted, opened in a browser that had never signed in. The id is deliberately one
+  // that does not exist, because the guard is route-level and must not rest on the row surviving.
+  '/records/00000000-0000-4000-8000-000000000000'
+]
 
 for (const route of APP_ROUTES) {
   test(`an unauthenticated visitor to ${route} is sent to sign in`, async ({ page }) => {

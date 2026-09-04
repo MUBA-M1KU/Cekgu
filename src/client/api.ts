@@ -1,5 +1,5 @@
 import type { CreateRecordInput, DispositionInput } from '../shared/schemas'
-import type { Health, RecordDetail, RecordSummary } from '../shared/types'
+import type { AccountStats, Health, ReceiptLookup, RecordDetail, RecordSummary } from '../shared/types'
 
 export type CreateRecordResponse = { id: string; status: string; itemCount: number; expiresAt: string | null }
 
@@ -161,6 +161,22 @@ export async function getHealth(): Promise<Health> {
   if (MOCK) return { models: [], windowMinutes: 15, mascotEnabled: true }
 
   return request<Health>('/api/health')
+}
+
+export async function getStats(): Promise<AccountStats> {
+  if (MOCK) {
+    const { mockStats } = await import('./mock-record')
+    return mockStats()
+  }
+
+  return request<AccountStats>('/api/stats')
+}
+
+// Through our own server, never the gateway directly: api.gonkarouter.io sends no
+// Access-Control-Allow-Origin, so a browser on this origin cannot read the response even though
+// anyone can curl it. The route is a read-through and adds no authority.
+export async function getReceipt(requestId: string): Promise<ReceiptLookup> {
+  return request<ReceiptLookup>(`/api/receipts/${encodeURIComponent(requestId)}`)
 }
 
 // Better Auth's own sign-out. It answers 403 without an Origin header, which a browser always

@@ -2,7 +2,7 @@
 
 > Draft demo notice. Not final. Re-review against the deployed product and obtain owner approval before publication.
 
-<!-- Review baseline: 4 September 2026, main d3a31341dc004c433da2365ce524034443e864d7. -->
+<!-- Review baseline: 5 September 2026, main c59daaf. -->
 
 Use Cekgu to review practice or synthetic multiple-choice questions that you are permitted to share for processing
 through GonkaRouter's decentralised inference network. Cekgu supports an educator's review; the educator remains

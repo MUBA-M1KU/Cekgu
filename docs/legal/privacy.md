@@ -2,7 +2,7 @@
 
 > Draft demo notice. Not final. Re-review against the deployed product and obtain owner approval before publication.
 
-<!-- Review baseline: 4 September 2026, main d3a31341dc004c433da2365ce524034443e864d7. -->
+<!-- Review baseline: 5 September 2026, main c59daaf. -->
 
 Cekgu processes assessment content so educators can inspect potential problems. Do not enter confidential final papers
 or personal data in questions or notes. A private account does not make that content suitable for external processing.
@@ -27,7 +27,7 @@ within Cekgu's infrastructure.
 Your browser requests fonts from Google Fonts when pages load, including before sign-in. When animated characters load,
 it also downloads the Cubism runtime from Live2D's CDN.
 
-[GonkaRouter's privacy policy](https://gonkarouter.io/privacy-policy) allows retention of API inputs and outputs for
+[GonkaRouter's privacy policy](https://gonkarouter.io/privacy-policy) says it may retain API inputs and outputs for
 debugging, service improvement and security monitoring, without stating a fixed retention period. Its providers may
 process data under their own policies, including outside your country. Cekgu does not promise zero third-party
 retention.
@@ -65,5 +65,5 @@ third-party systems.
 
 See also [terms](terms.md) and [acceptable use](acceptable-use.md).
 
-<!-- Release review: Settings currently says opening a record renews retention, but GET /api/records/:id does not
-update records.updated_at. Reconcile implementation, Settings copy and this notice before publication. -->
+<!-- Release review: verified 5 September against src/client/pages/Settings.tsx and src/server/retention.ts. Opening a
+record does not renew private-record retention. Re-review against the deployed product before publication. -->

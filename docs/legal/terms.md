@@ -2,7 +2,7 @@
 
 > Draft demo notice. Not final. Re-review against the deployed product and obtain owner approval before publication.
 
-<!-- Review baseline: 4 September 2026, main d3a31341dc004c433da2365ce524034443e864d7. -->
+<!-- Review baseline: 5 September 2026, main c59daaf. -->
 
 Cekgu is a demo for educators checking multiple-choice practice questions before publication. It highlights possible
 problems for a human to review. It does not certify a paper as correct or replace subject expertise or institutional
@@ -44,8 +44,9 @@ The following is the required application-length attribution, not a claim that L
 > terms and conditions set by Live2D Inc. This content itself is created at the author’s sole discretion.
 
 <!-- Release review: the current home page uses static images of these characters even with MASCOT_ENABLED=false.
-Keep attribution while those images or the animated characters are included. Owner must confirm the applicable asset
-and SDK terms and placement of this full notice in the application and submission materials. -->
+Keep attribution while those images or the animated characters are included. Owner must confirm the team's eligibility
+under the applicable asset and SDK terms, and placement of this full notice in the application and submission materials,
+before public release. -->
 
 [material]: https://www.live2d.com/eula/live2d-free-material-license-agreement_en.html
 [sample-terms]: https://www.live2d.com/en/learn/sample/model-terms/

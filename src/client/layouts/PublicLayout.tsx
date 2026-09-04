@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router'
 import { BackToTop } from '../components/BackToTop'
 import { Lockup } from '../components/Lockup'
+import { SiteFooter } from '../components/SiteFooter'
+import { useSession } from '../session'
 
 // Plain anchors rather than Link, so a fragment on the current path scrolls and a fragment on
 // another path navigates. Both are the browser's own behaviour and neither needs a scroll handler.
@@ -9,12 +11,6 @@ const PUBLIC_NAV = [
   { href: '/#how-it-works', label: 'How It Works' },
   { href: '/#sample', label: 'Sample Report' },
   { href: '/#pricing', label: 'Pricing' },
-  { href: '/#trust', label: 'Trust and Privacy' }
-]
-
-const FOOTER_LINKS = [
-  { href: '/#how-it-works', label: 'How It Works' },
-  { href: '/#sample', label: 'Sample Report' },
   { href: '/#trust', label: 'Trust and Privacy' }
 ]
 
@@ -35,12 +31,23 @@ function useSolidNav(threshold: number) {
 
 export function PublicLayout() {
   const { pathname } = useLocation()
+  const session = useSession()
   // Only the landing has a hero behind the bar. Everywhere else it is solid immediately.
   const overHero = pathname === '/'
-  // Sign-in is a screen rather than a document: it composes its own two-column layout and needs
-  // the full width to do it. Everything else public is a document and keeps the 880 px measure.
-  const fullBleed = overHero || pathname === '/sign-in'
+  // Sign-in is a task, not a document, and it is the only public route that composes a whole
+  // screen: two panels, its own lockup and its own way back to the site. The site bar and footer
+  // over it are a second set of exits on a screen whose whole job is one action, and the bar's
+  // Sign In button is a link to the page it is already on.
+  const bare = pathname === '/sign-in'
   const scrolled = useSolidNav(24)
+
+  if (bare) {
+    return (
+      <div className="min-h-dvh bg-paper">
+        <Outlet />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-dvh bg-paper">
@@ -60,34 +67,41 @@ export function PublicLayout() {
               </a>
             ))}
           </nav>
-          <Link
-            to="/sign-in"
-            className="ml-auto inline-flex h-9 shrink-0 items-center rounded-bubble bg-ink px-5 font-medium text-on-ink md:ml-0"
-          >
-            Sign In
-          </Link>
+          {/* A visitor who is already signed in has no use for Sign In, and offering it on the
+              landing page is a link back to a decision they have made. Guest counts: the shared
+              workspace is a session like any other and the way back into it is the same door.
+
+              Nothing is rendered while the session is still unknown, because a bar that says
+              Sign In for a moment and then changes its mind is worse than one that waits. */}
+          {session.status === 'in' ? (
+            <Link
+              to="/dashboard"
+              className="ml-auto inline-flex h-9 shrink-0 items-center rounded-bubble bg-ink px-5 font-medium text-on-ink md:ml-0"
+            >
+              Open App
+            </Link>
+          ) : session.status === 'out' ? (
+            <Link
+              to="/sign-in"
+              className="ml-auto inline-flex h-9 shrink-0 items-center rounded-bubble bg-ink px-5 font-medium text-on-ink md:ml-0"
+            >
+              Sign In
+            </Link>
+          ) : (
+            <span className="ml-auto h-9 w-[6.5rem] shrink-0 md:ml-0" aria-hidden="true" />
+          )}
         </div>
       </header>
 
       {/* The landing is full-bleed: its sections carry their own grounds and their own measure.
-          Every other public route is a document and keeps DESIGN.md's 880 px measure. */}
-      <main className={fullBleed ? undefined : 'mx-auto max-w-[880px] px-4 py-6 sm:px-8'}>
+          The sample report is a working surface with filters and evidence side by side, so it
+          takes the workspace measure rather than the prose one. */}
+      <main className={overHero ? undefined : 'mx-auto w-full max-w-[76rem] px-4 py-6 sm:px-6'}>
         <Outlet />
       </main>
 
-      <footer className="border-t border-rule">
-        <div className="wrap flex flex-wrap items-center justify-between gap-x-8 gap-y-4 py-8">
-          <p className="type-caption text-ink-muted">
-            Cekgu · Pre-publication review for multiple-choice papers · Every reading routed through GonkaRouter
-          </p>
-          <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2">
-            {FOOTER_LINKS.map((item) => (
-              <a key={item.href} href={item.href} className="type-caption text-ink-muted hover:text-ink">
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </div>
+      <footer className="public-footer" role="contentinfo">
+        <SiteFooter />
       </footer>
 
       <BackToTop />

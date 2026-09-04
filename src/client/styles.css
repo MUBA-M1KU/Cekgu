@@ -64,9 +64,23 @@
   --s-8: 64px;
   --s-9: 96px;
 
-  /* Two radii by descent: round for bubbles, nearly square for paper. There is no medium radius. */
+  /* Three radii, one rule, applied everywhere: round is the bubble's meaning, surfaces take the
+     card corner, and anything a person operates directly takes the control corner. A fourth value
+     is a bug.
+
+     The surface corner came down from 1.25rem on 4 September. At 20px a card reads as a soft tile
+     and every panel on a working screen looked like a landing-page pill; the admin reference and
+     Geist both sit at 12px, which is visibly rounded and still square enough that a table can end
+     at its edge. */
   --r-bubble: 999px;
-  --r-sheet: 4px;
+  --r-card: 0.75rem;
+  /* The old name, kept pointing at the new value so the landing page's surfaces move with the
+     product's rather than becoming the last screen at 20px. */
+  --r-sheet: var(--r-card);
+  --r-control: 0.5rem;
+  /* Derived, not a fourth value: 8px on a 17px tick box is most of the way to a circle, and a
+     circle is the bubble's job. */
+  --r-tick: calc(var(--r-control) * 0.5);
 
   --t-quick: 120ms; /* hover, focus, chip and bubble state changes */
   --t-panel: 200ms; /* evidence panel and popover enter and exit */
@@ -92,7 +106,9 @@
   --font-mono: var(--font-mono);
 
   --radius-bubble: var(--r-bubble);
+  --radius-card: var(--r-card);
   --radius-sheet: var(--r-sheet);
+  --radius-control: var(--r-control);
 
   /* Deliberately no --spacing-* here. Tailwind's numeric scale is 4px steps, so redefining
      --spacing-9 as --s-9 turned h-9 into 96px rather than 36px. DESIGN.md's steps map onto the
@@ -170,13 +186,20 @@
 }
 
 /* NFR-UX-5: product-wide, not only the mascot. !important is deliberate here: this reset has to
-   beat component-level transitions, which is the whole point of the block. The attribute carries
-   the user's own Reduce Motion setting, which the system query cannot see. */
+   beat component-level transitions, which is the whole point of the block.
+   
+   The system query is honoured unless the reader has explicitly asked for animation. Before
+   4 September this block was unconditional, so a machine with animations switched off killed every
+   animation in the product and nothing in Settings could bring them back — Windows reports its
+   "show animations" toggle through this query, and that switch is thrown for a faster desktop as
+   often as for motion sensitivity. Following the system is still the default; :not([data-motion])
+   is the reader overruling it, in the one direction the old boolean could not express. */
 /* biome-ignore-start lint/complexity/noImportantStyles: a reduced-motion reset must win the cascade */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  :root:not([data-motion="full"]),
+  :root:not([data-motion="full"]) *,
+  :root:not([data-motion="full"]) *::before,
+  :root:not([data-motion="full"]) *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -184,10 +207,10 @@
   }
 }
 
-:root[data-reduce-motion="true"],
-:root[data-reduce-motion="true"] *,
-:root[data-reduce-motion="true"] *::before,
-:root[data-reduce-motion="true"] *::after {
+:root[data-motion="reduce"],
+:root[data-motion="reduce"] *,
+:root[data-motion="reduce"] *::before,
+:root[data-motion="reduce"] *::after {
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
@@ -324,19 +347,19 @@ section[id] {
   box-shadow: 0 1px 0 var(--rule);
 }
 
-/* The landing only: the bar sits over the hero clip for a full viewport of scrolling, which is
-   real content for the blur to work on. It is glass from the first pixel rather than transparent
-   until scrolled — a bar with no background at all is the same defect as one with a broken glass
-   background, which is that it has no surface. Over the clip the blur has something to work on,
-   so this is real glass rather than a tint pretending to be one. */
+/* The landing only. The bar has no surface of its own over the top of the hero, so the clip runs
+   edge to edge on arrival, and it becomes glass as soon as the page moves. Owner's call on
+   4 September, replacing glass from the first pixel. The argument for that was that a bar with no
+   background has no surface — true, and for the one screenful where the hero is the whole surface
+   that is what it is meant to be. Past that the blur has content behind it and earns the tint. */
 .nav-sticky[data-glass="true"] {
-  background: color-mix(in oklab, var(--sheet) 72%, transparent);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  backdrop-filter: blur(14px) saturate(160%);
+  background: transparent;
 }
 
 .nav-sticky[data-glass="true"][data-solid="true"] {
   background: color-mix(in oklab, var(--sheet) 86%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
 }
 
 /* The hero and the ticker under it are one viewport, exactly, at any screen size. The shell owns
@@ -351,6 +374,8 @@ section[id] {
   position: sticky;
   top: 0;
   z-index: 0;
+  /* Declared on the shell rather than the hero because the ticker sizes itself against it too. */
+  --cat-w: clamp(8rem, 17vw, 16rem);
   height: 100dvh;
   /* Exactly one viewport in every realistic window, and taller only when the content genuinely
      cannot fit one — a 620 px-tall desktop window, say. Clipping the headline to hold the height
@@ -371,7 +396,6 @@ section[id] {
   align-items: center;
   /* Not overflow: hidden. Hijiki hangs past the bottom edge on purpose, and .hero-media does its
      own clipping, so nothing else here needs the section to clip. */
-  --cat-w: clamp(8rem, 17vw, 16rem);
 }
 
 /* The sliding half. Opaque, or the pinned hero shows through it as it passes over. */
@@ -479,7 +503,7 @@ section[id] {
   position: relative;
   padding: var(--s-5);
   border: 1px solid color-mix(in oklab, var(--sheet) 90%, transparent);
-  border-radius: 1.5rem;
+  border-radius: var(--r-sheet);
   background: color-mix(in oklab, var(--sheet) 90%, transparent);
   -webkit-backdrop-filter: blur(18px) saturate(170%);
   backdrop-filter: blur(18px) saturate(170%);
@@ -502,6 +526,15 @@ section[id] {
   background: var(--ink);
   color: color-mix(in oklab, var(--on-ink) 72%, transparent);
   padding-block: 0.9rem;
+  /* This band is the ledge Hijiki's front paws land on, so it has to be at least as tall as the
+     drop. The pose hangs 0.345 of the cat's width below the line where the hero ends; the band was
+     a flat 50 px, so from about 1100 px wide the paws finished below the shell instead of on the
+     band — clipped by the viewport on arrival and painted over by the footer at the end of the
+     page. Sized off --cat-w it can never fall behind again. The half rem is clearance, so the paws
+     rest on the band rather than flush with its bottom edge. */
+  min-height: calc(var(--cat-w) * 0.345 + 0.5rem);
+  display: flex;
+  align-items: center;
 }
 
 .marquee-track {
@@ -526,7 +559,7 @@ section[id] {
 /* Raised surfaces on the marketing page are softer and rounder than the app's 4 px document
    corner, because a card here is a card and not a sheet of paper. */
 .card-soft {
-  border-radius: 1.25rem;
+  border-radius: var(--r-sheet);
   background: var(--sheet);
   box-shadow: 0 1px 2px var(--shadow-tint);
 }
@@ -541,13 +574,15 @@ section[id] {
   position: relative;
   display: grid;
   place-items: center;
-  width: 1.375rem;
-  height: 1.375rem;
+  /* Sizeable, so the walkthrough can draw the same bubble larger without a second component. The
+     default and the ratio below are the values this rule already had. */
+  width: var(--slot-size, 1.375rem);
+  height: var(--slot-size, 1.375rem);
   flex: none;
   border: 1.5px solid var(--rule-strong);
   border-radius: var(--r-bubble);
   font-family: var(--font-ui);
-  font-size: 0.75rem;
+  font-size: calc(var(--slot-size, 1.375rem) * 0.545);
   font-weight: 500;
   line-height: 1;
   color: var(--ink-muted);
@@ -600,6 +635,197 @@ section[id] {
   padding-block: 0.56rem;
   padding-inline: 0.56rem;
   margin-inline: -0.56rem;
+}
+
+/* ---------------------------------------------------------------------------------------------
+   How It Works is a walkthrough, not a card wall. The five steps genuinely happen in order, so the
+   rail carries the sequence and reports position while the panels carry one step each. The
+   five-across grid this replaces gave every step a fifth of a row at the widest breakpoint, which
+   is not enough width for a figure and a paragraph, and it made an ordered process read as a set
+   of parallel options. */
+.hiw-grid {
+  display: grid;
+  gap: var(--s-6);
+  margin-top: var(--s-6);
+}
+
+@media (min-width: 64rem) {
+  .hiw-grid {
+    grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+    gap: var(--s-6);
+    align-items: start;
+  }
+
+  .hiw-rail {
+    position: sticky;
+    /* The 4.25rem bar, plus air. */
+    top: 6rem;
+  }
+}
+
+.hiw-kicker {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-muted);
+}
+
+.hiw-steps {
+  margin: var(--s-5) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Under the rail's breakpoint the panels carry their own number and title, so the rail would be
+   the same five titles printed twice. */
+@media (max-width: 63.999rem) {
+  .hiw-steps {
+    display: none;
+  }
+}
+
+.hiw-step {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--s-2);
+  padding-block: 0.6rem;
+  padding-inline-start: var(--s-3);
+  border-top: 1px solid var(--rule);
+  color: var(--ink-muted);
+  box-shadow: inset 2px 0 0 transparent;
+  transition:
+    color var(--t-quick) var(--ease-out),
+    box-shadow var(--t-quick) var(--ease-out);
+}
+
+.hiw-steps li:last-child .hiw-step {
+  border-bottom: 1px solid var(--rule);
+}
+
+.hiw-step:hover {
+  color: var(--ink);
+}
+
+/* Ink, not an accent colour. It reports which step is being read, which is information, so it is
+   drawn in the same ink as the text it belongs to rather than introducing a colour for it. */
+.hiw-step[data-active="true"] {
+  color: var(--ink);
+  box-shadow: inset 2px 0 0 var(--ink);
+}
+
+.hiw-step-num {
+  font-size: 0.75rem;
+}
+
+.hiw-step-title {
+  font-weight: 500;
+}
+
+.hiw-panels {
+  display: grid;
+  gap: var(--s-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hiw-panel {
+  padding: var(--s-5);
+  /* Cleared for the sticky bar when the rail's own links jump here. */
+  scroll-margin-top: 6rem;
+}
+
+/* The figure moves beside the prose once there is room. Stacked, the panel ran a 52ch paragraph
+   down the left of a card twice that wide and the right half was dead. */
+@media (min-width: 48rem) {
+  .hiw-panel {
+    display: grid;
+    /* 11rem, not 13: at 1024 the rail and a 13rem figure column together squeezed the prose to
+       312px, about forty characters. .read-row wraps, so a four-bubble figure folds rather than
+       overflows on the way down. */
+    grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+    gap: var(--s-5);
+    align-items: start;
+  }
+}
+
+.hiw-figure {
+  --slot-size: 2.25rem;
+  gap: 1.1rem;
+}
+
+.hiw-panel-num {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}
+
+@media (max-width: 47.999rem) {
+  .hiw-panel-num {
+    margin-top: var(--s-4);
+  }
+}
+
+.hiw-panel-title {
+  margin-top: var(--s-2);
+  font-size: 1.25rem;
+}
+
+/* The trust section's questions. Seven answers opened at once is a wall, and only one of them is
+   ever the reader's question; the facts that apply to everyone are in the section's lede above,
+   which the wall was burying. */
+.faq-list {
+  /* Held to a reading measure rather than the full wrap. Across 80rem the chevron ends up most of
+     a screen away from the question it belongs to, which reads as two columns of unrelated things. */
+  max-width: 52rem;
+  margin-top: var(--s-6);
+  border-top: 1px solid var(--rule);
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--rule);
+}
+
+.faq-q {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-5);
+  padding-block: var(--s-4);
+  cursor: pointer;
+  list-style: none;
+}
+
+/* Safari still draws its own triangle without this. */
+.faq-q::-webkit-details-marker {
+  display: none;
+}
+
+.faq-q::after {
+  content: "";
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: 0.15rem;
+  border-right: 1.5px solid var(--ink-muted);
+  border-bottom: 1.5px solid var(--ink-muted);
+  transform: rotate(45deg);
+  transition: transform var(--t-quick) var(--ease-out);
+}
+
+.faq-item[open] .faq-q::after {
+  transform: rotate(-135deg);
+}
+
+.faq-q:hover {
+  color: var(--ink);
+}
+
+.faq-a {
+  max-width: 68ch;
+  margin: 0;
+  padding-bottom: var(--s-4);
+  color: var(--ink-muted);
 }
 
 /* ---------------------------------------------------------------------------------------------
@@ -720,159 +946,207 @@ section[id] {
 }
 
 /* ---------------------------------------------------------------------------------------------
-   The post-authentication shell: a hover rail, a glass topbar, the content container and a quiet
-   footer. The rail is the one piece here that is genuinely bespoke — it animates width, which the
-   usual advice forbids, but a 64 px rail that becomes 200 px is a width change and faking it with
-   a transform would move the icons it is supposed to leave still. */
+   The post-authentication shell: a sidebar that stays where you put it, a topbar that floats as
+   its own card, the content grid and a one-line footer.
+
+   The rail this replaces opened on hover and dimmed the whole page behind itself while it did.
+   That is a menu pretending to be navigation: the labels were unreadable until the pointer was
+   already on top of them, so the first click of every session was a guess at four glyphs, and the
+   backdrop made a hover look like a modal. The sidebar is now a surface with a state a person
+   sets, and the topbar carries the control that sets it. */
 
 .app-shell {
-  --app-foot-h: 9.5rem;
+  --side-w: 15.5rem;
+  --side-w-collapsed: 3.75rem;
+  --topbar-h: 3.25rem;
 }
 
-.app-rail {
+.app-shell[data-side="collapsed"] {
+  --side-w: var(--side-w-collapsed);
+}
+
+.app-sidebar {
   position: fixed;
   inset-block: 0;
   left: 0;
   z-index: 40;
   display: flex;
-  width: 4rem;
+  width: var(--side-w);
   flex-direction: column;
-  gap: var(--s-5);
-  padding: var(--s-4) 0;
   border-right: 1px solid var(--rule);
   background: var(--sheet);
-  overflow: hidden;
+  /* Animating width is what the usual advice forbids, and the detector flags it. Declined on
+     purpose, twice over: a 3.75rem rail that becomes 15.5rem IS a width change, and faking it with
+     a transform would scale the icons it exists to leave still. It fires once, on a deliberate
+     click, never on hover or scroll. */
   transition: width var(--t-panel) var(--ease-out);
 }
 
-.app-rail:hover,
-.app-rail:focus-within {
-  width: 12.5rem;
-}
-
-.app-rail-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 39;
-  opacity: 0;
-  pointer-events: none;
-  background: color-mix(in oklab, var(--ink) 22%, transparent);
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
-  transition: opacity var(--t-panel) var(--ease-out);
-}
-
-.app-rail:hover ~ .app-rail-backdrop,
-.app-rail:focus-within ~ .app-rail-backdrop {
-  opacity: 1;
-}
-
-.app-rail-logo {
+.app-sidebar-logo {
   display: flex;
+  height: 3.75rem;
+  flex: none;
   align-items: center;
-  gap: 0.6rem;
-  height: 2.25rem;
-  padding-inline: 1.125rem;
+  gap: 0.625rem;
+  padding-inline: 1.0625rem;
+  border-bottom: 1px solid var(--rule);
   color: var(--ink);
 }
 
-/* Without this the mark loses its own width to the label as the rail opens: the span keeps its
-   layout width while only its opacity animates, and 20 + 12 + 40 does not fit in a 28 px box. */
-.app-rail-logo svg {
+/* Without this the mark loses its own width to the label as the sidebar narrows. */
+.app-sidebar-logo svg {
   flex: none;
 }
 
-.app-rail-head {
+.app-sidebar-nav {
   display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  height: 1.5rem;
-  padding-inline: 1.125rem;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--s-5);
+  padding: var(--s-4) 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-.app-rail-rule {
+.app-sidebar-head {
+  height: 1.25rem;
+  margin-bottom: var(--s-1);
+  padding-inline: 1.125rem;
+  color: var(--ink-muted);
+}
+
+/* Collapsed, a group heading is four clipped letters, so it becomes a rule at the same height
+   and the group keeps its separation without the word. */
+.app-sidebar-head hr {
+  display: none;
   width: 1.25rem;
-  flex: none;
-  margin: 0;
+  margin: 0.5rem 0 0;
   border: 0;
   border-top: 1px solid var(--rule);
 }
 
-.app-rail-link {
+.app-shell[data-side="collapsed"] .app-sidebar-head hr {
+  display: block;
+}
+
+.app-sidebar-link {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  height: 2.5rem;
-  padding-inline: 1.125rem;
+  gap: 0.6875rem;
+  height: 2.25rem;
+  margin-inline: 0.5rem;
+  padding-inline: 0.625rem;
+  border-radius: var(--r-control);
   color: var(--ink-muted);
   white-space: nowrap;
-  transition: color var(--t-quick) var(--ease-out);
+  transition:
+    background-color var(--t-quick) var(--ease-out),
+    color var(--t-quick) var(--ease-out);
 }
 
-.app-rail-link:hover {
+.app-sidebar-link:hover {
+  background: var(--well);
   color: var(--ink);
 }
 
-.app-rail-link.active {
+/* Filled rather than underlined: on a surface the size of a sidebar a 2px edge marker is the
+   smallest signal on screen, and it was carrying the one fact the reader most needs from it. */
+.app-sidebar-link.active {
+  background: var(--well);
   color: var(--ink);
+  font-weight: 500;
 }
 
-/* The active mark is a 2 px bar at the leading edge, which reads at 64 px and at 200 px alike. */
-.app-rail-link.active::before {
+/* The pen sits inside the active row rather than on the sidebar's edge: it is the mark on the
+   place the reader is, which is what pen means everywhere else in the product. */
+.app-sidebar-link.active::before {
   content: "";
   position: absolute;
-  left: 0;
-  top: 0.5rem;
-  bottom: 0.5rem;
+  left: -0.5rem;
+  top: 0.4375rem;
+  bottom: 0.4375rem;
   width: 2px;
   border-radius: 0 2px 2px 0;
   background: var(--pen);
 }
 
-.app-rail-icon {
+.app-sidebar-icon {
   display: grid;
-  width: 1.375rem;
+  width: 1.25rem;
   flex: none;
   place-items: center;
 }
 
-/* Labels and section headings crossfade rather than slide, so nothing moves horizontally except
-   the rail's own edge. */
-.app-rail-text {
-  opacity: 0;
+/* Labels crossfade and are pulled out of the layout at the narrow width, so nothing wraps to a
+   second line during the transition. */
+.app-sidebar-text {
+  min-width: 0;
+  overflow: hidden;
+  opacity: 1;
   transition: opacity var(--t-quick) var(--ease-out);
 }
 
-.app-rail:hover .app-rail-text,
-.app-rail:focus-within .app-rail-text {
-  opacity: 1;
+.app-shell[data-side="collapsed"] .app-sidebar-text {
+  opacity: 0;
+  pointer-events: none;
 }
 
+.app-sidebar-foot {
+  flex: none;
+  padding: var(--s-3) 0 var(--s-4);
+  border-top: 1px solid var(--rule);
+}
+
+/* The topbar is a card floating on the page rather than a bar welded to the top of it, which is
+   the admin reference's own signature. The masked blur behind it is what lets content pass under
+   the card and fade out instead of cutting against a hard edge. */
 .app-topbar {
   position: sticky;
   top: 0;
   z-index: 30;
+  padding-inline: var(--s-4);
+}
+
+.app-topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  mask-image: linear-gradient(var(--paper), var(--paper) 62%, transparent 100%);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.app-topbar-inner {
+  position: relative;
+  z-index: 1;
   display: flex;
+  height: var(--topbar-h);
   align-items: center;
   gap: var(--s-4);
-  height: 3.5rem;
-  margin-left: 4rem;
+  margin-top: var(--s-3);
   padding-inline: var(--s-4);
-  border-bottom: 1px solid var(--rule);
-  /* Solid. The authenticated pages are a flat ground, so there is nothing for a blur to act on
-     and the glass version rendered as a half-transparent bar with the page showing through it. */
+  border: 1px solid var(--rule);
+  border-radius: var(--r-card);
   background: var(--sheet);
+  box-shadow: var(--shadow-sheet);
+}
+
+.app-topbar-divider {
+  width: 1px;
+  height: 1rem;
+  flex: none;
+  background: var(--rule);
 }
 
 .app-icon-button,
 .app-avatar {
   position: relative;
   display: grid;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2rem;
+  height: 2rem;
   place-items: center;
-  border-radius: var(--r-bubble);
+  border-radius: var(--r-control);
   color: var(--ink-muted);
   transition:
     background-color var(--t-quick) var(--ease-out),
@@ -886,6 +1160,7 @@ section[id] {
 }
 
 .app-avatar {
+  border-radius: var(--r-bubble);
   border: 1px solid var(--rule-strong);
   font-size: 0.8125rem;
   font-weight: 500;
@@ -894,21 +1169,20 @@ section[id] {
 
 .app-badge {
   position: absolute;
-  top: 0.1875rem;
-  right: 0.1875rem;
+  top: -0.125rem;
+  right: -0.125rem;
   display: grid;
   min-width: 1rem;
   height: 1rem;
   place-items: center;
   padding-inline: 0.25rem;
+  border: 2px solid var(--sheet);
   border-radius: var(--r-bubble);
   background: var(--pen);
   color: var(--pen-ink);
 }
 
-/* SolarSim's popover, matched: w-[min(20rem,calc(100vw-2rem))], max-h-[400px] with its own
-   scroll, a 0.75rem radius, one border, a deep shadow, a header row above divided rows, and an
-   entrance that scales up from 95% while rising 10px. Solid, never translucent — it sits over a
+/* A popover is a panel, so it takes the card corner. Solid, never translucent: it sits over a
    flat page and there is nothing for a blur to act on. */
 .app-pop {
   position: absolute;
@@ -920,7 +1194,7 @@ section[id] {
   overflow-x: hidden;
   overflow-y: auto;
   border: 1px solid var(--rule);
-  border-radius: 0.75rem;
+  border-radius: var(--r-card);
   background: var(--sheet);
   box-shadow: var(--shadow-overlay);
   transform-origin: top right;
@@ -930,7 +1204,7 @@ section[id] {
 @keyframes pop-in {
   from {
     opacity: 0;
-    transform: translateY(-10px) scale(0.95);
+    transform: translateY(-6px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -943,11 +1217,28 @@ section[id] {
   align-items: center;
   justify-content: space-between;
   gap: var(--s-4);
-  padding: var(--s-4);
+  padding: var(--s-3) var(--s-4);
   border-bottom: 1px solid var(--rule);
 }
 
-/* divide-y: rows are separated from each other, not boxed individually. */
+/* The head's one action. A text button rather than a row, because it acts on the list rather
+   than being an item in it. */
+.app-pop-action {
+  color: var(--ink-muted);
+  transition: color var(--t-quick) var(--ease-out);
+}
+
+.app-pop-action:hover {
+  color: var(--ink);
+}
+
+.app-pop-account {
+  display: grid;
+  gap: var(--s-1);
+  padding: var(--s-3) var(--s-4);
+}
+
+/* Rows are separated from each other, not boxed individually. */
 .app-pop-list > * + * {
   border-top: 1px solid var(--rule);
 }
@@ -957,7 +1248,7 @@ section[id] {
   width: 100%;
   align-items: flex-start;
   gap: var(--s-3);
-  padding: var(--s-4);
+  padding: var(--s-3) var(--s-4);
   text-align: left;
   transition: background-color var(--t-quick) var(--ease-out);
 }
@@ -966,7 +1257,8 @@ section[id] {
   background: var(--well);
 }
 
-/* The unread dot, as SolarSim marks an unread notification. */
+/* Pen only where a person is being asked for something. DESIGN.md reserves red for the human
+   hand, and a check the machine is still running is not that. */
 .app-pop-dot {
   width: 0.375rem;
   height: 0.375rem;
@@ -974,6 +1266,10 @@ section[id] {
   flex: none;
   border-radius: var(--r-bubble);
   background: var(--pen);
+}
+
+.app-pop-dot[data-running="true"] {
+  background: var(--ink-muted);
 }
 
 .app-pop-empty {
@@ -986,52 +1282,52 @@ section[id] {
 }
 
 .app-body {
-  position: relative;
-  z-index: 1;
   display: flex;
   min-height: 100dvh;
-  margin-left: 4rem;
-  /* The reveal: the page reserves the footer's height below itself and paints over it until the
-     reader reaches the end. */
-  margin-bottom: var(--app-foot-h);
+  margin-left: var(--side-w);
   flex-direction: column;
   background: var(--paper);
+  /* Same decision, same reason. The sidebar is fixed, so the content's left margin is the only
+     thing that can follow it, and there is no transform that moves a column without also moving
+     what is inside it. 200 ms of layout on a click a person asked for; the alternative is content
+     snapping to its new position while the rail is still sliding, which reads as a broken toggle. */
+  transition: margin-left var(--t-panel) var(--ease-out);
 }
 
-/* SolarSim's dashboard container: centred, capped, and the same on every authenticated screen so
-   no page has a measure of its own to get wrong. */
 .app-content {
   flex: 1;
   width: 100%;
-  max-width: 100rem;
+  max-width: 90rem;
   margin-inline: auto;
-  padding: var(--s-5) var(--s-4) var(--s-6);
+  padding: var(--s-5) var(--s-4) var(--s-7);
 }
 
-/* The document keeps DESIGN.md's 880 px measure inside that container, unchanged from the layout
-   this replaces. margin-inline: auto is what centres it: without it the measure caps the width and
-   the page hangs off the left edge of a container up to 1600 px wide. */
-.app-doc {
-  max-width: 55rem;
-  margin-inline: auto;
-}
-
-/* MakanLah's footer is a reveal: fixed at the bottom, behind the page, with the content scrolling
-   over it and uncovering it at the end. The previous version copied the look and not the
-   behaviour, which is the half that makes it work — and it is also what gives the blur something
-   to act on, since the page's own ground passes over it. */
+/* One line, in flow. The reveal footer this replaces reserved 9.5 rem of dead margin under every
+   working screen so that a marketing block could be uncovered at the end of it, which is a landing
+   page's move made inside a workspace. */
 .app-footer {
-  position: fixed;
-  bottom: 0;
-  left: 4rem;
-  right: 0;
-  z-index: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3) var(--s-5);
+  padding: var(--s-4) var(--s-5);
+  border-top: 1px solid var(--rule);
+  background: var(--sheet);
+}
+
+/* The landing keeps the tall reveal footer it was designed around. */
+.public-footer {
+  --app-foot-h: 9.5rem;
+  position: relative;
+  z-index: 2;
+  /* Height, not min-height, and no flex wrapper: .app-footer-inner centres its own rows against a
+     definite height and right-aligns them across the full measure. */
   height: var(--app-foot-h);
   border-top: 1px solid var(--rule);
   background: color-mix(in oklab, var(--sheet) 70%, transparent);
   -webkit-backdrop-filter: blur(10px) saturate(1.18);
   backdrop-filter: blur(10px) saturate(1.18);
-  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--sheet) 60%, transparent);
 }
 
 .app-footer-inner {
@@ -1046,6 +1342,12 @@ section[id] {
   text-align: right;
 }
 
+/* Back To Top is fixed at the bottom right and floats over this footer. Clear the button's width
+   plus its own offset, or it sits on top of the Trust and Privacy link. */
+.public-footer .app-footer-inner {
+  padding-inline-end: calc(2.75rem + var(--s-5) * 2);
+}
+
 .app-footer-brand {
   display: inline-flex;
   align-items: center;
@@ -1053,10 +1355,13 @@ section[id] {
   color: var(--ink);
 }
 
+/* The wordmark has one treatment. Lockup.tsx and AppSidebar.tsx both set 1.25rem, 700 and
+   -0.02em inline; this was a third rendering of the same word disagreeing with them on all three.
+   Carried over from #190. */
 .app-footer-name {
-  font-size: 1.125rem;
-  font-weight: 600;
-  letter-spacing: -0.035em;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .app-footer-link {
@@ -1068,6 +1373,44 @@ section[id] {
 
 .app-footer-link:hover {
   color: var(--ink);
+}
+
+/* Below the md breakpoint the sidebar leaves the flow entirely and slides in over the page, so a
+   375 px screen is not spending 60 px of its width on chrome. */
+@media (max-width: 47.99rem) {
+  .app-sidebar {
+    width: var(--side-w-collapsed);
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-overlay);
+    transition:
+      transform var(--t-panel) var(--ease-out),
+      width var(--t-panel) var(--ease-out);
+  }
+
+  .app-shell[data-side="open"] .app-sidebar {
+    width: 15.5rem;
+    transform: translateX(0);
+  }
+
+  .app-shell[data-side="open"] .app-sidebar-text {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .app-body {
+    margin-left: 0;
+  }
+
+  .app-content {
+    padding-inline: var(--s-3);
+  }
+}
+
+.app-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 39;
+  background: color-mix(in oklab, var(--ink) 34%, transparent);
 }
 
 /* ---------------------------------------------------------------------------------------------
@@ -1115,12 +1458,14 @@ section[id] {
   .nav-sticky[data-glass="true"],
   .hero-card,
   .hero-badge,
-  .app-footer {
+  .public-footer {
     background: var(--sheet);
   }
 
-  .app-rail-backdrop {
-    background: color-mix(in oklab, var(--ink) 34%, transparent);
+  /* The topbar's blur is the whole point of the strip: with no blur to run there is nothing to
+     fade content into, so the strip goes away and the card stands on the page alone. */
+  .app-topbar::before {
+    display: none;
   }
 }
 
@@ -1128,15 +1473,14 @@ section[id] {
   .nav-sticky[data-glass="true"],
   .hero-card,
   .hero-badge,
-  .app-footer {
+  .public-footer {
     background: var(--sheet);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
 
-  .app-rail-backdrop {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
+  .app-topbar::before {
+    display: none;
   }
 }
 
@@ -1152,7 +1496,7 @@ section[id] {
   gap: var(--s-2);
   padding-inline: var(--s-3);
   border: 1px solid var(--rule-strong);
-  border-radius: var(--r-sheet);
+  border-radius: var(--r-control);
   background: var(--sheet);
   color: var(--ink);
   text-align: left;
@@ -1175,7 +1519,7 @@ section[id] {
   overflow-y: auto;
   list-style: none;
   border: 1px solid var(--rule);
-  border-radius: 0.75rem;
+  border-radius: var(--r-control);
   background: var(--sheet);
   box-shadow: var(--shadow-overlay);
   transform-origin: top;
@@ -1184,7 +1528,7 @@ section[id] {
 
 .select-option {
   padding: 0.4375rem var(--s-3);
-  border-radius: var(--r-sheet);
+  border-radius: calc(var(--r-control) - 0.125rem);
   cursor: pointer;
 }
 
@@ -1203,7 +1547,7 @@ section[id] {
   height: 1.0625rem;
   flex: none;
   border: 1px solid var(--rule-strong);
-  border-radius: var(--r-sheet);
+  border-radius: var(--r-tick);
   background: var(--sheet);
   display: grid;
   place-content: center;
@@ -1231,4 +1575,789 @@ section[id] {
 
 .check-box:checked::before {
   transform: scale(1);
+}
+
+/* Everything below is in @layer components, so a Tailwind utility beats it.
+
+   The rest of this stylesheet is unlayered, which puts it ABOVE every layer in the cascade: a
+   class here would win against `sm:hidden` on the same element and a responsive utility written
+   beside one of these class names would silently do nothing. That is a trap to walk into once.
+   Layering the furniture means `className="btn btn-primary sm:hidden"` behaves the way the person
+   writing it expects. */
+@layer components {
+  /* ---------------------------------------------------------------------------------------------
+     Page furniture. Every working screen is built from the same five things — a page header, a
+     card, a stat, a table and a button — so a screen has no measurements of its own to get wrong.
+
+     What this replaces was one 71.5 rem sheet per page with everything inside it. That reads as a
+     document, which is right for the record workspace and wrong for a dashboard, a library and a
+     settings screen: a single slab gives a reader no way to tell where one concern ends and the
+     next begins, and it left half the viewport empty on every one of them. */
+
+  .page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--s-4);
+    margin-bottom: var(--s-5);
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+
+  .page-sub {
+    margin-top: 0.375rem;
+    max-width: 68ch;
+    color: var(--ink-muted);
+  }
+
+  /* Twelve columns, because twelve divides by two, three, four and six, and this product has
+     screens that want each of those. Every card declares its own span; nothing is placed by being
+     next in the source, and a row with four things in it gets four cells rather than three and a
+     gap. */
+  .page-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--s-4);
+    /* Stretch, not start. A row of cards that each stop at their own content leaves a ragged
+       bottom edge across the page, and the eye reads the ragged edge as the layout rather than as
+       the content. The footer inside each card is pushed to the bottom below, so the extra height
+       goes into one gap rather than being spread through the card. */
+    align-items: stretch;
+  }
+
+  .card {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    border: 1px solid var(--rule);
+    border-radius: var(--r-card);
+    background: var(--sheet);
+    box-shadow: var(--shadow-sheet);
+  }
+
+  .card > * {
+    padding-inline: var(--s-5);
+  }
+
+  .card > :first-child {
+    padding-top: var(--s-5);
+  }
+
+  .card > :last-child {
+    padding-bottom: var(--s-5);
+  }
+
+  /* Only a card that is itself a grid cell fills its row. A card nested inside a column, like the
+     sticky rail on New Check, keeps its own height. */
+  .page-grid > .card {
+    height: 100%;
+  }
+
+  /* A card whose content runs to its own edges: a table, a list of rows. The rows supply the
+     padding so the hairlines and the hover band reach the border. */
+  .card-flush > * {
+    padding-inline: 0;
+  }
+
+  .card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--s-3) var(--s-4);
+    padding-bottom: var(--s-4);
+  }
+
+  .card-title {
+    font-family: var(--font-ui);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+
+  .card-desc {
+    margin-top: 0.25rem;
+    max-width: 62ch;
+    color: var(--ink-muted);
+  }
+
+  .card-body > * + * {
+    margin-top: var(--s-4);
+  }
+
+  .card-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3);
+    /* auto rather than a fixed step, so a card that was stretched to match its neighbour puts the
+       extra height above the rule instead of below its own content. padding-top carries the gap
+       the margin used to. */
+    margin-top: auto;
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--rule);
+  }
+
+  /* A rule that reaches the card's border rather than stopping inside its padding. Used where a
+     card holds two concerns that are genuinely separate. */
+  .card-rule {
+    height: 1px;
+    margin-inline: calc(var(--s-5) * -1);
+    background: var(--rule);
+  }
+
+  .card-flush .card-head,
+  .card-flush .card-foot {
+    padding-inline: var(--s-5);
+  }
+
+  /* A figure with a label, and nothing else. No icon tile, no trend badge: this product has no
+     week-on-week number to put in one, and a badge with an invented percentage in it is the
+     clearest way to tell a judge the screen is a template. */
+  .stat-label {
+    color: var(--ink-muted);
+  }
+
+  .stat-value {
+    margin-top: var(--s-2);
+    font-family: var(--font-mono);
+    font-size: 1.75rem;
+    line-height: 1.1;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums slashed-zero;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-value[data-pen="true"] {
+    color: var(--pen);
+  }
+
+  .stat-note {
+    margin-top: var(--s-2);
+    color: var(--ink-muted);
+  }
+
+  /* ---------------------------------------------------------------------------------------------
+     Buttons. Four roles and one geometry, so a screen cannot invent a fifth by writing a slightly
+     different utility string. */
+  .btn {
+    display: inline-flex;
+    height: 2.25rem;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--s-2);
+    padding-inline: var(--s-4);
+    border: 1px solid transparent;
+    border-radius: var(--r-control);
+    font-family: var(--font-ui);
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition:
+      background-color var(--t-quick) var(--ease-out),
+      border-color var(--t-quick) var(--ease-out),
+      color var(--t-quick) var(--ease-out),
+      transform var(--t-quick) var(--ease-out);
+  }
+
+  .btn:active:not(:disabled) {
+    transform: scale(0.985);
+  }
+
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--on-ink);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--ink) 88%, var(--sheet));
+    border-color: color-mix(in oklab, var(--ink) 88%, var(--sheet));
+  }
+
+  .btn-outline {
+    border-color: var(--rule-strong);
+    background: var(--sheet);
+    color: var(--ink);
+  }
+
+  .btn-outline:hover:not(:disabled) {
+    background: var(--well);
+  }
+
+  .btn-ghost {
+    color: var(--ink-muted);
+  }
+
+  .btn-ghost:hover:not(:disabled) {
+    background: var(--well);
+    color: var(--ink);
+  }
+
+  /* The one destructive role. Red is the human's hand, and deleting is the human's hand. */
+  .btn-danger {
+    border-color: var(--pen);
+    color: var(--pen);
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--pen) 10%, var(--sheet));
+  }
+
+  .btn-sm {
+    height: 2rem;
+    padding-inline: var(--s-3);
+    font-size: 0.8125rem;
+  }
+
+  /* ---------------------------------------------------------------------------------------------
+     The table. Rows are separated by a hairline and nothing else: no zebra, no per-row card, no
+     border on both edges of every row. */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .data-table thead th {
+    padding: var(--s-2) var(--s-4);
+    border-bottom: 1px solid var(--rule);
+    background: var(--well);
+    color: var(--ink-muted);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .data-table tbody td {
+    padding: 0.6875rem var(--s-4);
+    border-bottom: 1px solid var(--rule);
+    vertical-align: middle;
+  }
+
+  .data-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  /* The count of what is on screen, which is the one thing a filtered table cannot say for itself. */
+  .data-table tfoot td {
+    padding: var(--s-3) var(--s-4);
+  }
+
+  .data-table tbody tr {
+    transition: background-color var(--t-quick) var(--ease-out);
+  }
+
+  .data-table tbody tr:hover {
+    background: var(--well);
+  }
+
+  /* A selection mark on a table row, not a card rail. */
+  .data-table tbody tr[data-selected="true"] {
+    background: var(--well);
+    box-shadow: inset 2px 0 0 0 var(--ink);
+  }
+
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums slashed-zero;
+    text-align: right;
+  }
+
+  /* ---------------------------------------------------------------------------------------------
+     The settings measure: what the section is on the left, the controls that change it on the
+     right. A settings screen is a list of separate decisions, and stacking them into one column
+     makes every heading look like the next paragraph of the one above. */
+  .settings-row {
+    display: grid;
+    gap: var(--s-4);
+    padding-block: var(--s-7);
+    border-top: 1px solid var(--rule);
+  }
+
+  .settings-row:first-of-type {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  @media (min-width: 60rem) {
+    .settings-row {
+      grid-template-columns: minmax(0, 17rem) minmax(0, 1fr);
+      gap: var(--s-7);
+    }
+  }
+
+  .settings-heading {
+    font-family: var(--font-ui);
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .settings-desc {
+    margin-top: 0.375rem;
+    max-width: 46ch;
+    color: var(--ink-muted);
+  }
+
+  .settings-body > * + * {
+    margin-top: var(--s-4);
+  }
+
+  /* One recent record. A tile on the well, per the rule above.
+
+     The status chip inside it takes the sheet instead of the well it normally uses: chip and tile
+     are the same ground otherwise, and the chip stops reading as a chip at all. It is the only
+     place in the product where a level-0 chip sits on a level-0 ground. */
+  .record-tile {
+    display: flex;
+    /* A grid item defaults to min-width: auto, so without this the tile refuses to shrink below
+       its title and the dashboard scrolls sideways at 375 px. */
+    min-width: 0;
+    align-items: center;
+    gap: var(--s-4);
+    padding: 0.75rem var(--s-4);
+    border-radius: var(--r-control);
+    background: var(--well);
+    transition: background-color var(--t-quick) var(--ease-out);
+  }
+
+  .record-tile:hover {
+    background: color-mix(in oklab, var(--well) 84%, var(--ink));
+  }
+
+  .record-tile .status-chip {
+    background: var(--sheet);
+  }
+
+  /* A labelled fact in a card: the label on the left, the value on the right.
+
+     Tiles on the well, not rows separated by hairlines. A hairline inside a bordered card draws the
+     same boundary twice: level 0 assumes rows sitting directly on the sheet, where the rule is the
+     only separation available. DESIGN.md names this list as one of the three that must be tiles. */
+  .fact-list {
+    margin: 0;
+    display: grid;
+    grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+    gap: var(--s-1) 0;
+  }
+
+  .fact-list dt,
+  .fact-list dd {
+    margin: 0;
+    padding-block: 0.625rem;
+    background: var(--well);
+  }
+
+  .fact-list dt {
+    padding-left: var(--s-4);
+    padding-right: var(--s-5);
+    border-radius: var(--r-control) 0 0 var(--r-control);
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+
+  .fact-list dd {
+    padding-right: var(--s-4);
+    border-radius: 0 var(--r-control) var(--r-control) 0;
+  }
+
+  /* ---------------------------------------------------------------------------------------------
+     Sign in. Two panels of one screen: the form, and the one thing this product can show a person
+     who has not used it yet. */
+  .auth-screen {
+    display: grid;
+    min-height: 100dvh;
+    align-items: stretch;
+  }
+
+  @media (min-width: 64rem) {
+    .auth-screen {
+      grid-template-columns: minmax(0, 28rem) minmax(0, 1fr);
+    }
+  }
+
+  .auth-form-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--s-6);
+    padding: var(--s-7) var(--s-5);
+    background: var(--sheet);
+  }
+
+  @media (min-width: 64rem) {
+    .auth-form-panel {
+      padding-inline: var(--s-8);
+      border-right: 1px solid var(--rule);
+    }
+  }
+
+  .auth-aside {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--s-5);
+    padding: var(--s-8);
+    background: var(--paper);
+  }
+
+  @media (min-width: 64rem) {
+    .auth-aside {
+      display: flex;
+    }
+  }
+
+  /* The tab pair that swaps the form between signing in and creating an account. A segmented
+     control, because the two are one choice with two states rather than two separate actions. */
+  .seg {
+    display: inline-flex;
+    padding: 0.1875rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--r-control);
+    background: var(--well);
+  }
+
+  .seg button {
+    height: 1.875rem;
+    padding-inline: var(--s-4);
+    border-radius: calc(var(--r-control) - 0.125rem);
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition:
+      background-color var(--t-quick) var(--ease-out),
+      color var(--t-quick) var(--ease-out);
+  }
+
+  .seg button[aria-pressed="true"] {
+    background: var(--sheet);
+    color: var(--ink);
+    box-shadow: var(--shadow-sheet);
+  }
+
+  /* ---------------------------------------------------------------------------------------------
+     New Check. A question is a block a person edits, so it gets a surface of its own rather than a
+     fieldset separated from the last one by a rule. */
+  .question-block {
+    border: 1px solid var(--rule);
+    border-radius: var(--r-card);
+    background: var(--sheet);
+  }
+
+  .question-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    border-bottom: 1px solid var(--rule);
+    background: var(--well);
+    border-radius: calc(var(--r-card) - 1px) calc(var(--r-card) - 1px) 0 0;
+  }
+
+  .question-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+    padding: var(--s-4);
+  }
+
+  /* The right-hand column on New Check follows the form down the page: what is about to be sent,
+     and the button that sends it, stay reachable from question nine. */
+  .sticky-rail {
+    position: sticky;
+    top: calc(var(--topbar-h) + var(--s-5));
+  }
+
+  /* ---------------------------------------------------------------------------------------------
+     States. A working screen shows three things besides its content, and all three are drawn the
+     same way so none of them reads as a fourth kind of page. */
+  .state-block {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-3);
+    padding: var(--s-7) var(--s-5);
+    color: var(--ink-muted);
+  }
+
+  .state-block[data-centre="true"] {
+    justify-items: center;
+    text-align: center;
+  }
+
+  /* A skeleton in the shape of the row it will become, not a spinner. It says nothing about the
+     content, only that the row is coming. */
+  .skeleton {
+    border-radius: var(--r-control);
+    background: linear-gradient(90deg, var(--well), color-mix(in oklab, var(--well) 45%, var(--sheet)), var(--well));
+    background-size: 200% 100%;
+    animation: skeleton-slide 1.4s linear infinite;
+  }
+
+  @keyframes skeleton-slide {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  /* -------------------------------------------------------------------------------------------
+     Charts. Three forms, no library, and every one of them built so the numbers are readable as
+     text with the colour switched off.
+
+     THE VERDICT MIX IS FACETED, NOT STACKED, and that is not a style choice. Run the five verdict
+     colours through a CVD validator against either ground and the adjacent pair Split Opinion
+     (ink blue) and Possible Ambiguity (violet) separate by dE 9.9 in light and 6.6 in dark for
+     normal vision, against a floor of 15. In a five-segment stacked bar those two segments touch
+     and nothing but hue tells them apart. The palette cannot move, because a verdict colour is
+     semantic and PRODUCT.md owns it, so the chart moves instead: one labelled row per verdict,
+     where the label carries the identity and the colour only reinforces it. */
+
+  .chart-rows {
+    display: grid;
+    gap: 0.625rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chart-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: var(--s-2) var(--s-3);
+  }
+
+  .chart-row-label {
+    min-width: 0;
+    color: var(--ink);
+  }
+
+  .chart-row-value {
+    color: var(--ink-muted);
+  }
+
+  /* The track is one step off the surface, not a box: a bar chart with a filled background behind
+     every row is dashboard clutter. */
+  .chart-track {
+    grid-column: 1 / -1;
+    height: 0.5rem;
+    border-radius: var(--r-tick);
+    background: var(--well);
+    overflow: hidden;
+  }
+
+  /* 4px rounded data-end, anchored flat to the baseline so the bar starts where the axis is. */
+  .chart-fill {
+    height: 100%;
+    min-width: 2px;
+    border-radius: 0 var(--r-tick) var(--r-tick) 0;
+    background: var(--fill, var(--ink));
+  }
+
+  /* A single ratio against a limit. The fill is ink because verification is a machine fact, and
+     red in this product is the human's hand. */
+  .meter {
+    height: 0.625rem;
+    border-radius: var(--r-tick);
+    background: var(--well);
+    overflow: hidden;
+  }
+
+  .meter-fill {
+    height: 100%;
+    min-width: 2px;
+    border-radius: 0 var(--r-tick) var(--r-tick) 0;
+    background: var(--ink);
+  }
+
+  /* The admin reference calls this an illustrated stat: a title, a period chip, one large figure
+     with a second beside it, and an illustration bleeding out of the bottom-right corner. The
+     structure is copied; the content is not.
+
+     The illustration is Hijiki, one of the product's two readers, already licensed and credited
+     and already standing for Reader B on the landing page. The figure counts readings those two
+     produced, so the cat in the corner is the thing being counted rather than a stock person
+     dropped in to fill the corner. */
+  .panel {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .panel-body {
+    position: relative;
+    z-index: 1;
+    /* Clear of the cat at every width the card is used at. */
+    max-width: 22ch;
+  }
+
+  .panel-figure {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-3);
+    margin-top: var(--s-5);
+    font-family: var(--font-mono);
+    font-size: 2.5rem;
+    line-height: 1;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+  }
+
+  .panel-chip {
+    display: inline-flex;
+    align-items: center;
+    margin-top: var(--s-3);
+    padding: 0.125rem var(--s-3);
+    border-radius: var(--r-bubble);
+    background: var(--well);
+    color: var(--ink-muted);
+  }
+
+  /* Anchored to the card's corner and allowed to run off two of its edges, which is what makes it
+     read as part of the card rather than as a picture placed inside one. */
+  .panel-art {
+    position: absolute;
+    /* The asset carries about 18% transparent margin on its left and almost none on its right, so
+       these offsets are measured against the cat rather than against the file: it hangs over the
+       card the way the same asset hangs over the ticker on the landing page. */
+    right: -1.5rem;
+    bottom: -2rem;
+    z-index: 0;
+    width: 13.5rem;
+    max-width: 46%;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* On the dark ground the cat is black on near-black. A soft halo behind it separates the two
+     without recolouring an asset that is licensed as it is. */
+  :root[data-theme="dark"] .panel-art {
+    filter: drop-shadow(0 0 14px color-mix(in oklab, var(--ink) 22%, transparent));
+  }
+
+  /* A machine string a person is about to act on: a URL they are being sent to, an id they are
+     about to check. Recessed rather than raised, because it is something to read rather than
+     something to press, and mono because every character in it counts.
+
+     One class, two places. The receipt viewer shows the gateway URL in it and the leaving-site
+     dialog shows the same URL split into its host and its path, so the string a person compares
+     across those two screens is set the same way in both. */
+  .code-block {
+    display: block;
+    padding: var(--s-3);
+    border-radius: var(--r-control);
+    background: var(--well);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums slashed-zero;
+    overflow-wrap: anywhere;
+  }
+
+  /* The same string inside a sentence. No chip: the receipt viewer sets its own fields as bare
+     mono for the same reason, and a padded background immediately before a comma renders as
+     "api.gonkarouter.io , which", which reads as a typo rather than as emphasis. The face is the
+     emphasis. */
+  .code-inline {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    font-variant-numeric: tabular-nums slashed-zero;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  /* The shared-workspace disclosure: a drawer pulled out from under the topbar card.
+
+     It was a full-width inverted strip below the bar, then briefly a chip with a popover. The
+     strip read as a separate stamp laid across the page; the chip was something a person had to
+     find. This shares the card's width and its corner and hides its own top edge behind it, so the
+     two read as one surface that was pulled downward.
+
+     In flow rather than inside the sticky header: the header staying pinned is right for a bar and
+     wrong for a paragraph, and nothing may sit between the bar and this (FR-AUTH-3). */
+  .guest-drawer {
+    position: relative;
+    /* Under the topbar's 30 so the card hides this one's top edge, over the page below it. */
+    z-index: 20;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s-4);
+    margin-inline: var(--s-4);
+    /* Exactly the card's corner, so the overlap is the radius and no straight top edge shows. */
+    margin-top: calc(var(--r-card) * -1);
+    padding: calc(var(--r-card) + var(--s-3)) var(--s-4) var(--s-3);
+    border: 1px solid var(--rule);
+    border-top: 0;
+    border-radius: 0 0 var(--r-card) var(--r-card);
+    background: var(--sheet);
+    box-shadow: var(--shadow-sheet);
+    animation: guest-drawer-in var(--t-panel) var(--ease-out) both;
+  }
+
+  /* Slides out from behind the bar rather than fading in place, because the whole idea is that it
+     came from there. */
+  @keyframes guest-drawer-in {
+    from {
+      transform: translateY(-0.5rem);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* No reading measure here, deliberately. A measure is for a column of prose someone settles into
+     and it was breaking this sentence onto a second line on a screen wide enough to hold it whole.
+     This is one line of chrome that has to be read once before anything is typed, so it takes the
+     width it is given and wraps only when the drawer is genuinely too narrow. */
+  .guest-drawer-text {
+    min-width: 0;
+    flex: 1;
+    text-wrap: pretty;
+  }
+
+  .guest-drawer-close {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    flex: none;
+    place-items: center;
+    /* auto on the left pins it to the drawer's trailing edge rather than to the end of the
+       sentence, which is where the text's own max-width would otherwise leave it. The rest is
+       pulled back over padding that is already there, so a 32 px target does not grow the drawer
+       by its own height. */
+    margin: -0.375rem -0.5rem -0.375rem auto;
+    border-radius: var(--r-control);
+    color: var(--ink-muted);
+    font-size: 1.125rem;
+    line-height: 1;
+    transition:
+      background-color var(--t-quick) var(--ease-out),
+      color var(--t-quick) var(--ease-out);
+  }
+
+  .guest-drawer-close:hover {
+    background: var(--well);
+    color: var(--ink);
+  }
+
+  @media (max-width: 47.99rem) {
+    .guest-drawer {
+      margin-inline: var(--s-3);
+    }
+  }
 }

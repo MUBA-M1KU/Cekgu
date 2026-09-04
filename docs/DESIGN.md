@@ -256,14 +256,31 @@ Mobile halves the two largest steps: sheet padding drops from `--s-6` to `--s-4`
 
 ### Radius
 
-Two radii, each with a name that says what it is for:
+Three radii, each with a name that says what it is for:
 
 - `--r-bubble: 999px`. Anything descended from the OMR bubble is round: verdict chips, status chips, filter counts, the
   disposition bubbles, avatars, the mascot's stage badge
-- `--r-sheet: 4px`. Anything descended from paper is nearly square: the sheet, inputs, buttons, dialogs, the evidence
-  panel, tables. Paper has corners
+- `--r-card: 0.75rem`. Every surface: cards, the sheet, dialogs, popovers, the evidence panel, recessed panels
+- `--r-control: 0.5rem`. Everything a person operates directly: buttons, text inputs, the select trigger
 
-There is no medium radius. If a component does not know whether it is a bubble or a sheet, it is a sheet.
+`--r-sheet` is kept as an alias of `--r-card` so the landing page's surfaces move with the product's rather than being
+left behind at the old value.
+
+**Paper was nearly square until 4 September**, at `4px`, on the reasoning that paper has corners. It read as sharp
+beside the landing and dashboard cards, which had drifted to four different medium radii — 12, 16, 20 and 24px — and the
+owner asked for the rounded ones to win. The four collapsed onto one value at `1.25rem`, and paper came with them.
+
+**The surface corner came down again on 4 September**, from `1.25rem` to `0.75rem`, when the post-authentication screens
+moved onto a card grid. At 20px a card reads as a soft tile: fine on a landing page where a panel is a decorated block,
+wrong on a working screen where a table has to end at the card's edge. Both references the redesign was measured
+against, Vercel's Geist and the shadcn admin template, sit at 12px. Controls came down with it, to `0.5rem`.
+
+Controls get their own step rather than sharing the surface radius, because the surface corner on a 36px control clamps
+towards a pill, and the pill is the bubble's meaning rather than a button's. If a component does not know which it is,
+it is a surface.
+
+One derived value exists and no others: `--r-tick`, half the control radius, for the 17px checkbox, because 8px on a box
+that size is most of the way to a circle and a circle is the bubble's job.
 
 ### Borders and elevation
 
@@ -280,12 +297,56 @@ Separation is spent by role. Three levels exist and nothing invents a fourth:
 Recessed areas use `--well` with no border at all: the evidence panel, code, the guest banner's inner note. Inputs use a
 1 px `--rule-strong` border and no fill. No surface uses a left-hand colour rail, a gradient border or a glass effect.
 
+**A hairline inside a bordered card draws the same boundary twice.** Level 0 assumes rows sitting directly on the sheet,
+where the hairline is the only separation available. Inside a card that already has its own border, a stack of rules
+reads as clutter, so the separation moves to a gap plus a `--well` ground and the rows become tiles at `--r-control`:
+the dashboard's Recent Records list, its three reader figures, and the Settings panels' facts. The hairline stays
+wherever the rows are the sheet's own — the bubble row, attempt rows, the records table, the option list and the review
+document's items are all still level 0.
+
 ## Layout
+
+### The workspace shell
+
+Everything behind sign-in sits in one shell: a sidebar down the left, a topbar floating over the content as its own
+card, the page, and a one-line footer.
+
+- **The sidebar** is 15.5 rem wide, holds the width a person sets, and remembers it in `localStorage`. Collapsed it is
+  3.75 rem of icons; below 768 px it leaves the flow and slides in over the page behind a scrim. The control that sets
+  the width is the first thing in the topbar. Groups are headed by an eyebrow when open and by a short rule when
+  collapsed. The active item is filled `--well` with a 2 px pen mark at the sidebar's edge
+- **The topbar** is a `--sheet` card with a 1 px `--rule` border, 3.25 rem tall, sticky, with a masked `blur(8px)` strip
+  behind it so content passes under the card and fades rather than cutting against a hard edge. It carries the sidebar
+  control, the breadcrumb, **New Check**, the theme switch, the bell and the account menu
+- **The page** is capped at 90 rem and centred, with `--s-5` of padding
+- **The footer** is one line in flow: a sentence and the Trust and Privacy link
+
+**The hover rail this replaces opened on pointer and dimmed the whole page behind itself while it was open.** That is a
+menu pretending to be navigation: the labels were unreadable until the pointer was already on top of them, so the first
+click of a session was a guess at four glyphs, and a hover read as a modal. **The reveal footer it replaces** reserved
+9.5 rem of dead margin under every working screen so a marketing block could be uncovered at the end of it, which is a
+landing page's move made inside a workspace. The landing keeps both, because both were designed for it.
+
+### The page grid
+
+Post-authentication pages are built from cards on a **12-column grid** with `--s-4` gaps, not from one sheet holding a
+whole page. Twelve divides by two, three, four and six, and this product has screens that want each of those. Every card
+declares its own span; nothing is placed by being next in the source, and a row with four things in it gets four cells
+rather than three and a gap.
+
+**One card is one concern.** A card has an optional header (TitleCase title, sentence-case description, at most one
+action at the trailing edge), a body, and an optional footer above a `--rule` hairline. A card whose content runs to its
+own edges, a table or a list of rows, drops the horizontal padding and lets its rows supply it, so the hairlines and the
+hover band reach the border.
+
+The record workspace is the exception and stays a document, below.
 
 ### The review document
 
-The record workspace is one sheet, at most 880 px wide, centred on the paper ground with `--s-6` padding. It reads top
-to bottom like the paper it reviews:
+The record workspace is one sheet, at most **1144 px** wide, centred on the paper ground with `--s-6` padding. That is
+the post-authentication measure, widened from 880 px on 4 September because these are working surfaces carrying tables,
+filter rows and evidence rather than prose. The public side keeps the 880 px measure, which is where prose wants to be.
+It reads top to bottom like the paper it reviews:
 
 1. **Header.** Record title (heading 1), subject and language as a caption line, the record status chip, and for Guest
    records the expiry. The **Sample** label from FR-SAMPLE-2 sits here as a status chip in ink, not a banner
@@ -541,13 +602,17 @@ Each line is one tell from [design standards](../AGENTS.md#design-standards) and
 - **Inter or Space Grotesk.** Schibsted Grotesk, Source Serif 4 and Spline Sans Mono, each with a job
 - **Everything centred.** The sheet is centred on the desk; everything inside it is left-aligned like a paper, and the
   only right-aligned things are numbers
-- **One large radius everywhere.** Two radii by descent: round for bubbles, 4 px for paper
-- **A coloured rail on a rounded card.** No cards inside the sheet and no rails. Selection is a 2 px inset on a table
-  row; verdicts live in chips
+- **One large radius everywhere.** Three radii by role, and a fourth value is a bug: round for bubbles, 12 px for
+  surfaces, 8 px for controls
+- **A coloured rail on a rounded card.** Cards are a card's border and nothing else. Selection is a 2 px inset on a
+  table row, the active nav item is a 2 px pen mark at the sidebar's own edge, and verdicts live in chips
 - **Numbered markers on non-sequences.** The only numbers on items are the paper's own item numbers, and attempts are
   numbered because they happened in order
 - **Three of everything.** Five verdicts, five dispositions, six statuses, two readers, three faces, because that is how
   many there are
-- **Glassmorphism.** Three elevation levels, each meaning something: flat rows, one sheet, overlays. No blur
+- **Glassmorphism.** Three elevation levels, each meaning something: flat rows, cards, overlays. Every surface is
+  opaque. The two blurs in the product are not materials: the topbar's masked strip, which exists so scrolling content
+  fades under the card instead of cutting against its edge, and the landing's nav over the hero clip. Neither is a panel
+  you can read through
 - **A neon dashboard with no data.** A review document with real readings, real request ids and a receipt for each, and
   the one thing that pulses is a cat's eyelid

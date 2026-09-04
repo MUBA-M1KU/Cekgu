@@ -1,11 +1,5 @@
-import { and, count, eq, isNull, lt } from 'drizzle-orm'
-import {
-  type CreateRecordInput,
-  GUEST_MAX_ITEM_CHARS,
-  GUEST_MAX_ITEMS,
-  GUEST_MAX_RECORDS,
-  itemCharCount
-} from '../shared/schemas'
+import { and, eq, lt } from 'drizzle-orm'
+import { type CreateRecordInput, GUEST_MAX_ITEM_CHARS, itemCharCount } from '../shared/schemas'
 import type { ApiError } from '../shared/types'
 import { db } from './db'
 import { user } from './db/auth-schema'
@@ -20,17 +14,9 @@ export function guestExpiresAt(from: Date = new Date()): Date {
   return new Date(from.getTime() + GUEST_RECORD_TTL_MS)
 }
 
-// FR-AUTH-5, enforced on the server rather than only in the form. The count is passed in rather than
-// queried here so the limits stay a pure function; call guestRecordsHeld for it.
-export function guestLimitRejection(input: CreateRecordInput, recordsHeld: number): ApiError['error'] | null {
-  if (input.items.length > GUEST_MAX_ITEMS) {
-    const over = input.items.length - GUEST_MAX_ITEMS
-    return {
-      code: 'guest_item_limit',
-      message: `The Guest workspace takes ${GUEST_MAX_ITEMS} questions per check. Remove ${over} and try again, or sign in with an account.`
-    }
-  }
-
+// FR-AUTH-5, enforced on the server rather than only in the form. Counts are no longer capped;
+// this is the one guard left, and it is about payload size rather than allowance.
+export function guestLimitRejection(input: CreateRecordInput): ApiError['error'] | null {
   const oversized = input.items.findIndex((item) => itemCharCount(item) > GUEST_MAX_ITEM_CHARS)
   if (oversized >= 0) {
     return {
@@ -39,23 +25,7 @@ export function guestLimitRejection(input: CreateRecordInput, recordsHeld: numbe
     }
   }
 
-  if (recordsHeld >= GUEST_MAX_RECORDS) {
-    return {
-      code: 'guest_record_limit',
-      message: `The Guest workspace already holds ${GUEST_MAX_RECORDS} records. Delete one from Records, or wait for the oldest to expire.`
-    }
-  }
-
   return null
-}
-
-export async function guestRecordsHeld(userId: string): Promise<number> {
-  const [row] = await db
-    .select({ held: count() })
-    .from(records)
-    .where(and(eq(records.userId, userId), eq(records.isSample, false), isNull(records.deletedAt)))
-
-  return row?.held ?? 0
 }
 
 // FR-AUTH-4 and FR-SAMPLE-2. A hard delete, because Guest carries no recovery promise; items,

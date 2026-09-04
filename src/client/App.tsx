@@ -4,6 +4,7 @@ import { PublicLayout } from './layouts/PublicLayout'
 import { Dashboard } from './pages/Dashboard'
 import { Home } from './pages/Home'
 import { NewCheck } from './pages/NewCheck'
+import { ReceiptView } from './pages/ReceiptView'
 import { Records } from './pages/Records'
 import { RecordWorkspace } from './pages/RecordWorkspace'
 import { SampleReport } from './pages/SampleReport'
@@ -26,6 +27,10 @@ export function App() {
           <Route path="trust" element={<Navigate to="/#trust" replace />} />
           {/* The full sample stays a route: it is the working tool, filters and all, not a section. */}
           <Route path="sample" element={<SampleReport />} />
+          {/* Public, because the Sample Report is reachable signed out and its request ids are the
+              whole point of it (FR-SAMPLE-4). A signed-in reader arrives here from the evidence
+              panel and the page's own Back returns them to it. */}
+          <Route path="receipt/:requestId" element={<ReceiptView />} />
           <Route path="sign-in" element={<SignIn />} />
         </Route>
         <Route element={<AppLayout />}>

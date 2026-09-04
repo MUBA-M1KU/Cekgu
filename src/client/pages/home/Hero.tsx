@@ -102,7 +102,6 @@ export function Hero({ record }: { record: RecordDetail | null }) {
 
       <div className="hero-body wrap grid w-full grid-cols-1 items-center gap-8 pt-8 pb-[clamp(5rem,14vh,11rem)] lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-12 lg:pt-12 lg:pb-20">
         <div>
-          <span className="hero-badge type-mono">Two readers · every question · before publication</span>
           <h1 className="mt-6 max-w-[15ch] text-[clamp(2.25rem,min(5.6vw,8.5vh),4.75rem)]/[1.05] tracking-[-0.03em]">
             Two readers see your paper before your learners do.
           </h1>

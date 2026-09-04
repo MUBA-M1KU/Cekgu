@@ -105,7 +105,7 @@ export function RecordWorkspace() {
           <button
             type="button"
             onClick={() => setFilter(null)}
-            className="mt-4 inline-flex h-9 items-center rounded-sheet bg-ink px-4 font-medium text-on-ink"
+            className="mt-4 inline-flex h-9 items-center rounded-control bg-ink px-4 font-medium text-on-ink"
           >
             Show All Items
           </button>

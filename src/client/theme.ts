@@ -31,7 +31,7 @@ export function useTheme(): Theme {
 }
 
 // styles.css keys color-scheme off this attribute, so the stored choice has to reach the document
-// at boot as well as on every change. Called from main.tsx beside applyReduceMotion.
+// at boot as well as on every change. Called from main.tsx beside applyMotionSetting.
 export function applyTheme(): void {
   document.documentElement.setAttribute('data-theme', stored())
 }
