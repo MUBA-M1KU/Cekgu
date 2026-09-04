@@ -35,4 +35,4 @@ export function Field({ label, htmlFor, helper, error, children }: Props) {
 }
 
 export const inputClass =
-  'w-full rounded-sheet border border-rule-strong bg-transparent px-3 py-2 text-ink placeholder:text-ink-muted'
+  'w-full rounded-control border border-rule-strong bg-transparent px-3 py-2 text-ink placeholder:text-ink-muted'

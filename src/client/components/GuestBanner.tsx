@@ -52,7 +52,7 @@ export function GuestBanner() {
           aria-label="Dismiss the shared workspace notice"
           // -my-2 keeps the 44 px hit area from growing the strip: the target extends over the
           // padding that is already there rather than adding height. Measured 27x26 before this.
-          className="-my-2 -mr-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-sheet text-[1.125rem]/[1.2] opacity-80 hover:opacity-100"
+          className="-my-2 -mr-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-control text-[1.125rem]/[1.2] opacity-80 hover:opacity-100"
         >
           <span aria-hidden="true">&times;</span>
         </button>

@@ -56,14 +56,14 @@ export function ConfirmDialog({ open, title, body, onCancel, onConfirm }: Props)
           ref={cancelRef}
           type="button"
           onClick={onCancel}
-          className="inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium"
+          className="inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium"
         >
           Cancel
         </button>
         <button
           type="button"
           onClick={onConfirm}
-          className="inline-flex h-9 items-center rounded-sheet bg-pen px-4 font-medium text-pen-ink"
+          className="inline-flex h-9 items-center rounded-control bg-pen px-4 font-medium text-pen-ink"
         >
           {title}
         </button>

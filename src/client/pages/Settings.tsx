@@ -81,7 +81,7 @@ export function Settings() {
             type="button"
             onClick={leave}
             disabled={leaving}
-            className="mt-4 inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium disabled:opacity-60"
+            className="mt-4 inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium disabled:opacity-60"
           >
             {leaving ? 'Signing Out' : 'Sign Out'}
           </button>
@@ -132,7 +132,7 @@ export function Settings() {
             type="button"
             onClick={() => setConfirming(true)}
             disabled={erasing}
-            className="mt-4 inline-flex h-9 items-center rounded-sheet border border-pen px-4 font-medium text-pen disabled:opacity-60"
+            className="mt-4 inline-flex h-9 items-center rounded-control border border-pen px-4 font-medium text-pen disabled:opacity-60"
           >
             {erasing ? 'Deleting' : 'Delete All Records'}
           </button>

@@ -52,7 +52,7 @@ export function PricingSection() {
 
       <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {PLANS.map((plan) => (
-          <section key={plan.name} className="card-soft flex flex-col rounded-[1.5rem] p-7">
+          <section key={plan.name} className="card-soft flex flex-col p-7">
             <h3 className="text-[1.25rem]">{plan.name}</h3>
             <p className="type-mono mt-3 text-[2rem] tracking-[-0.03em]">{plan.price}</p>
             <p className="type-caption text-ink-muted">{plan.period || 'Pilot plan'}</p>

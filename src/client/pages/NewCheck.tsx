@@ -149,7 +149,7 @@ export function NewCheck() {
           <button
             type="button"
             onClick={fillWithDemo}
-            className="inline-flex h-9 shrink-0 items-center rounded-sheet border border-rule-strong px-4 font-medium"
+            className="inline-flex h-9 shrink-0 items-center rounded-control border border-rule-strong px-4 font-medium"
           >
             Fill With Demo Content
           </button>
@@ -233,7 +233,7 @@ export function NewCheck() {
                     {item.options.length > 2 ? (
                       <button
                         type="button"
-                        className="inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium shrink-0"
+                        className="inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium shrink-0"
                         onClick={() => {
                           const next = relabel(item.options.filter((_, i) => i !== optionIndex))
                           patchItem(index, {
@@ -254,7 +254,7 @@ export function NewCheck() {
               <div>
                 <button
                   type="button"
-                  className="inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium"
+                  className="inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium"
                   onClick={() =>
                     patchItem(index, {
                       options: relabel([...item.options, { letter: '', text: '' }])
@@ -279,7 +279,7 @@ export function NewCheck() {
           {items.length > 1 ? (
             <button
               type="button"
-              className="mt-5 inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium"
+              className="mt-5 inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium"
               onClick={() => setItems((current) => current.filter((_, i) => i !== index))}
             >
               Remove Question {index + 1}
@@ -291,7 +291,7 @@ export function NewCheck() {
       <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-rule pt-6">
         <button
           type="button"
-          className="inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium disabled:opacity-60"
+          className="inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium disabled:opacity-60"
           onClick={() => setItems((current) => [...current, emptyItem()])}
         >
           Add Question
@@ -299,7 +299,7 @@ export function NewCheck() {
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex h-9 items-center rounded-sheet bg-ink px-4 font-medium text-on-ink disabled:opacity-60"
+          className="inline-flex h-9 items-center rounded-control bg-ink px-4 font-medium text-on-ink disabled:opacity-60"
         >
           Submit Check
         </button>

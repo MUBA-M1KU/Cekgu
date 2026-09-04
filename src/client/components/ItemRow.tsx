@@ -121,7 +121,7 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
               await onRetry(item.id)
               setBusy(false)
             }}
-            className="mt-3 inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium disabled:opacity-60"
+            className="mt-3 inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium disabled:opacity-60"
           >
             Retry Verification
           </button>
@@ -132,7 +132,7 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
             type="button"
             aria-expanded={showEvidence}
             onClick={() => setShowEvidence((open) => !open)}
-            className="type-label mt-3 inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4"
+            className="type-label mt-3 inline-flex h-9 items-center rounded-control border border-rule-strong px-4"
           >
             {showEvidence ? 'Hide Evidence' : 'Show Evidence'}
           </button>

@@ -118,7 +118,7 @@ export function Records() {
             type="button"
             disabled={deletable === 0}
             onClick={() => setConfirming(true)}
-            className="inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium text-pen disabled:opacity-60"
+            className="inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium text-pen disabled:opacity-60"
           >
             Delete Records
           </button>
@@ -134,7 +134,7 @@ export function Records() {
           <button
             type="button"
             onClick={load}
-            className="mt-4 inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium"
+            className="mt-4 inline-flex h-9 items-center rounded-control border border-rule-strong px-4 font-medium"
           >
             Try Again
           </button>
@@ -147,7 +147,7 @@ export function Records() {
           <button
             type="button"
             onClick={() => navigate('/new-check')}
-            className="mt-4 inline-flex h-9 items-center rounded-sheet bg-ink px-4 font-medium text-on-ink"
+            className="mt-4 inline-flex h-9 items-center rounded-control bg-ink px-4 font-medium text-on-ink"
           >
             New Check
           </button>
