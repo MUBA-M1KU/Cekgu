@@ -1719,6 +1719,20 @@ section[id] {
     margin-top: var(--s-4);
   }
 
+  /* Air above the foot's rule, not only below it.
+
+     `margin-top: auto` below gives the gap only on a card that was stretched to match a taller
+     neighbour. On a card that stops at its own content the margin collapses to nothing, so the
+     last line of the body sat directly on the hairline while the button under it floated a full
+     step below, and the rule read as an underline on that sentence rather than as the foot's own
+     top edge. This is the floor; the auto margin still spends any extra height above it.
+
+     Not on a flush card, for the same reason its children carry no inline padding: there the rows
+     supply their own, and adding a step on top of the last row's would double it. */
+  .card:not(.card-flush) > :has(+ .card-foot) {
+    padding-bottom: var(--s-5);
+  }
+
   .card-foot {
     display: flex;
     flex-wrap: wrap;
@@ -1868,8 +1882,11 @@ section[id] {
     white-space: nowrap;
   }
 
+  /* A full step, not 11 px. A row here can hold a status chip, and a chip is a painted edge
+     rather than a baseline: half its own height between it and the row rule reads as a crowded
+     row, where the same gap under plain text reads as fine. */
   .data-table tbody td {
-    padding: 0.6875rem var(--s-4);
+    padding: var(--s-4);
     border-bottom: 1px solid var(--rule);
     vertical-align: middle;
   }
