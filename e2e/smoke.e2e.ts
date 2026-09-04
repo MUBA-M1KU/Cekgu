@@ -197,8 +197,16 @@ test('navigating away from a record with the mascot mounted keeps the app render
   await page.getByRole('link', { name: 'Dashboard' }).first().click()
 
   // Rendered content, not #root: the point is that the tree survived, and a heading proves it.
-  await expect(page.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Records' })).toBeVisible()
+  // The heading is matched by role rather than by its words. #175 made the dashboard's h1
+  // state-aware — "Good to have you back." once the account holds a record, "Welcome to Cekgu."
+  // before that — and the Guest workspace's records expire after 24 hours, so pinning either
+  // string would make this test depend on the age of a fixture rather than on the tree surviving.
+  await expect(page).toHaveURL(/\/dashboard$/)
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  // Scoped to the rail. #175 added an All Records card to the dashboard, and getByRole matches the
+  // accessible name as a substring, so an unscoped 'Records' now resolves to both and fails strict
+  // mode. The rail is what this line was always checking: the shell around the page, still there.
+  await expect(page.getByLabel('Workspace', { exact: true }).getByRole('link', { name: 'Records' })).toBeVisible()
   expect(errors).toEqual([])
 })
 
