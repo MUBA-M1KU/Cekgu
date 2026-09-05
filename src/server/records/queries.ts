@@ -88,9 +88,9 @@ export async function recordDetail(recordId: string): Promise<RecordDetail | nul
   const itemIds = itemRows.map((row) => row.id)
 
   // Attempts newest first and dispositions oldest first, per TRD section 15: the most recent
-  // evidence is what an educator wants to see, and a decision history reads forward.
+  // evidence is what an educator wants to see, and a decision history reads forward. Ties in startedAt break on id.
   const attemptRows = itemIds.length
-    ? await db.select().from(attempts).where(inArray(attempts.itemId, itemIds)).orderBy(desc(attempts.startedAt))
+    ? await db.select().from(attempts).where(inArray(attempts.itemId, itemIds)).orderBy(desc(attempts.startedAt), asc(attempts.id))
     : []
   const dispositionRows = itemIds.length
     ? await db
