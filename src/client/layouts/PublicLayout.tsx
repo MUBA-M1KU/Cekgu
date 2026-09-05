@@ -50,10 +50,10 @@ export function PublicLayout() {
   }
 
   return (
-    // A column, not a block. min-h-dvh alone only guarantees the container reaches the viewport
-    // floor; it says nothing about where the footer inside it lands, so on a page shorter than the
-    // viewport the footer sat directly under the content with the remaining paper below it. Every
-    // other public route is long enough to hide that, which is why it only ever showed on a receipt.
+    // A column, not a block. min-h-dvh alone only stretches the container to the viewport floor; it
+    // says nothing about where the footer inside it lands, so on a page shorter than the viewport
+    // the footer sat directly under the content with the remaining paper below it. Every other
+    // public route is long enough to hide that, which is why it only ever showed on a receipt.
     <div className="flex min-h-dvh flex-col bg-paper">
       {/* data-glass only where there is media behind the bar for the blur to act on. Everywhere
           else it is solid: a translucent bar over a flat ground is not glass, it is see-through. */}
