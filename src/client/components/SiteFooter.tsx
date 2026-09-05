@@ -5,13 +5,15 @@ import { Mark } from './Mark'
 // the end; the landing puts it in flow, because a fixed footer under a sticky hero would be pinned
 // against the shell rather than revealed by it. The content and the surface are the same in both,
 // which is the whole point of sharing it.
-type Props = {
-  // Public-only. The app shell mounts the same footer without them, because a signed-in workspace
-  // is not where someone goes looking for the terms they agreed to before signing up.
-  legal?: { href: string; label: string }[]
-}
+// The notices were public-only until the owner asked for them in the workspace too: a signed-in
+// reader is exactly who has agreed to them, and the footer is the only place that carries them.
+const LEGAL = [
+  { href: '/terms', label: 'Terms' },
+  { href: '/privacy', label: 'Privacy' },
+  { href: '/acceptable-use', label: 'Acceptable Use' }
+]
 
-export function SiteFooter({ legal }: Props = {}) {
+export function SiteFooter() {
   return (
     <div className="app-footer-inner">
       <Link to="/" className="app-footer-brand" aria-label="Cekgu home">
@@ -26,20 +28,16 @@ export function SiteFooter({ legal }: Props = {}) {
         <Link to="/#trust" className="app-footer-link type-caption">
           Trust and Privacy
         </Link>
-        {legal ? (
-          <nav aria-label="Legal" className="app-footer-links">
-            {legal.map((item) => (
-              <Link key={item.href} to={item.href} className="app-footer-link type-caption">
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        ) : null}
-        {legal ? (
-          <a href="https://x.com/Cekgu0903" target="_blank" rel="noreferrer" className="app-footer-link type-caption">
-            @Cekgu0903
-          </a>
-        ) : null}
+        <nav aria-label="Legal" className="app-footer-links">
+          {LEGAL.map((item) => (
+            <Link key={item.href} to={item.href} className="app-footer-link type-caption">
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+        <a href="https://x.com/Cekgu0903" target="_blank" rel="noreferrer" className="app-footer-link type-caption">
+          @Cekgu0903
+        </a>
       </div>
     </div>
   )
