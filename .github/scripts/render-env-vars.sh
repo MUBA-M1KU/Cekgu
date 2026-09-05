@@ -22,6 +22,7 @@ jq -n --argjson all "${ALL_SECRETS:?ALL_SECRETS is unset}" '
       GUEST_EMAIL,
       GUEST_PASSWORD,
       MASCOT_ENABLED,
+      WORKER_CONCURRENCY,
       GEMINI_API_KEY,
       GEMINI_MODEL,
       CHAT_PROVIDER,
