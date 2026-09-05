@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react'
+import { MOCK } from './api'
 
 export type SessionUser = { id: string; email: string; name: string }
 export type SessionState =
@@ -27,7 +28,22 @@ function publish(next: SessionState): void {
   for (const listener of listeners) listener()
 }
 
+// VITE_MOCK_API answers the record contract from ./mock-record with no server behind it, and until
+// this existed it stopped at the sign-in wall: every signed-in screen — New Check, a record, the
+// dashboard — was unreachable, which is most of what the flag is for. Mocked mode is signed in as
+// Guest from the first paint.
+//
+// import.meta.env is replaced at build time, so a production bundle contains the fetch below and
+// nothing else; this branch is not shipped, not merely unreached.
+const MOCK_SESSION: SessionState = {
+  status: 'in',
+  user: { id: 'mock-guest', email: 'guest@cekgu.local', name: 'Guest' },
+  isGuest: true
+}
+
 async function read(): Promise<void> {
+  if (MOCK) return publish(MOCK_SESSION)
+
   try {
     const response = await fetch('/api/session', { credentials: 'include' })
     const body = response.ok ? ((await response.json()) as SessionResponse) : null
