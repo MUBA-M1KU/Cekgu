@@ -311,21 +311,24 @@ document's items are all still level 0.
 Everything behind sign-in sits in one shell: a sidebar down the left, a topbar floating over the content as its own
 card, the page, and a one-line footer.
 
-- **The sidebar** is 15.5 rem wide, holds the width a person sets, and remembers it in `localStorage`. Collapsed it is
-  3.75 rem of icons; below 768 px it leaves the flow and slides in over the page behind a scrim. The control that sets
-  the width is the first thing in the topbar. Groups are headed by an eyebrow when open and by a short rule when
-  collapsed. The active item is filled `--well` with a 2 px pen mark at the sidebar's edge
+- **The sidebar** rests as a 3.75 rem rail of icons and peeks while the pointer or keyboard focus is in it: it widens to
+  15.5 rem over the page, which stays where it is behind a scrim that dims and softens it slightly, and settles back
+  when they leave. Both directions take `--t-panel`. The control in the topbar pins it wide instead, and the pin is
+  remembered in `localStorage`. Below 768 px it leaves the flow and slides in over the page behind the drawer's scrim.
+  Groups are headed by an eyebrow when open and by a short rule when collapsed. The active item is filled `--well` with
+  a 2 px pen mark at the sidebar's edge
 - **The topbar** is a `--sheet` card with a 1 px `--rule` border, 3.25 rem tall, sticky, with a masked `blur(8px)` strip
   behind it so content passes under the card and fades rather than cutting against a hard edge. It carries the sidebar
   control, the breadcrumb, **New Check**, the theme switch, the bell and the account menu
 - **The page** is capped at 90 rem and centred, with `--s-5` of padding
 - **The footer** is one line in flow: a sentence and the Trust and Privacy link
 
-**The hover rail this replaces opened on pointer and dimmed the whole page behind itself while it was open.** That is a
-menu pretending to be navigation: the labels were unreadable until the pointer was already on top of them, so the first
-click of a session was a guess at four glyphs, and a hover read as a modal. **The reveal footer it replaces** reserved
-9.5 rem of dead margin under every working screen so a marketing block could be uncovered at the end of it, which is a
-landing page's move made inside a workspace. The landing keeps both, because both were designed for it.
+**The peek came back on 5 September at the owner's call.** The sidebar that shipped in between held a width a person set
+and ignored the pointer, on the reading that a rail opening on hover is a menu pretending to be navigation. The peek
+keeps what that objection was made of: the pin, so anyone who wants the labels there all the time can have them; a scrim
+that is light rather than a modal's; and keyboard focus opening it exactly as the pointer does. **The reveal footer it
+replaces** reserved 9.5 rem of dead margin under every working screen so a marketing block could be uncovered at the end
+of it, which is a landing page's move made inside a workspace. The landing keeps it, because it was designed for it.
 
 ### The page grid
 
@@ -621,8 +624,8 @@ Each line is one tell from [design standards](../AGENTS.md#design-standards) and
 - **Three of everything.** Five verdicts, five dispositions, six statuses, two readers, three faces, because that is how
   many there are
 - **Glassmorphism.** Three elevation levels, each meaning something: flat rows, cards, overlays. Every surface is
-  opaque. The two blurs in the product are not materials: the topbar's masked strip, which exists so scrolling content
-  fades under the card instead of cutting against its edge, and the landing's nav over the hero clip. Neither is a panel
-  you can read through
+  opaque. The three blurs in the product are not materials: the topbar's masked strip, which exists so scrolling content
+  fades under the card instead of cutting against its edge, the landing's nav over the hero clip, and the scrim behind
+  the peeking rail, which softens a page nobody is reading at that moment. None is a panel you can read through
 - **A neon dashboard with no data.** A review document with real readings, real request ids and a receipt for each, and
   the one thing that pulses is a cat's eyelid
