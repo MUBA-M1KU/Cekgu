@@ -37,33 +37,41 @@ describe('shot anchor checks', () => {
     expect(table).toContain('#q')
   })
 
-  test('waits for an anchor rendered after a client-side route transition', async () => {
-    const browser = await chromium.launch({ channel: 'chrome', headless: true })
-    const page = await browser.newPage()
-    await page.setContent(
-      "<main><script>setTimeout(() => document.querySelector('main').append('Sign In'), 50)</script></main>"
-    )
+  test(
+    'waits for an anchor rendered after a client-side route transition',
+    async () => {
+      const browser = await chromium.launch({ channel: 'chrome', headless: true })
+      const page = await browser.newPage()
+      await page.setContent(
+        "<main><script>setTimeout(() => document.querySelector('main').append('Sign In'), 50)</script></main>"
+      )
 
-    try {
-      expect(await locatorIsVisible(page.getByText(exactText('Sign In')), 1_000)).toBe(true)
-    } finally {
-      await browser.close()
-    }
-  }, BROWSER_TIMEOUT_MS)
+      try {
+        expect(await locatorIsVisible(page.getByText(exactText('Sign In')), 1_000)).toBe(true)
+      } finally {
+        await browser.close()
+      }
+    },
+    BROWSER_TIMEOUT_MS
+  )
 
-  test('targets the visible corrected-key bubble instead of its hidden radio', async () => {
-    const browser = await chromium.launch({ channel: 'chrome', headless: true })
-    const page = await browser.newPage()
-    await page.setContent(
-      "<div class='disposition-key'><label><input class='sr-only' type='radio' value='B'>B</label></div>"
-    )
-    const option = correctedKeyOption(page.locator('.disposition-key'), 'B')
+  test(
+    'targets the visible corrected-key bubble instead of its hidden radio',
+    async () => {
+      const browser = await chromium.launch({ channel: 'chrome', headless: true })
+      const page = await browser.newPage()
+      await page.setContent(
+        "<div class='disposition-key'><label><input class='sr-only' type='radio' value='B'>B</label></div>"
+      )
+      const option = correctedKeyOption(page.locator('.disposition-key'), 'B')
 
-    try {
-      await option.click()
-      expect(await page.locator("input[value='B']").isChecked()).toBe(true)
-    } finally {
-      await browser.close()
-    }
-  }, BROWSER_TIMEOUT_MS)
+      try {
+        await option.click()
+        expect(await page.locator("input[value='B']").isChecked()).toBe(true)
+      } finally {
+        await browser.close()
+      }
+    },
+    BROWSER_TIMEOUT_MS
+  )
 })
