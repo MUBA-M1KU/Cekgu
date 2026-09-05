@@ -190,6 +190,64 @@ describeDb('the sample record', () => {
     expect(await db.select().from(records).where(eq(records.isSample, true))).toHaveLength(1)
   })
 
+  // #301. The early return on "a sample already exists" meant an updated fixture never reached a
+  // deployment that had booted once: #299 added 24 retrieved pages and production kept serving a row
+  // seeded weeks earlier. These cover the reload and, more importantly, that a failed one cannot
+  // leave the demo surface empty.
+  describe('re-seeding when the fixture changes', () => {
+    test('an unchanged fixture is not re-seeded, so the record id is stable across boots', async () => {
+      const first = await seedSample(passPath)
+      const again = await seedSample(passPath)
+
+      expect(again).toBe(first as string)
+    })
+
+    test('a changed fixture is loaded, and the new content is served', async () => {
+      const first = await seedSample(passPath)
+
+      const pass = JSON.parse(await Bun.file(passPath).text())
+      for (const item of pass.items) {
+        for (const attempt of item.attempts) {
+          if (attempt.readingJson) {
+            attempt.readingJson.sources = [
+              { title: 'A page', url: 'https://example.com/a', snippet: 'retrieved after the readings' }
+            ]
+          }
+        }
+      }
+      const changed = `${passPath}.changed.json`
+      await Bun.write(changed, JSON.stringify(pass))
+
+      const second = await seedSample(changed)
+      expect(second).not.toBe(first as string)
+      expect(await db.select().from(records).where(eq(records.isSample, true))).toHaveLength(1)
+
+      const sample = await readSample()
+      const withSources = sample?.items.flatMap((item) =>
+        item.attempts.filter((attempt) => attempt.reading?.sources?.length)
+      )
+      expect(withSources?.length).toBeGreaterThan(0)
+    })
+
+    test('an unreadable fixture keeps the sample already stored rather than deleting it', async () => {
+      const first = await seedSample(passPath)
+      const kept = await seedSample('./does-not-exist.json')
+
+      expect(kept).toBe(first as string)
+      expect(await readSample()).not.toBeNull()
+    })
+
+    test('a malformed fixture keeps the sample already stored', async () => {
+      const first = await seedSample(passPath)
+      const broken = `${passPath}.broken.json`
+      await Bun.write(broken, '{"pass":"x","items":[{"stem":42}]}')
+
+      const kept = await seedSample(broken)
+      expect(kept).toBe(first as string)
+      expect(await readSample()).not.toBeNull()
+    })
+  })
+
   // The route a judge hits signed out. The session gate lives in routes/index.ts, which leaves
   // GET /sample public; POST /sample/reset sits behind it and is covered through resetSample.
   describe('GET /sample', () => {

@@ -442,6 +442,7 @@ src/
     records/         the query layer the records routes call
     routes/          one file per resource in section 15
     fixtures/        the committed evaluation set and the benchmark pass the sample is seeded from
+                     (`seedSample` re-seeds when this file no longer matches the stored row — see below)
     index.ts         entry point: migrate, seed the Guest user and sample, start the worker, listen
   shared/            TypeScript types, zod schemas, verdict.ts (the rule as a pure function)
 public/              static assets, copied into the client build as-is
@@ -1024,6 +1025,33 @@ Key Error** on the shared answer; the reason text names the single reader's seco
 
 **The rule must be unit-tested before any UI is written.** The table above is the test case list, plus the two edge
 cases: same model twice (Unverified) and a `defensible` list that omits `answer` (treated as if it included it).
+
+### Seeding the sample, and re-seeding it
+
+`seedSample` used to return early whenever a sample row existed, which meant an updated `benchmark-pass.json` never
+reached a deployment that had booted once: #299 attached 24 retrieved pages to the fixture and production went on
+serving a row seeded weeks earlier ([#301](https://github.com/MUBA-M1KU/Cekgu/issues/301)). It now compares a
+fingerprint of the fixture against the same fingerprint computed from the stored rows, and re-seeds when they differ.
+
+The fingerprint covers what the sample renders from — each item's stem, key and options, and each attempt's request id
+and reading — and two properties make it usable rather than merely present:
+
+- **Sorted before hashing**, because the database promises nothing about row order. An order-sensitive fingerprint would
+  differ on every boot and re-seed the demo surface forever
+- **Keys sorted at every depth** (`stableStringify`), because Postgres normalises `jsonb` key order. A reading read back
+  out does not stringify to the same bytes as the one in the file even when nothing about it changed, so a raw
+  `JSON.stringify` comparison would also re-seed forever
+
+Both failure modes are asserted in `src/server/sample.fingerprint.test.ts`, which needs no database.
+
+**Every branch is written so a failure leaves the existing sample untouched**, because a half-replaced sample is worse
+than a stale one: the fixture is loaded and validated before anything is deleted, an unreadable or malformed file keeps
+whatever is stored, a missing Guest user aborts rather than deleting a record it could not re-insert, and the delete and
+re-insert share one transaction so a throw halfway rolls the delete back.
+
+Seeding runs only when `MIGRATE_ON_START` is true, which a preview revision sets to `false`
+([section 10](#10-hosting-and-cicd)) — so a preview booting an older fixture cannot re-seed production, whose database
+it shares.
 
 ### Truth Score
 
