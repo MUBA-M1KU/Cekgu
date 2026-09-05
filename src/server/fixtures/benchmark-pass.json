@@ -1531,11 +1531,6 @@
             "reason": "In the SI standard a kilobyte equals 1000 bytes, but in computing the traditional definition treats a kilobyte as 1024 bytes. Since the question is from a computer‑science perspective, the conventional answer is 1024.",
             "sources": [
               {
-                "title": "1 kilobyte is precisely 1000 bytes? | Hacker News",
-                "url": "https://news.ycombinator.com/item?id=46873539",
-                "snippet": "And obviously, if you need two separate prefixes, you're going to change the one whose unit of measurement differs from all the rest of science and technology. And obviously, if you need two separate prefixes, you're going to change the one whose unit of…"
-              },
-              {
                 "title": "Kilobyte - Wikipedia",
                 "url": "https://en.wikipedia.org/wiki/Kilobyte",
                 "snippet": "defines the prefix kilo as a multiplication factor of 1000 (103); therefore, one kilobyte is 1000 bytes. The internationally recommended unit symbol for the kilobyte is kB. In some areas of information technology, particularly in reference to random-access…"
@@ -1577,11 +1572,6 @@
             "defensible": ["B", "C"],
             "reason": "In traditional computer science usage, one kilobyte equals 1024 bytes (2^10), though a competent reader could also select 1000 based on the SI definition of the SI prefix 'kilo-' and modern standards like IEC 80000-13 which reserve 1024 for the kibibyte.",
             "sources": [
-              {
-                "title": "1 kilobyte is precisely 1000 bytes? | Hacker News",
-                "url": "https://news.ycombinator.com/item?id=46873539",
-                "snippet": "And obviously, if you need two separate prefixes, you're going to change the one whose unit of measurement differs from all the rest of science and technology. And obviously, if you need two separate prefixes, you're going to change the one whose unit of…"
-              },
               {
                 "title": "Kilobyte - Wikipedia",
                 "url": "https://en.wikipedia.org/wiki/Kilobyte",
