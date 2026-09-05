@@ -232,7 +232,7 @@ export function Settings() {
                 {motion === 'system'
                   ? 'Following your system setting. Choose Always Animate if your machine has animations switched off but you want them here.'
                   : motion === 'full'
-                    ? 'Animating regardless of your system setting.'
+                    ? 'Animating regardless of your system setting. Choose Never Animate to stop them.'
                     : 'The mascot and every continuous animation are stopped.'}
               </p>
             </div>
