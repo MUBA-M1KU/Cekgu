@@ -124,12 +124,226 @@ type Spec = {
   defensible?: [string[], string[]]
   reasons: [string, string] | [string]
   timedOut?: string
-  /** Pages live retrieval found for this item, shown to both readers. Omitted where it found none. */
-  sources?: Source[]
-  grounding?: [Grounding, Grounding]
+}
+
+// Captured by running the real retrieval path against every question on this paper on 6 September
+// 2026: src/server/retrieval/tavily.ts, the same evidenceQuery the worker builds, one search each.
+// Every snippet is the string Tavily returned, verbatim and truncated the way the client truncates.
+// Results whose snippet was nothing but site navigation were dropped; nothing was rewritten.
+//
+// The grounding beside each pair is authored, like every reading on this fixture — on the live
+// product a Gonka reader reports it. It is set by reading what actually came back against what that
+// reader answered, so the two items the web did not settle say `absent` rather than claiming a
+// result nobody retrieved.
+const RETRIEVED: Record<string, { sources: Source[]; grounding: [Grounding, Grounding] }> = {
+  'Which data structure processes elements in first in, first out order?': {
+    sources: [
+      {
+        title: 'Which data structure uses the FIFO - ( - First In, ﻿First Out',
+        url: 'https://www.chegg.com/homework-help/questions-and-answers/data-structure-uses-fifo-first-first-principle-stack-b-queue-c-linked-list-d-tree-q182978170',
+        snippet:
+          'Which data structure uses the FIFO (First In, First Out) principle?A) StackB) QueueC) Linked ListD) Tree'
+      },
+      {
+        title: 'Stacks and Queues',
+        url: 'https://www.andrew.cmu.edu/course/15-121/lectures/Stacks%20and%20Queues/Stacks%20and%20Queues.html',
+        snippet:
+          '| A stack is a container of objects that are inserted and removed according to the last-in first-out (LIFO) principle. In the pushdown stacks only two operations are allowed: push the item into the stack, and pop the item out of the stack. A stack is a…'
+      }
+    ],
+    grounding: ['supported', 'supported']
+  },
+  'What is the worst-case time complexity of binary search on a sorted array of n elements?': {
+    sources: [
+      {
+        title: 'Time and Space Complexity Analysis of Binary Search Algorithm - GeeksforGeeks',
+        url: 'https://www.geeksforgeeks.org/dsa/complexity-analysis-of-binary-search',
+        snippet:
+          '### Worst Case Time Complexity of Binary Search Algorithm: O(log N) > The worst case will be when the element is present in the first position. As seen in the average case, the comparison required to reach the first element is logN. So the time complexity for…'
+      },
+      {
+        title: 'Binary search - Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Binary_search',
+        snippet:
+          'Binary search runs in logarithmic time in the worst case, making {\\displaystyle O(\\log n)} comparisons, where {\\displaystyle n} is the number of elements in the array. Binary search is faster than linear search except for small arrays. However, the array must…'
+      }
+    ],
+    grounding: ['supported', 'supported']
+  },
+  'Which of the following best describes a pure function?': {
+    sources: [
+      {
+        title: 'Pure function - Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Pure_function',
+        snippet:
+          '1. the function return values are identical for identical arguments (no variation with local static variables, non-local variables, mutable reference arguments or input streams, i.e., referential transparency), and 2. the function has no side effects "Side…'
+      },
+      {
+        title: 'Pure Functions | Glossary | GDQuest',
+        url: 'https://school.gdquest.com/glossary/function_pure',
+        snippet:
+          'logo See all glossary terms # Pure Functions We call "pure function" any function that: 1. Always returns the same output when given the same arguments. 2. Doesn\'t have any side effects. In other words, they are functions that don\'t automatically change the…'
+      }
+    ],
+    grounding: ['supported', 'supported']
+  },
+  'In an object-oriented language, what does it mean for a method to be virtual?': {
+    sources: [
+      {
+        title: 'Virtual function - Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Virtual_function',
+        snippet:
+          'In object-oriented programming such as is often used in C++ and Object Pascal, a virtual function or virtual method is an inheritable and overridable "Method overriding (programming)") function "Function (computer science)") or method "Method (computer…'
+      },
+      {
+        title: 'Object-Oriented Programming',
+        url: 'https://www.state-machine.com/oop',
+        snippet:
+          'This means that a virtual function call cannot be resolved at link-time, as it is done for ordinary function calls in C, because the actual version of the function to call depends on the type of the object (Rectangle, Circle, etc.) So, instead the binding…'
+      }
+    ],
+    grounding: ['supported', 'contradicted']
+  },
+  'Which statement about a hash table is correct?': {
+    sources: [
+      {
+        title: 'Hash table - Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Hash_table',
+        snippet:
+          'In a well-dimensioned hash table, the average time complexity for each lookup is independent of the number of elements stored in the table. Many hash table designs also allow arbitrary insertions and deletions of key–value pairs, at amortized constant average…'
+      },
+      {
+        title: "Hash Table Time Complexity: Why Lookup Is O(1) (and When It Secretly Isn't) ·…",
+        url: 'https://spacecomplexity.ai/blog/hash-table-time-complexity',
+        snippet:
+          'A hash table is an array accessed by a computed index: O(1) to hash, O(1) to access. Collisions are unavoidable. Chaining and open addressing handle them. Neither is magic. Average lookup is O(1) because the expected chain length equals the load factor α =…'
+      }
+    ],
+    grounding: ['supported', 'supported']
+  },
+  'What does the acronym API stand for?': {
+    sources: [
+      {
+        title: 'What is an API? - Application Programming Interfaces ...',
+        url: 'https://aws.amazon.com/what-is/api',
+        snippet:
+          'API stands for Application Programming Interface. In the context of APIs, the word Application refers to any software with a distinct function. Interface can be thought of as a contract of service between two applications. This contract defines how the two…'
+      },
+      {
+        title: 'What is an API? (Application Programming Interface)',
+        url: 'https://www.mulesoft.com/api/what-is-an-api',
+        snippet:
+          'API stands for Application Programming Interface. You can think of it as a common language that lets different software systems communicate smoothly, without needing to know how the other is built. More technically, an API is a set of rules and protocols that…'
+      }
+    ],
+    grounding: ['supported', 'supported']
+  },
+  'Which keyword declares a constant binding in JavaScript?': {
+    sources: [
+      {
+        title: 'const - JavaScript | MDN',
+        url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const',
+        snippet:
+          'The list that follows the `const` keyword is called a binding list and is separated by commas, where the commas are not comma operators and the `=` signs are not assignment operators. Initializers of later variables can refer to earlier variables in the list.…'
+      },
+      {
+        title: 'Medium',
+        url: 'https://medium.com/@robinviktorsson/understanding-the-differences-between-var-let-and-const-in-javascript-and-typescript-0ddd90c0b672',
+        snippet:
+          '1 Listen Share In JavaScript and TypeScript, `var`, `let`, and `const` are the three keywords used to declare variables. However, all three have different characteristics, in regards to scoping, hoisting, and mutability. Understanding these differences is…'
+      }
+    ],
+    grounding: ['supported', 'supported']
+  },
+  'What does SQL stand for?': {
+    sources: [
+      {
+        title: 'SQL - Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/SQL',
+        snippet:
+          'Structured Query Language (SQL) (pronounced /ˌɛsˌkjuˈɛl/ S-Q-L; or alternatively as /ˈsiːkwəl/ ⓘ-Flame,_not_lame-SQL.wav "File:LL-Q1860 (eng)-Flame, not lame-SQL.wav") "sequel") is a domain-specific language used to manage data, especially in a relational…'
+      },
+      {
+        title: 'What Does SQL Stand For? | Coursera',
+        url: 'https://www.coursera.org/articles/what-does-sql-stand-for',
+        snippet:
+          'The acronym SQL, pronounced either "sequel" or "S-Q-L," stands for structured query language. It is a universal programming language used to manage relational databases. Many relational database management systems (RDBMS) support the SQL language, including…'
+      }
+    ],
+    grounding: ['supported', 'supported']
+  },
+  'Which HTTP status code means Not Found?': {
+    sources: [
+      {
+        title: 'HTTP Status Codes: All 63 explained - including FAQ & Video',
+        url: 'https://umbraco.com/knowledge-base/http-status-codes',
+        snippet:
+          'HTTP status code 404 means "Page Not Found". This means that the request you sent was received by the server, but it could not find the page you were looking'
+      },
+      {
+        title: '200, 301, 404, & Other Numbers: HTTP Error Codes - Pleth, LLC',
+        url: 'https://www.pleth.com/posts/200-301-404-other-numbers-http-error-codes',
+        snippet:
+          '#### 403 — Forbidden A 403 status code indicates that the client cannot access the requested resource. That might mean that the wrong username and password were sent in the request, or that the permissions on the server do not allow what was being asked. ####…'
+      }
+    ],
+    grounding: ['supported', 'supported']
+  },
+  'In Big-O notation, which grows fastest as n increases?': {
+    sources: [
+      {
+        title: 'big o notation - Complexity of $O(\\log(n^n))$ vs $O(\\log(n!))$ - Computer Science Stack…',
+        url: 'https://cs.stackexchange.com/questions/123755/complexity-of-o-lognn-vs-o-logn',
+        snippet:
+          'Title: big o notation - Complexity of $O(\\log(n^n))$ vs $O(\\log(n!))$ - Computer Science Stack Exchange #### Stack Exchange Network. Stack Exchange network consists of 183 Q&A communities including Stack Overflow, the largest, most trusted online community…'
+      },
+      {
+        title: 'Understanding Big O Notation: O(n) and O(log n) in Python | by Felipe Limeira | Medium',
+        url: 'https://medium.com/@limeira.felipe94/understanding-big-o-notation-o-n-and-o-log-n-in-python-3bb13f55ad7b',
+        snippet:
+          'Title: Understanding Big O Notation: O(n) and O(log n) in Python | by Felipe Limeira | Medium # Understanding Big O Notation: O(n) and O(log n) in Python. Big O notation is a special notation that indicates how fast an algorithm is. Big O notation does not…'
+      }
+    ],
+    grounding: ['absent', 'absent']
+  },
+  'Which of these is a compiled language?': {
+    sources: [
+      {
+        title: 'Compiled vs Interpreted Programming Languages – C, C++, Rust, Go, Haskell, C#, Java,…',
+        url: 'https://finematics.com/compiled-vs-interpreted-programming-languages',
+        snippet:
+          'A compiled language is a programming language that is typically implemented using compilers rather than interpreters. A compiler is a program that translates statements written in a particular programming language into another language usually machine code. A…'
+      },
+      {
+        title: 'List of programming languages by type - Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/List_of_programming_languages_by_type',
+        snippet:
+          'Rebol (functional, imperative, object-oriented (prototype-based), metaprogramming (dialected)) Red "Red (programming language)") (functional, imperative, object-oriented (prototype-based), metaprogramming (dialected)) Ruby "Ruby (programming language)")…'
+      }
+    ],
+    grounding: ['absent', 'absent']
+  },
+  'What is the base of the binary number system?': {
+    sources: [
+      {
+        title: 'Binary number',
+        url: 'https://en.wikipedia.org/wiki/Binary_number',
+        snippet:
+          'The base-2 numeral system is a positional notation with a radix of 2. Each digit is referred to as a bit, or binary digit. Because of its straightforward implementation in digital electronic circuitry using logic gates, the binary system is used by almost all…'
+      },
+      {
+        title: 'Topics from the IB Computer Science syllabus.',
+        url: 'https://www.computersciencecafe.com/a121-computer-fundamentals-ib-369306.html',
+        snippet:
+          'What base is the binary number system? A) Base 8. B) Base 10. C) Base 2. D) Base 16 ; How many symbols are used in the hexadecimal number system? A) 8. B) 10. C)'
+      }
+    ],
+    grounding: ['supported', 'supported']
+  }
 }
 
 function buildItem(position: number, spec: Spec): Item {
+  const retrieved = RETRIEVED[spec.stem]
   const attempts: Attempt[] = spec.readers.map((model, index) =>
     attempt({
       requestedModel: model,
@@ -138,7 +352,7 @@ function buildItem(position: number, spec: Spec): Item {
         answer: spec.answers[index] ?? '',
         defensible: spec.defensible?.[index] ?? [spec.answers[index] ?? ''],
         reason: spec.reasons[index] ?? '',
-        ...(spec.sources ? { sources: spec.sources, grounding: spec.grounding?.[index] ?? 'absent' } : {})
+        ...(retrieved ? { sources: retrieved.sources, grounding: retrieved.grounding[index] ?? 'absent' } : {})
       }
     })
   )
@@ -194,31 +408,7 @@ const SPECS: Spec[] = [
     reasons: [
       'A queue removes the element that has waited longest, which is first in, first out. A stack is last in, first out.',
       'First in, first out describes a queue. Stack ordering is the reverse.'
-    ],
-    // Real pages, retrieved for this question and shown to both readers. They back what the readers
-    // said, which is what turns "two models disagree with your key" into something an educator can
-    // check for themselves before touching the paper.
-    sources: [
-      {
-        title: 'Queue (abstract data type) - Wikipedia',
-        url: 'https://en.wikipedia.org/wiki/Queue_(abstract_data_type)',
-        snippet:
-          'The order in which an element added to or removed from a queue is described as first in, first out, referred to by the acronym FIFO. Elements are added to the rear and removed from the front.'
-      },
-      {
-        title: 'Stack (abstract data type) - Wikipedia',
-        url: 'https://en.wikipedia.org/wiki/Stack_(abstract_data_type)',
-        snippet:
-          'The order in which an element added to or removed from a stack is described as last in, first out, referred to by the acronym LIFO.'
-      },
-      {
-        title: 'FIFO (computing and electronics) - Wikipedia',
-        url: 'https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics)',
-        snippet:
-          'FIFO is a method for organising the manipulation of a data structure in which the oldest entry, or head of the queue, is processed first.'
-      }
-    ],
-    grounding: ['supported', 'supported']
+    ]
   },
   {
     stem: 'What is the worst-case time complexity of binary search on a sorted array of n elements?',
@@ -229,25 +419,7 @@ const SPECS: Spec[] = [
     reasons: [
       'Each comparison halves the remaining range, giving a logarithmic bound.',
       'Binary search discards half the array per step, so the worst case is O(log n).'
-    ],
-    // A contradicted reading, so the state exists somewhere on the sample. What came back is about
-    // the right topic and the wrong claim, which is exactly the case the grounding field is for:
-    // the readers are right, the retrieved page is not, and the score is damped rather than flipped.
-    sources: [
-      {
-        title: 'Binary search algorithm - Wikipedia',
-        url: 'https://en.wikipedia.org/wiki/Binary_search',
-        snippet:
-          'Binary search runs in logarithmic time in the worst case, making O(log n) comparisons, where n is the number of elements in the array.'
-      },
-      {
-        title: 'Sorting and searching - cheat sheet',
-        url: 'https://en.wikipedia.org/wiki/Linear_search',
-        snippet:
-          'Linear search scans each element in turn and therefore runs in O(n) time in the worst case, examining every element before reporting failure.'
-      }
-    ],
-    grounding: ['supported', 'contradicted']
+    ]
   },
   {
     stem: 'Which of the following best describes a pure function?',
