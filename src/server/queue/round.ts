@@ -1,4 +1,4 @@
-import type { ItemVerdict, Option, Reading } from '../../shared/types'
+import type { ItemVerdict, Option, Reading, Source } from '../../shared/types'
 import { verdict as applyRule } from '../../shared/verdict'
 import type { Provenance } from '../gateway/client'
 import { admitReading } from '../gateway/reading'
@@ -42,6 +42,8 @@ export type RoundDeps = {
   onAttempt: (attempt: AttemptRow) => Promise<void>
   onOutcome?: (model: string, ok: boolean, latencyMs: number) => void
   hedgeAfterMs?: number
+  /** What the readers were shown. Empty when retrieval is off or found nothing. */
+  sources?: Source[]
   // Only tests set this; production leaves it at CALL_CEILING_MS.
   callCeilingMs?: number
   sleep?: (ms: number) => Promise<void>
@@ -133,7 +135,7 @@ export async function runRound(prompt: string, options: Option[], key: string, d
     discarded = false
   ): Promise<Reading | null> => {
     attempts += 1
-    const admission = admitReading(provenance, options)
+    const admission = admitReading(provenance, options, deps.sources ?? [])
     deps.onOutcome?.(model, admission.admitted, provenance.latencyMs)
 
     // A hedge that lost its race is evidence of what the gateway did, but it did not enter the

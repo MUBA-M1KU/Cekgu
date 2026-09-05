@@ -1,8 +1,18 @@
 import type { ChatMessage, Citation, Seat } from '../shared/chat'
 import { seatedAttempts } from '../shared/chat'
 import type { DispositionInput } from '../shared/schemas'
-import { recordScore, truthScore } from '../shared/truth-score'
-import type { AccountStats, Attempt, Item, Reading, RecordDetail, RecordSummary, VerdictCounts } from '../shared/types'
+import { corroboration, recordScore, truthScore } from '../shared/truth-score'
+import type {
+  AccountStats,
+  Attempt,
+  Grounding,
+  Item,
+  Reading,
+  RecordDetail,
+  RecordSummary,
+  Source,
+  VerdictCounts
+} from '../shared/types'
 import { verdict } from '../shared/verdict'
 
 // A stand-in for GET /api/records/:id behind VITE_MOCK_API, shaped exactly like TRD section 15.
@@ -114,6 +124,9 @@ type Spec = {
   defensible?: [string[], string[]]
   reasons: [string, string] | [string]
   timedOut?: string
+  /** Pages live retrieval found for this item, shown to both readers. Omitted where it found none. */
+  sources?: Source[]
+  grounding?: [Grounding, Grounding]
 }
 
 function buildItem(position: number, spec: Spec): Item {
@@ -124,7 +137,8 @@ function buildItem(position: number, spec: Spec): Item {
         model,
         answer: spec.answers[index] ?? '',
         defensible: spec.defensible?.[index] ?? [spec.answers[index] ?? ''],
-        reason: spec.reasons[index] ?? ''
+        reason: spec.reasons[index] ?? '',
+        ...(spec.sources ? { sources: spec.sources, grounding: spec.grounding?.[index] ?? 'absent' } : {})
       }
     })
   )
@@ -180,7 +194,31 @@ const SPECS: Spec[] = [
     reasons: [
       'A queue removes the element that has waited longest, which is first in, first out. A stack is last in, first out.',
       'First in, first out describes a queue. Stack ordering is the reverse.'
-    ]
+    ],
+    // Real pages, retrieved for this question and shown to both readers. They back what the readers
+    // said, which is what turns "two models disagree with your key" into something an educator can
+    // check for themselves before touching the paper.
+    sources: [
+      {
+        title: 'Queue (abstract data type) - Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Queue_(abstract_data_type)',
+        snippet:
+          'The order in which an element added to or removed from a queue is described as first in, first out, referred to by the acronym FIFO. Elements are added to the rear and removed from the front.'
+      },
+      {
+        title: 'Stack (abstract data type) - Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Stack_(abstract_data_type)',
+        snippet:
+          'The order in which an element added to or removed from a stack is described as last in, first out, referred to by the acronym LIFO.'
+      },
+      {
+        title: 'FIFO (computing and electronics) - Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics)',
+        snippet:
+          'FIFO is a method for organising the manipulation of a data structure in which the oldest entry, or head of the queue, is processed first.'
+      }
+    ],
+    grounding: ['supported', 'supported']
   },
   {
     stem: 'What is the worst-case time complexity of binary search on a sorted array of n elements?',
@@ -324,6 +362,13 @@ export function mockRecord(id: string): RecordDetail {
     expiresAt: null,
     counts: countBy(items),
     truthScore: recordScore(items.map((item) => item.truthScore)),
+    corroboration: corroboration(
+      items.map((item) =>
+        item.attempts
+          .filter((candidate) => candidate.admitted && candidate.reading)
+          .map((candidate) => candidate.reading as Reading)
+      )
+    ),
     items: items.map((item) => ({ ...item }))
   }
 }

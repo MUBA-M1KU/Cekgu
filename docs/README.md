@@ -147,11 +147,29 @@ The product is built for practice papers and synthetic examples, not for confide
    | **Clear**              | Both readers chose the supplied key.                                          |
    | **Possible Key Error** | Both readers agreed on the same option, and it is not the key.                |
 
+1. **The public web is consulted, and quoted.** Before the readers run, one search fetches up to four pages relevant to
+   the question, and both readers are shown the same snippets as background rather than authority. The supplied key is
+   never in the query — searching for the key returns pages that agree with the key. Every page is listed under the
+   readings with a live link and the quoted text, so the evidence is checkable rather than described.
+
+   This is a **search API, not a model**: it returns what other people published and forms no opinion. `include_answer`
+   is hard-coded false, because Tavily's own generated answer would be reasoning on a provider that is not the gateway,
+   and both that flag and the absence of any `answer` read are asserted by tests. Every judgement is still made by two
+   Gonka models with request ids. Without `TAVILY_API_KEY` the readers work from their own knowledge and every verdict
+   fires exactly as before. See [TRD section 22](TRD.md#22-live-retrieval-for-cross-verification).
+
 1. **A score puts a number on it.** The same two readings produce a Truth Score from 0 to 100, shown on the record and
    on every item. A reader's commitment to an option is worth half the weight and the rest is split across the options
    it would still defend, so a hedge costs the key something without erasing the commitment. It is computed in
    `src/shared/truth-score.ts` from readings already on the record — no extra inference call, and no model asked how
    confident it feels, because a model's report about itself is not evidence and no receipt could back it.
+
+   Where retrieval ran, each reader also reports what the pages did to its own answer, and that folds in as a
+   **confidence adjustment rather than a vote**: corroboration makes a reading count for more, contradiction makes it
+   count for half, and neither can flip a reading into meaning its opposite. A web search must not be able to outrank
+   two receipt-verified readings, because a verdict moved by a page nobody receipted would have no proof behind it.
+   Finding nothing is exactly neutral — most exam items have no page that settles them, and treating silence as doubt
+   would mark down every good question on an unusual topic.
 
    The number says how much of the verified reader agreement backs the supplied key. It is not a claim that the question
    is correct. An **Unverified** item scores null rather than 0: 0 is what two readers agreeing against the key earns,
@@ -185,6 +203,9 @@ The product is built for practice papers and synthetic examples, not for confide
 - **Explicit consensus.** The five-outcome rule above is a pure function in `src/shared/verdict.ts` with the reason
   sentence it produced shown next to the verdict. The Truth Score beside it is a second pure function over the same two
   readings, so a score can never disagree with the verdict printed next to it.
+- **Retrieval that decides nothing.** `src/server/retrieval/` reaches the public web for evidence and is held by
+  `only-gonkarouter.test.ts` to the same rule the two provider directories are: it may not import the verdict rule, the
+  schema, the round or the gateway client. It is not a third exemption, because it calls no model.
 
 **The checking pipeline.**
 
@@ -284,6 +305,7 @@ all. [TRD section 21](TRD.md#21-the-readers-voice-and-the-record-assistant) hold
 | Auth           | Better Auth                                    | Email and password, Google OAuth, shared Guest workspace         |
 | Inference      | GonkaRouter                                    | Blind reads, draft structuring, receipts — all reasoning         |
 | Transcription  | Vision model, uploads only                     | Printed text from an image or PDF, no judgement                  |
+| Retrieval      | Search API, no model                           | Text other people published, quoted verbatim, no judgement       |
 | Assistant      | GonkaRouter, MiniMax-M2.7 with tool calling    | Grounded answers about one record, with receipts                 |
 | Mascot         | PixiJS, pixi-live2d-display, Web Speech        | Live2D reader seats, their captions and their voice              |
 | Hosting and CI | Cloud Run, Artifact Registry, GitHub Actions   | Container build, tagged PR previews, production deploy           |
@@ -311,6 +333,8 @@ is not meant to be one.
 - [Bun](https://bun.sh) 1.4 or newer
 - A PostgreSQL database, local or hosted
 - A GonkaRouter API key from [gonkarouter.io](https://gonkarouter.io)
+- Optional: a Tavily key (`TAVILY_API_KEY`) to enable live retrieval. Without it the readers work from their own
+  knowledge and every verdict is unchanged.
 - Optional: a Google OAuth client for Google sign-in, and a vision API key to enable paper uploads. Without either, the
   app still runs — Google sign-in disappears and `POST /api/extract` answers 503 saying uploads are off. Pasting a link
   to a web page keeps working, because that path needs no vision model.

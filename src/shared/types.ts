@@ -12,7 +12,27 @@ export type DispositionKind =
 
 export type Option = { letter: string; text: string }
 
-export type Reading = { model: string; answer: string; defensible: string[]; reason: string }
+/** One page the readers were shown. Retrieved text, never a model's words. */
+export type Source = { title: string; url: string; snippet: string }
+
+/**
+ * What the retrieved evidence did to this reading's own answer, as the Gonka reader reports it.
+ *
+ * `absent` is the honest default and covers both "we retrieved nothing" and "what we retrieved did
+ * not speak to this question". Most exam items have no page on the web that settles them, and
+ * treating silence as doubt would flag the entire syllabus.
+ */
+export type Grounding = 'supported' | 'contradicted' | 'absent'
+
+export type Reading = {
+  model: string
+  answer: string
+  defensible: string[]
+  reason: string
+  /** Absent on readings taken before live retrieval existed, and on any round that retrieved nothing. */
+  grounding?: Grounding
+  sources?: Source[]
+}
 
 export type Attempt = {
   id: string
@@ -61,6 +81,9 @@ export type VerdictCounts = Record<ItemVerdict, number>
 /** A record's Truth Score beside the item counts it was drawn from. See truth-score.ts. */
 export type RecordScore = { score: number | null; scored: number; total: number }
 
+/** What live retrieval found across a record, counted per item. See truth-score.ts. */
+export type Corroboration = { supported: number; contradicted: number; absent: number; retrieved: number }
+
 export type RecordSummary = {
   id: string
   title: string
@@ -85,6 +108,8 @@ export type RecordDetail = {
   counts: VerdictCounts
   /** The mean of the items that have a score, with how many of them there were. */
   truthScore: RecordScore
+  /** Zero `retrieved` means live retrieval never ran on this record, which is a different fact from finding nothing. */
+  corroboration: Corroboration
   items: Item[]
 }
 

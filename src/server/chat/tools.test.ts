@@ -67,6 +67,7 @@ const record: RecordDetail = {
     pending: 1
   },
   truthScore: { score: null, scored: 0, total: 0 },
+  corroboration: { supported: 0, contradicted: 0, absent: 0, retrieved: 0 },
   items: [
     makeItem({
       position: 1,

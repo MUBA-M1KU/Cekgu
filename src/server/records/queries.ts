@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, ilike, inArray, isNull, or, sql } from 'drizzle-orm'
-import { recordScore, truthScore } from '../../shared/truth-score'
+import { corroboration, recordScore, truthScore } from '../../shared/truth-score'
 import type { Attempt, Disposition, Item, RecordDetail, RecordSummary, VerdictCounts } from '../../shared/types'
 import { db } from '../db'
 import { attempts, dispositions, items, records } from '../db/schema'
@@ -23,14 +23,12 @@ function emptyCounts(): VerdictCounts {
    order the round produced them — attempts arrive newest first for the evidence view, and a score
    built in that order would pick a different pair from the rule and could then contradict the
    verdict printed beside it. Sorting on finishedAt puts them back in completion order. */
-function itemScore(row: { key: string }, attemptsForItem: Attempt[]): number | null {
-  const readings = attemptsForItem
+function admittedReadings(attemptsForItem: Attempt[]) {
+  return attemptsForItem
     .filter((attempt) => attempt.admitted && attempt.reading)
     .slice()
     .sort((a, b) => (a.finishedAt ?? '').localeCompare(b.finishedAt ?? ''))
     .map((attempt) => attempt.reading as NonNullable<Attempt['reading']>)
-
-  return truthScore(readings, row.key)
 }
 
 export type ListFilters = { status?: string; subject?: string; attention?: boolean; q?: string }
@@ -134,7 +132,7 @@ export async function recordDetail(recordId: string): Promise<RecordDetail | nul
       status: row.status,
       verdict: row.verdict,
       verdictReason: row.verdictReason,
-      truthScore: itemScore(row, itemAttempts),
+      truthScore: truthScore(admittedReadings(itemAttempts), row.key),
       attemptsUsed: row.attemptsUsed,
       attempts: itemAttempts,
       dispositions: dispositionRows.filter((disposition) => disposition.itemId === row.id).map(toDisposition)
@@ -152,6 +150,7 @@ export async function recordDetail(recordId: string): Promise<RecordDetail | nul
     expiresAt: record.expiresAt?.toISOString() ?? null,
     counts,
     truthScore: recordScore(built.map((item) => item.truthScore)),
+    corroboration: corroboration(built.map((item) => admittedReadings(item.attempts))),
     items: built
   }
 }

@@ -20,6 +20,7 @@ function parsePositiveInt(name: string, defaultValue: number, max?: number): num
 const googleClientId = optional('GOOGLE_CLIENT_ID')
 const googleClientSecret = optional('GOOGLE_CLIENT_SECRET')
 const geminiApiKey = optional('GEMINI_API_KEY')
+const tavilyApiKey = optional('TAVILY_API_KEY')
 
 export const env = {
   port: Number(process.env.PORT ?? 8080),
@@ -48,6 +49,10 @@ export const env = {
   // off, and every other route is unaffected. A deployment without this key is a working product
   // with one affordance missing, not a broken one.
   gemini: geminiApiKey ? { apiKey: geminiApiKey, model: optional('GEMINI_MODEL') ?? 'gemini-2.5-flash' } : null,
+  // Live retrieval for cross-verification. Optional in the same way the vision key is: absent, the
+  // readers work from their own knowledge exactly as they did before, and every other route is
+  // unaffected. It buys evidence, never a judgement — see src/server/retrieval/tavily.ts.
+  tavily: tavilyApiKey ? { apiKey: tavilyApiKey } : null,
   // The record agent. Its provider is a one-word switch because it is a track requirement decision
   // rather than a technical one: 'gemini' phrases answers off the gateway, 'gonka' keeps every
   // inference on it and pays for that in latency. Both paths are built, so reversing the decision

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { recordScore, scoreBand, truthScore } from './truth-score'
-import type { Reading } from './types'
+import { corroboration, recordScore, scoreBand, truthScore } from './truth-score'
+import type { Grounding, Reading } from './types'
 
 const read = (model: string, answer: string, defensible: string[] = [answer]): Reading => ({
   model,
@@ -89,6 +89,111 @@ describe('the pair is chosen the way the verdict chooses it', () => {
   test('the first distinct pair scores, and later readings do not move it', () => {
     const readings = [read(DEEPSEEK, 'A'), read(MINIMAX, 'A'), read(MINIMAX, 'C')]
     expect(truthScore(readings, 'A')).toBe(100)
+  })
+})
+
+const ground = (reading: Reading, grounding: Grounding): Reading => ({ ...reading, grounding })
+
+describe('live retrieval adjusts confidence, never direction', () => {
+  const bothKey = [read(DEEPSEEK, 'A'), read(MINIMAX, 'A')]
+  const bothWrong = [read(DEEPSEEK, 'B'), read(MINIMAX, 'B')]
+
+  test('a reading with no grounding field scores exactly as before retrieval existed', () => {
+    expect(truthScore(bothKey, 'A')).toBe(100)
+    expect(truthScore([read(DEEPSEEK, 'A'), read(MINIMAX, 'A', ['A', 'B'])], 'A')).toBe(88)
+  })
+
+  test('absent leaves the score where it was', () => {
+    const readings = bothKey.map((reading) => ground(reading, 'absent'))
+    expect(truthScore(readings, 'A')).toBe(100)
+  })
+
+  test('absent leaves a hedged score where it was, so silence never marks a question down', () => {
+    const readings = [ground(read(DEEPSEEK, 'A'), 'absent'), ground(read(MINIMAX, 'A', ['A', 'B']), 'absent')]
+    expect(truthScore(readings, 'A')).toBe(88)
+  })
+
+  test('support firms up a hedged reading', () => {
+    const hedged = truthScore([read(DEEPSEEK, 'A'), read(MINIMAX, 'A', ['A', 'B'])], 'A') as number
+    const backed = truthScore(
+      [ground(read(DEEPSEEK, 'A'), 'supported'), ground(read(MINIMAX, 'A', ['A', 'B']), 'supported')],
+      'A'
+    ) as number
+    expect(backed).toBeGreaterThan(hedged)
+    expect(backed).toBeLessThanOrEqual(100)
+  })
+
+  test('contradiction pulls a reading toward neutral rather than flipping it', () => {
+    // Both readers agreed against the key, so the key looked wrong. The web not backing them makes
+    // that finding weaker, never the opposite finding.
+    const score = truthScore(
+      bothWrong.map((reading) => ground(reading, 'contradicted')),
+      'A'
+    ) as number
+    expect(score).toBeGreaterThan(0)
+    expect(score).toBeLessThan(50)
+  })
+
+  test('contradicting two readers who chose the key lowers but does not invert the score', () => {
+    const score = truthScore(
+      bothKey.map((reading) => ground(reading, 'contradicted')),
+      'A'
+    ) as number
+    expect(score).toBeLessThan(100)
+    expect(score).toBeGreaterThan(50)
+  })
+
+  test('the web can never push a score outside 0 to 100', () => {
+    for (const grounding of ['supported', 'contradicted', 'absent'] as Grounding[]) {
+      for (const readings of [bothKey, bothWrong]) {
+        const score = truthScore(
+          readings.map((reading) => ground(reading, grounding)),
+          'A'
+        ) as number
+        expect(score).toBeGreaterThanOrEqual(0)
+        expect(score).toBeLessThanOrEqual(100)
+      }
+    }
+  })
+})
+
+describe('the corroboration tally', () => {
+  const pair = (a: Grounding, b: Grounding): Reading[] => [
+    ground(read(DEEPSEEK, 'A'), a),
+    ground(read(MINIMAX, 'A'), b)
+  ]
+
+  test('both readers supported counts as supported', () => {
+    expect(corroboration([pair('supported', 'supported')])).toEqual({
+      supported: 1,
+      contradicted: 0,
+      absent: 0,
+      retrieved: 1
+    })
+  })
+
+  test('one reader contradicted is enough to count the item as contradicted', () => {
+    expect(corroboration([pair('supported', 'contradicted')]).contradicted).toBe(1)
+  })
+
+  test('one reader supporting is not enough to claim the item is supported', () => {
+    const tally = corroboration([pair('supported', 'absent')])
+    expect(tally.supported).toBe(0)
+    expect(tally.absent).toBe(1)
+  })
+
+  test('items retrieval never ran on are not counted at all', () => {
+    expect(corroboration([[read(DEEPSEEK, 'A'), read(MINIMAX, 'A')]])).toEqual({
+      supported: 0,
+      contradicted: 0,
+      absent: 0,
+      retrieved: 0
+    })
+  })
+
+  test('an unverified item is not counted', () => {
+    expect(corroboration([[ground(read(DEEPSEEK, 'A'), 'supported')]]).retrieved).toBe(0)
+    expect(corroboration([undefined]).retrieved).toBe(0)
   })
 })
 
