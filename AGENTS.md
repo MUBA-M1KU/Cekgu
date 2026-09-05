@@ -33,8 +33,14 @@ source material is in [`docs/source/`](docs/source/).
 
 Non-negotiable, from [`docs/source/gonkarouter-challenge.md`](docs/source/gonkarouter-challenge.md):
 
-1. **All AI reasoning runs through GonkaRouter** (`https://api.gonkarouter.io`). A direct OpenAI, Anthropic or Gemini
-   call anywhere in the product path disqualifies the entry
+1. **All AI reasoning and verification runs through GonkaRouter** (`https://api.gonkarouter.io`). Reasoning and
+   verification, which is the organizers' own wording — see [`docs/brief.md`](docs/brief.md). Two directories are
+   exempt, and neither may decide anything: `src/server/transcribe/` turns an uploaded image or PDF into the text
+   printed on it ([`docs/TRD.md` section 20](docs/TRD.md#20-reading-a-paper-from-an-upload)), and `src/server/chat/`
+   phrases the record assistant's answers from facts the Gonka readers already produced
+   ([section 21](docs/TRD.md#21-the-readers-voice-and-the-record-assistant)).
+   `src/server/gateway/only-gonkarouter.test.ts` fails the build if a provider host appears anywhere else, or if either
+   directory imports the verdict rule
 1. **At least two models cross-verify.** Multi-model consensus
 1. **Gonka Request IDs are surfaced in the UI** for every inference step. This is the on-chain proof: wire it through
    from the first commit, not at the end
@@ -77,8 +83,8 @@ days produce code nobody agreed to, and the deck's required sections get invente
 | `docs/PRD.md`     | **What.** Requirements, user stories, acceptance criteria, what is out of scope | Scope. What `hackathon-scope-cutter` cuts against |
 | `docs/TRD.md`     | **How.** Architecture, API contracts, data models, schemas, decision rationale  | Technical truth. Canonical over this file         |
 
-`docs/DESIGN.md` joins them when frontend work starts, and owns the design system: palette, type pairing, radius and
-border treatment, spacing scale.
+`docs/DESIGN.md` is the fourth, and owns the design system: palette, type pairing, radius and border treatment, spacing
+scale.
 
 **The gate is binary.** If the three are not all present, the answer to "can I start building" is no. Say so, and write
 the missing one. The deck's five required sections map onto these, so writing them now is writing the deck early.
@@ -109,20 +115,20 @@ If reading your message takes longer than doing the thing, you have cost time.
 ```bash
 bun install          # dev tooling; also wires husky hooks
 bun run test:guard   # regression tests for merge and main-branch enforcement
-bun run lint         # biome check . && prettier --check .
-bun run format       # biome format --write . && prettier --write .
-bun run typecheck    # tsc --noEmit, once src/ exists
+bun run lint         # Biome across the code, Prettier across Markdown and YAML
+bun run format       # the same two, writing
+bun run typecheck    # tsc --noEmit
 ```
 
-**Application framework, database and hosting are not chosen yet.** They get chosen and justified in
-[`docs/TRD.md`](docs/TRD.md); this table is an inventory of what is installed. There is no Python stack. **Prettier owns
-Markdown and YAML, Biome owns everything else**, split by file extension rather than an ignore file. `.prettierrc.json`
-mirrors every formatter setting `biome.json` states, so both wrap at 120 and neither can undo the other.
-`embeddedLanguageFormatting` is off, so fenced code samples are never rewritten.
+**The application stack is chosen and justified in [`docs/TRD.md`](docs/TRD.md):** Hono and React on Bun, Drizzle on
+Neon Postgres, Cloud Run. This table is the tooling around it. There is no Python stack. **Prettier owns Markdown and
+YAML, Biome owns everything else**, split by file extension rather than an ignore file. `.prettierrc.json` mirrors every
+formatter setting `biome.json` states, so both wrap at 120 and neither can undo the other. `embeddedLanguageFormatting`
+is off, so fenced code samples are never rewritten.
 
 `rtk` and `graphify`, both optional and per-machine, are documented in [`docs/agent-tooling.md`](docs/agent-tooling.md).
-The layout tree lives in [`docs/README.md`](docs/README.md#repository-layout), because a reviewer must read it without
-opening this file. Source layout is not decided; add it there when it is.
+The repository layout is not written down anywhere: `docs/README.md` is judge-facing and carries architecture rather
+than a directory tree. Read it off the tree itself.
 
 ## CLI first, always
 
@@ -225,8 +231,8 @@ text, placeholders, tooltips, errors, empty states and toasts. `Save Changes`, b
 codex exec --skip-git-repo-check "<prompt>. Use your image generation tool. Save to /absolute/path/<name>.png"
 ```
 
-Give it an absolute path, and resize before anything lands in the repo. Use the `brandkit` skill for art direction
-rather than hand-writing a prompt.
+Give it an absolute path, and resize before anything lands in the repo. Art direction comes from the identity section of
+[`docs/DESIGN.md`](docs/DESIGN.md); the `brandkit` skill was deliberately not vendored.
 
 **Nothing visual is done until all four are true.** State them when you report:
 
@@ -276,7 +282,9 @@ gh issue close <n>                     # done
 
 ## Critical do-nots
 
-- **Do not** call an AI provider directly. Everything goes through GonkaRouter
+- **Do not** call an AI provider directly. Everything goes through GonkaRouter, with the two documented exemptions in
+  `src/server/transcribe/` and `src/server/chat/`. Widening either directory, or adding a third, is a track requirement
+  decision and not a refactor
 - **Do not** import or adapt code written before 26 Aug 2026
 - **Do not** commit `.env` or any `sk-…` key. `.env.example` carries key names, never values
 - **Do not** commit directly to `main`, force-push, rewrite published history, or delete a branch other than a merged
@@ -296,7 +304,7 @@ gh issue close <n>                     # done
 
 ## Skills, subagents and hooks
 
-**37 skills are committed** and all are optional: invoke one when the task matches, not as a checkpoint before every
+**38 skills are committed** and all are optional: invoke one when the task matches, not as a checkpoint before every
 action. Your tool already lists them with descriptions, so the inventory is not repeated here. Provenance, what was
 retargeted, what was deliberately not taken, and what each hook does:
 [`.agents/skills/VENDORED.md`](.agents/skills/VENDORED.md).

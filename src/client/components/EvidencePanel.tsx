@@ -1,7 +1,17 @@
+import { useEffect, useRef } from 'react'
+import { Link } from 'react-router'
 import type { Attempt, Item, ReceiptStatus } from '../../shared/types'
+import { useMuted } from '../mascot/preferences'
+import { itemUtterances } from '../mascot/speech'
+import { type SpeechHandle, speak } from '../mascot/voice'
+import { receiptPath } from '../pages/ReceiptView'
 import { BubbleRow } from './BubbleRow'
+import { InfoIcon, VoiceOnIcon } from './icons'
 
-const RECEIPT_BASE = 'https://api.gonkarouter.io/v1/receipts/'
+// The rule the attempts table is read by. One sentence, on the heading, rather than a paragraph
+// under every table on every open item.
+const ATTEMPTS_RULE =
+  'Every attempt is listed, admitted or not. A reading enters the verdict only when its receipt names the model that was requested.'
 
 const RECEIPT_LABEL: Record<ReceiptStatus, string> = {
   verified: 'Verified',
@@ -20,7 +30,7 @@ export function attemptStatus(attempt: Attempt): string {
 }
 
 function seconds(ms: number | null): string {
-  return ms === null ? '—' : `${(ms / 1000).toFixed(1)}s`
+  return ms === null ? '-' : `${(ms / 1000).toFixed(1)}s`
 }
 
 // The cats are the two SEATS, never a particular model: which family serves a seat varies per
@@ -72,17 +82,48 @@ function ReaderColumn({ item, attempt, seat }: { item: Item; attempt: Attempt; s
         <dd className="m-0">{RECEIPT_LABEL[attempt.receiptStatus]}</dd>
       </dl>
 
+      {/* Outline rather than ghost: this panel is a well, and a ghost control on a recessed ground
+          is a text link with padding. The receipt is the product's whole claim, so the one control
+          that opens it gets a surface to sit on. */}
       {attempt.requestId ? (
-        <a
-          href={`${RECEIPT_BASE}${attempt.requestId}`}
-          target="_blank"
-          rel="noreferrer"
-          className="type-label mt-3 inline-block underline"
-        >
+        <Link to={receiptPath(attempt.requestId)} className="btn btn-outline btn-sm mt-3">
           View Receipt
-        </a>
+        </Link>
       ) : null}
     </div>
+  )
+}
+
+/**
+ * The two readers, out loud, on request. Nothing here speaks on its own: the record page says the
+ * summary once and everything per item waits to be asked for, which is what keeps twelve items from
+ * becoming twelve interruptions.
+ *
+ * There is no caption because this panel IS the caption — every word spoken is already printed
+ * beside it. Muted, the control is not rendered at all rather than left dead, since the evidence is
+ * fully readable without it.
+ */
+function PlayReaders({ item }: { item: Item }) {
+  const muted = useMuted()
+  const handle = useRef<SpeechHandle | null>(null)
+
+  useEffect(() => () => handle.current?.cancel(), [])
+
+  const lines = itemUtterances(item)
+  if (muted || lines.length === 0) return null
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        handle.current?.cancel()
+        handle.current = speak(lines, { muted: false })
+      }}
+      className="btn btn-ghost btn-sm"
+    >
+      <VoiceOnIcon />
+      Play Readers
+    </button>
   )
 }
 
@@ -97,11 +138,12 @@ export function EvidencePanel({ item }: { item: Item }) {
     if (readers.length === 2) break
   }
 
-  const unadmitted = item.attempts.filter((attempt) => !readers.includes(attempt))
-
   return (
-    <div className="mt-4 bg-well p-4 sm:p-6">
-      <h3 className="type-eyebrow text-ink-muted">Evidence</h3>
+    <div className="mt-4 rounded-control bg-well p-4 sm:p-6">
+      <div className="flex items-center justify-between gap-4">
+        <h3 className="type-eyebrow text-ink-muted">Evidence</h3>
+        <PlayReaders item={item} />
+      </div>
 
       <div className="mt-4 flex flex-col gap-6 min-[720px]:flex-row">
         {readers[0] ? <ReaderColumn item={item} attempt={readers[0]} seat={0} /> : null}
@@ -119,53 +161,68 @@ export function EvidencePanel({ item }: { item: Item }) {
         )}
       </div>
 
-      <h3 className="type-eyebrow mt-6 text-ink-muted">All Attempts</h3>
+      <div className="mt-6 flex items-center gap-2">
+        <h3 className="type-eyebrow text-ink-muted">All Attempts</h3>
+        {/* The rule this table is read by, on the heading that names it. It was a sentence printed
+            under every attempts table on every open item, and it says the same thing every time. */}
+        <button type="button" className="attempts-tip" data-tip={ATTEMPTS_RULE} aria-label="How attempts are counted">
+          <InfoIcon size={15} />
+          <span className="sr-only">{ATTEMPTS_RULE}</span>
+        </button>
+      </div>
+
+      {/* Eight columns did not fit. At 1920 this panel gives a table 898 px, and requested model,
+          served model and a 30-character request id each wanted a column of their own, so the table
+          scrolled sideways and the receipt link sat off the visible edge — on the one screen whose
+          whole job is to be inspected.
+
+          Six columns, and the two that merged were the two that belong together: an attempt's id and
+          the receipt that proves it are one fact, not two, and they read better stacked under the
+          model than spread across the page. Requested model earns a line only when it differs from
+          what was served, which is the single case the rule below the heading is about; when they
+          match, saying so twice per row bought nothing and cost the scrollbar. */}
       <div className="mt-3 overflow-x-auto">
-        <table className="w-full border-collapse text-left">
+        <table className="data-table" data-surface="well">
           <thead>
-            <tr className="type-label border-b border-rule">
-              <th className="py-2 pr-4 font-medium">#</th>
-              <th className="py-2 pr-4 font-medium">Requested Model</th>
-              <th className="py-2 pr-4 font-medium">Served Model</th>
-              <th className="py-2 pr-4 font-medium">Status</th>
-              <th className="py-2 pr-4 font-medium">Request Id</th>
-              <th className="py-2 pr-4 font-medium">Shard</th>
-              <th className="py-2 pr-4 font-medium">Latency</th>
-              <th className="py-2 font-medium">Receipt</th>
+            <tr className="type-label">
+              <th>#</th>
+              <th>Attempt</th>
+              <th>Status</th>
+              <th>Shard</th>
+              <th>Latency</th>
+              <th>Receipt</th>
             </tr>
           </thead>
           <tbody>
             {item.attempts.map((attempt, index) => (
-              <tr key={attempt.id} className="border-b border-rule align-top">
-                <td className="type-mono py-2 pr-4">{index + 1}</td>
-                <td className="type-mono py-2 pr-4 whitespace-nowrap">{attempt.requestedModel}</td>
-                <td className="type-mono py-2 pr-4 whitespace-nowrap">{attempt.servedModel ?? '—'}</td>
-                <td className="py-2 pr-4">
-                  <span className="status-chip type-label">{attemptStatus(attempt)}</span>
-                  {attempt.rejectionReason ? (
-                    <p className="mt-1 max-w-[40ch] type-caption text-ink-muted">{attempt.rejectionReason}</p>
+              <tr key={attempt.id}>
+                <td className="type-mono align-top">{index + 1}</td>
+                <td className="align-top">
+                  {/* A span, not a p. scripts/demo/record.mjs finds shot 5's reader columns with
+                      p.type-mono and record.test.ts asserts that resolves to exactly one element,
+                      so a paragraph here would put three of them on an item with a retry and the
+                      recorder would throw on a strict-mode violation before the camera moved. */}
+                  <span className="type-mono block">{attempt.servedModel ?? attempt.requestedModel}</span>
+                  {attempt.servedModel && attempt.servedModel !== attempt.requestedModel ? (
+                    <p className="type-caption mt-1 text-pen">Requested {attempt.requestedModel}</p>
                   ) : null}
-                </td>
-                <td className="type-mono py-2 pr-4 whitespace-nowrap">
                   {attempt.requestId ? (
-                    <>
-                      {attempt.requestId}{' '}
-                      <a
-                        href={`${RECEIPT_BASE}${attempt.requestId}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="type-label underline"
-                      >
+                    <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <span className="type-mono text-ink-muted">{attempt.requestId}</span>
+                      <Link to={receiptPath(attempt.requestId)} className="btn btn-outline btn-sm">
                         View Receipt
-                      </a>
-                    </>
+                      </Link>
+                    </p>
                   ) : (
-                    <span className="type-caption text-ink-muted">No request id was returned.</span>
+                    <p className="type-caption mt-2 text-ink-muted">No request id was returned.</p>
                   )}
                 </td>
-                <td className="type-mono py-2 pr-4">{attempt.devshardId ?? '—'}</td>
-                <td className="type-mono py-2 pr-4">{seconds(attempt.latencyMs)}</td>
-                <td className="py-2">
+                <td className="align-top">
+                  <span className="status-chip type-label">{attemptStatus(attempt)}</span>
+                </td>
+                <td className="type-mono align-top">{attempt.devshardId ?? '-'}</td>
+                <td className="type-mono align-top">{seconds(attempt.latencyMs)}</td>
+                <td className="align-top">
                   <span className="status-chip type-label">{RECEIPT_LABEL[attempt.receiptStatus]}</span>
                 </td>
               </tr>
@@ -173,13 +230,6 @@ export function EvidencePanel({ item }: { item: Item }) {
           </tbody>
         </table>
       </div>
-
-      {unadmitted.length > 0 ? (
-        <p className="mt-3 type-caption text-ink-muted">
-          Rejected, hedged and timed-out attempts are listed because they are part of the record. Only readings that
-          passed receipt verification enter the verdict.
-        </p>
-      ) : null}
     </div>
   )
 }

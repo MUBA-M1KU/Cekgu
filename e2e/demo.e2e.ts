@@ -42,12 +42,18 @@ test.describe('the live demo walk', () => {
 
     // 1. The shared-workspace banner appears and stays put.
     await page.getByRole('button', { name: 'Sign In as Guest' }).click()
-    await expect(page).toHaveURL(/\/records$/)
+    await expect(page).toHaveURL(/\/dashboard$/)
     await expect(page.getByText(/Shared demo workspace/)).toBeVisible()
 
     expect(await resetSample()).toEqual({ reset: true })
 
-    // 2. The Guest workspace is shared and holds other people's records, so the script says to
+    // 2. Signing in lands on the dashboard, so the walk crosses to Records the way a presenter
+    // does, through the rail. Scoped to it because the dashboard's own All Records card matches
+    // the same accessible name and an unscoped getByRole would fail strict mode on the pair.
+    await page.getByLabel('Workspace', { exact: true }).getByRole('link', { name: 'Records' }).click()
+    await expect(page).toHaveURL(/\/records$/)
+
+    // The Guest workspace is shared and holds other people's records, so the script says to
     // search rather than scroll hunting for it on stage.
     await page.locator('#q').fill('Introductory')
     await page
@@ -90,9 +96,12 @@ test.describe('the live demo walk', () => {
     )
     expect(models.length).toBeGreaterThanOrEqual(2)
 
+    // Every id on screen is a link to its own receipt. The link goes to the viewer rather than
+    // straight to the gateway JSON, and the viewer offers the gateway URL itself; the step below
+    // walks that second hop so the chain is asserted end to end rather than at its first link.
     const links = await item
-      .locator('a[href*="/v1/receipts/"]')
-      .evaluateAll((all) => all.map((anchor) => (anchor as HTMLAnchorElement).href))
+      .locator('a[href*="/receipt/"]')
+      .evaluateAll((all) => all.map((anchor) => (anchor as HTMLAnchorElement).getAttribute('href') ?? ''))
     for (const id of ids) expect(links.some((href) => href.endsWith(id))).toBe(true)
 
     // 7. All Attempts keeps what did not count. The driver says this one out loud: a reading with

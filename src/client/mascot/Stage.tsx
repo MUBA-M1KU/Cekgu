@@ -7,8 +7,13 @@ import type { MascotState } from './state'
 // stage watches the document for either rather than being told about them.
 const BLOCKING = 'dialog[open], [data-receipt-popover], [role="dialog"]'
 
-function blocked(): boolean {
-  return document.querySelector(BLOCKING) !== null
+// A dialog this stage lives INSIDE is not blocking it — that is the chat modal, whose whole point
+// is two moving cats. Without the containment test the modal froze the very stage it opened.
+function blocked(canvas: HTMLCanvasElement | null): boolean {
+  for (const blocker of document.querySelectorAll(BLOCKING)) {
+    if (!canvas || !blocker.contains(canvas)) return true
+  }
+  return false
 }
 
 export function Stage({ state }: { state: MascotState }) {
@@ -48,7 +53,7 @@ export function Stage({ state }: { state: MascotState }) {
         stage = created
         stageRef.current = created
         created.play(stateRef.current)
-        created.hold(blocked())
+        created.hold(blocked(canvas))
         // The observers may have spoken while the runtime was loading, so the live values win
         // over the ones this effect captured.
         applyActivity()
@@ -109,7 +114,7 @@ export function Stage({ state }: { state: MascotState }) {
   }, [applyActivity])
 
   useEffect(() => {
-    const check = () => stageRef.current?.hold(blocked())
+    const check = () => stageRef.current?.hold(blocked(canvasRef.current))
     const observer = new MutationObserver(check)
 
     observer.observe(document.body, {

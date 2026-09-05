@@ -38,6 +38,8 @@ Contents:
 1. [Mascot runtime](#17-mascot-runtime)
 1. [Testing](#18-testing)
 1. [Decided](#19-decided)
+1. [Reading a paper from an upload](#20-reading-a-paper-from-an-upload) — the first non-Gonka call
+1. [The readers' voice and the record assistant](#21-the-readers-voice-and-the-record-assistant) — the second
 
 ## 1. Gateway, base URLs and auth
 
@@ -381,6 +383,12 @@ GUEST_EMAIL=                                            # The one seeded Guest u
 GUEST_PASSWORD=                                         # Used server-side only by POST /api/auth/guest
 
 MASCOT_ENABLED=false                                    # FR-MASCOT-1 feature flag. true for the demo
+
+GEMINI_API_KEY=                                         # Transcription only, section 20. Absent, uploads are off
+GEMINI_MODEL=gemini-2.5-flash                           # Verify against GET /v1beta/models before changing this
+
+CHAT_PROVIDER=gemini                                    # gemini | gonka. See section 21
+CHAT_MODEL=gemini-2.5-flash                             # Separate from GEMINI_MODEL. Never …-flash-lite
 ```
 
 The three model ids are not configuration. They are a constant list in `src/server/gateway/models.ts`. **They are not
@@ -1219,6 +1227,81 @@ config route.
 }
 ```
 
+### `GET /api/stats`
+
+Account-wide aggregates for the dashboard, in one round trip and one row. Every figure is a count of rows this account
+owns; nothing is computed from anything but the tables. `families` is keyed on the **served** model each receipt names,
+never on what was requested, so a family that was asked and did not answer contributes nothing.
+
+`verifiedReadings` over `readings` is the track requirement stated as a number, and it is the one dashboard figure a
+reader can check without taking the product's word for it: open a record, follow a request id to
+`GET /v1/receipts/{id}`, compare.
+
+```json
+{
+  "records": 4,
+  "items": 12,
+  "counts": {
+    "clear": 7,
+    "possible_key_error": 2,
+    "possible_ambiguity": 1,
+    "split_opinion": 1,
+    "unverified": 1,
+    "pending": 0
+  },
+  "readings": 23,
+  "verifiedReadings": 23,
+  "families": [{ "model": "moonshotai/Kimi-K2.6", "readings": 12, "verified": 12 }]
+}
+```
+
+### `GET /api/receipts/:requestId`
+
+**Public.** A read-through to the gateway's own [`GET /v1/receipts/{x-request-id}`](#1-gateway-base-urls-and-auth).
+
+It exists for one reason: the gateway sends **no `Access-Control-Allow-Origin` header**, so a browser on our origin
+cannot read a receipt even though anyone can `curl` it unauthenticated. Without this route the receipt viewer could only
+ever show a link, never a receipt.
+
+The route sends **no `Authorization` header**, because the endpoint behind it needs none. It therefore grants the caller
+no authority they did not already have, which is why it is public alongside `GET /api/sample`: the Sample Report is
+reachable signed out and its request ids are the point of it (FR-SAMPLE-4). This is metadata, not inference; no model is
+called and no prompt is sent.
+
+`requestId` is matched against `^req-\d{1,25}-\d{1,12}$` before the call, so a pasted path cannot turn the read-through
+into an open proxy for other gateway routes.
+
+Always `200`. The four statuses are distinct facts and the viewer says which:
+
+| `status`      | Means                                                                        |
+| ------------- | ---------------------------------------------------------------------------- |
+| `found`       | The gateway returned a receipt, carried through verbatim in `receipt`        |
+| `not_found`   | The gateway answered `404`. No receipt was ever written for that id          |
+| `unreachable` | The gateway did not answer, or answered with something that is not a receipt |
+| `invalid`     | The id is not shaped like a Gonka request id, so no call was made            |
+
+`not_found` and `unreachable` are never collapsed. An outage reported as an absent receipt would read as "this product
+invented the request id", which is the one thing the screen exists to disprove.
+
+```json
+{
+  "requestId": "req-1788426383844621629-410375",
+  "status": "found",
+  "receipt": {
+    "x_request_id": "req-1788426383844621629-410375",
+    "x_devshard_id": "70340",
+    "model": "MiniMaxAI/MiniMax-M2.7",
+    "created_at": "2026-09-03T09:06:51Z",
+    "outcome": "success",
+    "status_code": 200,
+    "stream": false,
+    "total_tokens": 534,
+    "ttft_ms": 27328,
+    "duration_ms": 27328
+  }
+}
+```
+
 ## 16. Provenance display
 
 The evidence view is the track's proof moment and is where FR-EVIDENCE-1 to FR-EVIDENCE-4, FR-VERDICT-4 and NFR-PROV-3
@@ -1330,18 +1413,19 @@ gets a preview URL.
 
 Every decision that was open on 2 September is now a section above.
 
-| Decision                                                  | Section                              |
-| --------------------------------------------------------- | ------------------------------------ |
-| Application framework, repository layout                  | [9](#9-application-architecture)     |
-| Hosting, CI/CD, secrets                                   | [10](#10-hosting-and-cicd)           |
-| Record persistence                                        | [11](#11-data-model)                 |
-| Private sign-in mechanism, the Guest account              | [12](#12-auth-and-the-guest-account) |
-| Queue shape, concurrency, hedging, retry budget           | [13](#13-queue-and-worker)           |
-| Exact consensus algorithm, gateway client, reading schema | [14](#14-consensus-rule)             |
-| API surface                                               | [15](#15-api-contracts)              |
-| How provenance is displayed                               | [16](#16-provenance-display)         |
-| Mascot runtime and state mapping                          | [17](#17-mascot-runtime)             |
-| What is tested and where                                  | [18](#18-testing)                    |
+| Decision                                                  | Section                                  |
+| --------------------------------------------------------- | ---------------------------------------- |
+| Application framework, repository layout                  | [9](#9-application-architecture)         |
+| Hosting, CI/CD, secrets                                   | [10](#10-hosting-and-cicd)               |
+| Record persistence                                        | [11](#11-data-model)                     |
+| Private sign-in mechanism, the Guest account              | [12](#12-auth-and-the-guest-account)     |
+| Queue shape, concurrency, hedging, retry budget           | [13](#13-queue-and-worker)               |
+| Exact consensus algorithm, gateway client, reading schema | [14](#14-consensus-rule)                 |
+| API surface                                               | [15](#15-api-contracts)                  |
+| How provenance is displayed                               | [16](#16-provenance-display)             |
+| Mascot runtime and state mapping                          | [17](#17-mascot-runtime)                 |
+| What is tested and where                                  | [18](#18-testing)                        |
+| The one non-Gonka call, and its fence                     | [20](#20-reading-a-paper-from-an-upload) |
 
 **What was fixed before any of this and still is:** the gateway, the model ids returned by `GET /v1/models`, the two
 base URLs, the no-fallback contract, receipt verification, and the requirement that every call returns its
@@ -1356,3 +1440,225 @@ real runs. Two things in this half are still design rather than description, and
   ([section 13](#13-queue-and-worker))
 
 Both are deliberate, and both are cheaper to state than to change two days before a submission.
+
+## 20. Reading a paper from an upload
+
+An educator photographs or scans a paper and New Check fills itself in. `POST /api/extract` is two steps, and the split
+between them is the whole design.
+
+| Step          | Runs on                     | Job                                                                 | May it decide anything? |
+| ------------- | --------------------------- | ------------------------------------------------------------------- | ----------------------- |
+| 1. Transcribe | Gemini, **not** the gateway | Pixels and PDF bytes to the words printed on them                   | **No**                  |
+| 2. Structure  | **GonkaRouter**             | Those words to title, subject, language, questions, options and key | Yes                     |
+
+The track's mandatory rule binds AI **reasoning and verification logic** to the Gonka Network, in the organizers' own
+words. Copying printed words off a page is neither, and step 2 — every judgement in the feature — carries an
+`x-request-id` like any other inference in the product. mrJiang's ruling permitting a third-party provider outside the
+mandatory path is recorded in [`brief.md`](brief.md#non-negotiable-requirements).
+
+**The organizers' own reference architecture draws the same line**, which is worth more than our reading of it. Their
+mandatory list separates item 1, **Claim Extraction**, "accept a URL, tweet, or text snippet as input", from item 2,
+**Decentralised Verification**, where "Gonka-hosted models analyse the claim"
+([challenge doc](source/gonkarouter-challenge.md)). Input acquisition sits before and outside the reasoning step in
+their structure, not only in ours. Step 1 here is that first item generalised from text to pixels.
+
+### Why step 1 cannot be on the gateway
+
+Two measured reasons, not a preference:
+
+- **Only one family can see an image.** `moonshotai/Kimi-K2.6` is the sole model in [section 3](#3-models-measured)
+  reporting vision, and at an 8.6 s median it is the slowest of the three
+- **One reader cannot cross-verify itself.** A transcription step on the gateway would be a single-model inference by
+  construction, so it would spend the demo path's slowest reader on the one job in the product that needs no judgement
+
+### The route
+
+`POST /api/extract`, session required, so the default gate in `src/server/routes/index.ts` covers it. Request is
+`multipart/form-data` with one `file` field.
+
+| Field       | Value                                                                                                                                                               |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Accepts** | `image/png`, `image/jpeg`, `image/webp`, `application/pdf`, 10 MB cap                                                                                               |
+| **200**     | `{ draft, provenance: { requestId, servedModel, receiptStatus }, warnings: string[] }`                                                                              |
+| **Errors**  | `{ error: { code, message } }` — 400 `no_file` / `bad_upload`, 413 `too_large`, 415 `unsupported_type`, 422 `unreadable` / `not_structured`, 503 `uploads_disabled` |
+
+`draft` matches `createRecordSchema` in `src/shared/schemas.ts` exactly. **It prefills the form and stops.** No record
+is created and no check is queued: a wrong extraction that submitted itself would put the product's name on a claim
+nobody read. The route holds the same `gatewaySemaphore` the queue holds rather than a second one beside it, because
+[gotcha 10](#5-verified-gotchas) measured account-level `429`s above four concurrent calls and an upload taking its own
+slots would steal them from checks already running.
+
+**Gemini accepts `application/pdf` as inline data**, so images and PDFs take one identical path. That is why there is no
+PDF library and no native canvas in the container, and the absence is deliberate rather than missing.
+
+### Measured, 4 September
+
+End to end through the route with a session and a real three-question paper:
+
+| Path       | Result            | Served                                                      |
+| ---------- | ----------------- | ----------------------------------------------------------- |
+| PNG, 45 KB | 200 in **35.3 s** | MiniMax, receipt verified, `req-1788534284315774569-844912` |
+| PDF, 27 KB | 200 in **73.8 s** | MiniMax, receipt verified, `req-1788534328793024120-845199` |
+
+**The file type is almost none of the cost.** Transcription alone was 6.1 s for the PNG and 8.0 s for the PDF; the
+spread above is the gateway's. Structuring the same text, one family each:
+
+| Family                               | 14:0x                       | 15:5x               |
+| ------------------------------------ | --------------------------- | ------------------- |
+| `deepseek-ai/DeepSeek-V4-Flash-0731` | 0.5 s, `429`, no request id | **10.3 s, correct** |
+| `MiniMaxAI/MiniMax-M2.7`             | 31.2 s, correct             | 77.0 s, correct     |
+| `moonshotai/Kimi-K2.6`               | 90.0 s, cut off             | 87.6 s, cut off     |
+
+**Read the two columns, not either one.** Same prompt, same paper, two hours apart: DeepSeek went from refusing
+instantly to being the fastest of the three, and MiniMax's time more than doubled. Any single measurement of this
+gateway is a snapshot, and a design that assumes one family is reliably fastest will be wrong within the afternoon. Only
+Kimi is consistent, and consistently unusable for this prompt.
+
+`healthyOrder()` ranks on the health ring, which is empty on a cold instance — so the first upload after a deploy takes
+the static order and pays whatever the first family costs that minute. **The route caps the structuring step at 100 s**,
+just above one complete attempt: 90 s for the call plus 5 s for its receipt. A lower ceiling can cut off a call that was
+about to succeed, which is the worst outcome available: the reader waits the whole time and gets nothing.
+
+**Rate limits punish repetition, not use.** Seven runs against the deployed preview with the same paper:
+
+| How it was called                    | Result                                                                                      |
+| ------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Five back to back inside ten minutes | Two succeeded. Three failed: two on the ceiling, one on a `429` from the transcription step |
+| Two, each after a five-minute pause  | **Both succeeded: 200 in 10.6 s as PNG, 200 in 67.0 s as PDF**                              |
+
+The back-to-back column is self-inflicted: Gemini's per-minute limits and the account-level Gonka `429`s of
+[gotcha 10](#5-verified-gotchas) both punish exactly that pattern, and no educator uploads five papers in ten minutes.
+It is recorded because a load test that measures the tester is worth knowing about, and because a demo rehearsal is the
+one time a human does behave like that. **Leave a minute between rehearsal uploads.**
+
+**What the spaced runs establish is that the wait is unpredictable, not that it is short.** 10.6 s and 67.0 s are both
+correct answers to the same three-question paper minutes apart, and the second is two thirds of the way to the ceiling.
+The interface promises "a minute or two" and locks the form while it waits, which is the honest shape for a step whose
+duration nobody can predict.
+
+**That fix was written as "not one to make the day before a submission", and then the day before the submission the
+feature stopped working.** Measured on the deployed app on 4 September, after #197: two uploads in a row of the same PNG
+returned `422 not_structured` at 105.9 s and 107.2 s, the ceiling in both cases. `GET /api/health` on that instance
+explained it — `deepseek-ai/DeepSeek-V4-Flash-0731` at `successRate 0`, `moonshotai/Kimi-K2.6` at `successRate 0`, and
+only `MiniMaxAI/MiniMax-M2.7` healthy at a 33 s median. A direct gateway ping the same minute confirmed the picture from
+outside: DeepSeek `200`, MiniMax `200`, **Kimi no answer at all, cut off at 95 s**. So `healthyOrder()` correctly put
+the one healthy family first, that family is also the slowest at this prompt, and one attempt consumed the entire
+budget.
+
+**The structuring step now races the first two families of the order and takes the first verified receipt**, in waves of
+two until the order is exhausted. The wait becomes the smallest of the latencies instead of their sum. Two is the width
+because `gatewaySemaphore` admits four concurrent calls: a wave of two cannot reach the account-level `429`s of
+[gotcha 10](#5-verified-gotchas) and still leaves half the budget to the checks already queued. The family that loses a
+wave keeps its slot until `callGonka`'s own 90 s timeout releases it, which is the price of not cancelling a call that
+may yet be the only one to answer.
+
+**This is confined to the upload's structuring step and touches no part of the verification path.** Structuring is a
+single-model draft for a human to correct; the two-model consensus of [section 5](#5-verified-gotchas) and the verdict
+rules of [section 14](#14-consensus-rule) are untouched, so no track requirement moves.
+
+### Configuration
+
+Two names, both optional, added to the [section 8](#8-configuration-contract) contract and to
+`.github/scripts/render-env-vars.sh`:
+
+- **`GEMINI_API_KEY`** — absent, the route answers 503 and the rest of the product is unchanged
+- **`GEMINI_MODEL`** — defaults to `gemini-2.5-flash`
+
+**Choose the id on measured availability, not on the documentation.** Listing is not answering: every id below is real
+and present in `GET /v1beta/models`, and they behaved very differently on the same paper on the same afternoon.
+
+| Model                    | Result                                                                              |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| `gemini-2.5-flash`       | 200 in **5.9 s**, correct — the default                                             |
+| `gemini-3.5-flash`       | 200, correct                                                                        |
+| `gemini-flash-latest`    | 200 but **33.9 s**; an alias, so what it points at can move under us                |
+| `gemini-3-flash-preview` | `503`, "experiencing high demand"                                                   |
+| `gemini-3.5-flash-lite`  | **No response across three attempts** — a 60 s timeout, a `503`, and a 90 s timeout |
+
+An unavailable model does not fail fast, which is why the route carries its own ceiling rather than trusting the
+provider to answer or refuse. Verify against `GET /v1beta/models` as [section 3](#3-models-measured) requires for Gonka
+ids, then verify it actually answers.
+
+### How the boundary is enforced
+
+`src/server/gateway/only-gonkarouter.test.ts` asserts three things rather than one:
+
+1. A provider hostname may appear in `src/server/transcribe/` and **nowhere else** in `src/`
+1. That directory may not import the verdict rule, the record schema, the round or the database
+1. `gateway/`, `queue/`, `extract/` and `shared/` name **no** provider host at all, so widening the directory rule alone
+   cannot move a decision across the line
+
+Proven against the defect it names: planting the Gemini hostname in `src/server/queue/round.ts` fails assertion 3 by
+file name. **Widening that exemption is a track requirement decision, not a refactor.**
+
+That decision was taken once more on 4 September, and section 21 is what it bought.
+
+## 21. The readers' voice and the record assistant
+
+Two features on `/record/:id`, agreed 4 September. Design record:
+[`superpowers/specs/2026-09-04-talking-cats-and-record-agent-design.md`](superpowers/specs/2026-09-04-talking-cats-and-record-agent-design.md).
+
+### The cats are seats, and so are the voices
+
+`EvidencePanel.tsx` binds Tororo to Reader A and Hijiki to Reader B, never to a model family, because which family fills
+a seat varies per item ([section 3](#3-models-measured)). A voice is bound to a seat and never moves; the family that
+filled it is named in the caption and read from `attempt.servedModel`.
+
+**Nothing spoken is generated.** Every line is a template in `src/client/mascot/speech.ts` filled from a stored reading
+and a stored verdict, so the feature costs no inference, works with the gateway down, and cannot state anything the
+evidence panel does not already show.
+
+| Trigger                                | Who speaks                                              | Where                      |
+| -------------------------------------- | ------------------------------------------------------- | -------------------------- |
+| Record reaches a terminal status       | Tororo counts what needs a look; Hijiki only on a split | Once per record, per visit |
+| **Play Readers** in the evidence panel | Both seats, that item's exchange                        | On request only            |
+| Unverified item                        | Tororo alone. **Hijiki stays silent**                   | The absence is the verdict |
+| Clear item                             | Nobody                                                  | Silence is the signal      |
+
+**Engine.** `window.speechSynthesis`. No key, no host, no bytes, so the fence in
+[section 20](#20-reading-a-paper-from-an-upload) is untouched. Two voices are chosen from `getVoices()` by name
+heuristic; when a machine offers fewer than two, one voice is separated by pitch and rate. Chrome fills the list
+asynchronously, so `primeVoices()` warms it on mount — a first `getVoices()` returns nothing and would silently mute the
+first record of a session.
+
+**Captions are the authoritative channel, not a subtitle.** Every utterance renders with its served model and a receipt
+link. A muted browser, a machine with no installed voices and a hall with no speakers all still show what was found.
+Mute is a separate switch from Reduce Motion, persisted at `cekgu.mute`; neither implies the other.
+
+### The assistant, and what is true of it
+
+`POST /api/records/:id/chat`. Scoped to one record: the record is loaded by id against the session and handed to five
+pure tools in `src/server/chat/tools.ts`. No tool takes a record id and there is no cross-record search, which is what
+stops a prompt injected into an uploaded paper from reaching another account's questions.
+
+| Tool             | Answers                                              |
+| ---------------- | ---------------------------------------------------- |
+| `record_summary` | Title, subject, status, counts, how many are flagged |
+| `list_items`     | Position, truncated stem, verdict, whether decided   |
+| `get_item`       | Full stem, options, key, verdict and its reason      |
+| `get_readings`   | Both seats with served model, request id and receipt |
+| `get_attempts`   | Every attempt including rejected ones                |
+
+`get_attempts` is how an **Unverified** verdict gets explained: the honest answer is in the attempts that failed.
+
+**It runs on Gemini and that is the second exemption.** It is not claimed as a non-reasoning boundary — answering a
+question about a record sits closer to reasoning than transcription does. Four things hold instead, and all four are
+checkable:
+
+1. Every fact it states is retrieved by the tools from readings two Gonka models produced, each carrying an
+   `x-request-id` and a public receipt. The model phrases them and is forbidden from adding one
+1. It may not adjudicate: no saying which option is correct, no confirming or rejecting a key, no solving a question.
+   [`PRODUCT.md`](PRODUCT.md) defines Cekgu against "a single general AI chat", so an assistant that ruled on keys would
+   be the thing the product exists to replace
+1. Its own response id is labelled `Gemini · <id>` and rendered as a visibly different object — dashed, unlinked, no
+   receipt — because it is not a Gonka request id
+1. `CHAT_PROVIDER=gonka` moves it to MiniMax-M2.7 without a code change
+
+**Citations are resolved server-side, never trusted from the model.** It emits `[item:N]`, `[reading:N:A]` and
+`[receipt:<id>]` inline; `src/server/chat/citations.ts` resolves each against the loaded record and **drops any that
+does not resolve**, so an invented request id cannot become a pill a judge can click. Paragraphs become separate
+messages, and one citing a single seat is spoken by that seat.
+
+**Model choice is measured, not documented.** `CHAT_MODEL` defaults to `gemini-2.5-flash` at 5.9 s. It must never be
+`gemini-3.5-flash-lite`, which [section 20](#20-reading-a-paper-from-an-upload) measured as no response across three
+attempts. `GEMINI_MODEL` is separate, so the transcriber and the assistant can differ.

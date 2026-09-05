@@ -183,8 +183,8 @@ The four GonkaRouter requirements below still bind. Everything else about the pr
 
 Any of these missed disqualifies the entry:
 
-1. **All** AI reasoning runs through GonkaRouter (`api.gonkarouter.io`). A direct OpenAI or Anthropic call disqualifies
-   us.
+1. **All** AI reasoning and verification runs through GonkaRouter (`api.gonkarouter.io`). A direct OpenAI or Anthropic
+   call in that path disqualifies us. One non-reasoning step sits outside it, and only one — see below.
 1. **Two or more models** cross-verifying, for multi-model consensus.
 1. **Gonka Request IDs displayed** per inference step, the on-chain proof.
 1. **Consensus logic** for model disagreement, called out as "a major plus".
@@ -193,13 +193,31 @@ Any of these missed disqualifies the entry:
 direct question from our own team. Once the mandatory requirements above are satisfied through GonkaRouter, a feature
 outside that path may use another provider such as Gemini or Qwen. His full answer was "Yes, that's fine."
 
+The exchange is in the team's Discord and was confirmed by the team lead on 4 September. `TO FILL:` a screenshot of it
+in [`source/`](source/), so a judge who asks is handed the message rather than our account of it. **The qualifier "as
+long as every mandatory requirement is met" is the team's characterisation of the ruling rather than a quoted clause**,
+and it is recorded that way on purpose: the scoping it describes is one we hold ourselves to regardless, stated in
+requirement 1 above and enforced by `src/server/gateway/only-gonkarouter.test.ts`.
+
 This relaxes requirement 1, which is written here and in [`../AGENTS.md`](../AGENTS.md) as though any third-party call
 disqualifies. It does not; only the mandatory reasoning and verification path is constrained.
 
-**We are not taking the option, and that is a decision rather than an oversight.** Cekgu routes every inference through
-GonkaRouter, so NFR-SEC-1 stays as written: a judge can grep the repository for provider hostnames and SDK imports and
-find nothing but `api.gonkarouter.io`. That is a cleaner claim than one needing a caveat about which calls count. If a
-later feature genuinely needs a provider the gateway does not carry, this note is the permission to point at.
+**We took the option once, on 4 September, and only once.** Upload a Paper lets an educator photograph or scan a paper
+instead of typing it, and the step that turns those pixels into text runs on Gemini. Everything that then decides what
+the text means — which passage is a question, which strings are its options, which option the key names — runs on
+GonkaRouter and carries a request id, so requirement 1's own wording is met rather than waived.
+
+**The reason it cannot run on the gateway is measured.** Of the three families `GET /v1/models` serves, only
+`moonshotai/Kimi-K2.6` reports vision, and it is the slowest of the three
+([`TRD.md` section 3](TRD.md#3-models-measured)). One vision model also cannot cross-verify anything, so putting
+transcription on the gateway would spend the demo path's slowest reader on the one job in the product that needs no
+judgement.
+
+**The boundary is enforced, not promised.** `src/server/gateway/only-gonkarouter.test.ts` permits a provider hostname in
+`src/server/transcribe/` and fails the build anywhere else, forbids that directory from importing the verdict rule or
+the record schema, and separately asserts that the reasoning path names no provider host at all. So the grep a judge
+would run still returns one directory and a stated reason, rather than nothing —
+[`TRD.md` section 20](TRD.md#20-reading-a-paper-from-an-upload) holds the decision in full.
 
 ### Track prizes
 

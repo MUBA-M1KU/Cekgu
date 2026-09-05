@@ -49,7 +49,7 @@ export function VerdictFilters({ counts, active, onChange }: Props) {
 
   return (
     <div
-      className="mt-4 flex flex-wrap items-center gap-2"
+      className="flex flex-wrap items-center gap-2"
       role="toolbar"
       aria-label="Filter items by verdict"
       onKeyDown={onKeyDown}

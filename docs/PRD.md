@@ -124,19 +124,23 @@ inside the Guest workspace, word for word as [PRODUCT.md](PRODUCT.md#the-shared-
 - Given a guest record is 24 hours old, then it is no longer listed and its URL returns a not-found state
 - The Guest records library shows each record's expiry time
 
-**FR-AUTH-5.** The Guest account carries item, size and rate limits that private accounts do not.
+**FR-AUTH-5.** The Guest account carries a per-question size limit that private accounts do not.
 
-- A guest record accepts at most 12 questions, each question at most 2,000 characters across stem and options
-- The Guest account holds at most 20 non-sample records at once; a 21st submission is refused with an error that says
-  what to delete or wait for
-- Limits are enforced on the server, not only in the form
+- Each question is at most 2,000 characters across stem and options
+- **The count limits were removed on 4 September**, at the owner's request. A guest record took at most 12 questions and
+  the account held at most 20 non-sample records; neither is enforced now. A demo that hits a wall on stage costs more
+  than a shared workspace somebody could fill, and what bounds that workspace is the 24-hour sweep in FR-AUTH-4 rather
+  than a count
+- The remaining limit is enforced on the server, not only in the form
 
 ### Starting a check
 
 **FR-CHECK-1.** **New Check** captures assessment title, subject, language and optional context, then one or more
 multiple-choice items as structured typed input: stem, two to six options and one keyed option.
 
-- Given the educator fills the form, then no free-text paste, file upload, PDF or OCR path is offered
+- Given the educator fills the form, then the questions are stored as structured fields rather than as pasted prose
+- An upload may prefill those fields (FR-CHECK-5), but it never submits them and never bypasses
+  [FR-CHECK-2](#starting-a-check): the educator reviews and edits a draft like any other typed input
 - The language value is stored on the record and passed to the reading prompt as metadata
 
 **FR-CHECK-2.** Local validation rejects a malformed set before any inference request is spent.
@@ -161,6 +165,25 @@ action. A demo on a projector must not open with typing.
   filled, and the form is submittable without another keystroke
 - A second control reverses it, so a presenter can go back to an empty form on stage
 - The copy says what is in the paper, never what the readers will decide about it
+
+**FR-CHECK-5.** An educator may upload a photograph or a PDF of a paper instead of typing it, and the fields are
+prefilled from what it says.
+
+- Accepts `image/png`, `image/jpeg`, `image/webp` and `application/pdf`, to 10 MB. Anything else is refused before a
+  request is spent
+- **It prefills and stops.** No record is created and no check is queued: the educator reviews and edits the draft, and
+  [FR-CHECK-2](#starting-a-check) still applies to it exactly as to typed input
+- The draft lands whole or not at all. Given any failure, then the form is unchanged and the reason is shown in a
+  sentence the educator can act on
+- Given a request is in flight, then the form's fields are locked, so nothing typed during the wait can be replaced by
+  the draft when it arrives
+- The Gonka request id for the structuring step is displayed with the result, per
+  [NFR-PROV-3](#non-functional-requirements)
+- Given `GEMINI_API_KEY` is unset, then the control reports that uploads are off and every other route is unaffected
+
+**The transcription step is the product's one call outside GonkaRouter**, and it is bounded by
+[NFR-SEC-1](#non-functional-requirements). Its instructions forbid it answering a question, marking an option correct or
+supplying a key that is not printed, so every judgement about what the words mean is made by Gonka models afterwards.
 
 ### The queue
 
@@ -424,8 +447,13 @@ stated for attempts that did not.
 **NFR-PROV-4.** Every reasoning call sets `max_tokens` to at least 1024 and reasoning tags are stripped from content
 before comparison or display.
 
-**NFR-SEC-1.** No direct call to OpenAI, Anthropic, Gemini or any provider other than `api.gonkarouter.io` exists
-anywhere in the product path, checkable by searching the repository for provider hostnames and SDK imports.
+**NFR-SEC-1.** Every call that reasons or verifies goes to `api.gonkarouter.io`. Exactly one non-reasoning call may go
+elsewhere: the transcription step in `src/server/transcribe/`, which turns an uploaded image or PDF into the words
+printed on it under instructions forbidding it to answer, to mark an option correct or to supply an absent key. No
+provider SDK is installed anywhere. Checkable by searching the repository for provider hostnames and SDK imports, and
+asserted by `src/server/gateway/only-gonkarouter.test.ts`, which fails the build if a hostname appears outside that one
+directory or if that directory imports the verdict rule or the record schema.
+[`TRD.md` section 20](TRD.md#20-reading-a-paper-from-an-upload) holds the decision and its measurements.
 
 **NFR-SEC-2.** The GonkaRouter key lives only on the server; it never appears in a client bundle, a URL or a repository
 file other than a gitignored `.env`.
@@ -452,24 +480,24 @@ contract and where request ids are rendered without reading the code.
 
 ## User stories
 
-| Story                                                                                               | Requirements                            |
-| --------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| As an educator, I sign in and see only my own records                                               | FR-AUTH-1, FR-RECORD-5                  |
-| As an educator, I type a small quiz and am told about a missing key before anything is sent         | FR-CHECK-1, FR-CHECK-2                  |
-| As an educator, I submit and can close the tab, then come back to the same progress                 | FR-CHECK-3, FR-QUEUE-4, FR-AUTH-1       |
-| As an educator, I open a ready record and see the risky items first with the rule that flagged each | FR-RECORD-3, FR-VERDICT-3, FR-VERDICT-4 |
-| As an educator, I compare two blind readings and their receipts before deciding                     | FR-EVIDENCE-1, FR-EVIDENCE-3            |
-| As an educator, I record Key Corrected and the original verdict stays in history                    | FR-RECORD-4, FR-RECORD-2                |
-| As an educator, I see an Unverified item, understand why, and retry it later                        | FR-VERDICT-2, FR-QUEUE-5, FR-EVIDENCE-2 |
-| As an educator, I select several old records and delete them with a clear warning                   | FR-RECORD-6, FR-RECORD-7                |
-| As an educator, I delete everything my account holds and see how long data is kept                  | FR-RECORD-8                             |
-| As a presenter, I fill the check form in one action so a live demo does not open with typing        | FR-CHECK-4, FR-AUTH-2                   |
-| As a guest, I enter with one click and am told plainly that others can see and delete my records    | FR-AUTH-2, FR-AUTH-3                    |
-| As a guest, I try a real three-question check within the limits and it queues                       | FR-AUTH-5, FR-CHECK-3, FR-QUEUE-1       |
-| As a guest, I cannot delete the sample but I can reset my dispositions on it                        | FR-SAMPLE-2, FR-SAMPLE-3                |
-| As a judge, I open the sample signed out and see two model names and two request ids on one screen  | FR-SAMPLE-4, FR-EVIDENCE-1              |
-| As a judge, I verify a request id against the public receipt during Q&A                             | FR-EVIDENCE-3, FR-SAMPLE-1              |
-| As a judge, I grep the repo and find no provider call outside GonkaRouter                           | NFR-SEC-1, NFR-OPS-2                    |
+| Story                                                                                                      | Requirements                            |
+| ---------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| As an educator, I sign in and see only my own records                                                      | FR-AUTH-1, FR-RECORD-5                  |
+| As an educator, I type a small quiz and am told about a missing key before anything is sent                | FR-CHECK-1, FR-CHECK-2                  |
+| As an educator, I submit and can close the tab, then come back to the same progress                        | FR-CHECK-3, FR-QUEUE-4, FR-AUTH-1       |
+| As an educator, I open a ready record and see the risky items first with the rule that flagged each        | FR-RECORD-3, FR-VERDICT-3, FR-VERDICT-4 |
+| As an educator, I compare two blind readings and their receipts before deciding                            | FR-EVIDENCE-1, FR-EVIDENCE-3            |
+| As an educator, I record Key Corrected and the original verdict stays in history                           | FR-RECORD-4, FR-RECORD-2                |
+| As an educator, I see an Unverified item, understand why, and retry it later                               | FR-VERDICT-2, FR-QUEUE-5, FR-EVIDENCE-2 |
+| As an educator, I select several old records and delete them with a clear warning                          | FR-RECORD-6, FR-RECORD-7                |
+| As an educator, I delete everything my account holds and see how long data is kept                         | FR-RECORD-8                             |
+| As a presenter, I fill the check form in one action so a live demo does not open with typing               | FR-CHECK-4, FR-AUTH-2                   |
+| As a guest, I enter with one click and am told plainly that others can see and delete my records           | FR-AUTH-2, FR-AUTH-3                    |
+| As a guest, I try a real three-question check and it queues                                                | FR-AUTH-5, FR-CHECK-3, FR-QUEUE-1       |
+| As a guest, I cannot delete the sample but I can reset my dispositions on it                               | FR-SAMPLE-2, FR-SAMPLE-3                |
+| As a judge, I open the sample signed out and see two model names and two request ids on one screen         | FR-SAMPLE-4, FR-EVIDENCE-1              |
+| As a judge, I verify a request id against the public receipt during Q&A                                    | FR-EVIDENCE-3, FR-SAMPLE-1              |
+| As a judge, I grep the repo and find one fenced transcription call and every reasoning call on GonkaRouter | NFR-SEC-1, NFR-OPS-2                    |
 
 ## The submission demo as an acceptance test
 
@@ -504,7 +532,8 @@ Verbatim from [Explicitly outside version one](PRODUCT.md#explicitly-outside-ver
 - Essay, code-execution or mathematical-proof marking
 - Question generation as a substitute for authoring
 - Automatic key changes or automatic paper approval
-- PDF/OCR ingestion on the demo's critical path
+- PDF or image ingestion **on the demo's critical path**. It exists as an affordance beside typed input, not as a step
+  the demo depends on
 - Plagiarism detection, proctoring or learner surveillance
 - Claims that consensus is truth, cryptographic proof or an on-chain transaction
 - A full animated mascot if the review loop and receipt trail are not already stable

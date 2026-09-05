@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import type { RecordStatus, RecordSummary } from '../../shared/types'
 import { deleteRecords, listRecords } from '../api'
+import { Card } from '../components/Card'
 import { ConfirmDialog } from '../components/ConfirmDialog'
-import { Field, inputClass } from '../components/Field'
+import { PlusIcon, SearchIcon, TrashIcon } from '../components/icons'
 import { Select } from '../components/Select'
-import { Sheet } from '../components/Sheet'
 import { StatusChip } from '../components/StatusChip'
 import { useSession } from '../session'
 
@@ -18,10 +18,20 @@ const STATUSES: { value: '' | RecordStatus; label: string }[] = [
   { value: 'resolved', label: 'Resolved' }
 ]
 
+const COLUMNS = 7
+
 function updatedLabel(iso: string): string {
   return new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
 }
 
+/**
+ * The library.
+ *
+ * The filters sit in the table's own header rather than as a form above a separate slab, because
+ * they act on the rows below them and nothing else on the page. The bulk toolbar takes the same
+ * strip over once a selection exists, so a destructive control never appears in a place the
+ * reader was not already looking.
+ */
 export function Records() {
   const navigate = useNavigate()
   const session = useSession()
@@ -49,6 +59,7 @@ export function Records() {
   const chosen = records?.filter((record) => selected.has(record.id)) ?? []
   const protectedCount = chosen.filter((record) => record.isSample).length
   const deletable = chosen.length - protectedCount
+  const filtering = q !== '' || status !== '' || attention
 
   function toggle(id: string) {
     setSelected((current) => {
@@ -76,151 +87,193 @@ export function Records() {
   ]
 
   return (
-    <Sheet>
-      <h1>Records</h1>
-
-      <div className="mt-6 grid gap-4 sm:grid-cols-[1fr_auto_auto] sm:items-end">
-        <Field label="Search" htmlFor="q">
-          <input
-            id="q"
-            type="search"
-            className={inputClass}
-            placeholder="Title or subject"
-            value={q}
-            onChange={(event) => setQ(event.target.value)}
-          />
-        </Field>
-        <Field label="Status" htmlFor="status">
-          <Select
-            id="status"
-            label="Status"
-            value={status}
-            options={STATUSES.map((entry) => ({ value: entry.value, label: entry.label }))}
-            onChange={(value) => setStatus(value as '' | RecordStatus)}
-          />
-        </Field>
-        <label className="flex h-9 items-center gap-2">
-          <input
-            type="checkbox"
-            className="check-box"
-            checked={attention}
-            onChange={(event) => setAttention(event.target.checked)}
-          />
-          <span className="type-label">Needs Attention</span>
-        </label>
-      </div>
-
-      {/* Destructive controls are not visible until a selection exists (FR-RECORD-6). */}
-      {selected.size > 0 ? (
-        <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-rule pt-4">
-          <p className="type-label">{selected.size} selected</p>
-          <button
-            type="button"
-            disabled={deletable === 0}
-            onClick={() => setConfirming(true)}
-            className="inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium text-pen disabled:opacity-60"
-          >
-            Delete Records
-          </button>
-          {protectedCount > 0 ? (
-            <p className="type-caption text-ink-muted">The sample record is protected and cannot be deleted.</p>
-          ) : null}
+    <>
+      <header className="page-head">
+        <div className="min-w-0">
+          <h1 className="page-title">Records</h1>
+          <p className="page-sub">
+            Every paper this account has put through the readers, and what each one is waiting on.
+          </p>
         </div>
-      ) : null}
+        <Link to="/new-check" className="btn btn-primary sm:hidden">
+          <PlusIcon size={15} />
+          New Check
+        </Link>
+      </header>
 
-      {failed ? (
-        <div className="py-12">
-          <p className="type-ui text-ink-muted">We could not load your records, try again in a moment.</p>
-          <button
-            type="button"
-            onClick={load}
-            className="mt-4 inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium"
-          >
-            Try Again
-          </button>
-        </div>
-      ) : records === null ? (
-        <p className="mt-6 type-ui text-ink-muted">Loading your records.</p>
-      ) : records.length === 0 ? (
-        <div className="py-12">
-          <p className="type-ui text-ink-muted">No records yet.</p>
-          <button
-            type="button"
-            onClick={() => navigate('/new-check')}
-            className="mt-4 inline-flex h-9 items-center rounded-sheet bg-ink px-4 font-medium text-on-ink"
-          >
-            New Check
-          </button>
-        </div>
-      ) : (
-        <div className="mt-6 overflow-x-auto">
-          <table className="w-full border-collapse text-left">
-            <thead>
-              <tr className="type-label border-b border-rule">
-                <th className="w-8 py-2 pr-3 font-medium">
-                  <span className="sr-only">Select</span>
-                </th>
-                {/* Title is what a person scans for and the longest cell in the row, so it gets
-                    the width. Auto-layout gave it the same weight as Subject and wrapped it. */}
-                <th className="w-[38%] py-2 pr-4 font-medium">Title</th>
-                <th className="w-[22%] py-2 pr-4 font-medium">Subject</th>
-                <th className="py-2 pr-4 text-right font-medium">Questions</th>
-                <th className="py-2 pr-4 font-medium">Status</th>
-                <th className="py-2 pr-4 text-right font-medium">Attention</th>
-                <th className="py-2 font-medium whitespace-nowrap">Updated</th>
-              </tr>
-            </thead>
-            <tbody>
-              {records.map((record) => (
-                <tr
-                  key={record.id}
-                  className={`border-b border-rule hover:bg-well ${
-                    selected.has(record.id) ? 'shadow-[inset_2px_0_0_0_var(--ink)]' : ''
-                  }`}
-                >
-                  <td className="py-3 pr-3">
-                    <input
-                      type="checkbox"
-                      className="check-box"
-                      checked={selected.has(record.id)}
-                      onChange={() => toggle(record.id)}
-                      aria-label={`Select ${record.title}`}
-                    />
-                  </td>
-                  <td className="py-3 pr-4">
-                    <button
-                      type="button"
-                      onClick={() => navigate(`/records/${record.id}`)}
-                      className="text-left underline-offset-2 hover:underline"
-                    >
-                      {record.title}
-                    </button>
-                    {record.isSample ? <span className="status-chip type-label ml-2">Sample</span> : null}
-                    {record.expiresAt ? (
-                      <p className="type-caption text-ink-muted">Expires {updatedLabel(record.expiresAt)}</p>
-                    ) : null}
-                  </td>
-                  <td className="py-3 pr-4">{record.subject}</td>
-                  <td className="type-mono py-3 pr-4 text-right">{record.itemCount}</td>
-                  <td className="py-3 pr-4">
-                    <StatusChip status={record.status} />
-                  </td>
-                  <td className="type-mono py-3 pr-4 text-right">
-                    {record.attentionCount > 0 ? (
-                      <span className="text-pen">{record.attentionCount}</span>
-                    ) : (
-                      <span className="text-ink-muted">—</span>
-                    )}
-                  </td>
-                  <td className="type-caption py-3 whitespace-nowrap text-ink-muted">
-                    {updatedLabel(record.updatedAt)}
+      <Card flush>
+        {/* One strip, two states. A selection replaces the filters rather than pushing them down
+            the page, so the row count under the reader's cursor does not move when they tick a
+            box. FR-RECORD-6. */}
+        {selected.size > 0 ? (
+          <div className="flex flex-wrap items-center gap-3 border-b border-rule px-6 py-3">
+            <p className="type-label">{selected.size} selected</p>
+            <button
+              type="button"
+              disabled={deletable === 0}
+              onClick={() => setConfirming(true)}
+              className="btn btn-danger btn-sm"
+            >
+              <TrashIcon size={15} />
+              Delete Records
+            </button>
+            <button type="button" onClick={() => setSelected(new Set())} className="btn btn-ghost btn-sm">
+              Clear Selection
+            </button>
+            {protectedCount > 0 ? (
+              <p className="type-caption text-ink-muted">The sample record is protected and cannot be deleted.</p>
+            ) : null}
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center gap-3 border-b border-rule px-6 py-3">
+            <div className="relative min-w-[13rem] flex-1">
+              <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-muted">
+                <SearchIcon size={16} />
+              </span>
+              <input
+                id="q"
+                type="search"
+                aria-label="Search records"
+                className="h-9 w-full rounded-control border border-rule-strong bg-transparent pr-3 pl-9 text-ink placeholder:text-ink-muted"
+                placeholder="Title or subject"
+                value={q}
+                onChange={(event) => setQ(event.target.value)}
+              />
+            </div>
+            <div className="w-[11rem]">
+              <Select
+                id="status"
+                label="Status"
+                value={status}
+                options={STATUSES.map((entry) => ({ value: entry.value, label: entry.label }))}
+                onChange={(value) => setStatus(value as '' | RecordStatus)}
+              />
+            </div>
+            <label className="flex h-9 shrink-0 items-center gap-2">
+              <input
+                type="checkbox"
+                className="check-box"
+                checked={attention}
+                onChange={(event) => setAttention(event.target.checked)}
+              />
+              <span className="type-label">Needs Attention</span>
+            </label>
+          </div>
+        )}
+
+        {failed ? (
+          <div className="state-block">
+            <p className="type-ui">We could not load your records, try again in a moment.</p>
+            <button type="button" onClick={load} className="btn btn-outline btn-sm">
+              Try Again
+            </button>
+          </div>
+        ) : records === null ? (
+          /* A skeleton in the shape of the rows that are coming, so the table does not jump when
+             they land. */
+          <div className="px-6 py-1">
+            {[0, 1, 2, 3].map((row) => (
+              <div key={row} className="flex items-center gap-4 border-b border-rule py-4 last:border-b-0">
+                <div className="skeleton h-4 flex-1" />
+                <div className="skeleton h-4 w-24" />
+                <div className="skeleton h-4 w-16" />
+              </div>
+            ))}
+          </div>
+        ) : records.length === 0 ? (
+          <div className="state-block" data-centre="true">
+            <p className="type-ui">{filtering ? 'No record matches those filters.' : 'No records yet.'}</p>
+            {filtering ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setQ('')
+                  setStatus('')
+                  setAttention(false)
+                }}
+                className="btn btn-outline btn-sm"
+              >
+                Clear Filters
+              </button>
+            ) : (
+              <button type="button" onClick={() => navigate('/new-check')} className="btn btn-primary btn-sm">
+                <PlusIcon size={15} />
+                New Check
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="data-table">
+              <thead>
+                <tr className="type-label">
+                  <th className="w-10">
+                    <span className="sr-only">Select</span>
+                  </th>
+                  {/* Title is what a person scans for and the longest cell in the row, so it gets
+                      the width. Auto-layout gave it the same weight as Subject and wrapped it. */}
+                  <th className="w-[34%]">Title</th>
+                  <th className="w-[20%]">Subject</th>
+                  <th className="num">Questions</th>
+                  <th>Status</th>
+                  <th className="num">Attention</th>
+                  <th className="whitespace-nowrap">Updated</th>
+                </tr>
+              </thead>
+              <tbody>
+                {records.map((record) => (
+                  <tr key={record.id} data-selected={selected.has(record.id) ? 'true' : undefined}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        className="check-box"
+                        checked={selected.has(record.id)}
+                        onChange={() => toggle(record.id)}
+                        aria-label={`Select ${record.title}`}
+                      />
+                    </td>
+                    <td>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => navigate(`/records/${record.id}`)}
+                          className="type-label text-left underline-offset-2 hover:underline"
+                        >
+                          {record.title}
+                        </button>
+                        {record.isSample ? <span className="status-chip type-caption">Sample</span> : null}
+                      </div>
+                      {record.expiresAt ? (
+                        <p className="type-caption mt-1 text-ink-muted">Expires {updatedLabel(record.expiresAt)}</p>
+                      ) : null}
+                    </td>
+                    <td className="text-ink-muted">{record.subject}</td>
+                    <td className="num type-mono">{record.itemCount}</td>
+                    <td>
+                      <StatusChip status={record.status} />
+                    </td>
+                    <td className="num type-mono">
+                      {record.attentionCount > 0 ? (
+                        <span className="text-pen">{record.attentionCount}</span>
+                      ) : (
+                        <span className="text-ink-muted">-</span>
+                      )}
+                    </td>
+                    <td className="type-caption whitespace-nowrap text-ink-muted">{updatedLabel(record.updatedAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colSpan={COLUMNS} className="type-caption border-t border-rule text-ink-muted">
+                    {records.length === 1 ? '1 record' : `${records.length} records`}
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </tfoot>
+            </table>
+          </div>
+        )}
+      </Card>
 
       <ConfirmDialog
         open={confirming}
@@ -229,6 +282,6 @@ export function Records() {
         onCancel={() => setConfirming(false)}
         onConfirm={confirmDelete}
       />
-    </Sheet>
+    </>
   )
 }

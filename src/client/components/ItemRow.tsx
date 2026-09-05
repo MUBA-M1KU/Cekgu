@@ -3,6 +3,7 @@ import type { DispositionInput } from '../../shared/schemas'
 import type { Attempt, Item } from '../../shared/types'
 import { DispositionGroup, dispositionLabel } from './DispositionGroup'
 import { EvidencePanel } from './EvidencePanel'
+import { ChevronDownIcon } from './icons'
 import { ReadRow } from './ReadRow'
 import { StatusChip } from './StatusChip'
 import { VerdictChip } from './VerdictChip'
@@ -18,7 +19,7 @@ const FAIL_CLOSED = 'Two independent, receipt-verified readings are required bef
 
 // Distinctness is proven by the receipt, so the two seats are chosen on served model. EvidencePanel
 // below applies the same rule, and the row and the panel must name the same reader B.
-function admittedSeats(item: Item): Attempt[] {
+export function admittedSeats(item: Item): Attempt[] {
   const seats: Attempt[] = []
   for (const attempt of item.attempts) {
     if (!attempt.admitted || !attempt.reading) continue
@@ -44,16 +45,19 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
   // including the evidence, which stays reachable on every item because the receipts are the
   // product's claim and a judge must be able to open any of them.
   const [open, setOpen] = useState(false)
-  const quiet = item.verdict === 'clear' && item.status === 'done' && !latest && !open
+  // Whether this item has a collapsed state at all. quiet is that state right now; collapsible is
+  // the standing fact, and it is what tells an opened row it has somewhere to go back to.
+  const collapsible = item.verdict === 'clear' && item.status === 'done' && !latest
+  const quiet = collapsible && !open
 
   if (quiet) {
     return (
-      <li className="border-t border-rule">
+      <li data-item-position={item.position} className="border-t border-rule">
         <button
           type="button"
           onClick={() => setOpen(true)}
           aria-expanded={false}
-          className="flex w-full items-center gap-3 py-3 text-left sm:gap-4"
+          className="flex w-full items-center gap-3 py-4 text-left sm:gap-4"
         >
           <span className="type-mono w-7 shrink-0 text-ink-muted sm:w-10">{item.position}</span>
           <ReadRow
@@ -65,6 +69,7 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
           />
           <span className="type-body min-w-0 flex-1 truncate">{item.stem}</span>
           <VerdictChip verdict={item.verdict} />
+          <ChevronDownIcon size={16} className="shrink-0 text-ink-muted" />
         </button>
       </li>
     )
@@ -77,12 +82,30 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
   }
 
   return (
-    <li className="flex gap-3 border-t border-rule py-5 sm:gap-4">
+    <li data-item-position={item.position} className="flex gap-3 border-t border-rule py-6 sm:gap-4">
       <span className="type-mono w-7 shrink-0 text-ink-muted sm:w-10">{item.position}</span>
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-          <p className="type-lead min-w-0">{item.stem}</p>
+          {/* An item that collapsed to one line has to be able to go back to it. Opening one was a
+              one-way door: the quiet row is a button, the row it opens into was not, so a reader who
+              opened a Clear question to look at its receipts was left with it open for the rest of
+              the session and no control anywhere saying otherwise. The stem is what they clicked, so
+              the stem is what closes it. Only for items that can be quiet — a flagged item has never
+              had a collapsed state to return to. */}
+          {collapsible ? (
+            <button
+              type="button"
+              aria-expanded={true}
+              onClick={() => setOpen(false)}
+              className="flex min-w-0 items-start gap-2 text-left"
+            >
+              <ChevronDownIcon size={16} className="mt-1.5 shrink-0 rotate-180 text-ink-muted" />
+              <span className="type-lead min-w-0">{item.stem}</span>
+            </button>
+          ) : (
+            <p className="type-lead min-w-0">{item.stem}</p>
+          )}
           <span className="flex shrink-0 flex-wrap items-center gap-2">
             {item.status === 'done' ? <VerdictChip verdict={item.verdict} /> : <StatusChip status={item.status} />}
             {latest ? <span className="status-chip type-label">{dispositionLabel(latest.kind)}</span> : null}
@@ -112,30 +135,37 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
           </p>
         ) : null}
 
-        {!readOnly && item.verdict === 'unverified' ? (
-          <button
-            type="button"
-            disabled={busy}
-            onClick={async () => {
-              setBusy(true)
-              await onRetry(item.id)
-              setBusy(false)
-            }}
-            className="mt-3 inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4 font-medium disabled:opacity-60"
-          >
-            Retry Verification
-          </button>
-        ) : null}
+        {/* One row, so the two controls are spaced by the row rather than sitting flush against
+            each other. Each carried its own top margin and nothing carried a gap between them, so
+            Retry Verification and Show Evidence touched on any item that offered both. */}
+        {(!readOnly && item.verdict === 'unverified') || item.attempts.length > 0 ? (
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            {!readOnly && item.verdict === 'unverified' ? (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={async () => {
+                  setBusy(true)
+                  await onRetry(item.id)
+                  setBusy(false)
+                }}
+                className="btn btn-outline"
+              >
+                Retry Verification
+              </button>
+            ) : null}
 
-        {item.attempts.length > 0 ? (
-          <button
-            type="button"
-            aria-expanded={showEvidence}
-            onClick={() => setShowEvidence((open) => !open)}
-            className="type-label mt-3 inline-flex h-9 items-center rounded-sheet border border-rule-strong px-4"
-          >
-            {showEvidence ? 'Hide Evidence' : 'Show Evidence'}
-          </button>
+            {item.attempts.length > 0 ? (
+              <button
+                type="button"
+                aria-expanded={showEvidence}
+                onClick={() => setShowEvidence((open) => !open)}
+                className="btn btn-outline"
+              >
+                {showEvidence ? 'Hide Evidence' : 'Show Evidence'}
+              </button>
+            ) : null}
+          </div>
         ) : null}
 
         {showEvidence ? <EvidencePanel item={item} /> : null}

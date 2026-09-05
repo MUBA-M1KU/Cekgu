@@ -74,7 +74,7 @@ export function VerdictBand({ record }: { record: RecordDetail | null }) {
                 <span key={mark.id} data-fill={mark.fill} />
               ))}
             </div>
-            <h3 className="text-[1.0625rem]">{field.title}</h3>
+            <h3>{field.title}</h3>
             <p className="type-body mt-[0.55rem] max-w-[34ch] text-[0.9375rem]/[1.5] opacity-[0.88]">{field.meaning}</p>
             {n === null ? null : (
               <>

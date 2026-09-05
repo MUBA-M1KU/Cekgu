@@ -1,5 +1,14 @@
 <!-- Light-ground variant, ink #17202b from docs/DESIGN.md. Written literally for the same reason
-     as cekgu-mark.svg: currentColor does not inherit into an <img>-loaded SVG. -->
+     as cekgu-mark.svg: currentColor does not inherit into an SVG loaded through an img element. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 48" role="img" aria-label="Cekgu">
-  <text x="0" y="38" fill="#17202b" font-family="'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="-0.8">Cekgu</text>
+  <!-- The name is set from x=0 on a baseline at y=38, so the painted ink ran x 1.5..118.4 and
+       y 8.75..45.9 inside a 160 by 48 box: hard against the left edge with 41.6 units spare on the
+       right, and low enough that the descender of the g sat 2.1 units off the bottom.
+
+       Centred on the painted ink, descender included, which is the same rule the marks follow.
+       Measured with the Helvetica fallback, because Schibsted Grotesk is absent wherever this file
+       is opened outside a machine that has it licensed, and the fallback is what a reader sees. -->
+  <g transform="translate(20.06 -3.31)">
+    <text x="0" y="38" fill="#17202b" font-family="'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="-0.8">Cekgu</text>
+  </g>
 </svg>

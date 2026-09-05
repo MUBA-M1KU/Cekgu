@@ -43,7 +43,7 @@ test('a guest types a check and gets a receipt-verified verdict', async ({ page 
   // The request ids live behind Show Evidence, which is the affordance a judge clicks. Reading the
   // page without opening it asserts that provenance is absent, which is the opposite of the point.
   await page.getByRole('button', { name: 'Show Evidence' }).first().click()
-  await expect(page.locator('a[href*="/v1/receipts/"]').first()).toBeVisible({ timeout: 15_000 })
+  await expect(page.locator('a[href*="/receipt/"]').first()).toBeVisible({ timeout: 15_000 })
 
   const body = await page.locator('body').innerText()
   const requestIds = [...new Set([...body.matchAll(/req-\d+-\d+/g)].map((match) => match[0]))]
@@ -54,7 +54,7 @@ test('a guest types a check and gets a receipt-verified verdict', async ({ page 
   // The track requirements, read off the rendered page.
   expect(requestIds.length).toBeGreaterThanOrEqual(2)
   expect(models.length).toBeGreaterThanOrEqual(2)
-  expect(await page.locator('a[href*="/v1/receipts/"]').count()).toBeGreaterThanOrEqual(2)
+  expect(await page.locator('a[href*="/receipt/"]').count()).toBeGreaterThanOrEqual(2)
   expect(errors).toEqual([])
 
   // Guest records expire in 24 hours anyway, but leaving demo litter in a shared workspace is rude,
