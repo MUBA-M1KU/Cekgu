@@ -193,34 +193,12 @@ The product is built for practice papers and synthetic examples, not for confide
 
 ### Architecture
 
-```mermaid
-flowchart TB
-    UI["React 19 SPA<br/>records · evidence · receipt viewer"]
-
-    subgraph run["Google Cloud Run — one container"]
-        API["Hono API<br/>/api/*"]
-        WORK["Queue worker<br/>claim → round → verdict"]
-        SEM["Semaphore<br/>4 calls in flight"]
-    end
-
-    DB[("PostgreSQL · Neon<br/>records · items · attempts<br/>dispositions · model_health")]
-    GONKA["GonkaRouter<br/>api.gonkarouter.io/v1"]
-    RECEIPT["Public receipts<br/>GET /v1/receipts/:id"]
-    VISION["Vision transcription<br/>uploads only, decides nothing"]
-
-    UI -->|"fetch · SSE"| API
-    API --> DB
-    WORK --> DB
-    API -->|"upload bytes"| VISION
-    VISION -->|"printed text"| API
-    API -->|"structure the draft"| SEM
-    WORK -->|"solver prompt"| SEM
-    SEM --> GONKA
-    GONKA -->|"content + x-request-id"| SEM
-    SEM -->|"confirm the served model"| RECEIPT
-    UI -->|"read a receipt back"| API
-    API --> RECEIPT
-```
+<p align="center">
+  <img
+    src="assets/architecture.svg"
+    alt="A React SPA and a Hono API on one Cloud Run container, with a queue worker and a gateway semaphore behind it, PostgreSQL on Neon beside them, and every reasoning call leaving through GonkaRouter with a request id and a public receipt"
+    width="100%">
+</p>
 
 The browser talks to one Hono process on Cloud Run that serves both the API and the built client. Accounts, records,
 attempts and decisions live in PostgreSQL; the attempts table is the evidence trail, holding the request id, devshard,
