@@ -50,7 +50,7 @@ export function stripThinkTags(content: string): string {
 
 // Gotcha 8: byte-identical bodies are served from the gateway cache, so two samples of one item
 // would be one inference wearing two request ids.
-function withNonce(prompt: string): string {
+export function withNonce(prompt: string): string {
   return `${prompt}\n\n// nonce: ${crypto.randomUUID()}`
 }
 

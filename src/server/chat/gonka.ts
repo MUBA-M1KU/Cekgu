@@ -1,6 +1,6 @@
 import type { RecordDetail } from '../../shared/types'
 import { env } from '../env'
-import { stripThinkTags } from '../gateway/client'
+import { stripThinkTags, withNonce } from '../gateway/client'
 import { type AgentAnswer, MAX_ROUNDS, SYSTEM, TOOLS, type ToolReporter } from './prompt'
 import { runTool } from './tools'
 
@@ -81,7 +81,10 @@ export async function askGonka(
 ): Promise<AgentAnswer> {
   const model = env.chat.model
   const messages: Message[] = [
-    { role: 'system', content: SYSTEM },
+    // Gotcha 8 reaches this path too: an identical question about an identical record is a
+    // byte-identical body, and the gateway serves it from cache. On the system line rather than
+    // the question, so the model still reads what the visitor typed.
+    { role: 'system', content: withNonce(SYSTEM) },
     ...history.map((text, index) => ({ role: index % 2 === 0 ? 'user' : 'assistant', content: text })),
     { role: 'user', content: question }
   ]
