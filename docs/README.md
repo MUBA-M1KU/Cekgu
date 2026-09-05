@@ -116,8 +116,9 @@ The product is built for practice papers and synthetic examples, not for confide
 
 ### How It Works
 
-1. **Enter a paper.** Type the questions, options and key into **New Check**, or upload a scan or photograph and edit
-   the draft that comes back. An upload never submits itself; it produces a draft the educator corrects and sends.
+1. **Enter a paper.** Type the questions, options and key into **New Check**, paste a link to a page that already has
+   them, or upload a scan or photograph — and edit the draft that comes back. No draft ever submits itself; each one is
+   corrected and sent by the educator.
 
    <img src="assets/new-check.png" alt="The New Check form, with the upload card and the paper fields" width="100%">
 
@@ -207,6 +208,10 @@ The product is built for practice papers and synthetic examples, not for confide
 - Email and password accounts, plus Google sign-in when the deployment is configured with an OAuth client.
 - A dashboard that counts verified readings against total readings for the account, and each family's share of the work
   by served model.
+- A pasted link, fetched and reduced to the words on the page by a parser that calls no model at all, then structured
+  into a draft by a Gonka model. It is the only input that reaches nothing outside the Gonka network, so it works on a
+  deployment with no vision key. Links resolving inside a private network are refused before a socket opens, which
+  matters on Cloud Run where `169.254.169.254` hands out service-account tokens.
 - Upload of PNG, JPEG, WebP or PDF up to 10 MB, transcribed to text and then structured into a draft by a Gonka model.
 - An optional Live2D mascot, off unless `MASCOT_ENABLED=true`, which respects Reduce Motion and falls back to a still
   image when WebGL is unavailable.
@@ -307,7 +312,8 @@ is not meant to be one.
 - A PostgreSQL database, local or hosted
 - A GonkaRouter API key from [gonkarouter.io](https://gonkarouter.io)
 - Optional: a Google OAuth client for Google sign-in, and a vision API key to enable paper uploads. Without either, the
-  app still runs — Google sign-in disappears and `POST /api/extract` answers 503 saying uploads are off.
+  app still runs — Google sign-in disappears and `POST /api/extract` answers 503 saying uploads are off. Pasting a link
+  to a web page keeps working, because that path needs no vision model.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 

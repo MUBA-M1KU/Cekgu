@@ -44,8 +44,11 @@ export type ExtractResponse = {
   provenance: { requestId: string; servedModel: string; receiptStatus: ReceiptStatus }
   // The non-Gonka step's own receipt, kept as a separate field rather than merged into provenance:
   // a reader has to be able to see which step ran where. Gemini promises neither value.
-  transcription: { provider: string; responseId: string | null; model: string | null }
+  // Null for a link to a web page, which is read without a vision model at all.
+  transcription: { provider: string; responseId: string | null; model: string | null } | null
   warnings: string[]
+  /** The URL that was actually read, after redirects. Absent when the draft came from a file. */
+  source?: string
 }
 
 // headers is undefined on purpose. The shared helper stamps application/json whenever there is a
@@ -56,6 +59,10 @@ export async function extractPaper(file: File): Promise<ExtractResponse> {
   body.append('file', file)
 
   return request<ExtractResponse>('/api/extract', { method: 'POST', body, headers: undefined })
+}
+
+export async function extractPaperFromUrl(url: string): Promise<ExtractResponse> {
+  return request<ExtractResponse>('/api/extract/url', { method: 'POST', body: JSON.stringify({ url }) })
 }
 
 export async function createRecord(input: CreateRecordInput): Promise<CreateRecordResponse> {

@@ -1,0 +1,226 @@
+import { lookup } from 'node:dns/promises'
+import { isIP } from 'node:net'
+
+// TRD section 20's third input. A pasted link is fetched here, reduced to the text printed on the
+// page, and handed to the SAME structuring step an upload uses — so the only thing that decides
+// what the paper says is still a Gonka model. Nothing in this file calls a model, and that is why
+// it lives outside the two exempt directories rather than beside the transcriber.
+//
+// Fetching a URL a stranger typed is a server-side request forgery primitive, so the guard below is
+// the point of the module and the parsing is the easy part. Cloud Run reaches a metadata service on
+// 169.254.169.254 that hands out service-account tokens; an unguarded fetcher would hand them to
+// whoever pasted the link.
+
+export const URL_MAX_BYTES = 5_000_000
+const FETCH_TIMEOUT_MS = 15_000
+const MAX_REDIRECTS = 3
+// Enough for a long past paper, short enough that one page cannot fill a prompt on its own.
+const MAX_TEXT_CHARS = 40_000
+
+export const HTML_TYPES = ['text/html', 'application/xhtml+xml', 'text/plain']
+
+export type UrlFetch =
+  | { ok: true; kind: 'text'; text: string; finalUrl: string }
+  | { ok: true; kind: 'binary'; bytes: Uint8Array; contentType: string; finalUrl: string }
+  | { ok: false; reason: string }
+
+// The eight 16-bit groups of an IPv6 address, with :: expanded. Returns null for anything that does
+// not parse, and every caller treats null as private — an address we cannot read is not one to trust.
+function v6Groups(address: string): number[] | null {
+  // A v4-embedded tail is written in dotted form. Convert it to two hex groups first so the rest of
+  // this function only ever sees groups.
+  const dotted = address.match(/^(.*:)(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)
+  const normalised = dotted
+    ? `${dotted[1]}${(((Number(dotted[2]) << 8) | Number(dotted[3])) >>> 0).toString(16)}:${(((Number(dotted[4]) << 8) | Number(dotted[5])) >>> 0).toString(16)}`
+    : address
+
+  const halves = normalised.split('::')
+  if (halves.length > 2) return null
+  const parse = (part: string | undefined): number[] =>
+    part
+      ? part
+          .split(':')
+          .filter(Boolean)
+          .map((group) => Number.parseInt(group, 16))
+      : []
+
+  const left = parse(halves[0])
+  if (halves.length === 1) return left.length === 8 && !left.some(Number.isNaN) ? left : null
+
+  const right = parse(halves[1])
+  const fill = 8 - left.length - right.length
+  if (fill < 0) return null
+  const groups = [...left, ...Array<number>(fill).fill(0), ...right]
+  return groups.some(Number.isNaN) ? null : groups
+}
+
+// Every range that is not the public internet. Checked against the RESOLVED address, not the
+// hostname, because a name under someone else's control can point at 127.0.0.1 whenever it likes.
+function isPrivateAddress(address: string): boolean {
+  if (isIP(address) === 6) {
+    const lower = address.toLowerCase()
+    // Unique local and link-local.
+    if (/^f[cd]/.test(lower) || lower.startsWith('fe80')) return true
+
+    const groups = v6Groups(lower)
+    if (!groups) return true
+
+    // ::ffff:x.x.x.x is an IPv4 address wearing a v6 hat, and WHATWG URL normalises the dotted form
+    // to hex groups — so the embedded v4 address has to be reassembled from them and judged as v4.
+    // Without this, http://[::ffff:169.254.169.254]/ reaches the cloud metadata service.
+    const [g0, g1, g2, g3, g4, g5, g6, g7] = groups
+    if (g0 === undefined || g6 === undefined || g7 === undefined) return true
+    if (g0 === 0 && g1 === 0 && g2 === 0 && g3 === 0 && g4 === 0 && g5 === 0xffff) {
+      return isPrivateAddress(`${g6 >> 8}.${g6 & 0xff}.${g7 >> 8}.${g7 & 0xff}`)
+    }
+
+    // ::1 (loopback) and :: (unspecified), once expanded.
+    return groups.every((group, index) => (index === 7 ? group === 0 || group === 1 : group === 0))
+  }
+
+  const parts = address.split('.').map(Number)
+  const [a, b] = parts
+  if (parts.length !== 4 || a === undefined || b === undefined || parts.some(Number.isNaN)) return true
+
+  if (a === 0 || a === 10 || a === 127) return true
+  if (a === 169 && b === 254) return true // link-local, and the cloud metadata service with it
+  if (a === 172 && b >= 16 && b <= 31) return true
+  if (a === 192 && b === 168) return true
+  if (a === 100 && b >= 64 && b <= 127) return true // carrier-grade NAT
+  if (a >= 224) return true // multicast and reserved
+  return false
+}
+
+/** Parsed, scheme-checked and proven to resolve outside every private range. */
+export async function assertPublicUrl(raw: string): Promise<{ ok: true; url: URL } | { ok: false; reason: string }> {
+  let url: URL
+  try {
+    url = new URL(raw.trim())
+  } catch {
+    return { ok: false, reason: 'That is not a web address. Paste a link beginning with https://.' }
+  }
+
+  if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+    return { ok: false, reason: 'Only http and https links can be read.' }
+  }
+
+  // Credentials in a URL are almost always an attempt to reach something we should not be reaching.
+  if (url.username || url.password) {
+    return { ok: false, reason: 'That link carries a username or password. Paste a plain link.' }
+  }
+
+  const host = url.hostname.replace(/^\[|\]$/g, '')
+  const addresses = isIP(host) ? [host] : await resolve(host)
+  if (!addresses.length) return { ok: false, reason: 'That address could not be found.' }
+  if (addresses.some(isPrivateAddress)) {
+    return { ok: false, reason: 'That link points inside a private network, so it was not fetched.' }
+  }
+
+  return { ok: true, url }
+}
+
+async function resolve(host: string): Promise<string[]> {
+  try {
+    const found = await lookup(host, { all: true })
+    return found.map((entry) => entry.address)
+  } catch {
+    return []
+  }
+}
+
+/**
+ * Fetch a public URL and return either its text or its bytes.
+ *
+ * Redirects are followed by hand, one hop at a time, because `fetch` would follow them for us
+ * without re-checking where they land — and a public URL that redirects to 169.254.169.254 is the
+ * whole attack.
+ */
+export async function fetchUrl(raw: string): Promise<UrlFetch> {
+  let target = raw
+  for (let hop = 0; hop <= MAX_REDIRECTS; hop += 1) {
+    const checked = await assertPublicUrl(target)
+    if (!checked.ok) return checked
+
+    let response: Response
+    try {
+      response = await fetch(checked.url, {
+        redirect: 'manual',
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+        headers: { accept: 'text/html,application/xhtml+xml,application/pdf,image/*;q=0.8,*/*;q=0.5' }
+      })
+    } catch {
+      return { ok: false, reason: 'That page could not be reached.' }
+    }
+
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get('location')
+      if (!location) return { ok: false, reason: 'That page redirected to nowhere.' }
+      target = new URL(location, checked.url).toString()
+      continue
+    }
+
+    if (!response.ok) {
+      return { ok: false, reason: `That page answered ${response.status}.` }
+    }
+
+    const declared = Number(response.headers.get('content-length') ?? '0')
+    if (declared > URL_MAX_BYTES) {
+      return { ok: false, reason: 'That page is larger than 5 MB.' }
+    }
+
+    const contentType = (response.headers.get('content-type') ?? '').split(';')[0]?.trim().toLowerCase() ?? ''
+    const buffer = await response.arrayBuffer()
+    // Checked again after reading: a content-length header is a claim, not a limit.
+    if (buffer.byteLength > URL_MAX_BYTES) {
+      return { ok: false, reason: 'That page is larger than 5 MB.' }
+    }
+
+    const finalUrl = checked.url.toString()
+    if (HTML_TYPES.includes(contentType) || contentType === '') {
+      const text = htmlToText(new TextDecoder().decode(buffer))
+      if (text.length < 40) {
+        return { ok: false, reason: 'That page had almost no text on it. Paste the questions instead.' }
+      }
+      return { ok: true, kind: 'text', text, finalUrl }
+    }
+
+    return { ok: true, kind: 'binary', bytes: new Uint8Array(buffer), contentType, finalUrl }
+  }
+
+  return { ok: false, reason: 'That link redirected too many times.' }
+}
+
+const ENTITIES: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+  nbsp: ' ',
+  '#39': "'",
+  '#160': ' '
+}
+
+/**
+ * The words printed on the page, and nothing else.
+ *
+ * Deliberately crude. Anything cleverer is a guess about which div holds the questions, and the
+ * Gonka model downstream is far better at that than a selector would be — its whole job is finding
+ * stems, options and a key in loose text. What matters here is that script and style content never
+ * reaches it, because that is not text a reader can see.
+ */
+export function htmlToText(html: string): string {
+  const text = html
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/<(script|style|noscript|svg|head)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<\/(p|div|li|tr|h[1-6]|section|article|br)\s*>/gi, '\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&([a-z]+|#\d+);/gi, (whole, name: string) => ENTITIES[name.toLowerCase()] ?? whole)
+    .replace(/[ \t\f\v]+/g, ' ')
+    .replace(/ ?\n ?/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+
+  return text.length > MAX_TEXT_CHARS ? text.slice(0, MAX_TEXT_CHARS) : text
+}
