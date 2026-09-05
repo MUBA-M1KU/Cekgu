@@ -59,7 +59,12 @@
           question was MiniMax and Kimi and a delisted model beside a live one
           needs a footnote a wall cannot carry.
         - Slide 07's latency chart names Kimi on purpose. It is labelled
-          "3 SEP BENCHMARK" and that is what was measured that day.
+          "3 SEP BENCHMARK", its row reads "delisted 5 Sep", and its numbers are
+          exactly as recorded. NEVER EDIT A MEASURED NUMBER TO MATCH TODAY'S
+          ROSTER. Falsifying a benchmark is worse than the staleness it hides,
+          and this one stays checkable: every receipt Kimi produced still
+          resolves 200 from api.gonkarouter.io with no key, verified again on
+          5 September.
       Do not add a request ID to this deck that you have not just resolved
       against the public receipts endpoint. Never invent one.
 
@@ -85,14 +90,15 @@
       copied from DESIGN.md, not reinvented. Four decisions are worth stating
       because a later editor will otherwise undo them:
 
-      1. THE ACCENT IS TONE, NOT RED. DESIGN.md legislates that ink is the paper
+      1. ONE RED, AND IT IS THE PEN. DESIGN.md legislates that ink is the paper
          and the machine, and red is the human hand: machine verdicts, model
-         names, request IDs and status text are never red. So the headline
-         payload device (.title em) is carried by tone, muted lead into
-         full-strength ink, and it flips with the ground class rather than
-         picking a second colour. The only red on this deck is the pen: the
-         check in the mark, the committee's sign-off on slide 02, and the
-         attention count on slide 03. Nothing else. Do not recolour a headline.
+         names, request IDs and status text are never red, and none of them are
+         here. Read that rule as governing the product's chrome. This deck also
+         spends the same --pen on two display devices that are not product
+         chrome and carry no state: the eyebrow, and the second half of every
+         headline (.title em). Both flip with the ground, so there is exactly
+         one red in the deck and never a second accent colour. Do not add one,
+         and do not recolour a headline to something else.
 
       2. THE TRACKING CONTRACT IS THE FINGERPRINT. You can tell what a string is
          from its letter-spacing alone. Display is Schibsted Grotesk 700 with
@@ -111,8 +117,11 @@
       3. ONE RADIUS LANGUAGE, BY DESCENT. --r-sheet 4px for anything descended
          from paper (cards, panels, wells, the emphasis band); --r-bubble 999px
          for anything descended from the OMR bubble (chips, bubbles). There is
-         no medium radius, and no surface takes a coloured left rail, because
-         DESIGN.md forbids one.
+         no medium radius. DESIGN.md forbids a coloured rail on a rounded card
+         and no card here takes one; the rails that do exist are inside two
+         diagrams, on slide 04's five rule rows and slide 02's defective
+         question, and each one is its verdict's own colour. A rail that names
+         a verdict is a legend, not decoration. Do not put one on a card.
 
       4. THE GROUND CARRIES EMPHASIS. Light paper is the default. The ink ground
          is the emphasis mode and it is spent on exactly three of nine slides:
@@ -161,6 +170,25 @@
       The print block freezes every animation at its end state, so no page can
       be caught mid-rise. Verify the page count with pdfinfo, never with file(1),
       which undercounts this deck.
+
+      Then downsample, because Chromium does not. Skia embeds every raster at
+      300 ppi of the PAGE, so hero-cover.png goes in at 2645px wide however
+      small the source file is, and the raw print is 2.3 MB against a 2 MB
+      budget. One Ghostscript pass at 150 ppi brings it to 1.7 MB with the
+      fonts still embedded and subset:
+
+        gs -q -o out.pdf -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 \
+           -dPDFSETTINGS=/prepress -dDetectDuplicateImages=true \
+           -dDownsampleColorImages=true -dColorImageDownsampleType=/Bicubic \
+           -dColorImageResolution=150 -dDownsampleGrayImages=true \
+           -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=150 \
+           -dAutoRotatePages=/None -dEmbedAllFonts=true -dSubsetFonts=true \
+           raw.pdf
+
+      150 ppi of a 20in page is 3000px across, well over the 1920 the deck is
+      ever shown at. Check the result with pdfinfo for 9 pages at 1440 x 810 pts
+      and render a page with pdftoppm before shipping it: the faces are Type 3
+      glyph programs and a bad pass drops them silently.
 
       SELF-CONTAINED
       No network is needed to open this file. The CSS, the JS and all three
@@ -552,8 +580,12 @@
       .duo.fig-left {
         grid-template-columns: 1.3fr 1fr;
       }
+      /* The chart's height follows its column width, and .foot is absolutely
+         positioned at bottom 52. At 1.3fr the SVG ran to y=1028 and printed
+         straight through its own caption. 1.13fr lands it at 983, clear of the
+         foot, with the right edge still flush to the slide's margin. */
       .duo.chart-right {
-        grid-template-columns: 0.82fr 1.3fr;
+        grid-template-columns: 0.87fr 1.13fr;
       }
       .duo.chart-left {
         grid-template-columns: 1.2fr 1fr;
@@ -1157,25 +1189,28 @@
         font-size: 16px;
         color: rgb(255 255 255 / 0.55);
       }
+      /* No pen rail down the left edge. DESIGN.md forbids a coloured rail on a
+         card and the header comment above says so; the card carried one anyway
+         until impeccable's detector caught it. The Possible Key Error chip
+         inside already says what the rail was saying, in words. */
       .defect {
         background: var(--sheet);
         border: 1px solid var(--rule);
-        border-left: 6px solid var(--pen);
         border-radius: var(--r-sheet);
-        padding: 16px 20px 14px;
+        padding: 30px 34px 28px;
       }
       .defect-stem {
-        margin: 0 0 10px;
+        margin: 0 0 26px;
         font-family: var(--font-paper);
-        font-size: 22px;
+        font-size: 32px;
         line-height: 1.3;
         color: var(--ink);
       }
       .defect-row {
         display: flex;
         align-items: flex-end;
-        gap: 28px;
-        font-size: 19.5px;
+        gap: 40px;
+        font-size: 26px;
         color: var(--ink);
       }
       .defect-row i {
@@ -2174,7 +2209,7 @@
                     The answer key is wrong. <em>Nobody checked.</em>
                   </h1>
                   <p class="lead" style="margin-top: 26px; max-width: 44ch">
-                    Cekgu reviews a quiz for teachers and tutors, before students lose marks to a mistake in the answer key.
+                    A second opinion on every question, before the marks are in.
                   </p>
                 </div>
 
@@ -2239,21 +2274,17 @@
 
           <div class="head">
             <p class="eyebrow">1. Problem statement</p>
-            <h2 class="title">A quiz goes out with the wrong answer marked. <em>Every student loses that mark.</em></h2>
-            <p class="sub" style="max-width: 76ch">Teachers set quizzes with an answer key. When it is wrong, nobody finds out until the marks are in.</p>
+            <h2 class="title">The committee reads the paper. <em>Nobody re-solves it.</em></h2>
+            <p class="sub" style="max-width: 76ch">When the answer key is wrong, every student loses that mark.</p>
           </div>
 
           <div class="body">
             <div class="prob2">
               <div class="prob2-left" data-stagger>
-                <p class="kx on-ink">How a wrong answer key gets caught today</p>
-                <ul class="gap3">
-                  <li><b>She re-reads it</b><span>Reads straight past her own mistake.</span></li>
-                  <li><b>A colleague re-solves it</b><span>An hour of their time, every quiz.</span></li>
-                  <li><b>She asks a chatbot</b><span>One answer, no way to check it.</span></li>
-                </ul>
-
-                <p class="kx on-ink" style="margin-top: 30px">One from our sample quiz</p>
+                <!-- The three-row "how it gets caught today" list was cut with the
+                     slot. Twenty seconds buys one thing on this slide and it is the
+                     defective question; the alternatives are a spoken sentence. -->
+                <p class="kx on-ink">One question from our public sample</p>
                 <div class="defect on-ink">
                   <p class="defect-stem">Which data structure removes elements in first in, first out order?</p>
                   <div class="defect-row">
@@ -2266,8 +2297,8 @@
             </div>
 
             <div class="stamp on-ink">
-              Universities already put exam papers through a vetting committee.<span class="src inline">Source: UiTM procedure PKO09</span><br />
-              <b>Cekgu runs that check on every quiz, in minutes, before the committee does.</b>
+              Universities already vet exam papers by committee.<span class="src inline">Source: UiTM procedure PKO09</span><br />
+              <b>Cekgu re-solves every question, in minutes, before a student does.</b>
             </div>
           </div>
         </div>
@@ -2291,7 +2322,7 @@
           <div class="head">
             <p class="eyebrow">2. Project objective</p>
             <h2 class="title">She reads three questions <em>instead of twelve.</em></h2>
-            <p class="sub" style="max-width: 80ch">Cekgu uses two separate AI models on GonkaRouter to audit every answer, so the educator only reads the ones that came back flagged instead of all of them.</p>
+            <p class="sub" style="max-width: 80ch">Two models read every question. She opens only the flagged ones.</p>
           </div>
 
           <div class="body">
@@ -2412,7 +2443,7 @@
           <div class="head">
             <p class="eyebrow">3. Overall concept</p>
             <h2 class="title">Two models, no answer key, <em>one fixed rule.</em></h2>
-            <p class="sub" style="max-width: 80ch">Neither model is shown the teacher&rsquo;s answer or the other model&rsquo;s. The rule checks whether the two agree first, and only then whether they agree with the answer key.</p>
+            <p class="sub" style="max-width: 80ch">Compared to each other first. Only then to the answer key.</p>
           </div>
 
           <div class="body">
@@ -2554,7 +2585,7 @@
           <div class="head">
             <p class="eyebrow">3. Overall concept &middot; the proof</p>
             <h2 class="title">Every answer comes with <em>a GonkaRouter request ID.</em></h2>
-            <p class="sub">The gateway keeps a public record of every answer. An answer without one is never counted.</p>
+            <p class="sub">The gateway keeps the record, not us. No receipt, no reading.</p>
           </div>
 
           <div class="body mid">
@@ -2624,7 +2655,7 @@
           <div class="head">
             <p class="eyebrow">4. Technology stack and track chosen</p>
             <h2 class="title">One server, one gateway, <em>two model families.</em></h2>
-            <p class="sub">Every model call leaves from one file, and that file only knows how to reach GonkaRouter.</p>
+            <p class="sub">Every model call leaves from one file. It only reaches GonkaRouter.</p>
           </div>
 
           <div class="body">
@@ -2753,7 +2784,7 @@
         class="slide"
         data-section="Challenges"
         data-budget="24"
-        data-speaker-notes="We measured before we built, and it went against us. Not one question got two answers inside thirty seconds, so we threw out the instant checker and built a queue that fails closed. Then thirty questions, twice: fourteen of twenty planted defects caught, and on forty clean control runs it flagged nothing. Not one. Then at twenty past six this evening the gateway stopped serving one of our three model families. We changed one line, the list of families. The queue, the rule, the receipts and the screens are untouched. Land on untouched. Be exact if pushed: the family was moonshotai slash Kimi-K2.6, the mentor announced it on Discord at six twenty-one, and the commit is fix parenthesis gateway, drop the delisted Kimi family from the model registry. We did not sit and watch the health window demote it in production, and if a judge asks that, say so. Two measurements share the right of this slide and the deck keeps them apart: the chart is the third of September benchmark that judged a synchronous design nobody shipped, and the dot field is the thirty-question set run twice through the deployed queue. That run's own Unverified rate, nineteen of sixty, is deliberately off the slide because it is a load effect that needs a spoken sentence, and the Q and A carries it."
+        data-speaker-notes="We measured before we built, and it went against us. Not one question got two answers inside thirty seconds, so we threw out the instant checker and built a queue that fails closed. Then thirty questions, twice: fourteen of twenty planted defects caught, and on forty clean control runs it flagged nothing. Not one. Then last night the gateway stopped serving one of our three model families. We changed one line, the list of families. The queue, the rule, the receipts and the screens are untouched. Land on untouched. Be exact if pushed: the family was moonshotai slash Kimi-K2.6, the track mentor took it offline, a GET on slash v1 slash models returned two ids where it had returned three, and that is issue two three nine, filed at twenty past seven on the fifth. The fix is pull request two five six and its own body says the production change is one line. Do not claim we designed for this or saw it coming, and do not claim we watched the health window demote it in production, because we did not. Two measurements share the right of this slide and the deck keeps them apart: the chart is the third of September benchmark that judged a synchronous design nobody shipped, and the dot field is the thirty-question set run twice through the deployed queue. The chart still names Kimi and its numbers are exactly as recorded. If asked, that is the point: every receipt Kimi produced still resolves against the public endpoint today, so the measurement is checkable even though the model is gone. Never edit a measured number to match today. That run's own Unverified rate, nineteen of sixty, is deliberately off the slide because it is a load effect that needs a spoken sentence, and the Q and A carries it."
       >
         <div class="pad">
           <div class="chrome">
@@ -2766,13 +2797,13 @@
           <div class="head">
             <p class="eyebrow">5. Motivation and challenges</p>
             <h2 class="title">We measured first. <em>Then a model went dark.</em></h2>
-            <p class="sub" style="max-width: 80ch">The benchmark below killed our first design, so we built a queue instead. Two days later the gateway dropped a whole model family.</p>
+            <p class="sub" style="max-width: 80ch">The benchmark killed our first design. Then a model family vanished.</p>
           </div>
 
           <div class="body">
             <div class="duo chart-right">
               <div data-stagger>
-                <p class="kx" style="margin: 0 0 16px">5 SEPTEMBER, 6:21 PM</p>
+                <p class="kx" style="margin: 0 0 16px">5 SEPTEMBER, THE NIGHT BEFORE</p>
                 <p class="lead" style="margin-bottom: 46px">
                   One of our reader families went offline. <strong>The queue seated the other two.</strong>
                 </p>
@@ -2789,7 +2820,7 @@
                 <svg
                   viewBox="0 0 940 624"
                   role="img"
-                  aria-label="Above, the 3 September benchmark's call latency: MiniMax completed 24 of 24 calls between 14.3 and 73.8 seconds, Kimi 13 of 24 between 35.1 and 82.7 seconds, and no item got both of its readings inside the 30 second line. Below, 30 items run twice through the deployed queue: 40 clean control runs with no false flags, and 20 planted defect runs of which 14 were caught, 5 abstained as Unverified and 1 came back Clear"
+                  aria-label="Above, the 3 September benchmark's call latency: MiniMax completed 24 of 24 calls between 14.3 and 73.8 seconds, Kimi 13 of 24 between 35.1 and 82.7 seconds, and no item got both of its readings inside the 30 second line. Kimi was delisted by the gateway two days after this measurement and the numbers are left as they were recorded. Below, 30 items run twice through the deployed queue: 40 clean control runs with no false flags, and 20 planted defect runs of which 14 were caught, 5 abstained as Unverified and 1 came back Clear"
                 >
                   <text class="label f-muted" x="0" y="16" font-size="19">
                     SECONDS TO A COMPLETED CALL &middot; 3 SEP BENCHMARK
@@ -2807,7 +2838,7 @@
                   <text class="mono f-muted" x="780.9" y="104" font-size="22" text-anchor="middle">73.8</text>
 
                   <text class="mono f-ink" x="0" y="238" font-size="23">Kimi-K2.6</text>
-                  <text class="mono f-muted" x="0" y="270" font-size="23">13 of 24 calls</text>
+                  <text class="mono f-muted" x="0" y="270" font-size="23">13 of 24 calls &middot; delisted 5 Sep</text>
                   <line x1="468.1" y1="250" x2="853.1" y2="250" class="s-ink" stroke-width="10" stroke-linecap="round" />
                   <circle cx="468.1" cy="250" r="10" class="f-ink" />
                   <circle cx="853.1" cy="250" r="10" class="f-ink" />
@@ -2872,7 +2903,7 @@
         class="slide"
         data-section="Business"
         data-budget="10"
-        data-speaker-notes="We charge for questions checked, not tokens. Free is twenty a month, Plus is three hundred for twenty-nine ringgit. The first buyer is an independent tutor, not a university procurement office. And I will say it before you do: nobody has paid us anything. This is a price to test. Saying the pricing is untested before a judge says it is worth more than the pricing is, so if the clock is tight, cut the plan list and keep the last sentence. The unit of value is deliberately questions rather than model tokens, because the model cost is invisible to the buyer and what they are actually buying is saved attention, a reusable record and dependable retries. The axis on the left is logarithmic and prints its own ticks, so nothing is encoded by a length that would misread twenty against fifteen hundred. Guest is the shared demo workspace and its content expires in twenty-four hours."
+        data-speaker-notes="We charge for questions checked, not tokens. Free is twenty a month, Plus is three hundred for twenty-nine ringgit. The first buyer is an independent tutor, not a university procurement office. And I will say it before you do: nobody has paid us anything. This is a price to test. Saying the pricing is untested before a judge says it is worth more than the pricing is, so if the clock is tight, cut the three plan names and keep the last sentence. The unit of value is deliberately questions rather than model tokens, because the model cost is invisible to the buyer and what they are actually buying is saved attention, a reusable record and dependable retries. The build roadmap that used to sit under the tiers is cut: ten seconds cannot read it, and this slide is about who buys, not about what we build next. If a judge asks what Cekgu Studio is, it is the same product at fifteen hundred questions a month for a tuition centre, and nobody is on any of the three plans."
       >
         <div class="pad">
           <div class="chrome">
@@ -2914,12 +2945,13 @@
               <b>Pilot pricing; no buyer has paid yet.</b>
             </div>
 
-            <p class="kx" style="margin: 30px 0 12px">What we build next, in order</p>
-            <ol class="phases">
-              <li><span class="n">Next</span><b>Get papers in faster</b><p>Paste and CSV import. Bahasa Malaysia product copy.</p></li>
-              <li><span class="n">Then</span><b>Keep the record useful</b><p>Trash restore, duplication, export, email when a record is ready.</p></li>
-              <li><span class="n">Later</span><b>Charge for it</b><p>Billing on the three tiers. Library search and filters.</p></li>
-            </ol>
+            <!-- The build roadmap that sat here is cut. Ten seconds cannot
+                 read three phases with descriptions, and this slide answers
+                 "commercialisation", which is who buys and why, not what we
+                 build next. The roadmap lives in PRODUCT.md's scope ladder. -->
+            <p class="lead" style="margin: 46px 0 0; max-width: 44ch">
+              The first buyer is an independent tutor, <strong>not a university procurement office.</strong>
+            </p>
           </div>
 
           <p class="foot">Guest is a shared demo workspace, expiring in 24 hours.</p>
@@ -3064,8 +3096,10 @@
           history.replaceState(null, '', '#' + (i + 1))
         }
 
-        // The slot is 5 minutes. The script targets 4:45 so the last 15 seconds
-        // stay as buffer, which is what the timer warns against.
+        // The slot is 3 minutes. The nine data-budget values sum to 150 and the
+        // live demo is 30, so a clean run lands on 180. TOTAL is 170 rather than
+        // 180 on purpose: red means "you are into your last ten seconds", not
+        // "you are already over", and amber lands at TOTAL - 30.
         var TOTAL = 170
         var t0 = null
         var elapsed = 0
