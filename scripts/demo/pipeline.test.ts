@@ -10,6 +10,15 @@ const subtitles = join(import.meta.dir, 'subtitles.py')
 const speak = join(import.meta.dir, 'speak.py')
 const narration = join(import.meta.dir, 'narration.txt')
 const scratchDirs: string[] = []
+
+// Every test below drives the real ffmpeg, ffprobe and python3, because the thing being checked is
+// whether the pipeline actually produces a video rather than whether a mock was called. CI has none
+// of those three installed, and a suite that goes red there for want of a codec says nothing about
+// this code. Skipping is the same call the gateway and database tests already make: the external
+// tool IS the fixture, so without it there is no test to run.
+const TOOLS = ['ffmpeg', 'ffprobe', 'python3']
+const missing = TOOLS.filter((binary) => Bun.which(binary) === null)
+if (missing.length > 0) console.log(`demo pipeline tests skipped, not installed: ${missing.join(', ')}`)
 const browserBeats = [
   { name: 'shot-1', ms: 1_000 },
   { name: 'shot-2', ms: 14_000 },
@@ -59,7 +68,7 @@ afterEach(() => {
   for (const path of scratchDirs.splice(0)) rmSync(path, { recursive: true, force: true })
 })
 
-describe('demo timeline assembly', () => {
+describe.skipIf(missing.length > 0)('demo timeline assembly', () => {
   test('plans slide starts from the measured capture duration', () => {
     const demoDir = makeScratchDir()
     writeJson(join(demoDir, 'beats.json'), browserBeats)
@@ -200,7 +209,7 @@ describe('demo timeline assembly', () => {
   }, 30_000)
 })
 
-describe('demo narration scheduling', () => {
+describe.skipIf(missing.length > 0)('demo narration scheduling', () => {
   test('resolves narration from named beats instead of nominal timestamps', () => {
     const demoDir = makeScratchDir()
     const script = join(demoDir, 'narration.txt')
