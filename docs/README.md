@@ -195,7 +195,7 @@ The product is built for practice papers and synthetic examples, not for confide
 
 <p align="center">
   <img
-    src="assets/architecture.svg"
+    src="assets/architecture.png"
     alt="A React SPA and a Hono API on one Cloud Run container, with a queue worker and a gateway semaphore behind it, PostgreSQL on Neon beside them, and every reasoning call leaving through GonkaRouter with a request id and a public receipt"
     width="100%">
 </p>
