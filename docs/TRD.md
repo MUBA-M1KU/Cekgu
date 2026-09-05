@@ -1687,15 +1687,23 @@ answers 503 with a sentence saying so.
 - 15 s timeout, 5 MB ceiling enforced after reading as well as on `content-length`, and the extracted text is capped at
   40 000 characters
 
-**Known limits of the guard, recorded rather than implied away.**
+**The connection is pinned to the address that was checked.** `assertPublicUrl` returns the address it vetted, and the
+request goes to that literal rather than to the hostname again — the name travels in the `Host` header and in the TLS
+SNI. Handing `fetch` the name would let it resolve a second time and reach an address the guard never saw, which is DNS
+rebinding ([#294](https://github.com/MUBA-M1KU/Cekgu/issues/294)). Measured on Bun 1.4: fetching a literal IP without
+`tls: { serverName }` fails with `unknown certificate verification error`, and with it returns 200, so pinning costs no
+TLS validation. A hostname resolving to both a public and a private address is refused outright rather than raced.
 
-- **DNS rebinding is not closed.** `assertPublicUrl` resolves the host and judges those addresses; `fetch` then resolves
-  again for the connection. A name whose record changes between the two passes the check and connects elsewhere. Closing
-  it properly means connecting to the vetted literal with an explicit `Host` header, or pinning the resolver. Bun's
-  internal DNS cache narrows the window in practice, which is an accident of the runtime and not a control
-- Ports are not restricted, so the fetcher will open a connection to any port on a public host
-- The route is behind a session, but `POST /api/auth/guest` is public, so a session is free. There is no rate limit on
-  `/api/extract/url`
+**Only ports 80 and 443.** A paper is served over http or https and nothing else the fetcher could usefully reach is,
+while an open port field turns the guard into a port scanner that reports back through timing and error text.
+
+**Both extraction routes are rate limited**, six per minute per account, in `src/server/extract/rate-limit.ts`. The
+routes sit behind a session but `POST /api/auth/guest` is public, so a session costs one request; without a limit an
+anonymous caller could drive an unbounded number of URL fetches and, behind them, `structurePaper` spending real gateway
+calls. Keyed on the account, so the shared Guest workspace shares one budget — keying finer would let a caller mint a
+fresh budget per call. In memory rather than in Postgres because Cloud Run runs this at min-instances 1, max-instances 1
+([section 10](#10-hosting-and-cicd)): one process, one counter. A second instance would break that, which is why it is
+written down here.
 
 `htmlToText` is deliberately crude: it drops `script`, `style`, `noscript`, `svg`, `head` and comments, turns block tags
 into line breaks and decodes the common entities. Anything cleverer would be a guess about which element holds the

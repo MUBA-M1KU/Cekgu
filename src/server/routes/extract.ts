@@ -1,10 +1,11 @@
-import { Hono } from 'hono'
+import { type Context, Hono } from 'hono'
 import { fetchUrl } from '../extract/fetch-url'
+import { extractLimiter } from '../extract/rate-limit'
 import { structurePaper } from '../extract/structure'
 import { callGonka } from '../gateway/client'
 import { healthyOrder } from '../queue/health'
 import { gatewaySemaphore } from '../queue/semaphore'
-import type { AppEnv } from '../session'
+import { type AppEnv, sessionOf } from '../session'
 import { ACCEPTED_TYPES, MAX_BYTES, transcribe, transcriptionUnavailable } from '../transcribe/gemini'
 
 // TRD section 20. Two steps, and the order of them is the design: a vision model turns the upload
@@ -57,6 +58,25 @@ async function structure(text: string) {
   ])
 }
 
+// Keyed on the account, so the shared Guest workspace shares one budget. That is the intent: a
+// guest session costs one public request, so keying on anything finer would let a caller mint a
+// fresh budget per call and the limit would mean nothing.
+function overBudget(c: Context<AppEnv>) {
+  const taken = extractLimiter.take(sessionOf(c).user.id)
+  if (taken.allowed) return null
+
+  return c.json(
+    {
+      error: {
+        code: 'rate_limited',
+        message: `That is a lot of papers at once. Try again in ${taken.retryAfterSeconds} seconds.`
+      }
+    },
+    429,
+    { 'retry-after': String(taken.retryAfterSeconds) }
+  )
+}
+
 export const extractRoutes = new Hono<AppEnv>()
 
 // TRD section 20's third input, and the one the compliance audit called out as missing: a link.
@@ -67,6 +87,9 @@ export const extractRoutes = new Hono<AppEnv>()
 // deployment with no GEMINI_API_KEY. A link to a PDF or an image still needs the transcriber, and
 // says so rather than failing vaguely.
 extractRoutes.post('/extract/url', async (c) => {
+  const limited = overBudget(c)
+  if (limited) return limited
+
   let raw: unknown
   try {
     raw = (await c.req.json())?.url
@@ -137,6 +160,9 @@ extractRoutes.post('/extract/url', async (c) => {
 })
 
 extractRoutes.post('/extract', async (c) => {
+  const limited = overBudget(c)
+  if (limited) return limited
+
   if (transcriptionUnavailable()) {
     return c.json({ error: { code: 'uploads_disabled', message: 'Uploads are switched off on this deployment.' } }, 503)
   }

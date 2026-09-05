@@ -104,8 +104,16 @@ function isPrivateAddress(address: string): boolean {
   return false
 }
 
-/** Parsed, scheme-checked and proven to resolve outside every private range. */
-export async function assertPublicUrl(raw: string): Promise<{ ok: true; url: URL } | { ok: false; reason: string }> {
+/**
+ * Parsed, scheme-checked and proven to resolve outside every private range.
+ *
+ * Returns the address it vetted, and the caller connects to THAT rather than to the hostname again.
+ * Resolving twice is the DNS rebinding hole: a name whose record changes between the check and the
+ * connect passes here and lands somewhere else (#294).
+ */
+export async function assertPublicUrl(
+  raw: string
+): Promise<{ ok: true; url: URL; address: string } | { ok: false; reason: string }> {
   let url: URL
   try {
     url = new URL(raw.trim())
@@ -122,14 +130,38 @@ export async function assertPublicUrl(raw: string): Promise<{ ok: true; url: URL
     return { ok: false, reason: 'That link carries a username or password. Paste a plain link.' }
   }
 
+  // Only the default web ports. A paper is served over http or https, and nothing else the fetcher
+  // could usefully reach is — while a port field turns the guard into a port scanner that reports
+  // back through timing and error text (#295).
+  if (url.port && url.port !== '80' && url.port !== '443') {
+    return { ok: false, reason: 'Only the standard web ports can be read.' }
+  }
+
   const host = url.hostname.replace(/^\[|\]$/g, '')
   const addresses = isIP(host) ? [host] : await resolve(host)
   if (!addresses.length) return { ok: false, reason: 'That address could not be found.' }
+  // EVERY address, not the one that will be used: a name resolving to one public and one private
+  // address must be refused outright rather than raced.
   if (addresses.some(isPrivateAddress)) {
     return { ok: false, reason: 'That link points inside a private network, so it was not fetched.' }
   }
 
-  return { ok: true, url }
+  const address = addresses[0]
+  if (!address) return { ok: false, reason: 'That address could not be found.' }
+  return { ok: true, url, address }
+}
+
+/**
+ * The same request, addressed to the literal IP that was vetted.
+ *
+ * This is what closes the rebinding window: `fetch` resolves the hostname itself, so handing it the
+ * name again would let a second lookup return an address the guard never saw. The name is carried
+ * in the Host header and the SNI instead.
+ */
+function pinnedUrl(url: URL, address: string): string {
+  const host = isIP(address) === 6 ? `[${address}]` : address
+  const port = url.port ? `:${url.port}` : ''
+  return `${url.protocol}//${host}${port}${url.pathname}${url.search}`
 }
 
 async function resolve(host: string): Promise<string[]> {
@@ -156,10 +188,19 @@ export async function fetchUrl(raw: string): Promise<UrlFetch> {
 
     let response: Response
     try {
-      response = await fetch(checked.url, {
+      response = await fetch(pinnedUrl(checked.url, checked.address), {
         redirect: 'manual',
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-        headers: { accept: 'text/html,application/xhtml+xml,application/pdf,image/*;q=0.8,*/*;q=0.5' }
+        headers: {
+          // The socket goes to the vetted IP, so the name has to travel in the header for virtual
+          // hosts to serve the right page.
+          host: checked.url.host,
+          accept: 'text/html,application/xhtml+xml,application/pdf,image/*;q=0.8,*/*;q=0.5'
+        },
+        // And in the SNI, or the certificate cannot validate against an IP. Measured on Bun 1.4:
+        // fetching a literal IP without this fails with "unknown certificate verification error",
+        // and with it returns 200.
+        tls: { serverName: checked.url.hostname }
       })
     } catch {
       return { ok: false, reason: 'That page could not be reached.' }

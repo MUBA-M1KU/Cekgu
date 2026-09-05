@@ -24,22 +24,37 @@ export function retrievalUnavailable(): boolean {
 }
 
 /**
+ * Injected so the tests are hermetic.
+ *
+ * They used to assert the no-key path by assuming `TAVILY_API_KEY` was absent from the environment,
+ * which Bun's automatic `.env` loading made false on any machine that had one — and the assertion
+ * then made a real network call and failed on what Tavily happened to return (#290). `env` is read
+ * at module load, so no `beforeEach` can undo it; the seam has to be a parameter. It is the same
+ * shape runRound and structurePaper already use for the gateway.
+ */
+export type RetrievalDeps = { apiKey?: string | null; fetch?: typeof globalThis.fetch }
+
+/**
  * Public text relevant to one question, or an empty list.
  *
  * Never throws and never blocks a reading. Retrieval is an enrichment: a round that could not reach
  * the web still produces a verdict from two Gonka readings, exactly as it did before this existed.
  * Returning `[]` and carrying on is the whole failure policy.
  */
-export async function searchEvidence(query: string): Promise<Source[]> {
-  const config = env.tavily
-  if (!config) return []
+export async function searchEvidence(query: string, deps: RetrievalDeps = {}): Promise<Source[]> {
+  // `undefined` means "ask the environment"; an explicit null means "there is no key", which is what
+  // a test asserting the no-key path passes.
+  const apiKey = deps.apiKey === undefined ? (env.tavily?.apiKey ?? null) : deps.apiKey
+  if (!apiKey) return []
+
+  const send = deps.fetch ?? fetch
 
   let response: Response
   try {
-    response = await fetch(ENDPOINT, {
+    response = await send(ENDPOINT, {
       method: 'POST',
       signal: AbortSignal.timeout(TIMEOUT_MS),
-      headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}` },
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
         query: query.slice(0, 380),
         max_results: MAX_RESULTS,

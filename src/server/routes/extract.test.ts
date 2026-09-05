@@ -1,4 +1,7 @@
 import { describe, expect, test } from 'bun:test'
+import { Hono } from 'hono'
+import type { Session } from '../auth'
+import type { AppEnv } from '../session'
 import { extractRoutes } from './extract'
 
 // Every path here is reachable without a key, a network or a database, which is deliberate: the
@@ -10,8 +13,31 @@ import { extractRoutes } from './extract'
 // than a simulated one — which is also the assertion that a deployment without the key stays a
 // working product with one affordance missing.
 
+// The routes sit behind requireSession in src/server/routes/index.ts, so a session is always set by
+// the time they run. These tests call them directly, which means the middleware has to be stood back
+// up here or `sessionOf` has nothing to read.
+//
+// Each call gets its own user id, because the rate limit is keyed on the account and this file makes
+// more requests than one account is allowed per minute. The limit itself is asserted below, on an id
+// that deliberately does not vary.
+function withSession(userId: string) {
+  const app = new Hono<AppEnv>()
+  app.use('*', async (c, next) => {
+    c.set('session', { user: { id: userId, email: `${userId}@test.local`, name: 'Test' } } as Session)
+    await next()
+  })
+  app.route('/', extractRoutes)
+  return app
+}
+
+let caller = 0
+function nextCaller(): string {
+  caller += 1
+  return `user-${caller}`
+}
+
 const post = (body: BodyInit | null, headers?: HeadersInit) =>
-  extractRoutes.request('/extract', { method: 'POST', body, headers })
+  withSession(nextCaller()).request('/extract', { method: 'POST', body, headers })
 
 function multipart(parts: { name: string; value: string | Blob; filename?: string }[]): FormData {
   const form = new FormData()
@@ -40,8 +66,8 @@ describe('POST /api/extract without a transcription key', () => {
   })
 })
 
-const postUrl = (body: string) =>
-  extractRoutes.request('/extract/url', {
+const postUrl = (body: string, userId = nextCaller()) =>
+  withSession(userId).request('/extract/url', {
     method: 'POST',
     body,
     headers: { 'content-type': 'application/json' }
@@ -99,6 +125,34 @@ describe('POST /api/extract/url', () => {
     const response = await postUrl(JSON.stringify({ url: 'file:///etc/passwd' }))
     expect(response.status).toBe(422)
     expect(((await response.json()) as { error: { message: string } }).error.message).toContain('http and https')
+  })
+})
+
+// #295. Both routes do slow, expensive work — a URL fetch, then structurePaper spending real gateway
+// calls — for a caller whose session cost one public request to POST /api/auth/guest.
+describe('the extraction routes are rate limited', () => {
+  test('one account is refused once it exceeds the window, with a retry-after', async () => {
+    const hammer = 'noisy-neighbour'
+    const codes: number[] = []
+    for (let i = 0; i < 9; i += 1) {
+      const response = await postUrl(JSON.stringify({ url: 'http://192.168.0.1/' }), hammer)
+      codes.push(response.status)
+    }
+
+    // The early ones are refused on their own merit (422, private address); what matters is that
+    // the tail switches to 429 rather than continuing to do the work.
+    expect(codes.at(-1)).toBe(429)
+    expect(codes.filter((code) => code === 429).length).toBeGreaterThan(0)
+
+    const refused = await postUrl(JSON.stringify({ url: 'http://192.168.0.1/' }), hammer)
+    expect(refused.status).toBe(429)
+    expect(Number(refused.headers.get('retry-after'))).toBeGreaterThan(0)
+    expect(((await refused.json()) as { error: { code: string } }).error.code).toBe('rate_limited')
+  })
+
+  test('a different account is unaffected', async () => {
+    const response = await postUrl(JSON.stringify({ url: 'http://192.168.0.1/' }), 'quiet-neighbour')
+    expect(response.status).toBe(422)
   })
 })
 
