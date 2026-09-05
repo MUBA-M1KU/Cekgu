@@ -1,7 +1,7 @@
 import { type FormEvent, useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import type { ItemVerdict, RecordDetail } from '../../shared/types'
-import { getSample } from '../api'
+import { getSample, MOCK } from '../api'
 import { Field, inputClass } from '../components/Field'
 import { GUEST_WARNING } from '../components/GuestBanner'
 import { admittedSeats } from '../components/ItemRow'
@@ -153,8 +153,11 @@ export function SignIn() {
     setBusy(true)
     setError(null)
     try {
-      const response = await fetch('/api/auth/guest', { method: 'POST', credentials: 'include' })
-      if (!response.ok) throw new Error('guest sign-in failed')
+      // Mocked mode has no server to ask, and refreshSession publishes the Guest session itself.
+      if (!MOCK) {
+        const response = await fetch('/api/auth/guest', { method: 'POST', credentials: 'include' })
+        if (!response.ok) throw new Error('guest sign-in failed')
+      }
       await refreshSession()
       navigate(destination)
     } catch {
