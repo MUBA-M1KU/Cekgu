@@ -370,11 +370,12 @@ issues).
 
 ## Team
 
-<a href="https://github.com/MUBA-M1KU/Cekgu/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=MUBA-M1KU/Cekgu" alt="Team" />
-</a>
+<a href="https://github.com/AlaskanTuna"><img src="https://github.com/AlaskanTuna.png?size=100" width="64" height="64" alt="AlaskanTuna" /></a>
+<a href="https://github.com/kymil4"><img src="https://github.com/kymil4.png?size=100" width="64" height="64" alt="kymil4" /></a>
+<a href="https://github.com/chaosiris"><img src="https://github.com/chaosiris.png?size=100" width="64" height="64" alt="chaosiris" /></a>
+<a href="https://github.com/c3638"><img src="https://github.com/c3638.png?size=100" width="64" height="64" alt="c3638" /></a>
 
-Made with [contrib.rocks](https://contrib.rocks).
+Every [contributor](https://github.com/MUBA-M1KU/Cekgu/graphs/contributors).
 
 Built by Team M1KU for the MUBA Blockchain Hackathon 2026, GonkaRouter — AI for Society track.
 
@@ -402,7 +403,6 @@ See [LICENSE](../LICENSE) for more information.
   removed. Demo notices: [terms](legal/terms.md), [privacy](legal/privacy.md),
   [acceptable use](legal/acceptable-use.md).
 - [Shields.io](https://shields.io)
-- [contrib.rocks](https://contrib.rocks)
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
