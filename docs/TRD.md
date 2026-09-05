@@ -383,6 +383,7 @@ GUEST_EMAIL=                                            # The one seeded Guest u
 GUEST_PASSWORD=                                         # Used server-side only by POST /api/auth/guest
 
 MASCOT_ENABLED=false                                    # FR-MASCOT-1 feature flag. true for the demo
+WORKER_CONCURRENCY=1                                    # Concurrent worker loops, default 1, maximum 4
 
 GEMINI_API_KEY=                                         # Transcription only, section 20. Absent, uploads are off
 GEMINI_MODEL=gemini-2.5-flash                           # Verify against GET /v1beta/models before changing this
@@ -411,7 +412,8 @@ precondition. The Anthropic surface is unused by the product; the base-URL rule 
 `env-drift` hook compares `.env` against it, so the two files change together. Two further variables exist in the
 server's environment and deliberately do not appear here: `MIGRATE_ON_START` and `WORKER_ENABLED`, both defaulting to
 on, which only a preview revision sets to `false`. They are explained in [section 10](#10-hosting-and-cicd), because
-they are a deployment concern rather than part of the contract a developer fills in. `PORT` defaults to `8080`.
+they are a deployment concern rather than part of the contract a developer fills in. `WORKER_CONCURRENCY` appears above.
+`PORT` defaults to `8080`.
 
 **Account state, 2026-08-29:** balance **20.00 USDT**, monthly cost 0.00 after 9 test requests and 1,011 tokens. Tokens
 are unlimited for the event; email Jack if the credit is ever exhausted.
@@ -814,8 +816,9 @@ and is refused by every mutating route except dispositions (FR-SAMPLE-2, FR-SAMP
 
 ## 13. Queue and worker
 
-The worker is a loop inside the server process. It claims one queued item at a time, runs its reading round, writes the
-verdict, and goes back for the next. It discharges FR-QUEUE-1 to FR-QUEUE-3 and NFR-OPS-1.
+The worker runs WORKER_CONCURRENCY loops inside the server process, each claiming one queued item at a time, running its
+reading round, and going back for the next; the semaphore caps gateway calls at four regardless. It discharges
+FR-QUEUE-1 to FR-QUEUE-3 and NFR-OPS-1.
 
 **Why this shape.** The 3 September benchmark ([section 3](#3-models-measured)) showed that no item obtained two
 verified readings inside 30 seconds and that a 36-call fan-out was refused. A queue with a small fixed cap is the only

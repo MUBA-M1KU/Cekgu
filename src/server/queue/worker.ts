@@ -1,6 +1,7 @@
 import { and, eq, inArray, sql } from 'drizzle-orm'
 import { db } from '../db'
 import { attempts, items, records } from '../db/schema'
+import { env } from '../env'
 import { callGonka } from '../gateway/client'
 import { solverPrompt } from '../gateway/reading'
 import { claimNextItem, releaseStaleClaims } from './claim'
@@ -8,8 +9,8 @@ import { healthyOrder, recordOutcome } from './health'
 import { type AttemptRow, runRound } from './round'
 import { gatewaySemaphore } from './semaphore'
 
-// TRD section 13. A loop inside the server process: claim one queued item, run its round, write the
-// verdict, go back for the next. The gateway is never told to do more than four things at once.
+// TRD section 13. WORKER_CONCURRENCY loops inside the server process, each claiming one queued item,
+// running its round, and going back for the next. The gateway is never told to do more than four things at once.
 
 const IDLE_POLL_MS = 2_000
 
@@ -103,5 +104,7 @@ export async function startWorker(): Promise<void> {
     }
   }
 
-  void loop()
+  for (let i = 0; i < env.workerConcurrency; i++) {
+    void loop()
+  }
 }
