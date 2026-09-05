@@ -4,6 +4,7 @@ import { attempts, items, records } from '../db/schema'
 import { env } from '../env'
 import { callGonka } from '../gateway/client'
 import { solverPrompt } from '../gateway/reading'
+import { evidenceQuery, searchEvidence } from '../retrieval/tavily'
 import { claimNextItem, releaseStaleClaims } from './claim'
 import { healthyOrder, recordOutcome } from './health'
 import { type AttemptRow, runRound } from './round'
@@ -34,9 +35,18 @@ export async function processNextItem(): Promise<boolean> {
   // started when the gateway is already working.
   await refreshRecordStatus(item.recordId)
 
-  const prompt = solverPrompt({ stem: item.stem, options: item.options }, record.subject, record.language)
+  // Retrieved once for the item, not once per reader: both readers must see the same evidence or
+  // their disagreement stops being about the question. It is also the difference between one search
+  // per item and four, and the round already spends enough.
+  //
+  // The key is never in the query, for the same reason it is never in the prompt — searching for
+  // the key returns pages that agree with the key.
+  const sources = await searchEvidence(evidenceQuery(item.stem, item.options, record.subject))
+
+  const prompt = solverPrompt({ stem: item.stem, options: item.options }, record.subject, record.language, sources)
 
   const result = await runRound(prompt, item.options, item.key, {
+    sources,
     call: async (model, text) => {
       const release = await gatewaySemaphore.acquire()
       try {

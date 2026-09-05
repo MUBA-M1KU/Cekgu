@@ -215,7 +215,7 @@ export function RecordWorkspace() {
             <CardBody>
               {/* The score first, then the chips it was drawn from. It is a summary of them, and
                   a summary printed under its own detail reads as a footnote. */}
-              <TruthScoreSummary score={record.truthScore} />
+              <TruthScoreSummary score={record.truthScore} tally={record.corroboration} />
               {/* The chips are both the counts and the filter, so the same numbers are never printed
                   twice. DESIGN.md Layout. */}
               <VerdictFilters counts={record.counts} active={filter} onChange={setFilter} />

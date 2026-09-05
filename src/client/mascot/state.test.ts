@@ -55,6 +55,7 @@ function record(status: RecordStatus, specs: ItemSpec[]): RecordDetail {
     expiresAt: null,
     counts,
     truthScore: { score: null, scored: 0, total: 0 },
+    corroboration: { supported: 0, contradicted: 0, absent: 0, retrieved: 0 },
     items
   }
 }

@@ -25,6 +25,7 @@ jq -n --argjson all "${ALL_SECRETS:?ALL_SECRETS is unset}" '
       WORKER_CONCURRENCY,
       GEMINI_API_KEY,
       GEMINI_MODEL,
+      TAVILY_API_KEY,
       CHAT_PROVIDER,
       CHAT_MODEL
     }

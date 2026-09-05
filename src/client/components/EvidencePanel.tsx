@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
-import type { Attempt, Item, ReceiptStatus } from '../../shared/types'
+import type { Attempt, Grounding, Item, ReceiptStatus, Source } from '../../shared/types'
 import { useMuted } from '../mascot/preferences'
 import { itemUtterances } from '../mascot/speech'
 import { type SpeechHandle, speak } from '../mascot/voice'
 import { receiptPath } from '../pages/ReceiptView'
 import { BubbleRow } from './BubbleRow'
+import { ExternalLink } from './ExternalLink'
 import { InfoIcon, VoiceOnIcon } from './icons'
 
 // The rule the attempts table is read by. One sentence, on the heading, rather than a paragraph
@@ -71,6 +72,8 @@ function ReaderColumn({ item, attempt, seat }: { item: Item; attempt: Attempt; s
 
       <p className="type-body mt-3 italic">{reading.reason}</p>
 
+      {reading.grounding ? <GroundingLine grounding={reading.grounding} /> : null}
+
       <dl className="type-mono mt-4 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
         <dt className="text-ink-muted">Request Id</dt>
         <dd className="m-0 break-words">{attempt.requestId}</dd>
@@ -90,6 +93,55 @@ function ReaderColumn({ item, attempt, seat }: { item: Item; attempt: Attempt; s
           View Receipt
         </Link>
       ) : null}
+    </div>
+  )
+}
+
+// What the retrieved pages did to this reader's own answer, in the reader's own words rather than
+// as a chip: it is a sentence about evidence, and a chip beside the verdict chip would read as a
+// second verdict. NFR-UX-3, never colour alone — the label carries the whole meaning.
+const GROUNDING_LINE: Record<Grounding, string> = {
+  supported: 'The pages retrieved for this question backed this answer.',
+  contradicted: 'The pages retrieved for this question pointed somewhere else.',
+  absent: 'The pages retrieved for this question did not settle it.'
+}
+
+function GroundingLine({ grounding }: { grounding: Grounding }) {
+  return (
+    <p className="mt-2 type-caption text-ink-muted" data-grounding={grounding}>
+      {GROUNDING_LINE[grounding]}
+    </p>
+  )
+}
+
+/**
+ * The pages both readers were shown, listed once under them rather than twice inside them.
+ *
+ * They are links because the claim is checkable or it is nothing: a judge who cannot open the page
+ * has been told a story about evidence. Retrieved text is quoted, never paraphrased, so nothing on
+ * this panel is a model's account of what a page said.
+ */
+function Sources({ sources }: { sources: Source[] }) {
+  return (
+    <div className="mt-6 border-t border-rule pt-4">
+      <p className="type-label">Retrieved From The Web</p>
+      <p className="mt-1 type-caption text-ink-muted">
+        Fetched while the readers worked, and shown to both of them. No model wrote any of it, and no model outside the
+        Gonka network read it.
+      </p>
+      <ol className="mt-3 flex flex-col gap-3">
+        {sources.map((source, index) => (
+          <li key={source.url} className="flex gap-2">
+            <span className="type-mono shrink-0 text-ink-muted">[{index + 1}]</span>
+            <div className="min-w-0">
+              <ExternalLink href={source.url} className="type-body break-words underline">
+                {source.title}
+              </ExternalLink>
+              <p className="mt-1 type-caption text-ink-muted">{source.snippet}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
     </div>
   )
 }
@@ -138,6 +190,11 @@ export function EvidencePanel({ item }: { item: Item }) {
     if (readers.length === 2) break
   }
 
+  // Both readers were shown the same pages, so they are listed once under the pair rather than
+  // twice inside it. Taken from whichever reader carries them, because a reading recorded before
+  // live retrieval existed carries none.
+  const sources = readers.find((attempt) => attempt.reading?.sources?.length)?.reading?.sources ?? []
+
   return (
     <div className="mt-4 rounded-control bg-well p-4 sm:p-6">
       <div className="flex items-center justify-between gap-4">
@@ -160,6 +217,8 @@ export function EvidencePanel({ item }: { item: Item }) {
           </div>
         )}
       </div>
+
+      {sources.length ? <Sources sources={sources} /> : null}
 
       <div className="mt-6 flex items-center gap-2">
         <h3 className="type-eyebrow text-ink-muted">All Attempts</h3>

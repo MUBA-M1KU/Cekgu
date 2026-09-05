@@ -101,6 +101,22 @@ describe('every inference goes through GonkaRouter', () => {
     expect(offences).toEqual([])
   })
 
+  // Live retrieval is not an exemption, because it is not inference: src/server/retrieval/ fetches
+  // text other people published and runs no model. What makes that true rather than merely claimed
+  // is that it cannot decide anything and cannot reach the gateway, so it is held to the same
+  // "decides nothing" rule the two provider directories are.
+  test('the retrieval boundary decides nothing', () => {
+    const offences: string[] = []
+    for (const file of sources.filter((name) => name.startsWith('src/server/retrieval/'))) {
+      if (file.endsWith('.test.ts')) continue
+      const text = read(file)
+      for (const forbidden of ['shared/verdict', 'db/schema', 'queue/round', 'createRecordSchema', 'gateway/client']) {
+        if (text.includes(forbidden)) offences.push(`${file}: ${forbidden}`)
+      }
+    }
+    expect(offences).toEqual([])
+  })
+
   test('no provider client library is installed', () => {
     const manifest = JSON.parse(read('package.json')) as {
       dependencies?: Record<string, string>

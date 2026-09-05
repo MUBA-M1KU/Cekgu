@@ -94,7 +94,7 @@ export function SampleReport() {
             }
           />
           <CardBody>
-            <TruthScoreSummary score={record.truthScore} />
+            <TruthScoreSummary score={record.truthScore} tally={record.corroboration} />
             <VerdictFilters counts={record.counts} active={filter} onChange={setFilter} />
           </CardBody>
         </Card>

@@ -386,6 +386,7 @@ MASCOT_ENABLED=false                                    # FR-MASCOT-1 feature fl
 WORKER_CONCURRENCY=1                                    # Concurrent worker loops, default 1, maximum 4
 
 GEMINI_API_KEY=                                         # Transcription only, section 20. Absent, uploads are off
+TAVILY_API_KEY=                                         # Live retrieval, section 22. Absent, readers use own knowledge
 GEMINI_MODEL=gemini-2.5-flash                           # Verify against GET /v1beta/models before changing this
 
 CHAT_PROVIDER=gemini                                    # gemini | gonka. See section 21
@@ -1753,3 +1754,86 @@ messages, and one citing a single seat is spoken by that seat.
 **Model choice is measured, not documented.** `CHAT_MODEL` defaults to `gemini-2.5-flash` at 5.9 s. It must never be
 `gemini-3.5-flash-lite`, which [section 20](#20-reading-a-paper-from-an-upload) measured as no response across three
 attempts. `GEMINI_MODEL` is separate, so the transcriber and the assistant can differ.
+
+## 22. Live retrieval for cross-verification
+
+The track's second requirement is that at least two models cross-verify. Until 6 September 2026 they did so from their
+own training alone, which the compliance audit recorded as partial: there was no live external step, so a fact that
+changed after training could not be caught. `src/server/retrieval/tavily.ts` adds one.
+
+### It is retrieval, not inference
+
+**This is the part that must survive review.** Tavily is a search API, not a model. It returns text other people
+published, verbatim, and forms no opinion about it. The two Gonka readers are shown those snippets and do every piece of
+reasoning, so every judgement in the product still carries a Gonka request id and a public receipt.
+
+That claim rests on one flag:
+
+- The request sends **`include_answer: false`**. Tavily will otherwise return an LLM-written answer to the query, and
+  taking it would put reasoning on a provider that is not the gateway — the track's one fatal rule
+- It also sends `include_raw_content: false`, so a prompt cannot be filled with a scraped page
+- `src/server/retrieval/tavily.test.ts` asserts both flags on the source, and asserts no `answer` field is ever read off
+  the response
+- `only-gonkarouter.test.ts` holds `src/server/retrieval/` to the same "decides nothing" rule the two provider
+  directories are held to: it may not import the verdict rule, the schema, the round or the gateway client
+
+`src/server/retrieval/` is therefore **not a third exemption**. The two exemptions in
+[Track requirements](../AGENTS.md#track-requirements) are directories that call a model; this one does not.
+
+### What runs, and when
+
+One search per item, before the round, in `src/server/queue/worker.ts`:
+
+1. `evidenceQuery` builds a query from subject, stem and option texts. **The supplied key is never in it** — a search
+   containing the key returns pages that agree with the key, and the reader would then be shown evidence selected to
+   confirm the very thing under test. The function takes no key argument at all, which a test asserts on its arity
+1. At most four results, snippets capped at 500 characters, 8 s timeout, `search_depth: 'basic'`
+1. Both readers are shown **the same** snippets. Retrieving per reader would make their disagreement a disagreement
+   about evidence rather than about the question, and would cost four searches an item instead of one
+1. The snippets go into the solver prompt under a heading that says they are background, not authority
+
+**Retrieval never blocks a verdict.** Every failure path — no key, timeout, non-200, unparseable body — returns `[]`,
+and the round proceeds exactly as it did before this existed. A deployment with no `TAVILY_API_KEY` is the product as it
+shipped on 5 September.
+
+### Grounding, and what it does to the score
+
+Each reader reports a `grounding` alongside its answer: what the retrieved text did to **its own** answer.
+
+| Value          | Means                                         |
+| -------------- | --------------------------------------------- |
+| `supported`    | The retrieved pages back this reader's answer |
+| `contradicted` | They point at a different option              |
+| `absent`       | They do not settle this question              |
+
+`absent` is the default for an unrecognised or missing value, and the field is **omitted entirely** when retrieval
+returned nothing — a reading with no evidence is a different fact from a reading whose evidence said nothing.
+
+The Truth Score ([section 14](#truth-score)) folds grounding in as a **confidence adjustment, never a vote**. 0.5 is the
+neutral contribution, and grounding scales a reading's distance from it:
+
+| Grounding      | Scale | Effect                                         |
+| -------------- | ----- | ---------------------------------------------- |
+| `supported`    | 1.2   | The reading counts for more, clamped to [0, 1] |
+| `absent`       | 1.0   | Unchanged                                      |
+| `contradicted` | 0.5   | The reading counts for half as much            |
+
+The asymmetry is the design. **A web search cannot outrank two receipt-verified readings** — it can only make them count
+for more or less, never flip one into meaning its opposite, because a verdict moved by a page nobody receipted would
+have no proof behind it. And `absent` must be exactly neutral: most exam items have no page that settles them, so
+treating silence as doubt would mark down every well-written question on an unusual topic.
+
+Readings written before this existed carry no `grounding` and score exactly as they did, so the change is backwards
+compatible on rows already in the database. No migration was needed either: `grounding` and `sources` ride inside the
+existing `reading_json` column.
+
+`corroboration()` tallies a record per item, not per reading: an item counts as supported only when **both** readers
+said so, and as contradicted when **either** did. A single reader noticing the web disagrees is worth surfacing; a
+single reader agreeing is not worth claiming.
+
+### What a reader sees
+
+`EvidencePanel` prints, under the two reader columns, every page that was retrieved — title, live link and the quoted
+snippet. They are links because the claim is checkable or it is nothing. Each reader column carries one sentence saying
+what the evidence did to that reader's answer. The record summary carries a one-line tally, and renders nothing at all
+when `retrieved` is zero, so a record checked without retrieval never implies the web was consulted.

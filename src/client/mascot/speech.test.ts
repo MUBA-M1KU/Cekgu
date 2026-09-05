@@ -57,6 +57,7 @@ function record(items: Item[]): RecordDetail {
     expiresAt: null,
     counts: { clear: 0, possible_key_error: 0, possible_ambiguity: 0, split_opinion: 0, unverified: 0, pending: 0 },
     truthScore: { score: null, scored: 0, total: 0 },
+    corroboration: { supported: 0, contradicted: 0, absent: 0, retrieved: 0 },
     items
   }
 }

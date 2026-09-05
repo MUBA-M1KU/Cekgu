@@ -271,6 +271,21 @@ the key, so the consensus logic is explicit to a reader who has not seen this do
   Stack. Rule: two verified readings agree on a non-key option, so Possible Key Error"
 - The screen also states the fail-closed rule in one sentence wherever **Unverified** is shown
 
+**FR-VERDICT-6.** Where a retrieval key is configured, both readers are shown the same live search results for the item
+before they answer, and every page shown is listed with a live link and the quoted text. **Added 6 September 2026**,
+closing the decentralized-verification gap the compliance audit recorded: cross-verification ran on model knowledge
+alone, with no live external step.
+
+- The query carries subject, stem and options and **never the supplied key**, so the evidence cannot be selected to
+  confirm the thing under test
+- Retrieval decides nothing. It calls no model, and every judgement still comes from two Gonka readings with request ids
+- Retrieval never blocks a verdict. Given no key, a timeout, a non-200 or an unparseable body, then the round proceeds
+  on model knowledge alone and every verdict fires exactly as it did before
+- Each reader reports what the evidence did to its own answer, and that adjusts confidence in that reading only. It can
+  never invert a reading or outrank the pair
+- Given retrieval found nothing, then the score is identical to the same item with no retrieval at all
+- Given retrieval never ran on a record, then no screen implies the web was consulted
+
 **FR-VERDICT-5.** A verdict is never _replaced_ by a percentage, score or confidence number. **Amended 6 September
 2026**, superseding the original wording, which forbade a number anywhere. The GonkaRouter track brief asks for a Truth
 Score from 0 to 100 and the original requirement made that impossible to meet; the compliance audit recorded it as the
@@ -512,6 +527,7 @@ contract and where request ids are rendered without reading the code.
 | As an educator, I sign in and see only my own records                                                      | FR-AUTH-1, FR-RECORD-5                  |
 | As an educator, I type a small quiz and am told about a missing key before anything is sent                | FR-CHECK-1, FR-CHECK-2                  |
 | As an educator, I paste a link to a paper already online and correct the draft it fills in                 | FR-CHECK-6, FR-CHECK-2                  |
+| As an educator, I see the web pages the readers were shown and open them myself                            | FR-VERDICT-6, FR-EVIDENCE-1             |
 | As an educator, I submit and can close the tab, then come back to the same progress                        | FR-CHECK-3, FR-QUEUE-4, FR-AUTH-1       |
 | As an educator, I open a ready record and see the risky items first with the rule that flagged each        | FR-RECORD-3, FR-VERDICT-3, FR-VERDICT-4 |
 | As an educator, I compare two blind readings and their receipts before deciding                            | FR-EVIDENCE-1, FR-EVIDENCE-3            |
