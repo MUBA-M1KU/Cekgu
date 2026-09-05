@@ -322,14 +322,14 @@ test('signing in returns the visitor to the page they were refused', async ({ pa
 // redesign in #44 rewrites the surface around it.
 const NOTICES = ['/terms', '/privacy', '/acceptable-use']
 
-test('every notice is reachable from Trust and Privacy', async ({ page }) => {
-  await page.goto('/trust')
+test('every notice is reachable from the landing page', async ({ page }) => {
+  await page.goto('/')
 
-  // Scoped to the section: the footer carries the same three hrefs, so an unscoped locator
-  // matches twice and fails on strict mode rather than on the thing being asserted.
-  const trust = page.locator('#trust')
+  // The landing carried these as cards in the Trust section until they moved to the footer, which
+  // is now the only place on the page that has them.
+  const footer = page.getByRole('navigation', { name: 'Legal' })
   for (const href of NOTICES) {
-    await expect(trust.locator(`a[href="${href}"]`)).toBeVisible()
+    await expect(footer.locator(`a[href="${href}"]`)).toBeVisible()
   }
 })
 
