@@ -72,7 +72,7 @@ test.describe('the live demo walk', () => {
     await expect(page.getByRole('button', { name: 'Show Evidence' })).toHaveCount(2)
 
     // 4. Evidence opens inline beneath the item, not on a new page.
-    const item = page.locator('li').filter({ hasText: /first in, first out/i })
+    const item = page.locator('li[data-item-position]').filter({ hasText: /first in, first out/i })
     await item.getByRole('button', { name: 'Show Evidence' }).click()
     await expect(item.getByText('Evidence').first()).toBeVisible()
 
@@ -111,7 +111,7 @@ test.describe('the live demo walk', () => {
   })
 
   test('recording a decision drops the attention count and leaves the verdict alone', async () => {
-    const item = page.locator('li').filter({ hasText: /first in, first out/i })
+    const item = page.locator('li[data-item-position]').filter({ hasText: /first in, first out/i })
     const before = Number(((await page.getByText(/items? needs? attention/).textContent()) ?? '').replace(/\D+/g, ''))
     expect(before).toBeGreaterThan(0)
 
