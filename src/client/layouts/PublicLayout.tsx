@@ -50,7 +50,11 @@ export function PublicLayout() {
   }
 
   return (
-    <div className="min-h-dvh bg-paper">
+    // A column, not a block. min-h-dvh alone only guarantees the container reaches the viewport
+    // floor; it says nothing about where the footer inside it lands, so on a page shorter than the
+    // viewport the footer sat directly under the content with the remaining paper below it. Every
+    // other public route is long enough to hide that, which is why it only ever showed on a receipt.
+    <div className="flex min-h-dvh flex-col bg-paper">
       {/* data-glass only where there is media behind the bar for the blur to act on. Everywhere
           else it is solid: a translucent bar over a flat ground is not glass, it is see-through. */}
       <header
@@ -96,11 +100,14 @@ export function PublicLayout() {
       {/* The landing is full-bleed: its sections carry their own grounds and their own measure.
           The sample report is a working surface with filters and evidence side by side, so it
           takes the workspace measure rather than the prose one. */}
-      <main className={overHero ? undefined : 'mx-auto w-full max-w-[76rem] px-4 py-6 sm:px-6'}>
+      {/* grow, so the slack on a short page goes here and the footer keeps the floor. */}
+      <main className={overHero ? 'grow' : 'mx-auto w-full max-w-[76rem] grow px-4 py-6 sm:px-6'}>
         <Outlet />
       </main>
 
-      <footer className="public-footer" role="contentinfo">
+      {/* shrink-0 because .public-footer sets a definite height and a flex child would otherwise
+          give it up to a long page. */}
+      <footer className="public-footer shrink-0" role="contentinfo">
         <SiteFooter />
       </footer>
 
