@@ -9,6 +9,14 @@ function optional(name: string): string | null {
   return value && value.length > 0 ? value : null
 }
 
+function parsePositiveInt(name: string, defaultValue: number, max?: number): number {
+  const value = process.env[name]
+  if (!value) return defaultValue
+  const parsed = Number(value)
+  if (!Number.isInteger(parsed) || parsed <= 0) return defaultValue
+  return max !== undefined ? Math.min(parsed, max) : parsed
+}
+
 const googleClientId = optional('GOOGLE_CLIENT_ID')
 const googleClientSecret = optional('GOOGLE_CLIENT_SECRET')
 const geminiApiKey = optional('GEMINI_API_KEY')
@@ -30,6 +38,9 @@ export const env = {
   // instance nobody has reviewed yet must not apply migrations or run a delete loop against those rows.
   migrateOnStart: process.env.MIGRATE_ON_START !== 'false',
   workerEnabled: process.env.WORKER_ENABLED !== 'false',
+  // One loop is the measured default. More loops let a small record progress beside a large one,
+  // and the semaphore, not this number, bounds the gateway.
+  workerConcurrency: parsePositiveInt('WORKER_CONCURRENCY', 1, 4),
   // Google stays optional so a deployment without an OAuth client still boots with
   // email and Guest sign-in working. FR-AUTH-2 is the demo path, not Google.
   google: googleClientId && googleClientSecret ? { clientId: googleClientId, clientSecret: googleClientSecret } : null,

@@ -14,15 +14,6 @@ const PUBLIC_NAV = [
   { href: '/#trust', label: 'Trust and Privacy' }
 ]
 
-// The three notices this branch adds. The other footer links this list used to carry are now in
-// SiteFooter, which the app shell shows too; these are public-only, so they are passed in rather
-// than baked into the shared block.
-const LEGAL_LINKS = [
-  { href: '/terms', label: 'Terms' },
-  { href: '/privacy', label: 'Privacy' },
-  { href: '/acceptable-use', label: 'Acceptable Use' }
-]
-
 // Prose, not a workspace: one column held to a reading measure. These three are the only public
 // routes that are documents rather than tools.
 const NOTICES = ['/terms', '/privacy', '/acceptable-use']
@@ -131,7 +122,7 @@ export function PublicLayout() {
       {/* shrink-0 because .public-footer sets a definite height and a flex child would otherwise
           give it up to a long page. */}
       <footer className="public-footer shrink-0" role="contentinfo" data-reveal={revealFooter ? 'true' : undefined}>
-        <SiteFooter legal={LEGAL_LINKS} />
+        <SiteFooter />
       </footer>
 
       <BackToTop />

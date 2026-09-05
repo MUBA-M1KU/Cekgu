@@ -383,6 +383,7 @@ GUEST_EMAIL=                                            # The one seeded Guest u
 GUEST_PASSWORD=                                         # Used server-side only by POST /api/auth/guest
 
 MASCOT_ENABLED=false                                    # FR-MASCOT-1 feature flag. true for the demo
+WORKER_CONCURRENCY=1                                    # Concurrent worker loops, default 1, maximum 4
 
 GEMINI_API_KEY=                                         # Transcription only, section 20. Absent, uploads are off
 GEMINI_MODEL=gemini-2.5-flash                           # Verify against GET /v1beta/models before changing this
@@ -491,6 +492,12 @@ Artifact Registry Docker repository `cekgu` in the same region, at
 | Request timeout | 300 s                        | SSE connections in section 15 stay open; the client reconnects after this      |
 | Ingress, auth   | All traffic, unauthenticated | The app does its own auth; judges open the URL cold                            |
 
+**Every push to `main` deploys, and `--max-instances 1` means a rollout replaces the single instance.** Whatever it was
+serving dies with it (a chat answer mid-stream, a live check, a recording take); raising max instances does not help
+because the old revision still drains. Do not merge to `main` while anyone is recording, rehearsing or demoing, and
+batch merges into a window nobody is demoing against. A min-instances plus traffic-splitting change is the real fix and
+is deferred until after the event.
+
 **Why Cloud Run, and one region.** The team lead's GCP project is the account the team can reach by CLI today, and Cloud
 Run is the one managed runtime there that keeps a process alive between requests without a VM to patch. Singapore is the
 closest region to the Kuala Lumpur demo and to the Neon database, so the two hops the product cannot avoid, browser to
@@ -523,6 +530,10 @@ runs `gcloud run services update-traffic cekgu --remove-tags pr-<number>` so rev
 
 **On merge to `main`** (`deploy.yml`): the same steps, then `gcloud run deploy cekgu --image <sha image>` with traffic,
 so the production URL always runs the head of `main`.
+
+**`scripts/deploy-local.sh` reproduces the production deploy from a laptop when Actions cannot run.** It inherits the
+live environment variables from the previous Cloud Run revision, so secrets live in GitHub and production, never in a
+laptop `.env`. Requires a logged-in `gcloud` and a running Docker daemon.
 
 **Traffic is routed explicitly, and the routing is asserted.** A preview deploy rewrites the service's traffic block
 from the implicit "latest revision" pointer to an explicit revision pin. Once pinned, a plain `gcloud run deploy`
@@ -804,8 +815,9 @@ and is refused by every mutating route except dispositions (FR-SAMPLE-2, FR-SAMP
 
 ## 13. Queue and worker
 
-The worker is a loop inside the server process. It claims one queued item at a time, runs its reading round, writes the
-verdict, and goes back for the next. It discharges FR-QUEUE-1 to FR-QUEUE-3 and NFR-OPS-1.
+The worker runs WORKER_CONCURRENCY loops inside the server process, each claiming one queued item at a time, running its
+reading round, and going back for the next; the semaphore caps gateway calls at four regardless. It discharges
+FR-QUEUE-1 to FR-QUEUE-3 and NFR-OPS-1.
 
 **Why this shape.** The 3 September benchmark ([section 3](#3-models-measured)) showed that no item obtained two
 verified readings inside 30 seconds and that a 36-call fan-out was refused. A queue with a small fixed cap is the only

@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import { NavLink } from 'react-router'
+import { Link, NavLink } from 'react-router'
 import { DashboardIcon, NewCheckIcon, RecordsIcon, SettingsIcon } from './icons'
 import { Mark } from './Mark'
 
@@ -32,10 +32,12 @@ const GROUPS: { heading: string; items: RailItem[] }[] = [
 export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="app-sidebar">
-      <NavLink to="/dashboard" className="app-sidebar-logo" aria-label="Cekgu, dashboard" onClick={onNavigate}>
+      {/* Link, not NavLink: NavLink to "/" matches every path below it, so the wordmark would
+          announce itself as the current page on every screen in the shell. */}
+      <Link to="/" className="app-sidebar-logo" aria-label="Cekgu, home" onClick={onNavigate}>
         <Mark className="h-6 w-6 shrink-0" />
         <span className="app-sidebar-text font-ui text-[1.0625rem] font-bold tracking-[-0.02em]">Cekgu</span>
-      </NavLink>
+      </Link>
 
       <nav className="app-sidebar-nav" aria-label="Workspace">
         {GROUPS.map((group) => (

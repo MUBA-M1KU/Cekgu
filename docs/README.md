@@ -150,7 +150,7 @@ The product is built for practice papers and synthetic examples, not for confide
    corrected the key, revised the wording, confirmed the key, dismissed the flag, or asked for a retry. That decision is
    stored with the item.
 
-   <img src="assets/record-decisions.png" alt="A record with a corrected key, a Possible Ambiguity item, and an Unverified item offering Retry Verification" width="100%">
+   <img src="assets/record-decisions.png" alt="A record with a corrected key, a Possible Ambiguity item, and a Clear item carrying a Retry Requested decision" width="100%">
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
