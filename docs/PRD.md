@@ -259,9 +259,24 @@ the key, so the consensus logic is explicit to a reader who has not seen this do
   Stack. Rule: two verified readings agree on a non-key option, so Possible Key Error"
 - The screen also states the fail-closed rule in one sentence wherever **Unverified** is shown
 
-**FR-VERDICT-5.** A verdict is never expressed as a percentage, score or confidence number.
+**FR-VERDICT-5.** A verdict is never _replaced_ by a percentage, score or confidence number. **Amended 6 September
+2026**, superseding the original wording, which forbade a number anywhere. The GonkaRouter track brief asks for a Truth
+Score from 0 to 100 and the original requirement made that impossible to meet; the compliance audit recorded it as the
+one unmet mandatory item.
 
-- No verdict chip, summary or evidence panel displays a numeric confidence
+What the original decision was protecting is kept. PRODUCT.md's reason was that "a precise-looking score would hide the
+different operational actions each state requires" — so the score is additive, never a substitute:
+
+- The five-outcome verdict remains the primary signal on every item, in words, and is what the disposition controls and
+  the attention count key off. Nothing in the product routes off the number
+- No verdict chip contains a number. The score sits beside the chip as a separate mark, and the chip is unchanged
+- The score is derived from the same two readings the rule used, by a pure function over them
+  ([TRD section 14](TRD.md#truth-score)), so it cannot disagree with the verdict beside it
+- **Unverified** carries no score at all, rather than a zero, so a missing reading is never rendered as a bad key
+- Any record-level figure is shown with the number of items it was computed over
+
+This requirement does **not** license an accuracy or correctness percentage. Publishing one still needs the labelled set
+named in [Success measures](PRODUCT.md#success-measures).
 
 ### Records
 

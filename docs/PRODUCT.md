@@ -275,8 +275,15 @@ record changes from processing to ready; the submission demo relies on in-app st
 | **Split Opinion**      | Two distinct verified readings commit incompatible single answers                                                                    | Expert judgment is required               | Majority vote may silently decide |
 | **Unverified**         | Fewer than two distinct receipt-verified readings survive the attempt                                                                | The evidence threshold was not reached    | The question is good or bad       |
 
-The initial product does not collapse these states into a percentage confidence score. A precise-looking score would
-hide the different operational actions each state requires.
+The product does not collapse these states into a percentage confidence score. A precise-looking score would hide the
+different operational actions each state requires, so the five states above stay the signal an educator acts on.
+
+A Truth Score from 0 to 100 is shown **beside** them, not instead of them, because the GonkaRouter track brief asks for
+one. It is computed from the two readings the verdict already used and adds granularity the categories cannot carry —
+two Clear items score 100 and 88 when one had a reader that hedged. It never decides anything: no disposition, attention
+count or record status reads it. See [`PRD.md` FR-VERDICT-5](PRD.md#verdicts) and
+[`TRD.md` section 14](TRD.md#truth-score). This is not an accuracy percentage, which still needs the labelled set named
+in [Success measures](#success-measures).
 
 ### Human dispositions
 
