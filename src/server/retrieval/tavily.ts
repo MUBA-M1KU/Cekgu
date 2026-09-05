@@ -66,6 +66,15 @@ export async function searchEvidence(query: string): Promise<Source[]> {
   return asSources(body)
 }
 
+function isHttpUrl(value: string): boolean {
+  try {
+    const parsed = new URL(value)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 function asSources(body: unknown): Source[] {
   if (typeof body !== 'object' || body === null) return []
   const results = (body as { results?: unknown }).results
@@ -78,6 +87,13 @@ function asSources(body: unknown): Source[] {
     const url = row.url
     const snippet = row.content
     if (typeof url !== 'string' || typeof snippet !== 'string' || !snippet.trim()) continue
+    // Validated here because this is the boundary. The value is persisted, returned by the API and
+    // rendered into an href the viewer can click, and ExternalLink hands it to window.open — which,
+    // unlike React's href, will happily run a javascript: URL.
+    if (!isHttpUrl(url)) continue
+    // The same page can rank twice. Two identical entries buy the readers nothing and give the
+    // evidence list a duplicate React key.
+    if (sources.some((existing) => existing.url === url)) continue
 
     sources.push({
       title: typeof row.title === 'string' && row.title.trim() ? row.title : url,

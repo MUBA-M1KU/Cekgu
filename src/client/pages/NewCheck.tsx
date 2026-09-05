@@ -153,37 +153,35 @@ export function NewCheck() {
 
   // Nothing is written until the whole draft has parsed, whichever input produced it.
   function applyDraft(response: ExtractResponse, subject: string) {
-    {
-      const draft = createRecordSchema.safeParse(response.draft)
+    const draft = createRecordSchema.safeParse(response.draft)
 
-      if (!draft.success) {
-        setExtractError(`We could not read a usable paper out of ${subject}. Try another, or type it in.`)
-        return
-      }
-
-      setTitle(draft.data.title)
-      setSubject(draft.data.subject)
-      setLanguage(draft.data.language)
-      setContext(draft.data.context ?? '')
-      setItems(
-        draft.data.items.map((item) => ({
-          id: crypto.randomUUID(),
-          stem: item.stem,
-          options: item.options.map((option) => ({ ...option })),
-          key: item.key
-        }))
-      )
-      // Errors on screen were about the form before this paper landed in it.
-      setErrors({})
-      setPrefilled(true)
-      setExtraction({
-        requestId: response.provenance.requestId,
-        servedModel: response.provenance.servedModel,
-        receiptStatus: response.provenance.receiptStatus,
-        transcription: response.transcription ?? null,
-        warnings: response.warnings
-      })
+    if (!draft.success) {
+      setExtractError(`We could not read a usable paper out of ${subject}. Try another, or type it in.`)
+      return
     }
+
+    setTitle(draft.data.title)
+    setSubject(draft.data.subject)
+    setLanguage(draft.data.language)
+    setContext(draft.data.context ?? '')
+    setItems(
+      draft.data.items.map((item) => ({
+        id: crypto.randomUUID(),
+        stem: item.stem,
+        options: item.options.map((option) => ({ ...option })),
+        key: item.key
+      }))
+    )
+    // Errors on screen were about the form before this paper landed in it.
+    setErrors({})
+    setPrefilled(true)
+    setExtraction({
+      requestId: response.provenance.requestId,
+      servedModel: response.provenance.servedModel,
+      receiptStatus: response.provenance.receiptStatus,
+      transcription: response.transcription ?? null,
+      warnings: response.warnings
+    })
   }
 
   function clearForm() {

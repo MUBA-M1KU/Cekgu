@@ -193,7 +193,12 @@ export function EvidencePanel({ item }: { item: Item }) {
   // Both readers were shown the same pages, so they are listed once under the pair rather than
   // twice inside it. Taken from whichever reader carries them, because a reading recorded before
   // live retrieval existed carries none.
-  const sources = readers.find((attempt) => attempt.reading?.sources?.length)?.reading?.sources ?? []
+  // Deduplicated on the way out as well as on the way in: a search can return the same page twice,
+  // and rows written before tavily.ts deduplicated may already carry one.
+  const retrieved = readers.find((attempt) => attempt.reading?.sources?.length)?.reading?.sources ?? []
+  const sources = retrieved.filter(
+    (source, index) => retrieved.findIndex((other) => other.url === source.url) === index
+  )
 
   return (
     <div className="mt-4 rounded-control bg-well p-4 sm:p-6">
