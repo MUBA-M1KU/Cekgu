@@ -38,6 +38,7 @@
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
+        <li><a href="#demo-video">Demo Video</a></li>
         <li><a href="#screenshots">Screenshots</a></li>
         <li><a href="#how-it-works">How It Works</a></li>
         <li><a href="#features">Features</a></li>
@@ -78,6 +79,23 @@ not mark a paper, does not certify a question as correct, and does not prove a q
 readers who agree are indistinguishable from an unambiguous question, and the sample record carries a real instance of
 that: a question written to be ambiguous came back **Clear** because both readers committed to the same single answer.
 The product is built for practice papers and synthetic examples, not for confidential or unreleased examinations.
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
+### Demo Video
+
+Four and a half minutes: the product walked end to end, then the case for it. Request ids and receipts are on screen
+throughout, because they are the claim.
+
+<a href="https://github.com/MUBA-M1KU/Cekgu/releases/download/demo-video-v1/Cekgu-Demo-Full.mp4">
+  <img src="assets/demo-poster.jpg" alt="Play the Cekgu demo video" width="100%">
+</a>
+
+<sub>
+  <a href="https://github.com/MUBA-M1KU/Cekgu/releases/download/demo-video-v1/Cekgu-Demo-Full.mp4">Download the film
+  (33 MB)</a> &middot; 1:55 live walkthrough, then 2:35 of deck &middot; 1920&times;1080, narrated, subtitles burned in.
+  It is a release asset rather than a committed file: media stays out of the repository, so a clone does not carry it.
+</sub>
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
