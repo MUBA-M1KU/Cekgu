@@ -151,10 +151,10 @@ The product is built for practice papers and synthetic examples, not for confide
    the question, and both readers are shown the same snippets as background rather than authority. The supplied key is
    never in the query — searching for the key returns pages that agree with the key.
 
-   A record says which of two states it is in. Checked **with** retrieval, each reader reports what the pages did to
-   its answer, and every page is listed beneath the readings with a live link and the quoted text, so the evidence is
-   checkable rather than described. Checked **before** retrieval shipped, the record says so plainly rather than
-   leaving the feature looking absent. The sample report is in that second state and labels itself accordingly.
+   A record says which of two states it is in. Checked **with** retrieval, each reader reports what the pages did to its
+   answer, and every page is listed beneath the readings with a live link and the quoted text, so the evidence is
+   checkable rather than described. Checked **before** retrieval shipped, the record says so plainly rather than leaving
+   the feature looking absent. The sample report is in that second state and labels itself accordingly.
 
    This is a **search API, not a model**: it returns what other people published and forms no opinion. `include_answer`
    is hard-coded false, because Tavily's own generated answer would be reasoning on a provider that is not the gateway,
