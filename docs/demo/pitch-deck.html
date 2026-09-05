@@ -915,7 +915,7 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
-        gap: 40px;
+        gap: 16px;
         padding-top: 22px;
         border-top: 1px solid var(--rule);
         font-family: var(--font-mono);
@@ -1477,13 +1477,19 @@
       .sdg {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
       }
       .sdg svg {
-        width: 56px;
-        height: 56px;
+        width: 76px;
+        height: 76px;
         border-radius: 6px;
         flex-shrink: 0;
+      }
+      /* The cover is read from the back of the room, so its badges take every
+         pixel the footer's right column does not need. */
+      .cover-foot .sdg svg {
+        width: 92px;
+        height: 92px;
       }
       .sdg {
         flex-shrink: 0;
@@ -1491,9 +1497,9 @@
       .sdg-lbl {
         white-space: nowrap;
         font-family: var(--font-mono);
-        font-size: 15px;
+        font-size: 14px;
         line-height: 1.35;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.05em;
         text-transform: uppercase;
         color: var(--ink-muted);
       }
@@ -2216,7 +2222,7 @@
 
                 <div class="cover-foot">
                   <div class="sdg">
-                    <span class="sdg-lbl">Aligned with<br />UN Global Goals 4 and 16</span>
+                    <span class="sdg-lbl">Aligned with UN Global<br />Goals 4 and 16</span>
                     <svg viewBox="0 0 100 100" role="img" aria-label="SDG 4, Quality Education"><use href="#sdg4" /></svg>
                     <svg viewBox="0 0 100 100" role="img" aria-label="SDG 16, Peace, Justice and Strong Institutions"><use href="#sdg16" /></svg>
                   </div>
@@ -2858,7 +2864,7 @@
           <div class="head">
             <p class="eyebrow">4. Technology and track</p>
             <h2 class="title">One server, one gateway, <em>two models.</em></h2>
-            <p class="sub">Every model call in this product leaves from one file, and that file only knows how to reach GonkaRouter.</p>
+            <p class="sub">Every model call leaves from one file, and that file only knows how to reach GonkaRouter.</p>
           </div>
 
           <div class="body">
@@ -2868,84 +2874,94 @@
                 role="img"
                 aria-label="Architecture. The browser posts a paper to a single Bun process on Cloud Run, which runs the Hono API and the queue worker and stores records in Neon Postgres. Both reach GonkaRouter through one gateway client, which calls two models, MiniMax and Kimi, and then checks each receipt."
               >
+                <!-- Three group labels on one baseline, three boxes whose tops
+                     line up under them, and one 27.5 inset used by every box on
+                     the slide. -->
                 <text class="label f-muted" x="0" y="20" font-size="19">BROWSER</text>
+                <text class="label f-muted" x="452.5" y="20" font-size="19">GOOGLE CLOUD RUN &middot; ONE BUN PROCESS</text>
+                <use href="#lg-googlecloud" x="934" y="0" width="24" height="24" />
+                <use href="#lg-bun" x="966" y="0" width="24" height="24" />
                 <text class="label f-muted" x="1300" y="20" font-size="19">GONKAROUTER</text>
 
-                <!-- The deployment boundary is drawn, not described: everything
-                     inside the dashed rule is the one container image. -->
-                <rect x="420" y="0" width="740" height="372" rx="14" class="s-rule" stroke-dasharray="9 9" />
-                <use href="#lg-googlecloud" x="448" y="16" width="26" height="26" />
-                <use href="#lg-bun" x="482" y="16" width="26" height="26" />
-                <text class="label f-muted" x="520" y="35" font-size="19">GOOGLE CLOUD RUN &middot; ONE BUN PROCESS</text>
+                <rect x="420" y="36.5" width="748" height="339" rx="14" class="s-rule" stroke-dasharray="9 9" />
 
-                <rect x="0.5" y="36.5" width="251" height="169" rx="10" class="card-s" />
-                <text class="f-ink" x="28" y="76" font-size="25">Cekgu web app</text>
-                <use href="#lg-react" x="28" y="98" width="30" height="30" />
-                <text class="f-muted" x="70" y="120" font-size="21">React 19</text>
-                <use href="#lg-vite" x="28" y="144" width="30" height="30" />
-                <text class="f-muted" x="70" y="166" font-size="21">Vite</text>
+                <rect x="0.5" y="36.5" width="251" height="179" rx="10" class="card-s" />
+                <text class="f-ink" x="28" y="78" font-size="25">Cekgu web app</text>
+                <use href="#lg-react" x="28" y="100" width="30" height="30" />
+                <text class="f-muted" x="70" y="122" font-size="21">React 19</text>
+                <use href="#lg-vite" x="28" y="148" width="30" height="30" />
+                <text class="f-muted" x="70" y="170" font-size="21">Vite</text>
 
-                <path class="conn" d="M252 121 H412" />
-                <path class="conn" d="M403 115 L412 121 L403 127" />
-                <text class="mono f-muted" x="332" y="103" font-size="16" text-anchor="middle">POST /api/checks</text>
+                <path class="conn" d="M252 126 H412" />
+                <path class="conn" d="M403 120 L412 126 L403 132" />
+                <text class="mono f-muted" x="336" y="108" font-size="16" text-anchor="middle">POST /api/checks</text>
 
-                <rect x="452.5" y="54.5" width="319" height="123" rx="10" class="card-s" />
-                <use href="#lg-hono" x="478" y="74" width="28" height="28" />
-                <text class="f-ink" x="516" y="97" font-size="25">Hono API</text>
-                <text class="f-muted" x="478" y="133" font-size="19">Validates the paper and writes</text>
-                <text class="f-muted" x="478" y="159" font-size="19">the record before any model runs.</text>
+                <rect x="452.5" y="64.5" width="319" height="123" rx="10" class="card-s" />
+                <use href="#lg-hono" x="480" y="84" width="28" height="28" />
+                <text class="f-ink" x="518" y="106" font-size="25">Hono API</text>
+                <text class="f-muted" x="480" y="142" font-size="18">Validates and writes the</text>
+                <text class="f-muted" x="480" y="168" font-size="18">record before any model runs.</text>
 
-                <rect x="452.5" y="210.5" width="319" height="123" rx="10" class="card-s" />
-                <use href="#lg-postgresql" x="478" y="230" width="28" height="28" />
-                <text class="f-ink" x="516" y="253" font-size="25">Queue worker</text>
-                <text class="f-muted" x="478" y="289" font-size="20">One question claimed at a time,</text>
-                <text class="mono f-muted" x="478" y="315" font-size="20">SKIP LOCKED</text>
-                <text class="f-muted" x="610" y="315" font-size="20">. Four in flight.</text>
+                <rect x="452.5" y="225.5" width="319" height="123" rx="10" class="card-s" />
+                <use href="#lg-postgresql" x="480" y="245" width="28" height="28" />
+                <text class="f-ink" x="518" y="267" font-size="25">Queue worker</text>
+                <text class="f-muted" x="480" y="303" font-size="18">Claims one question at a time.</text>
+                <text class="mono f-muted" x="480" y="329" font-size="17">SKIP LOCKED &middot; 4 in flight</text>
 
                 <!-- Both halves of the process reach the network through the
                      same box, which is the point of the slide. -->
-                <path class="conn" d="M772 116 H792 V194 H804" />
-                <path class="conn" d="M772 272 H792 V194" />
-                <path class="conn" d="M803 188 L812 194 L803 200" />
+                <path class="conn" d="M772 126 H792 V206.5 H804" />
+                <path class="conn" d="M772 287 H792 V206.5" />
+                <path class="conn" d="M803 200.5 L812 206.5 L803 212.5" />
 
-                <rect x="812.5" y="110.5" width="327" height="167" rx="10" class="card-s" />
-                <text class="f-ink" x="840" y="151" font-size="25">Gateway client</text>
-                <text class="mono f-muted" x="840" y="185" font-size="20">src/server/gateway/</text>
-                <text class="f-muted" x="840" y="217" font-size="20">The only file that calls out.</text>
-                <text class="mono f-ink" x="840" y="251" font-size="20">X-Gonka-No-Fallback</text>
+                <rect x="812.5" y="123" width="327" height="167" rx="10" class="card-s" />
+                <text class="f-ink" x="840" y="165" font-size="25">Gateway client</text>
+                <text class="mono f-muted" x="840" y="199" font-size="20">src/server/gateway/</text>
+                <text class="f-muted" x="840" y="231" font-size="20">The only file that calls out.</text>
+                <text class="mono f-ink" x="840" y="263" font-size="20">X-Gonka-No-Fallback</text>
 
-                <path class="conn" d="M1140 194 H1292" />
-                <path class="conn" d="M1283 188 L1292 194 L1283 200" />
-                <text class="f-muted" x="1216" y="180" font-size="18" text-anchor="middle">two model calls</text>
+                <path class="conn" d="M1140 206.5 H1292" />
+                <path class="conn" d="M1283 200.5 L1292 206.5 L1283 212.5" />
+                <text class="f-muted" x="1234" y="190" font-size="16" text-anchor="middle">two model calls</text>
 
                 <rect x="1300.5" y="36.5" width="435" height="339" rx="10" class="card-s" />
-                <text class="f-ink" x="1332" y="82" font-size="28">GonkaRouter</text>
-                <text class="mono f-muted" x="1332" y="114" font-size="20">api.gonkarouter.io</text>
+                <text class="mono f-muted" x="1328" y="70" font-size="20">api.gonkarouter.io</text>
 
-                <rect x="1332" y="138" width="372" height="68" rx="8" class="f-well" />
-                <text class="mono f-ink" x="1356" y="168" font-size="20">MiniMaxAI/MiniMax-M2.7</text>
-                <text class="f-muted" x="1356" y="194" font-size="19">Reader A, answers blind</text>
+                <!-- Tororo reads first and Hijiki second, the same two seats the
+                     product puts on the evidence panel, so a judge who saw the
+                     cats in the demo meets them again here. The seat is the
+                     mascot; the model id beside it is the model. What is true of
+                     both readers is said once, under them, rather than twice
+                     inside the chips where it read as filler. -->
+                <rect x="1328" y="86" width="380" height="72" rx="8" class="f-well" />
+                <image href="assets/tororo.png" x="1348" y="94" width="56" height="56" />
+                <text class="mono f-ink" x="1420" y="118" font-size="20">MiniMaxAI/MiniMax-M2.7</text>
+                <text class="f-muted" x="1420" y="142" font-size="19">Reader A</text>
 
-                <rect x="1332" y="214" width="372" height="68" rx="8" class="f-well" />
-                <text class="mono f-ink" x="1356" y="244" font-size="20">moonshotai/Kimi-K2.6</text>
-                <text class="f-muted" x="1356" y="270" font-size="19">Reader B, answers blind</text>
+                <rect x="1328" y="168" width="380" height="72" rx="8" class="f-well" />
+                <image href="assets/hijiki.png" x="1348" y="176" width="56" height="56" />
+                <text class="mono f-ink" x="1420" y="200" font-size="20">moonshotai/Kimi-K2.6</text>
+                <text class="f-muted" x="1420" y="224" font-size="19">Reader B</text>
 
-                <path class="s-rule" d="M1332 302 H1704" />
-                <text class="mono f-ink" x="1332" y="332" font-size="20">GET /v1/receipts/{id}</text>
-                <text class="f-muted" x="1332" y="360" font-size="19">The served model must match.</text>
+                <text class="f-ink" x="1328" y="270" font-size="19">Neither reader sees the answer key,</text>
+                <text class="f-ink" x="1328" y="292" font-size="19">or the other reader&rsquo;s answer.</text>
 
-                <path class="conn" d="M612 334 V396" />
-                <path class="conn" d="M606 387 L612 396 L618 387" />
+                <path class="s-rule" d="M1328 312 H1708" />
+                <text class="mono f-ink" x="1328" y="342" font-size="20">GET /v1/receipts/{id}</text>
+                <text class="f-muted" x="1328" y="366" font-size="19">The served model must match.</text>
+
+                <path class="conn" d="M612 349 V400" />
+                <path class="conn" d="M606 391 L612 400 L618 391" />
 
                 <rect x="452.5" y="404.5" width="687" height="87" rx="10" class="card-s" />
-                <use href="#lg-neon" x="478" y="428" width="30" height="30" />
-                <use href="#lg-drizzle" x="518" y="428" width="30" height="30" />
-                <text class="f-ink" x="564" y="441" font-size="24">Neon Postgres, Drizzle</text>
-                <text class="f-muted" x="564" y="471" font-size="20">Records, attempts and every request ID.</text>
+                <use href="#lg-neon" x="480" y="433" width="30" height="30" />
+                <use href="#lg-drizzle" x="520" y="433" width="30" height="30" />
+                <text class="f-ink" x="566" y="441" font-size="24">Neon Postgres, Drizzle</text>
+                <text class="f-muted" x="566" y="471" font-size="20">Records, attempts and every request ID.</text>
 
                 <text class="mono f-ink" x="1300" y="420" font-size="20">only-gonkarouter.test.ts</text>
-                <text class="f-muted" x="1300" y="448" font-size="19">Fails the build if any other provider host</text>
-                <text class="f-muted" x="1300" y="474" font-size="19">appears anywhere in the code.</text>
+                <text class="f-muted" x="1300" y="448" font-size="19">Fails the build if any other provider</text>
+                <text class="f-muted" x="1300" y="474" font-size="19">host appears anywhere in the code.</text>
               </svg>
             </div>
 
@@ -3184,7 +3200,7 @@
                   <div class="sdg">
                     <svg viewBox="0 0 100 100" role="img" aria-label="SDG 4, Quality Education"><use href="#sdg4" /></svg>
                     <svg viewBox="0 0 100 100" role="img" aria-label="SDG 16, Peace, Justice and Strong Institutions"><use href="#sdg16" /></svg>
-                    <span class="sdg-lbl">Aligned with<br />UN Global Goals 4 and 16</span>
+                    <span class="sdg-lbl">Aligned with UN Global<br />Goals 4 and 16</span>
                   </div>
                   <p class="close-team">Team M1KU &middot; @chaosiris &middot; @AlaskanTuna &middot; @kymil4 &middot; @c3638<br />MUBA Blockchain Hackathon 2026 &middot; GonkaRouter Track<br />Submitted on Devfolio</p>
                 </div>
