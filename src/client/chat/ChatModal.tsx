@@ -1,10 +1,11 @@
 import { useEffect, useId, useRef } from 'react'
 import type { ChatMessage, Citation } from '../../shared/chat'
-import { CloseIcon } from '../components/icons'
+import { CloseIcon, VoiceOffIcon, VoiceOnIcon } from '../components/icons'
 import { useLiveViewport } from '../mascot/Mascot'
 import { STAGE_HEIGHT, STAGE_WIDTH } from '../mascot/motions'
-import { useReduceMotion } from '../mascot/preferences'
+import { setMuted, useMuted, useReduceMotion } from '../mascot/preferences'
 import { Stage } from '../mascot/Stage'
+import { type SpeechHandle, speak } from '../mascot/voice'
 import { Composer } from './Composer'
 import { ToolTrace, type TracedTool } from './ToolTrace'
 import { Transcript } from './Transcript'
@@ -71,6 +72,35 @@ export function ChatModal({ open, messages, pending, tools, suggestions, onSend,
     if (region && turns > 0) region.scrollTop = region.scrollHeight
   }, [turns])
 
+  // The cats read their own answers. Everywhere else in the product they speak what they found and
+  // this was the one surface where they were addressed directly and stayed silent.
+  //
+  // Keyed on the message id rather than on the array, because the transcript re-renders on every
+  // tool frame and a length check would start the same answer again mid-sentence. The id is also
+  // what makes this idempotent across a reopen: an answer already spoken is not spoken twice.
+  const muted = useMuted()
+  const handle = useRef<SpeechHandle | null>(null)
+  const spoken = useRef<string | null>(null)
+  const answer = messages.findLast((message) => message.role === 'agent') ?? null
+
+  useEffect(() => {
+    if (!open || !answer || muted || spoken.current === answer.id) return
+    spoken.current = answer.id
+    handle.current?.cancel()
+    // seat 0 when the line is Cekgu's own rather than a quoted reading, so an answer that cites
+    // neither reader still comes out in a voice rather than in silence.
+    handle.current = speak([{ seat: answer.seat ?? 0, text: answer.text, caption: answer.text, cite: null }], {
+      muted: false
+    })
+  }, [open, answer, muted])
+
+  // Closing the modal is a reason to stop talking, and so is unmounting it.
+  useEffect(() => {
+    if (!open) handle.current?.cancel()
+  }, [open])
+
+  useEffect(() => () => handle.current?.cancel(), [])
+
   return (
     <dialog
       ref={dialogRef}
@@ -102,23 +132,43 @@ export function ChatModal({ open, messages, pending, tools, suggestions, onSend,
       </header>
 
       {/* Centre stage, and at full size. The cats are the interface here rather than an ornament in
-          a corner: this is the one surface in the product where a person is addressing them. */}
-      <div
-        data-chat-stage
-        aria-hidden="true"
-        className="pointer-events-none mt-2 flex shrink-0 justify-center overflow-hidden"
-        style={{ height: `${live ? STAGE_HEIGHT : SMALL.h}px` }}
-      >
-        {open && live && !reduceMotion ? (
-          <Stage state={pending ? 'checking' : 'idle'} />
-        ) : (
-          <img
-            src="/brand/mascot-still.png"
-            alt=""
-            width={live ? STAGE_WIDTH : SMALL.w}
-            height={live ? STAGE_HEIGHT : SMALL.h}
-          />
-        )}
+          a corner: this is the one surface in the product where a person is addressing them.
+
+          The mute control is absolutely placed rather than laid out beside the stage, so the cats
+          stay centred in the modal and the button keeps the same relationship to them it has in the
+          summary card: mute on the left, cats on the right. */}
+      <div className="relative mt-2 flex shrink-0 items-end justify-center">
+        <button
+          type="button"
+          onClick={() => {
+            if (!muted) handle.current?.cancel()
+            setMuted(!muted)
+          }}
+          aria-pressed={muted}
+          className="btn btn-ghost btn-sm absolute bottom-0 left-0"
+          title={muted ? 'Unmute The Readers' : 'Mute The Readers'}
+        >
+          {muted ? <VoiceOffIcon /> : <VoiceOnIcon />}
+          <span className="sr-only">{muted ? 'Unmute The Readers' : 'Mute The Readers'}</span>
+        </button>
+
+        <div
+          data-chat-stage
+          aria-hidden="true"
+          className="pointer-events-none flex justify-center overflow-hidden"
+          style={{ height: `${live ? STAGE_HEIGHT : SMALL.h}px` }}
+        >
+          {open && live && !reduceMotion ? (
+            <Stage state={pending ? 'checking' : 'idle'} />
+          ) : (
+            <img
+              src="/brand/mascot-still.png"
+              alt=""
+              width={live ? STAGE_WIDTH : SMALL.w}
+              height={live ? STAGE_HEIGHT : SMALL.h}
+            />
+          )}
+        </div>
       </div>
 
       <div ref={scrollRef} aria-live="polite" className="min-h-0 flex-1 overflow-y-auto py-4">

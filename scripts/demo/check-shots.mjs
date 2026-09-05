@@ -248,9 +248,22 @@ export async function runShotChecks(options = {}) {
     // Shot 6 used to check for "The call passed the 90 second evidence cutoff." on the timed-out
     // row. #202 removed every per-attempt reason from this table at the owner's request; the string
     // is still on the record the API returns, but nothing renders it. The Status chip is what names
-    // a failed attempt now, and it is checked directly above. The footer is checked here instead
-    // because it carries the claim the shot is actually about - that nothing was hidden.
-    await check(6, 'Attempts footer', `text='${ATTEMPTS_FOOTER}' i`, item.getByText(new RegExp(ATTEMPTS_FOOTER, 'i')))
+    // a failed attempt now, and it is checked directly above.
+    //
+    // The sentence that carries the shot's actual claim - that nothing was hidden - moved from a
+    // paragraph under the table onto the heading over it, as a tooltip. So the anchor is the control
+    // that holds it and the assertion is on the text it would reveal, which is the same claim
+    // checked one layer in rather than a weaker check on a visible string.
+    await check(
+      6,
+      'Attempts rule',
+      `.attempts-tip[data-tip*='${ATTEMPTS_FOOTER}' i]`,
+      item.locator('.attempts-tip'),
+      async (locator) => {
+        const tip = (await locator.first().getAttribute('data-tip')) ?? ''
+        return tip.toLowerCase().includes(ATTEMPTS_FOOTER.toLowerCase())
+      }
+    )
 
     const keyCorrected = item.getByText(exactText('Key Corrected'))
     await check(7, 'Key Corrected', "text='Key Corrected' i", keyCorrected)

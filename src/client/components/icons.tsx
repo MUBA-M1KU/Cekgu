@@ -127,6 +127,23 @@ export const ChevronLeftIcon = (props: IconProps) => (
   </Icon>
 )
 
+export const ChevronDownIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M4.5 7.5 10 13l5.5-5.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+  </Icon>
+)
+
+// The family's own bubble, carrying a mark instead of a letter: the same ring the option bubbles
+// draw, so an explanation reads as one more thing the paper is telling you rather than a borrowed
+// help glyph.
+export const InfoIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.4" />
+    <circle cx="10" cy="6.6" r="0.95" fill="currentColor" />
+    <path d="M10 9.4v4.2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+  </Icon>
+)
+
 export const CloseIcon = (props: IconProps) => (
   <Icon {...props}>
     <path d="M5.5 5.5l9 9M14.5 5.5l-9 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />

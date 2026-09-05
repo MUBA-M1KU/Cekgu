@@ -321,18 +321,20 @@ export async function recordDemo(options = {}) {
     const allAttempts = item.getByRole('heading', { name: exactText('All Attempts') })
     await scrollTo(allAttempts, 'start')
     const timedOut = attemptStatusLabel(item, 'Timed Out')
-    // The per-attempt reason this shot used to rest on was removed in #202 at the owner's request.
-    // The Status column and the footer under it carry the shot's claim now, so the camera holds on
-    // the chip and then on the sentence saying nothing was hidden, rather than on a string the
-    // product no longer prints.
-    const footer = item.getByText(/Every attempt is listed, admitted or not/i)
+    // The per-attempt reason this shot used to rest on was removed in #202 at the owner's request,
+    // and the footer sentence that replaced it has since moved onto the heading as a tooltip. So the
+    // camera holds on the Status chip, then rests on the mark beside All Attempts until the rule
+    // appears under the pointer. Hovering is the shot now: the sentence arrives because the viewer
+    // watched someone ask for it, which reads better than a paragraph that was always there.
+    const attemptsRule = item.locator('.attempts-tip').first()
     await must(timedOut, 'shot 6 Timed Out')
-    await must(footer, 'shot 6 attempts footer')
+    await must(attemptsRule, 'shot 6 attempts rule')
     await moveTo(timedOut, 700)
     await pause(3_000)
-    await scrollTo(footer, 'center')
-    await moveTo(footer, 700)
-    await pause(2_000)
+    await scrollTo(attemptsRule, 'center')
+    await moveTo(attemptsRule, 700)
+    // Long enough for the tooltip to fade up and be read, which a 2 s hold was not.
+    await pause(3_200)
     await finishShot('shot-6', 14_000)
 
     await mark('shot-7')
