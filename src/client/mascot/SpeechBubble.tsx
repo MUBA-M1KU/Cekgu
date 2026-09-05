@@ -11,7 +11,7 @@ export function SpeechBubble({ utterance }: { utterance: Utterance }) {
   const cite = utterance.cite
 
   return (
-    <div className="relative z-20 w-full rounded-control border border-rule bg-sheet p-3 shadow-[var(--shadow-overlay)]">
+    <div className="relative z-20 w-full rounded-control border border-rule bg-sheet p-3 shadow-[var(--shadow-soft)]">
       <p className="type-ui m-0">{utterance.caption}</p>
 
       {cite ? (

@@ -122,7 +122,9 @@ export function RecordWorkspace() {
     setPending(true)
 
     try {
-      const answer = await askRecord(id, question, history, (event) =>
+      // `messages`, not `history`: history already carries the question being asked, and the server
+      // appends it again, so sending history put the same user turn in twice.
+      const answer = await askRecord(id, question, messages, (event) =>
         setTools((seen) => [...seen, { ...event, id: crypto.randomUUID() }])
       )
       setMessages([...history, ...answer])
