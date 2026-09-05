@@ -50,17 +50,18 @@ export function TruthScoreSummary({ score }: { score: RecordScore }) {
 }
 
 /** One item's score, sized to sit beside its verdict chip rather than compete with it. */
-export function TruthScoreMark({ score }: { score: number | null }) {
+export function TruthScoreMark({ score, className }: { score: number | null; className?: string }) {
   // Unverified already says so in the chip beside this. A dash here would read as a low score.
   if (score === null) return null
 
+  // The denominator rather than a second bar. Twelve mini bars down a page is noise, and a bare
+  // figure beside a verdict has to be guessed at; "88/100" says what it is without a legend, and
+  // echoes the summary figure above it.
   return (
-    <span className="truth-score-mark type-mono" style={tint(score)}>
-      <span className="truth-score-mark-track" aria-hidden="true">
-        <span className="truth-score-mark-fill" style={{ inlineSize: `${score}%` }} />
-      </span>
+    <span className={`truth-score-mark type-mono${className ? ` ${className}` : ''}`} style={tint(score)}>
+      <span className="sr-only">Truth Score </span>
       <span className="truth-score-mark-value">{score}</span>
-      <span className="sr-only"> out of 100 Truth Score</span>
+      <span className="truth-score-mark-of">/100</span>
     </span>
   )
 }

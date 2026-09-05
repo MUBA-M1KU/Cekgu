@@ -70,6 +70,13 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
           />
           <span className="type-body min-w-0 flex-1 truncate">{item.stem}</span>
           <VerdictChip verdict={item.verdict} />
+          {/* The collapsed row is where the score earns its place: every one of these says Clear,
+              and the figure is the only thing separating a unanimous reading from a hedged one.
+
+              Not on a phone, though. This row already carries a bubble row, a verdict and a
+              chevron, and at 375 px the score takes the last of the stem — which is the one thing
+              on the line a reader needs to tell these questions apart. The open row still has it. */}
+          <TruthScoreMark score={item.truthScore} className="hidden sm:inline-flex" />
           <ChevronDownIcon size={16} className="shrink-0 text-ink-muted" />
         </button>
       </li>
