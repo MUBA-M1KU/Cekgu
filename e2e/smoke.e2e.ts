@@ -345,7 +345,8 @@ for (const href of NOTICES) {
 test('the footer carries the notices on a page that is not the landing', async ({ page }) => {
   await page.goto('/sample')
 
-  const footer = page.getByRole('navigation', { name: 'Footer' })
+  // SiteFooter names this nav for what it holds, not for where it sits: aria-label="Legal".
+  const footer = page.getByRole('navigation', { name: 'Legal' })
   for (const href of NOTICES) {
     await expect(footer.locator(`a[href="${href}"]`)).toBeVisible()
   }
