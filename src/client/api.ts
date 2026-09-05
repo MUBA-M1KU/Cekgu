@@ -208,18 +208,74 @@ export async function signOut(): Promise<void> {
 // The agent is scoped to one record by its URL, and the history is sent back as prose only: the
 // server rebuilds every citation from the record it loads, so an edited request id in a client's
 // history buys nothing.
-export async function askRecord(id: string, question: string, history: ChatMessage[]): Promise<ChatMessage[]> {
+export type ToolEvent = { name: string; position: number | null }
+
+/**
+ * Streamed, so the tools the agent calls are visible while it is calling them rather than
+ * summarised after the fact. EventSource cannot POST, so the frames are parsed off the fetch body.
+ */
+export async function askRecord(
+  id: string,
+  question: string,
+  history: ChatMessage[],
+  onTool: (event: ToolEvent) => void
+): Promise<ChatMessage[]> {
   if (MOCK) {
-    const { mockAnswer } = await import('./mock-record')
+    const { mockAnswer, mockTools } = await import('./mock-record')
+    for (const event of mockTools()) {
+      await new Promise((resolve) => setTimeout(resolve, 550))
+      onTool(event)
+    }
+    await new Promise((resolve) => setTimeout(resolve, 400))
     return mockAnswer(id)
   }
 
-  const body = await request<{ messages: ChatMessage[] }>(`/api/records/${encodeURIComponent(id)}/chat`, {
+  const response = await fetch(`/api/records/${encodeURIComponent(id)}/chat`, {
     method: 'POST',
+    credentials: 'include',
+    headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ question, history })
   })
 
-  return body.messages
+  if (!response.ok || !response.body) {
+    const body = (await response.json().catch(() => null)) as { error?: { code: string; message: string } } | null
+    throw new ApiError(
+      body?.error?.code ?? 'unknown',
+      body?.error?.message ?? 'The assistant could not answer that.',
+      response.status
+    )
+  }
+
+  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
+  let buffer = ''
+  let messages: ChatMessage[] = []
+  let failure: string | null = null
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += value
+
+    // A frame is complete only at the blank line, so a chunk that splits one mid-JSON is held
+    // rather than parsed into a throw.
+    let boundary = buffer.indexOf('\n\n')
+    while (boundary !== -1) {
+      const frame = buffer.slice(0, boundary)
+      buffer = buffer.slice(boundary + 2)
+      boundary = buffer.indexOf('\n\n')
+
+      const event = /^event:\s*(.+)$/m.exec(frame)?.[1]?.trim()
+      const data = /^data:\s*(.+)$/m.exec(frame)?.[1]
+      if (!event || !data) continue
+
+      if (event === 'tool') onTool(JSON.parse(data) as ToolEvent)
+      if (event === 'messages') messages = (JSON.parse(data) as { messages: ChatMessage[] }).messages
+      if (event === 'failed') failure = (JSON.parse(data) as { message: string }).message
+    }
+  }
+
+  if (failure) throw new ApiError('agent_failed', failure, 502)
+  return messages
 }
 
 export async function getSample(): Promise<RecordDetail> {

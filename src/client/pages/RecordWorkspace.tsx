@@ -5,6 +5,8 @@ import type { DispositionInput } from '../../shared/schemas'
 import type { ItemVerdict, RecordDetail } from '../../shared/types'
 import { askRecord, getRecord, recordDisposition, retryItem, subscribeToRecord } from '../api'
 import { ChatModal } from '../chat/ChatModal'
+import { followUpSuggestions, openingSuggestions } from '../chat/suggestions'
+import type { TracedTool } from '../chat/ToolTrace'
 import { Card, CardBody, CardHead } from '../components/Card'
 import { ItemRow } from '../components/ItemRow'
 import { StatusChip } from '../components/StatusChip'
@@ -33,6 +35,8 @@ export function RecordWorkspace() {
   const [chatOpen, setChatOpen] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [pending, setPending] = useState(false)
+  const [tools, setTools] = useState<TracedTool[]>([])
+  const [suggestions, setSuggestions] = useState<string[]>([])
 
   const load = useCallback(() => {
     getRecord(id)
@@ -114,10 +118,17 @@ export function RecordWorkspace() {
     }
     const history = [...messages, asked]
     setMessages(history)
+    setTools([])
     setPending(true)
 
     try {
-      setMessages([...history, ...(await askRecord(id, question, history))])
+      const answer = await askRecord(id, question, history, (event) =>
+        setTools((seen) => [...seen, { ...event, id: crypto.randomUUID() }])
+      )
+      setMessages([...history, ...answer])
+      // Fresh four after every answer, so the follow-ups track the conversation rather than
+      // repeating the openers the reader has already dismissed once.
+      setSuggestions(followUpSuggestions())
     } catch (error) {
       // The failure belongs in the transcript rather than in a toast: it is a turn in the
       // conversation, and a person needs to see which question did not get answered.
@@ -225,12 +236,22 @@ export function RecordWorkspace() {
         </div>
       </div>
 
-      <Mascot record={record} onOpenChat={() => setChatOpen(true)} />
+      <Mascot
+        record={record}
+        onOpenChat={() => {
+          // Rolled on open rather than on mount, so a second visit to the same record offers a
+          // different four.
+          if (messages.length === 0) setSuggestions(openingSuggestions(record))
+          setChatOpen(true)
+        }}
+      />
 
       <ChatModal
         open={chatOpen}
         messages={messages}
         pending={pending}
+        tools={tools}
+        suggestions={suggestions}
         onClose={() => setChatOpen(false)}
         onSend={onAsk}
         onCite={onCite}

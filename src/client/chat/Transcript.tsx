@@ -55,28 +55,14 @@ function Turn({ message, onCite }: { message: ChatMessage; onCite: CiteAction })
  * The message list. The server hands over prose with the citation tokens already stripped and the
  * citations already resolved, so nothing here parses: it renders what it was given.
  */
-export function Transcript({
-  messages,
-  pending,
-  onCite
-}: {
-  messages: ChatMessage[]
-  pending: boolean
-  onCite?: CiteAction
-}) {
+export function Transcript({ messages, onCite }: { messages: ChatMessage[]; onCite?: CiteAction }) {
+  // The in-flight signal is ToolTrace, rendered by ChatModal after this list, because what is
+  // happening while a turn runs is a list of lookups rather than one line of "thinking".
   return (
     <ol role="log" className="m-0 flex list-none flex-col gap-5 p-0">
       {messages.map((message) => (
         <Turn key={message.id} message={message} onCite={onCite} />
       ))}
-
-      {/* The cats tapping on the stage are the other half of this signal. A line of text carries it
-          on a projector with the stage off, and nothing pulses or bounces. */}
-      {pending ? (
-        <li className="type-caption text-ink-muted">
-          <span className="sr-only">Cekgu is answering. </span>Reading the record…
-        </li>
-      ) : null}
     </ol>
   )
 }

@@ -147,7 +147,12 @@ async function generate(model: string, key: string, contents: Content[]): Promis
  * keeps calling tools is a model that is not answering, and a chat that hangs on stage is worse
  * than one that says it could not find out.
  */
-export async function ask(record: RecordDetail, question: string, history: string[]): Promise<AgentAnswer> {
+export async function ask(
+  record: RecordDetail,
+  question: string,
+  history: string[],
+  onTool?: (name: string, args: Record<string, unknown>) => void
+): Promise<AgentAnswer> {
   const config = env.gemini
   if (!config) return { ok: false, reason: 'The assistant is not configured on this deployment.', provenance: null }
 
@@ -187,12 +192,18 @@ export async function ask(record: RecordDetail, question: string, history: strin
     contents.push({ role: 'model', parts })
     contents.push({
       role: 'function',
-      parts: calls.map((part) => ({
-        functionResponse: {
-          name: part.functionCall.name,
-          response: runTool(record, part.functionCall.name, part.functionCall.args ?? {})
+      parts: calls.map((part) => {
+        const args = part.functionCall.args ?? {}
+        // Reported before the tool runs, not after, because the point of showing it is that the
+        // reader sees the lookup happening rather than a spinner with nothing behind it.
+        onTool?.(part.functionCall.name, args)
+        return {
+          functionResponse: {
+            name: part.functionCall.name,
+            response: runTool(record, part.functionCall.name, args)
+          }
         }
-      }))
+      })
     })
   }
 
