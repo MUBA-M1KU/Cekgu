@@ -6,7 +6,7 @@ const GUEST_WARNING =
   'Shared demo workspace. Anything you add can be viewed or deleted by other guests. Do not enter real, personal or confidential exam content.'
 const SAMPLE_TITLE = 'Introductory computer science practice set'
 const FIFO_STEM = 'Which data structure removes elements in first in, first out order?'
-const CUTOFF_REASON = 'The call passed the 90 second evidence cutoff.'
+const ATTEMPTS_FOOTER = 'Every attempt is listed, admitted or not'
 
 export function exactText(value) {
   const escaped = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -96,6 +96,11 @@ export async function runShotChecks(options = {}) {
 
     if (await guestButton.isVisible().catch(() => false)) {
       await guestButton.click()
+      // SignIn.tsx:103 sends a guest with no saved destination to /dashboard; it was /records when
+      // this gate was written. The shot list still films Records, so the walk goes there explicitly
+      // rather than asserting wherever sign-in happens to land this week.
+      await page.waitForURL(/\/(dashboard|records)(?:[/?#]|$)/)
+      await page.getByRole('link', { name: exactText('Records') }).click()
       await page.waitForURL(/\/records(?:[/?#]|$)/)
       await page.getByRole('heading', { name: exactText('Records') }).waitFor()
     }
@@ -240,7 +245,12 @@ export async function runShotChecks(options = {}) {
       }
     )
     await check(6, 'Timed Out attempt', "text='Timed Out' i", item.getByText(exactText('Timed Out')))
-    await check(6, 'Evidence cutoff reason', `text='${CUTOFF_REASON}' i`, item.getByText(exactText(CUTOFF_REASON)))
+    // Shot 6 used to check for "The call passed the 90 second evidence cutoff." on the timed-out
+    // row. #202 removed every per-attempt reason from this table at the owner's request; the string
+    // is still on the record the API returns, but nothing renders it. The Status chip is what names
+    // a failed attempt now, and it is checked directly above. The footer is checked here instead
+    // because it carries the claim the shot is actually about - that nothing was hidden.
+    await check(6, 'Attempts footer', `text='${ATTEMPTS_FOOTER}' i`, item.getByText(new RegExp(ATTEMPTS_FOOTER, 'i')))
 
     const keyCorrected = item.getByText(exactText('Key Corrected'))
     await check(7, 'Key Corrected', "text='Key Corrected' i", keyCorrected)

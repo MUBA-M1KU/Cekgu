@@ -246,7 +246,16 @@ export async function recordDemo(options = {}) {
     const guestButton = page.getByRole('button', { name: exactText('Sign In as Guest') })
     await must(guestButton, 'shot 2 Sign In as Guest')
     await click(guestButton, 500)
-    await page.waitForURL(/\/records(?:[/?#]|$)/)
+    // A guest with no saved destination lands on /dashboard since SignIn.tsx:103 changed; it used to
+    // be /records. The walk holds there long enough to read, then takes the sidebar to Records, which
+    // is where the shot list continues. Clicking the link rather than pushing the URL keeps the rail
+    // visibly doing its job, and the shot needs a post-auth page on screen either way.
+    await page.waitForURL(/\/(dashboard|records)(?:[/?#]|$)/)
+    if (new URL(page.url()).pathname.startsWith('/dashboard')) {
+      await pause(2_400)
+      await click(page.getByRole('link', { name: exactText('Records') }), 500)
+      await page.waitForURL(/\/records(?:[/?#]|$)/)
+    }
     await must(page.locator('.guest-drawer'), 'shot 2 shared-workspace drawer')
     await resetSharedSample(page)
     await pause(1_900)
@@ -312,13 +321,17 @@ export async function recordDemo(options = {}) {
     const allAttempts = item.getByRole('heading', { name: exactText('All Attempts') })
     await scrollTo(allAttempts, 'start')
     const timedOut = attemptStatusLabel(item, 'Timed Out')
-    const cutoff = item.getByText(exactText('The call passed the 90 second evidence cutoff.'))
+    // The per-attempt reason this shot used to rest on was removed in #202 at the owner's request.
+    // The Status column and the footer under it carry the shot's claim now, so the camera holds on
+    // the chip and then on the sentence saying nothing was hidden, rather than on a string the
+    // product no longer prints.
+    const footer = item.getByText(/Every attempt is listed, admitted or not/i)
     await must(timedOut, 'shot 6 Timed Out')
-    await must(cutoff, 'shot 6 evidence cutoff reason')
+    await must(footer, 'shot 6 attempts footer')
     await moveTo(timedOut, 700)
     await pause(3_000)
-    await scrollTo(cutoff, 'center')
-    await moveTo(cutoff, 700)
+    await scrollTo(footer, 'center')
+    await moveTo(footer, 700)
     await pause(2_000)
     await finishShot('shot-6', 14_000)
 
