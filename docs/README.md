@@ -84,9 +84,10 @@ The product is built for practice papers and synthetic examples, not for confide
 
 ### Demo Video
 
-<a href="https://github.com/MUBA-M1KU/Cekgu/releases/download/demo-video-v1/Cekgu-Demo-720p.mp4">
-  <img src="assets/demo-poster.jpg" alt="Play the Cekgu demo video" width="100%">
-</a>
+<video src="https://github.com/user-attachments/assets/09f7f9f2-9757-4d40-8aa3-0973fe5ee2b2" controls muted poster="assets/demo-poster.jpg" width="100%">
+  Your browser does not support inline video playback.
+  <a href="https://github.com/MUBA-M1KU/Cekgu/releases/download/demo-video-v1/Cekgu-Demo-720p.mp4">Download the film</a> instead.
+</video>
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
