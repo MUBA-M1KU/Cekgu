@@ -44,9 +44,14 @@ trigger the rate limiting it was meant to survive. We moved the hedge to 45 seco
 cutoff and recorded both winner and loser so the evidence trail does not hide failed or duplicate attempts.
 
 Health filtering created a subtler failure. Removing every recently failing family could leave only one candidate, but
-one family can never produce two distinct readings. The scheduler now demotes an unhealthy family while retaining at
-least two candidates. A third family can take over a failed seat, and any round that still lacks two valid readings ends
-as Unverified rather than guessing.
+one family can never produce two distinct readings. The scheduler now demotes an unhealthy family rather than dropping
+it, so a round always has candidates to pair, and any round that still lacks two receipt-verified readings from distinct
+families ends as Unverified rather than guessing.
+
+That design earned itself late: on submission day the network stopped serving one of the three model families we had
+built against, and calls to it began returning HTTP 400. Because the rule is two distinct verified readings rather than
+three, and because the scheduler pairs whatever remains, the product kept working through a change in the catalogue we
+did not control.
 
 ## Technologies used
 
@@ -117,5 +122,5 @@ The images are direct Playwright captures, not generated stand-ins. Preserve thi
 - Deadline: 5 September 2026 at 23:59 MYT; do not rely on Devfolio's later countdown
 - Drive folder: <https://drive.google.com/drive/folders/1MxznywqLC6gTLZecfbg5HO9vPxwtFDKg?usp=sharing>
 - Collected: final cover, five exported product screenshots and three LinkedIn URLs in Drive
-- Missing: demo video URL
+- Demo video: <https://youtu.be/zFASN69yQr8>, 4:31, unlisted and playable without sign-in
 - Final check: links open, assets render, track is selected, team roster is correct and no placeholder text remains
