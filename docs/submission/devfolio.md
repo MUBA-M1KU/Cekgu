@@ -23,10 +23,11 @@ the model evidence and public gateway receipt metadata. The educator makes and r
 Alongside the verdict, every question carries a Truth Score from 0 to 100, computed from the same two readings by a pure
 function — no extra inference call, and no model asked how confident it feels. Before the readers run, a live web search
 fetches pages relevant to the question and shows the same snippets to both of them; each reader reports whether that
-evidence backed its answer. When a record was checked with retrieval, the evidence panel lists the pages found; when it
-was not, the panel says so plainly rather than leaving the feature invisible. The search is a retrieval step that runs
-no model, so all reasoning stays on GonkaRouter. A paper can be entered by typing it, by pasting a link to a page that
-already holds the questions, or by uploading a scan.
+evidence backed its answer. The evidence panel lists every page with a live link and the quoted text, so the educator
+can check it. The sample report carries pages too, retrieved on 6 September for its own questions and labelled as
+fetched after those readings — the readers did not see them and no verdict or score rests on them. The search is a
+retrieval step that runs no model, so all reasoning stays on GonkaRouter. A paper can be entered by typing it, by
+pasting a link to a page that already holds the questions, or by uploading a scan.
 
 The workflow is asynchronous because a decentralised inference network can be slow or unavailable. Cekgu keeps every
 attempt, fails closed when it cannot obtain two receipt-verified readings from distinct models and lets an educator
@@ -124,14 +125,14 @@ guide does not publish a required project-screenshot pixel size. Keep this 16:9 
 ## Product screenshots
 
 **The 4 September captures are out of date.** Three of the five screens changed on 6 September: the sample report and
-the evidence panel now carry a Truth Score and state whether the record was checked with live web retrieval, and New
-Check offers a link beside the upload in one card. Recapture from the deployment **after** the 6 September deploy,
-keeping the same order so the first image is the cover:
+the evidence panel now carry a Truth Score and the pages retrieved from the web, and New Check offers a link beside the
+upload in one card. Recapture from the deployment **after** the 6 September deploy, keeping the same order so the first
+image is the cover:
 
 1. `01-cover-landing.png` — landing page and product promise, 1440 × 810
 2. `02-sample-report.png` — sample verdict summary **with its Truth Score**, 1440 × 810
-3. `03-evidence-receipts.png` — two served models, two request IDs, **the retrieval disclosure** and attempt history,
-   1440 × 810
+3. `03-evidence-receipts.png` — two served models, two request IDs, **the pages retrieved from the web** and attempt
+   history, 1440 × 810
 4. `04-guest-records.png` — shared Guest records library, 1440 × 810
 5. `05-new-check.png` — Guest warning and the **Start From a Paper** card offering a link or an upload, 1440 × 810
 

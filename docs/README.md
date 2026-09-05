@@ -104,7 +104,7 @@ The product is built for practice papers and synthetic examples, not for confide
   </tr>
   <tr>
     <td width="50%"><img src="assets/dashboard.png" alt="The account dashboard" width="100%"></td>
-    <td width="50%"><img src="assets/item-evidence.png" alt="Item evidence showing two served models, two request ids, receipt states and every attempt, including a timed-out one" width="100%"></td>
+    <td width="50%"><img src="assets/item-evidence.png" alt="Item evidence showing two served models, two request ids, receipt states, the pages retrieved from the web and every attempt" width="100%"></td>
   </tr>
   <tr>
     <td><sub>The dashboard: verified readings against total, the verdict breakdown, and each family's share of the work.</sub></td>
