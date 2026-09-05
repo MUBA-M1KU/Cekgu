@@ -91,10 +91,11 @@ intentionally excluded from this project scope.
 
 ## Phone walk at 375 px, 6 September
 
-Production acceptance on `https://cekgu-op7lf5dspq-as.a.run.app` at 14:47 UTC on 5 September 2026. The production
-deployment serves a build from before that time; the page does not expose a commit hash. This walk covers steps 1, 2, 3
-and 4 of the PRD demo acceptance test on a 375 px mobile device: the landing page, the public sample record opening with
-evidence, Guest sign-in landing on the dashboard, and four workspace routes.
+Walked at 17:20 UTC on 5 September 2026 against production, which was still serving the build deployed at 14:47 UTC that
+day ([#260](https://github.com/MUBA-M1KU/Cekgu/issues/260)); the page does not expose a commit hash. Headless Chromium
+at a 375 px viewport with iPhone SE emulation, not a physical phone. Covers steps 1 to 4 of the PRD demo acceptance
+test: the landing page, the public sample record with its evidence, Guest sign-in landing on the dashboard, and four
+workspace routes.
 
 | Route        | Elapsed (ms) | Console errors | Overflow (px) | Result | Note                                                         |
 | ------------ | ------------ | -------------- | ------------- | ------ | ------------------------------------------------------------ |
