@@ -54,7 +54,24 @@
             "model": "MiniMaxAI/MiniMax-M2.7",
             "answer": "A",
             "defensible": ["A"],
-            "reason": "Reading an element at a known index in an array is a constant‑time operation because the memory address of the element can be computed directly from the base address and the index. Therefore the time complexity is O(1)."
+            "reason": "Reading an element at a known index in an array is a constant‑time operation because the memory address of the element can be computed directly from the base address and the index. Therefore the time complexity is O(1).",
+            "sources": [
+              {
+                "title": "What is the time-complexity for the get(index) ﻿method?O ...",
+                "url": "https://www.chegg.com/homework-help/questions-and-answers/time-complexity-get-index-method-o-1-o-nlogn-o-n-o-logn-q155430224",
+                "snippet": "What is the time-complexity for the get(index) ﻿method?O(1)O(nlogn)O(n)O(logn)"
+              },
+              {
+                "title": "Learn Basic Array Operations Time Complexity | List and Array",
+                "url": "https://codefinity.com/courses/v2/212d3d3e-af15-4df9-bb13-5cbbb8114954/58324ed0-9644-4e88-ba8c-e93d15b8697a/c72b87c4-3da6-41f0-9133-559b82b95adc",
+                "snippet": "As we discussed previously and as it can be seen from the above, the main advantage of the array is that we can access an arbitrary item in constant time if we know the index of that item in an array. But if we don't know what item we are looking for, the…"
+              },
+              {
+                "title": "Why is a list access O(1) in Python?",
+                "url": "https://stackoverflow.com/questions/37350450/why-is-a-list-access-o1-in-python",
+                "snippet": "I understand that a list is different from an array. But still, O(1)? That would mean accessing an element in a list would be as fast as accessing an element"
+              }
+            ]
           },
           "latencyMs": 27745,
           "admitted": true,
@@ -126,7 +143,24 @@
             "model": "moonshotai/Kimi-K2.6",
             "answer": "A",
             "defensible": ["A"],
-            "reason": "Arrays support random access via contiguous memory allocation and pointer arithmetic, so reading an element at a known index takes constant time regardless of the array size."
+            "reason": "Arrays support random access via contiguous memory allocation and pointer arithmetic, so reading an element at a known index takes constant time regardless of the array size.",
+            "sources": [
+              {
+                "title": "What is the time-complexity for the get(index) ﻿method?O ...",
+                "url": "https://www.chegg.com/homework-help/questions-and-answers/time-complexity-get-index-method-o-1-o-nlogn-o-n-o-logn-q155430224",
+                "snippet": "What is the time-complexity for the get(index) ﻿method?O(1)O(nlogn)O(n)O(logn)"
+              },
+              {
+                "title": "Learn Basic Array Operations Time Complexity | List and Array",
+                "url": "https://codefinity.com/courses/v2/212d3d3e-af15-4df9-bb13-5cbbb8114954/58324ed0-9644-4e88-ba8c-e93d15b8697a/c72b87c4-3da6-41f0-9133-559b82b95adc",
+                "snippet": "As we discussed previously and as it can be seen from the above, the main advantage of the array is that we can access an arbitrary item in constant time if we know the index of that item in an array. But if we don't know what item we are looking for, the…"
+              },
+              {
+                "title": "Why is a list access O(1) in Python?",
+                "url": "https://stackoverflow.com/questions/37350450/why-is-a-list-access-o1-in-python",
+                "snippet": "I understand that a list is different from an array. But still, O(1)? That would mean accessing an element in a list would be as fast as accessing an element"
+              }
+            ]
           },
           "latencyMs": 52037,
           "admitted": true,
@@ -210,7 +244,24 @@
             "model": "MiniMaxAI/MiniMax-M2.7",
             "answer": "A",
             "defensible": ["A"],
-            "reason": "TCP is a transport protocol that provides reliable, ordered delivery by retransmitting lost segments."
+            "reason": "TCP is a transport protocol that provides reliable, ordered delivery by retransmitting lost segments.",
+            "sources": [
+              {
+                "title": "Transmission Control Protocol",
+                "url": "https://en.wikipedia.org/wiki/Transmission_Control_Protocol",
+                "snippet": "A TCP sender may interpret an out-of-order segment delivery as a lost segment. If it does so, the TCP sender will retransmit the segment previous to the out-of-order packet and slow its data delivery rate for that connection. The duplicate-SACK option, an…"
+              },
+              {
+                "title": "Transmission Control Protocol (TCP) - GeeksforGeeks",
+                "url": "https://www.geeksforgeeks.org/computer-networks/what-is-transmission-control-protocol-tcp",
+                "snippet": "Segments may arrive out of order because they can take different paths through the network. TCP at the receiver uses sequence numbers to reassemble the segments into the correct order to reconstruct the original message. ### 4. Acknowledgments (ACKs) The…"
+              },
+              {
+                "title": "TCP – the Transmission Control Protocol explained simply",
+                "url": "https://nflo.tech/knowledge-base/tcp-a-comprehensive-guide-to-the-transmission-control-protocol-from-the-basics-to-advanced-mechanisms-of-operation",
+                "snippet": "The TCP protocol uses a complex system of detection and recovery of lost packets, based on several mechanisms. Primary among them is the acknowledgment (ACK) and retransmission timeout (RTO) system. When a segment is not acknowledged within the specified…"
+              }
+            ]
           },
           "latencyMs": 9167,
           "admitted": true,
@@ -284,7 +335,24 @@
             "model": "moonshotai/Kimi-K2.6",
             "answer": "A",
             "defensible": ["A"],
-            "reason": "TCP is the only transport-layer protocol listed that provides reliable delivery through acknowledgments, sequence numbers, and retransmission of lost segments to ensure data arrives complete and in order. UDP is connectionless and unreliable, while ICMP and ARP are not transport protocols at all."
+            "reason": "TCP is the only transport-layer protocol listed that provides reliable delivery through acknowledgments, sequence numbers, and retransmission of lost segments to ensure data arrives complete and in order. UDP is connectionless and unreliable, while ICMP and ARP are not transport protocols at all.",
+            "sources": [
+              {
+                "title": "Transmission Control Protocol",
+                "url": "https://en.wikipedia.org/wiki/Transmission_Control_Protocol",
+                "snippet": "A TCP sender may interpret an out-of-order segment delivery as a lost segment. If it does so, the TCP sender will retransmit the segment previous to the out-of-order packet and slow its data delivery rate for that connection. The duplicate-SACK option, an…"
+              },
+              {
+                "title": "Transmission Control Protocol (TCP) - GeeksforGeeks",
+                "url": "https://www.geeksforgeeks.org/computer-networks/what-is-transmission-control-protocol-tcp",
+                "snippet": "Segments may arrive out of order because they can take different paths through the network. TCP at the receiver uses sequence numbers to reassemble the segments into the correct order to reconstruct the original message. ### 4. Acknowledgments (ACKs) The…"
+              },
+              {
+                "title": "TCP – the Transmission Control Protocol explained simply",
+                "url": "https://nflo.tech/knowledge-base/tcp-a-comprehensive-guide-to-the-transmission-control-protocol-from-the-basics-to-advanced-mechanisms-of-operation",
+                "snippet": "The TCP protocol uses a complex system of detection and recovery of lost packets, based on several mechanisms. Primary among them is the acknowledgment (ACK) and retransmission timeout (RTO) system. When a segment is not acknowledged within the specified…"
+              }
+            ]
           },
           "latencyMs": 15984,
           "admitted": true,
@@ -352,7 +420,24 @@
             "model": "MiniMaxAI/MiniMax-M2.7",
             "answer": "B",
             "defensible": ["B"],
-            "reason": "A queue is a linear structure that follows the first‑in, first‑out (FIFO) order when removing elements. A stack uses LIFO, binary search trees and hash tables do not enforce a FIFO removal order."
+            "reason": "A queue is a linear structure that follows the first‑in, first‑out (FIFO) order when removing elements. A stack uses LIFO, binary search trees and hash tables do not enforce a FIFO removal order.",
+            "sources": [
+              {
+                "title": "Basics of Data Structures: Stack, Queue, Hash Table, and ...",
+                "url": "https://medium.com/@hrishinandan/basics-of-data-structures-stack-queue-hash-table-and-tree-bc0819d25588",
+                "snippet": "Share ## Stack A stack is a linear data structure that follows the LIFO (Last In, First Out) principle — the last element added is the first one to be removed. Stacks are fast because all operations happen at one end — the top. ### Key Operations: Time…"
+              },
+              {
+                "title": "Difference Between Stack and Queue Data Structures",
+                "url": "https://www.geeksforgeeks.org/dsa/difference-between-stack-and-queue-data-structures",
+                "snippet": "Both store elements in a sequential manner. Stack follows the LIFO (Last In, First Out) principle. Queue follows the FIFO (First In, First Out) principle. ## Stacks A stack is a linear data structure that follows the Last In, First Out (LIFO) principle. This…"
+              },
+              {
+                "title": "Stacks and Queues",
+                "url": "https://www.andrew.cmu.edu/course/15-121/lectures/Stacks%20and%20Queues/Stacks%20and%20Queues.html",
+                "snippet": "| A stack is a container of objects that are inserted and removed according to the last-in first-out (LIFO) principle. In the pushdown stacks only two operations are allowed: push the item into the stack, and pop the item out of the stack. A stack is a…"
+              }
+            ]
           },
           "latencyMs": 11743,
           "admitted": true,
@@ -382,7 +467,24 @@
             "model": "moonshotai/Kimi-K2.6",
             "answer": "B",
             "defensible": ["B"],
-            "reason": "A queue is defined by the first-in, first-out (FIFO) principle, where elements are removed in the same order they were added. A stack uses last-in, first-out order, while binary search trees and hash tables have no inherent FIFO removal behavior."
+            "reason": "A queue is defined by the first-in, first-out (FIFO) principle, where elements are removed in the same order they were added. A stack uses last-in, first-out order, while binary search trees and hash tables have no inherent FIFO removal behavior.",
+            "sources": [
+              {
+                "title": "Basics of Data Structures: Stack, Queue, Hash Table, and ...",
+                "url": "https://medium.com/@hrishinandan/basics-of-data-structures-stack-queue-hash-table-and-tree-bc0819d25588",
+                "snippet": "Share ## Stack A stack is a linear data structure that follows the LIFO (Last In, First Out) principle — the last element added is the first one to be removed. Stacks are fast because all operations happen at one end — the top. ### Key Operations: Time…"
+              },
+              {
+                "title": "Difference Between Stack and Queue Data Structures",
+                "url": "https://www.geeksforgeeks.org/dsa/difference-between-stack-and-queue-data-structures",
+                "snippet": "Both store elements in a sequential manner. Stack follows the LIFO (Last In, First Out) principle. Queue follows the FIFO (First In, First Out) principle. ## Stacks A stack is a linear data structure that follows the Last In, First Out (LIFO) principle. This…"
+              },
+              {
+                "title": "Stacks and Queues",
+                "url": "https://www.andrew.cmu.edu/course/15-121/lectures/Stacks%20and%20Queues/Stacks%20and%20Queues.html",
+                "snippet": "| A stack is a container of objects that are inserted and removed according to the last-in first-out (LIFO) principle. In the pushdown stacks only two operations are allowed: push the item into the stack, and pop the item out of the stack. A stack is a…"
+              }
+            ]
           },
           "latencyMs": 58626,
           "admitted": true,
@@ -450,7 +552,24 @@
             "model": "moonshotai/Kimi-K2.6",
             "answer": "B",
             "defensible": ["B"],
-            "reason": "Big-O notation describes an asymptotic upper bound, so O(n) means the algorithm's running time grows no faster than a constant multiple of the input size n. Options A and C incorrectly imply exact values, and D is wrong because asymptotic bounds ignore constant factors and lower-order terms that determine actual speed for any given input."
+            "reason": "Big-O notation describes an asymptotic upper bound, so O(n) means the algorithm's running time grows no faster than a constant multiple of the input size n. Options A and C incorrectly imply exact values, and D is wrong because asymptotic bounds ignore constant factors and lower-order terms that determine actual speed for any given input.",
+            "sources": [
+              {
+                "title": "Big O Notation - GeeksforGeeks",
+                "url": "https://www.geeksforgeeks.org/dsa/analysis-algorithms-big-o-analysis",
+                "snippet": "### 1. Linear Time Complexity: Big O(n) Complexity Linear time complexity means that the running time of an algorithm grows linearly with the size of the input. For example, consider an algorithm that traverses through an array to find a specific element:…"
+              },
+              {
+                "title": "Time complexity - Wikipedia",
+                "url": "https://en.wikipedia.org/wiki/Time_complexity",
+                "snippet": "An algorithm is said to take linear time, or {\\displaystyle O(n)} time, if its time complexity is {\\displaystyle O(n)}. Informally, this means that the running time increases at most linearly with the size of the input. More precisely, this means that there…"
+              },
+              {
+                "title": "Big-O Notation: Explained in 8 Minutes",
+                "url": "https://blog.algomaster.io/p/big-o-notation-explained-in-8-minutes",
+                "snippet": "Big O is not about the exact number of steps, it’s about how fast your algorithm grows with input. Whether your algorithm takes `n` steps or `5n` steps, both grow linearly as `n` increases, the constant multiplier doesn’t affect the growth trend. If you…"
+              }
+            ]
           },
           "latencyMs": 59673,
           "admitted": true,
@@ -480,7 +599,24 @@
             "model": "MiniMaxAI/MiniMax-M2.7",
             "answer": "B",
             "defensible": ["B"],
-            "reason": "O(n) indicates that the algorithm's running time grows at most linearly as the input size increases, not that it takes exactly n steps. It does not describe memory usage and is not generally faster than algorithms with lower growth rates like O(log n)."
+            "reason": "O(n) indicates that the algorithm's running time grows at most linearly as the input size increases, not that it takes exactly n steps. It does not describe memory usage and is not generally faster than algorithms with lower growth rates like O(log n).",
+            "sources": [
+              {
+                "title": "Big O Notation - GeeksforGeeks",
+                "url": "https://www.geeksforgeeks.org/dsa/analysis-algorithms-big-o-analysis",
+                "snippet": "### 1. Linear Time Complexity: Big O(n) Complexity Linear time complexity means that the running time of an algorithm grows linearly with the size of the input. For example, consider an algorithm that traverses through an array to find a specific element:…"
+              },
+              {
+                "title": "Time complexity - Wikipedia",
+                "url": "https://en.wikipedia.org/wiki/Time_complexity",
+                "snippet": "An algorithm is said to take linear time, or {\\displaystyle O(n)} time, if its time complexity is {\\displaystyle O(n)}. Informally, this means that the running time increases at most linearly with the size of the input. More precisely, this means that there…"
+              },
+              {
+                "title": "Big-O Notation: Explained in 8 Minutes",
+                "url": "https://blog.algomaster.io/p/big-o-notation-explained-in-8-minutes",
+                "snippet": "Big O is not about the exact number of steps, it’s about how fast your algorithm grows with input. Whether your algorithm takes `n` steps or `5n` steps, both grow linearly as `n` increases, the constant multiplier doesn’t affect the growth trend. If you…"
+              }
+            ]
           },
           "latencyMs": 64168,
           "admitted": true,
@@ -594,7 +730,24 @@
             "model": "MiniMaxAI/MiniMax-M2.7",
             "answer": "C",
             "defensible": ["C"],
-            "reason": "The fourth necessary condition for deadlock is circular wait, where each process holds resources needed by another process in a chain. Without circular wait, a deadlock cannot occur even if the other three conditions are satisfied."
+            "reason": "The fourth necessary condition for deadlock is circular wait, where each process holds resources needed by another process in a chain. Without circular wait, a deadlock cannot occur even if the other three conditions are satisfied.",
+            "sources": [
+              {
+                "title": "Introduction of Deadlock in Operating System - GeeksforGeeks",
+                "url": "https://www.geeksforgeeks.org/operating-systems/introduction-of-deadlock-in-operating-system",
+                "snippet": "Deadlock is a state in an operating system where two or more processes are stuck forever because each is waiting for a resource held by another. It happens only when four conditions exist: mutual exclusion, hold and wait, no preemption, and circular wait. For…"
+              },
+              {
+                "title": "Must a deadlock necessarily occur if the four conditions ...",
+                "url": "https://cs.stackexchange.com/questions/12501/must-a-deadlock-necessarily-occur-if-the-four-conditions-exist",
+                "snippet": "I understand the four necessary conditions, mutual exclusion, hold and wait, no preemption, and circular wait, for deadlock to occur. However, does there"
+              },
+              {
+                "title": "What is deadlock? Deadlocks Explained: Key Conditions and Mutual Exclusion Factors | Lenov",
+                "url": "https://www.lenovo.com/us/en/glossary/what-is-deadlock",
+                "snippet": "## Which conditions are necessary for a deadlock to happen? For a deadlock to occur, four conditions, known as the Coffman conditions, must be met simultaneously: mutual exclusion, hold and wait, no preemption, and circular wait. ## How does mutual exclusion…"
+              }
+            ]
           },
           "latencyMs": 24769,
           "admitted": true,
@@ -624,7 +777,24 @@
             "model": "moonshotai/Kimi-K2.6",
             "answer": "C",
             "defensible": ["C"],
-            "reason": "The four Coffman conditions required for deadlock are mutual exclusion, hold and wait, no preemption, and circular wait. Round-robin scheduling, virtual memory, and context switching are unrelated operating system concepts and not conditions for deadlock."
+            "reason": "The four Coffman conditions required for deadlock are mutual exclusion, hold and wait, no preemption, and circular wait. Round-robin scheduling, virtual memory, and context switching are unrelated operating system concepts and not conditions for deadlock.",
+            "sources": [
+              {
+                "title": "Introduction of Deadlock in Operating System - GeeksforGeeks",
+                "url": "https://www.geeksforgeeks.org/operating-systems/introduction-of-deadlock-in-operating-system",
+                "snippet": "Deadlock is a state in an operating system where two or more processes are stuck forever because each is waiting for a resource held by another. It happens only when four conditions exist: mutual exclusion, hold and wait, no preemption, and circular wait. For…"
+              },
+              {
+                "title": "Must a deadlock necessarily occur if the four conditions ...",
+                "url": "https://cs.stackexchange.com/questions/12501/must-a-deadlock-necessarily-occur-if-the-four-conditions-exist",
+                "snippet": "I understand the four necessary conditions, mutual exclusion, hold and wait, no preemption, and circular wait, for deadlock to occur. However, does there"
+              },
+              {
+                "title": "What is deadlock? Deadlocks Explained: Key Conditions and Mutual Exclusion Factors | Lenov",
+                "url": "https://www.lenovo.com/us/en/glossary/what-is-deadlock",
+                "snippet": "## Which conditions are necessary for a deadlock to happen? For a deadlock to occur, four conditions, known as the Coffman conditions, must be met simultaneously: mutual exclusion, hold and wait, no preemption, and circular wait. ## How does mutual exclusion…"
+              }
+            ]
           },
           "latencyMs": 41665,
           "admitted": true,
@@ -678,7 +848,24 @@
             "model": "MiniMaxAI/MiniMax-M2.7",
             "answer": "C",
             "defensible": ["C"],
-            "reason": "HTTP is an application layer protocol in the TCP/IP model, used for web communication. It operates on top of the transport layer, which provides end-to-end communication services."
+            "reason": "HTTP is an application layer protocol in the TCP/IP model, used for web communication. It operates on top of the transport layer, which provides end-to-end communication services.",
+            "sources": [
+              {
+                "title": "Network Layers Explained: OSI & TCP/IP Models [with examples]",
+                "url": "https://www.plixer.com/blog/network-layers-explained",
+                "snippet": "While TCP/IP is the newer model, the Open Systems Interconnection (OSI) model is still referenced a lot to describe network layers. The OSI model was developed by the International Organization for Standardization. There are 7 layers: 1. Physical (e.g. cable,…"
+              },
+              {
+                "title": "TCP/IP Model Explained: Layers, Protocols & Best Practices",
+                "url": "https://www.exabeam.com/explainers/osi-layers/tcp-ip-model-explained-layers-protocols-and-best-practices",
+                "snippet": "### Core Protocols in the Application Layer (HTTP, DNS, SMTP, FTP) The application layer supports protocols enabling user and system communication. HTTP (hypertext transfer protocol) is the foundational protocol for web traffic, defining how browsers and web…"
+              },
+              {
+                "title": "Medium",
+                "url": "https://medium.com/@RealSuheyl/understanding-the-osi-model-and-tcp-ip-the-hidden-language-of-the-internet-df50a2aa1e06",
+                "snippet": "When you open a website, your browser uses HTTP over TCP/IP — and everything just works, without you noticing the complexity behind it. ## 🌐 The Beauty Behind the Chaos When you scroll through Instagram, send a tweet, or join an online class, you’re…"
+              }
+            ]
           },
           "latencyMs": 25306,
           "admitted": true,
@@ -708,7 +895,24 @@
             "model": "moonshotai/Kimi-K2.6",
             "answer": "C",
             "defensible": ["C"],
-            "reason": "HTTP is an application-layer protocol in the TCP/IP model because it defines the rules for communication between web clients and servers. The TCP/IP model does not include a Presentation layer, and HTTP does not perform transport or internet-layer functions like segmenting traffic or routing packets."
+            "reason": "HTTP is an application-layer protocol in the TCP/IP model because it defines the rules for communication between web clients and servers. The TCP/IP model does not include a Presentation layer, and HTTP does not perform transport or internet-layer functions like segmenting traffic or routing packets.",
+            "sources": [
+              {
+                "title": "Network Layers Explained: OSI & TCP/IP Models [with examples]",
+                "url": "https://www.plixer.com/blog/network-layers-explained",
+                "snippet": "While TCP/IP is the newer model, the Open Systems Interconnection (OSI) model is still referenced a lot to describe network layers. The OSI model was developed by the International Organization for Standardization. There are 7 layers: 1. Physical (e.g. cable,…"
+              },
+              {
+                "title": "TCP/IP Model Explained: Layers, Protocols & Best Practices",
+                "url": "https://www.exabeam.com/explainers/osi-layers/tcp-ip-model-explained-layers-protocols-and-best-practices",
+                "snippet": "### Core Protocols in the Application Layer (HTTP, DNS, SMTP, FTP) The application layer supports protocols enabling user and system communication. HTTP (hypertext transfer protocol) is the foundational protocol for web traffic, defining how browsers and web…"
+              },
+              {
+                "title": "Medium",
+                "url": "https://medium.com/@RealSuheyl/understanding-the-osi-model-and-tcp-ip-the-hidden-language-of-the-internet-df50a2aa1e06",
+                "snippet": "When you open a website, your browser uses HTTP over TCP/IP — and everything just works, without you noticing the complexity behind it. ## 🌐 The Beauty Behind the Chaos When you scroll through Instagram, send a tweet, or join an online class, you’re…"
+              }
+            ]
           },
           "latencyMs": 80372,
           "admitted": true,
@@ -792,7 +996,24 @@
             "model": "MiniMaxAI/MiniMax-M2.7",
             "answer": "D",
             "defensible": ["D"],
-            "reason": "A primary key uniquely identifies each row in a table and cannot contain null values. This guarantees that every row can be referenced by a unique, non‑null identifier."
+            "reason": "A primary key uniquely identifies each row in a table and cannot contain null values. This guarantees that every row can be referenced by a unique, non‑null identifier.",
+            "sources": [
+              {
+                "title": "Database Table & Relational | Structure & Theory Revision",
+                "url": "https://teachcomputerscience.com/database-table",
+                "snippet": "Each relational table has a primary key. A primary key is used to distinctly identify each row in the database. The same primary key value cannot be present in two rows. The practical benefit of this is that you can distinguish each row without needing more…"
+              },
+              {
+                "title": "[Solved] What uniquely identifies each row in a table foreign key primary - Database Desig",
+                "url": "https://www.studocu.com/en-us/messages/question/5799343/what-uniquely-identifies-each-row-in-a-table-foreign-key-primary-key",
+                "snippet": "# What uniquely identifies each row in a table foreign key primary. What uniquely identifies each row in a table? ## Unique Identifier in a Table. In a database table, each row is uniquely identified by a **Primary Key**. ### Primary Key. A primary key is a…"
+              },
+              {
+                "title": "database - Does an empty SQL table have a superkey? Does every SQL table have one? - Stack",
+                "url": "https://stackoverflow.com/questions/46024902/does-an-empty-sql-table-have-a-superkey-does-every-sql-table-have-one",
+                "snippet": "Title: database - Does an empty SQL table have a superkey? Does every SQL table have one? - Stack Overflow ### more stack exchange communities. # Does an empty SQL table have a superkey? The superkeys of an SQL table might reasonably informally be said to be…"
+              }
+            ]
           },
           "latencyMs": 29514,
           "admitted": true,
@@ -822,7 +1043,24 @@
             "model": "moonshotai/Kimi-K2.6",
             "answer": "D",
             "defensible": ["D"],
-            "reason": "A primary key is defined by the relational model as a column or combination of columns that uniquely identifies each row and cannot contain null values. The other options describe unrelated or incorrect properties: columns may be any data type, tables have no inherent row order, and primary keys impose no requirements on how many tables a table may be joined with."
+            "reason": "A primary key is defined by the relational model as a column or combination of columns that uniquely identifies each row and cannot contain null values. The other options describe unrelated or incorrect properties: columns may be any data type, tables have no inherent row order, and primary keys impose no requirements on how many tables a table may be joined with.",
+            "sources": [
+              {
+                "title": "Database Table & Relational | Structure & Theory Revision",
+                "url": "https://teachcomputerscience.com/database-table",
+                "snippet": "Each relational table has a primary key. A primary key is used to distinctly identify each row in the database. The same primary key value cannot be present in two rows. The practical benefit of this is that you can distinguish each row without needing more…"
+              },
+              {
+                "title": "[Solved] What uniquely identifies each row in a table foreign key primary - Database Desig",
+                "url": "https://www.studocu.com/en-us/messages/question/5799343/what-uniquely-identifies-each-row-in-a-table-foreign-key-primary-key",
+                "snippet": "# What uniquely identifies each row in a table foreign key primary. What uniquely identifies each row in a table? ## Unique Identifier in a Table. In a database table, each row is uniquely identified by a **Primary Key**. ### Primary Key. A primary key is a…"
+              },
+              {
+                "title": "database - Does an empty SQL table have a superkey? Does every SQL table have one? - Stack",
+                "url": "https://stackoverflow.com/questions/46024902/does-an-empty-sql-table-have-a-superkey-does-every-sql-table-have-one",
+                "snippet": "Title: database - Does an empty SQL table have a superkey? Does every SQL table have one? - Stack Overflow ### more stack exchange communities. # Does an empty SQL table have a superkey? The superkeys of an SQL table might reasonably informally be said to be…"
+              }
+            ]
           },
           "latencyMs": 19749,
           "admitted": true,
@@ -906,7 +1144,24 @@
             "model": "MiniMaxAI/MiniMax-M2.7",
             "answer": "A",
             "defensible": ["A"],
-            "reason": "A compiler translates source code into another language, usually machine code, before the program runs, whereas an interpreter executes statements one at a time without translating them first."
+            "reason": "A compiler translates source code into another language, usually machine code, before the program runs, whereas an interpreter executes statements one at a time without translating them first.",
+            "sources": [
+              {
+                "title": "1.4. Machine Code",
+                "url": "https://icarus.cs.weber.edu/~dab/cs1410/textbook/1.Basics/machine",
+                "snippet": "A compiler is a program that translates other programs written in a high-level programming language like C or C‍+‍+ into machine code or machine language. Some languages, such as Java and C#, take a different route. Compilers for these languages translate the…"
+              },
+              {
+                "title": "java - How can an interpreter run code without translating into machine code? - Software E",
+                "url": "https://softwareengineering.stackexchange.com/questions/453234/how-can-an-interpreter-run-code-without-translating-into-machine-code?noredirect=1",
+                "snippet": "Title: java - How can an interpreter run code without translating into machine code? - Software Engineering Stack Exchange Stack Exchange network consists of 183 Q&A communities including Stack Overflow, the largest, most trusted online community for…"
+              },
+              {
+                "title": "java - How can an interpreter run code without translating into machine code? - Software E",
+                "url": "https://softwareengineering.stackexchange.com/questions/453234/how-can-an-interpreter-run-code-without-translating-into-machine-code/453235",
+                "snippet": "Title: java - How can an interpreter run code without translating into machine code? - Software Engineering Stack Exchange Stack Exchange network consists of 183 Q&A communities including Stack Overflow, the largest, most trusted online community for…"
+              }
+            ]
           },
           "latencyMs": 11016,
           "admitted": true,
@@ -936,7 +1191,24 @@
             "model": "moonshotai/Kimi-K2.6",
             "answer": "A",
             "defensible": ["A"],
-            "reason": "A compiler translates source code written in a high-level programming language into another language, typically machine code or assembly, before the program executes. This distinguishes it from an interpreter, which runs code one statement at a time during runtime without producing a separate translated program beforehand."
+            "reason": "A compiler translates source code written in a high-level programming language into another language, typically machine code or assembly, before the program executes. This distinguishes it from an interpreter, which runs code one statement at a time during runtime without producing a separate translated program beforehand.",
+            "sources": [
+              {
+                "title": "1.4. Machine Code",
+                "url": "https://icarus.cs.weber.edu/~dab/cs1410/textbook/1.Basics/machine",
+                "snippet": "A compiler is a program that translates other programs written in a high-level programming language like C or C‍+‍+ into machine code or machine language. Some languages, such as Java and C#, take a different route. Compilers for these languages translate the…"
+              },
+              {
+                "title": "java - How can an interpreter run code without translating into machine code? - Software E",
+                "url": "https://softwareengineering.stackexchange.com/questions/453234/how-can-an-interpreter-run-code-without-translating-into-machine-code?noredirect=1",
+                "snippet": "Title: java - How can an interpreter run code without translating into machine code? - Software Engineering Stack Exchange Stack Exchange network consists of 183 Q&A communities including Stack Overflow, the largest, most trusted online community for…"
+              },
+              {
+                "title": "java - How can an interpreter run code without translating into machine code? - Software E",
+                "url": "https://softwareengineering.stackexchange.com/questions/453234/how-can-an-interpreter-run-code-without-translating-into-machine-code/453235",
+                "snippet": "Title: java - How can an interpreter run code without translating into machine code? - Software Engineering Stack Exchange Stack Exchange network consists of 183 Q&A communities including Stack Overflow, the largest, most trusted online community for…"
+              }
+            ]
           },
           "latencyMs": 52712,
           "admitted": true,
@@ -1020,7 +1292,24 @@
             "model": "MiniMaxAI/MiniMax-M2.7",
             "answer": "D",
             "defensible": ["D"],
-            "reason": "The Domain Name System’s primary purpose is to resolve human‑friendly domain names into the numeric IP addresses that computers use to communicate. Although DNS can be involved in other tasks such as load balancing, its core function is name‑to‑address translation."
+            "reason": "The Domain Name System’s primary purpose is to resolve human‑friendly domain names into the numeric IP addresses that computers use to communicate. Although DNS can be involved in other tasks such as load balancing, its core function is name‑to‑address translation.",
+            "sources": [
+              {
+                "title": "Domain Name System",
+                "url": "https://en.wikipedia.org/wiki/Domain_Name_System",
+                "snippet": "The Domain Name System (DNS) is a hierarchical and distributed name service that provides a naming system for computers, services, and other resources on the Internet or other Internet Protocol (IP) networks. It associates various information with domain…"
+              },
+              {
+                "title": "Domain Name System (DNS) | Computer Science | Research Starters | EBSCOhost",
+                "url": "https://www.ebsco.com/research-starters/computer-science/domain-name-system-dns",
+                "snippet": "The Domain Name System (DNS) is a crucial component of the Internet that translates human-readable domain names, like www.example.com, into numeric Internet Protocol (IP) addresses that computers use to identify each other. This system simplifies the process…"
+              },
+              {
+                "title": "What is Domain Name System and what is the purpose of the DNS?",
+                "url": "https://www.cloudns.net/blog/what-is-dns",
+                "snippet": "DNS or a Domain Name System is an amazing technology. You can see DNS as a hierarchy system of domains/hostnames and IP addresses. It helps us open internet addresses without a hustle. We easily write the domain name and the DNS has the job to find the IP of…"
+              }
+            ]
           },
           "latencyMs": 31072,
           "admitted": true,
@@ -1050,7 +1339,24 @@
             "model": "moonshotai/Kimi-K2.6",
             "answer": "D",
             "defensible": ["D"],
-            "reason": "The Domain Name System primarily translates human-readable domain names into machine-readable IP addresses, enabling users to reach websites without memorizing numerical addresses. The other options describe separate technologies—DHCP, routing protocols, and TLS encryption—each with a different core purpose."
+            "reason": "The Domain Name System primarily translates human-readable domain names into machine-readable IP addresses, enabling users to reach websites without memorizing numerical addresses. The other options describe separate technologies—DHCP, routing protocols, and TLS encryption—each with a different core purpose.",
+            "sources": [
+              {
+                "title": "Domain Name System",
+                "url": "https://en.wikipedia.org/wiki/Domain_Name_System",
+                "snippet": "The Domain Name System (DNS) is a hierarchical and distributed name service that provides a naming system for computers, services, and other resources on the Internet or other Internet Protocol (IP) networks. It associates various information with domain…"
+              },
+              {
+                "title": "Domain Name System (DNS) | Computer Science | Research Starters | EBSCOhost",
+                "url": "https://www.ebsco.com/research-starters/computer-science/domain-name-system-dns",
+                "snippet": "The Domain Name System (DNS) is a crucial component of the Internet that translates human-readable domain names, like www.example.com, into numeric Internet Protocol (IP) addresses that computers use to identify each other. This system simplifies the process…"
+              },
+              {
+                "title": "What is Domain Name System and what is the purpose of the DNS?",
+                "url": "https://www.cloudns.net/blog/what-is-dns",
+                "snippet": "DNS or a Domain Name System is an amazing technology. You can see DNS as a hierarchy system of domains/hostnames and IP addresses. It helps us open internet addresses without a hustle. We easily write the domain name and the DNS has the job to find the IP of…"
+              }
+            ]
           },
           "latencyMs": 31895,
           "admitted": true,
@@ -1104,7 +1410,24 @@
             "model": "MiniMaxAI/MiniMax-M2.7",
             "answer": "B",
             "defensible": ["B"],
-            "reason": "A cache provides a small, fast memory near the CPU that stores recently accessed data and instructions, reducing the time the processor spends waiting for main memory. This improves overall performance by minimizing memory access latency."
+            "reason": "A cache provides a small, fast memory near the CPU that stores recently accessed data and instructions, reducing the time the processor spends waiting for main memory. This improves overall performance by minimizing memory access latency.",
+            "sources": [
+              {
+                "title": "CPU cache - Wikipedia",
+                "url": "https://en.wikipedia.org/wiki/CPU_cache",
+                "snippet": "A CPU cache is a hardware cache used by the central processing unit (CPU) of a computer to reduce the average cost (time or energy) to access data \"Data (computer science)\") from the main memory. A cache is a smaller, faster memory, located closer to a…"
+              },
+              {
+                "title": "Cache Memory - GeeksforGeeks",
+                "url": "https://www.geeksforgeeks.org/computer-science-fundamentals/cache-memory",
+                "snippet": "Cache memory stores data close to the CPU, which helps speed up processing. It's much faster than the main memory (RAM). When the CPU needs data, it checks the cache first. If the data is there, it’s quickly accessed. If not, the CPU gets it from the slower…"
+              },
+              {
+                "title": "Cache Memory: understand cache memory for fast data access",
+                "url": "https://redis.io/glossary/cache-memory",
+                "snippet": "The L2 cache is larger in size and slightly slower in speed compared to the L1 cache. It may be located inside the CPU chip or outside it, but it’s always closer to the CPU than the main memory. The L2 cache can be shared among multiple cores or exclusive to…"
+              }
+            ]
           },
           "latencyMs": 13885,
           "admitted": true,
@@ -1134,7 +1457,24 @@
             "model": "moonshotai/Kimi-K2.6",
             "answer": "B",
             "defensible": ["B"],
-            "reason": "Cache memory stores frequently or recently accessed data in fast memory physically closer to the processor than main memory, which reduces access latency. The other options incorrectly describe non-volatile storage, processor multicore architecture, and assembly translation."
+            "reason": "Cache memory stores frequently or recently accessed data in fast memory physically closer to the processor than main memory, which reduces access latency. The other options incorrectly describe non-volatile storage, processor multicore architecture, and assembly translation.",
+            "sources": [
+              {
+                "title": "CPU cache - Wikipedia",
+                "url": "https://en.wikipedia.org/wiki/CPU_cache",
+                "snippet": "A CPU cache is a hardware cache used by the central processing unit (CPU) of a computer to reduce the average cost (time or energy) to access data \"Data (computer science)\") from the main memory. A cache is a smaller, faster memory, located closer to a…"
+              },
+              {
+                "title": "Cache Memory - GeeksforGeeks",
+                "url": "https://www.geeksforgeeks.org/computer-science-fundamentals/cache-memory",
+                "snippet": "Cache memory stores data close to the CPU, which helps speed up processing. It's much faster than the main memory (RAM). When the CPU needs data, it checks the cache first. If the data is there, it’s quickly accessed. If not, the CPU gets it from the slower…"
+              },
+              {
+                "title": "Cache Memory: understand cache memory for fast data access",
+                "url": "https://redis.io/glossary/cache-memory",
+                "snippet": "The L2 cache is larger in size and slightly slower in speed compared to the L1 cache. It may be located inside the CPU chip or outside it, but it’s always closer to the CPU than the main memory. The L2 cache can be shared among multiple cores or exclusive to…"
+              }
+            ]
           },
           "latencyMs": 43274,
           "admitted": true,
@@ -1188,7 +1528,24 @@
             "model": "MiniMaxAI/MiniMax-M2.7",
             "answer": "C",
             "defensible": ["B", "C"],
-            "reason": "In the SI standard a kilobyte equals 1000 bytes, but in computing the traditional definition treats a kilobyte as 1024 bytes. Since the question is from a computer‑science perspective, the conventional answer is 1024."
+            "reason": "In the SI standard a kilobyte equals 1000 bytes, but in computing the traditional definition treats a kilobyte as 1024 bytes. Since the question is from a computer‑science perspective, the conventional answer is 1024.",
+            "sources": [
+              {
+                "title": "1 kilobyte is precisely 1000 bytes? | Hacker News",
+                "url": "https://news.ycombinator.com/item?id=46873539",
+                "snippet": "And obviously, if you need two separate prefixes, you're going to change the one whose unit of measurement differs from all the rest of science and technology. And obviously, if you need two separate prefixes, you're going to change the one whose unit of…"
+              },
+              {
+                "title": "Kilobyte - Wikipedia",
+                "url": "https://en.wikipedia.org/wiki/Kilobyte",
+                "snippet": "defines the prefix kilo as a multiplication factor of 1000 (103); therefore, one kilobyte is 1000 bytes. The internationally recommended unit symbol for the kilobyte is kB. In some areas of information technology, particularly in reference to random-access…"
+              },
+              {
+                "title": "KB to Bytes Conversion Kilobytes to Bytes Calculator",
+                "url": "https://www.gbmb.org/kb-to-bytes",
+                "snippet": "| Kilobytes (KB) | Bytes (B) decimal | Bytes (B) binary | --- | 1 KB | 1000 Bytes | 1024 Bytes | | 2 KB | 2000 Bytes | 2048 Bytes | | 3 KB | 3000 Bytes | 3072 Bytes | | 4 KB | 4000 Bytes | 4096 Bytes | | 5 KB | 5000 Bytes | 5120 Bytes | | 6 KB | 6000 Bytes |…"
+              }
+            ]
           },
           "latencyMs": 42549,
           "admitted": true,
@@ -1218,7 +1575,24 @@
             "model": "moonshotai/Kimi-K2.6",
             "answer": "C",
             "defensible": ["B", "C"],
-            "reason": "In traditional computer science usage, one kilobyte equals 1024 bytes (2^10), though a competent reader could also select 1000 based on the SI definition of the SI prefix 'kilo-' and modern standards like IEC 80000-13 which reserve 1024 for the kibibyte."
+            "reason": "In traditional computer science usage, one kilobyte equals 1024 bytes (2^10), though a competent reader could also select 1000 based on the SI definition of the SI prefix 'kilo-' and modern standards like IEC 80000-13 which reserve 1024 for the kibibyte.",
+            "sources": [
+              {
+                "title": "1 kilobyte is precisely 1000 bytes? | Hacker News",
+                "url": "https://news.ycombinator.com/item?id=46873539",
+                "snippet": "And obviously, if you need two separate prefixes, you're going to change the one whose unit of measurement differs from all the rest of science and technology. And obviously, if you need two separate prefixes, you're going to change the one whose unit of…"
+              },
+              {
+                "title": "Kilobyte - Wikipedia",
+                "url": "https://en.wikipedia.org/wiki/Kilobyte",
+                "snippet": "defines the prefix kilo as a multiplication factor of 1000 (103); therefore, one kilobyte is 1000 bytes. The internationally recommended unit symbol for the kilobyte is kB. In some areas of information technology, particularly in reference to random-access…"
+              },
+              {
+                "title": "KB to Bytes Conversion Kilobytes to Bytes Calculator",
+                "url": "https://www.gbmb.org/kb-to-bytes",
+                "snippet": "| Kilobytes (KB) | Bytes (B) decimal | Bytes (B) binary | --- | 1 KB | 1000 Bytes | 1024 Bytes | | 2 KB | 2000 Bytes | 2048 Bytes | | 3 KB | 3000 Bytes | 3072 Bytes | | 4 KB | 4000 Bytes | 4096 Bytes | | 5 KB | 5000 Bytes | 5120 Bytes | | 6 KB | 6000 Bytes |…"
+              }
+            ]
           },
           "latencyMs": 65664,
           "admitted": true,
@@ -1328,7 +1702,24 @@
             "model": "MiniMaxAI/MiniMax-M2.7",
             "answer": "D",
             "defensible": ["D"],
-            "reason": "Creating a branch in Git isolates development work so changes can be made independently of the main line. This allows developers to experiment and add features without disturbing the stable version of the project."
+            "reason": "Creating a branch in Git isolates development work so changes can be made independently of the main line. This allows developers to experiment and add features without disturbing the stable version of the project.",
+            "sources": [
+              {
+                "title": "How to Create a Branch in Git? | Atlassian Git Tutorial",
+                "url": "https://www.atlassian.com/git/tutorials/using-branches",
+                "snippet": "`git branch` Git branches are effectively a pointer to a snapshot of your changes. When you want to add a new feature or fix a bug—no matter how big or how small—you spawn a new branch to encapsulate your changes. This makes it harder for unstable code to get…"
+              },
+              {
+                "title": "What is Git Branch? – ITU Online IT Training",
+                "url": "https://www.ituonline.com/tech-definitions/what-is-git-branch",
+                "snippet": "Branches help developers isolate features, fix bugs, test changes, and coordinate reviews without destabilizing the main codebase. They also make collaboration clearer. When branch names are descriptive and branches are short-lived, the whole workflow becomes…"
+              },
+              {
+                "title": "Medium",
+                "url": "https://medium.com/@jacoblogan98/understanding-git-branching-5d01f3dda541",
+                "snippet": "## What is a Git Branch? According to the official documentation from Git, it is simply defined by this statement, “ Branching means you diverge from the main line of development and continue to do work without messing with that main line.” [...] This means a…"
+              }
+            ]
           },
           "latencyMs": 17439,
           "admitted": true,
@@ -1358,7 +1749,24 @@
             "model": "moonshotai/Kimi-K2.6",
             "answer": "D",
             "defensible": ["D"],
-            "reason": "Creating a branch establishes an isolated line of development that lets developers experiment or implement features without modifying the main codebase. This keeps the primary branch stable until the new work is reviewed and merged."
+            "reason": "Creating a branch establishes an isolated line of development that lets developers experiment or implement features without modifying the main codebase. This keeps the primary branch stable until the new work is reviewed and merged.",
+            "sources": [
+              {
+                "title": "How to Create a Branch in Git? | Atlassian Git Tutorial",
+                "url": "https://www.atlassian.com/git/tutorials/using-branches",
+                "snippet": "`git branch` Git branches are effectively a pointer to a snapshot of your changes. When you want to add a new feature or fix a bug—no matter how big or how small—you spawn a new branch to encapsulate your changes. This makes it harder for unstable code to get…"
+              },
+              {
+                "title": "What is Git Branch? – ITU Online IT Training",
+                "url": "https://www.ituonline.com/tech-definitions/what-is-git-branch",
+                "snippet": "Branches help developers isolate features, fix bugs, test changes, and coordinate reviews without destabilizing the main codebase. They also make collaboration clearer. When branch names are descriptive and branches are short-lived, the whole workflow becomes…"
+              },
+              {
+                "title": "Medium",
+                "url": "https://medium.com/@jacoblogan98/understanding-git-branching-5d01f3dda541",
+                "snippet": "## What is a Git Branch? According to the official documentation from Git, it is simply defined by this statement, “ Branching means you diverge from the main line of development and continue to do work without messing with that main line.” [...] This means a…"
+              }
+            ]
           },
           "latencyMs": 53022,
           "admitted": true,

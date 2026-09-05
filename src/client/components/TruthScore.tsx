@@ -34,6 +34,16 @@ const tint = (score: number): CSSProperties => ({ '--score': `var(${BAND_TOKEN[s
  */
 function CorroborationLine({ tally }: { tally: Corroboration }) {
   if (!tally.retrieved) {
+    // Pages attached after the readings are not corroboration and must not be summarised as if they
+    // were. The sentence says who saw what, because that is the only thing a reader needs here.
+    if (tally.sourcesOnly) {
+      return (
+        <p className="type-caption truth-score-basis">
+          Pages for these questions were retrieved later and are shown under each item. The readers did not see them, so
+          they count for nothing in the score above.
+        </p>
+      )
+    }
     return <p className="type-caption truth-score-basis">This record was checked without live web retrieval.</p>
   }
 

@@ -82,7 +82,14 @@ export type VerdictCounts = Record<ItemVerdict, number>
 export type RecordScore = { score: number | null; scored: number; total: number }
 
 /** What live retrieval found across a record, counted per item. See truth-score.ts. */
-export type Corroboration = { supported: number; contradicted: number; absent: number; retrieved: number }
+export type Corroboration = {
+  supported: number
+  contradicted: number
+  absent: number
+  retrieved: number
+  /** Items carrying pages but no grounding: retrieved after the readings, so the readers never saw them. */
+  sourcesOnly: number
+}
 
 export type RecordSummary = {
   id: string

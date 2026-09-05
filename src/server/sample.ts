@@ -18,11 +18,20 @@ export const SAMPLE_PASS_PATH = './src/server/fixtures/benchmark-pass.json'
 
 const option = z.object({ letter: z.string().min(1), text: z.string().min(1) })
 
+const source = z.object({ title: z.string().min(1), url: z.url(), snippet: z.string().min(1) })
+
 const reading = z.object({
   model: z.string().min(1),
   answer: z.string().min(1),
   defensible: z.array(z.string()),
-  reason: z.string()
+  reason: z.string(),
+  // Added 6 September, AFTER the 3 September capture, and carrying no `grounding` — which is the
+  // whole point. Grounding is a value a Gonka reader reports about evidence it was shown, and these
+  // readers were never shown anything: retrieval did not exist when they ran. Sources without
+  // grounding is therefore the only shape this record can honestly hold, and it is what makes the
+  // evidence panel say the readers did not see these pages. FR-SAMPLE-1 still holds: every page here
+  // is a real Tavily result for this question, and nothing about the readings or verdicts moved.
+  sources: z.array(source).optional()
 })
 
 // One row of the attempts table as the benchmark produced it, including the rejected calls: an
