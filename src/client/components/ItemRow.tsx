@@ -77,7 +77,7 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
   }
 
   return (
-    <li data-item-position={item.position} className="flex gap-3 border-t border-rule py-5 sm:gap-4">
+    <li data-item-position={item.position} className="flex gap-3 border-t border-rule py-6 sm:gap-4">
       <span className="type-mono w-7 shrink-0 text-ink-muted sm:w-10">{item.position}</span>
 
       <div className="min-w-0 flex-1">
