@@ -189,7 +189,8 @@ describe('the corroboration tally', () => {
       supported: 1,
       contradicted: 0,
       absent: 0,
-      retrieved: 1
+      retrieved: 1,
+      sourcesOnly: 0
     })
   })
 
@@ -203,12 +204,40 @@ describe('the corroboration tally', () => {
     expect(tally.absent).toBe(1)
   })
 
+  // The sample record's state: pages attached on 6 September to readings captured on 3 September.
+  // They must never read as corroboration, because the readers never saw them.
+  test('pages without grounding count as sourcesOnly, never as corroboration', () => {
+    const withPages: Reading[] = [
+      { ...read(DEEPSEEK, 'A'), sources: [{ title: 'T', url: 'https://example.com/', snippet: 's' }] },
+      { ...read(MINIMAX, 'A'), sources: [{ title: 'T', url: 'https://example.com/', snippet: 's' }] }
+    ]
+    expect(corroboration([withPages])).toEqual({
+      supported: 0,
+      contradicted: 0,
+      absent: 0,
+      retrieved: 0,
+      sourcesOnly: 1
+    })
+  })
+
+  test('a scored record with only retrofitted pages reports no corroboration at all', () => {
+    const withPages: Reading[] = [
+      { ...read(DEEPSEEK, 'A'), sources: [{ title: 'T', url: 'https://example.com/', snippet: 's' }] },
+      { ...read(MINIMAX, 'B'), sources: [{ title: 'T', url: 'https://example.com/', snippet: 's' }] }
+    ]
+    const tally = corroboration([withPages, withPages])
+    expect(tally.retrieved).toBe(0)
+    expect(tally.supported + tally.contradicted + tally.absent).toBe(0)
+    expect(tally.sourcesOnly).toBe(2)
+  })
+
   test('items retrieval never ran on are not counted at all', () => {
     expect(corroboration([[read(DEEPSEEK, 'A'), read(MINIMAX, 'A')]])).toEqual({
       supported: 0,
       contradicted: 0,
       absent: 0,
-      retrieved: 0
+      retrieved: 0,
+      sourcesOnly: 0
     })
   })
 

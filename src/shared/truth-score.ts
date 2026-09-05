@@ -96,7 +96,7 @@ export function recordScore(itemScores: (number | null)[]): RecordScore {
  * worth claiming.
  */
 export function corroboration(items: (Reading[] | undefined)[]): Corroboration {
-  const tally: Corroboration = { supported: 0, contradicted: 0, absent: 0, retrieved: 0 }
+  const tally: Corroboration = { supported: 0, contradicted: 0, absent: 0, retrieved: 0, sourcesOnly: 0 }
 
   for (const readings of items) {
     const pair = readings ? firstDistinctPair(readings) : null
@@ -104,7 +104,12 @@ export function corroboration(items: (Reading[] | undefined)[]): Corroboration {
     const groundings = pair
       .map((reading) => reading.grounding)
       .filter((value): value is Grounding => value !== undefined)
-    if (!groundings.length) continue
+    if (!groundings.length) {
+      // Pages but no grounding is a real and different state: evidence attached after the fact, which
+      // the readers cannot have weighed. It must never be counted as corroboration.
+      if (pair.some((reading) => reading.sources?.length)) tally.sourcesOnly += 1
+      continue
+    }
 
     tally.retrieved += 1
     if (groundings.includes('contradicted')) tally.contradicted += 1

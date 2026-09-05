@@ -398,6 +398,20 @@ recorded readings and public request ids from a real pass; nothing in it is fabr
 
 - Every request id in the sample resolves to a public receipt whose model matches the displayed served model
 - Items that never obtained two verified readings in the loaded pass appear as **Unverified**, not filled in
+- Web pages retrieved after the pass may be attached, but only as pages: they carry **no `grounding`**, no verdict or
+  score may rest on them, and both the record summary and the evidence panel must state that the readers did not see
+  them. Attaching a `grounding` would be inventing a value a Gonka reader never reported, which is the fabrication this
+  requirement exists to forbid
+
+**Pages added 6 September.** Live retrieval shipped three days after this pass was captured, so no record a judge could
+open showed any ([#292](https://github.com/MUBA-M1KU/Cekgu/issues/292)) and the feature read as missing rather than as
+dated. Real Tavily results for the sample's own twelve questions are now attached — three pages each, snippets verbatim,
+retrieved through `src/server/retrieval/tavily.ts` on 6 September 2026.
+
+**Nothing about the pass moved.** The readings, verdicts, request ids, receipts and the 77/100 Truth Score are exactly
+as captured on 3 September. The added pages carry no grounding, so `corroboration()` counts them under `sourcesOnly` and
+never as corroboration, and the score is arithmetically untouched. What a reader is told is what happened: the pages
+were fetched later and the readers did not see them.
 
 **How the loaded pass satisfies this, 3 September.** The twelve items are a subset of
 `src/server/fixtures/evaluation-set.json`, which is the benchmark's own paper — its `fifo-structure` and `dns-role`

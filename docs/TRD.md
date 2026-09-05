@@ -1853,6 +1853,12 @@ Readings written before this existed carry no `grounding` and score exactly as t
 compatible on rows already in the database. No migration was needed either: `grounding` and `sources` ride inside the
 existing `reading_json` column.
 
+A record can also carry pages with **no** grounding, which is a third state and not a degenerate one: evidence attached
+after the readings, as the sample's was on 6 September. `corroboration()` counts those under `sourcesOnly` and never as
+corroboration, the score does not move, and both the summary line and the evidence panel say the readers did not see
+them. `src/server/sample.ts` accepts `sources` on a recorded reading for exactly this and still has no field for
+`grounding`, so a fabricated one cannot be seeded even by accident.
+
 `corroboration()` tallies a record per item, not per reading: an item counts as supported only when **both** readers
 said so, and as contradicted when **either** did. A single reader noticing the web disagrees is worth surfacing; a
 single reader agreeing is not worth claiming.

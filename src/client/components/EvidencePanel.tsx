@@ -121,13 +121,18 @@ function GroundingLine({ grounding }: { grounding: Grounding }) {
  * has been told a story about evidence. Retrieved text is quoted, never paraphrased, so nothing on
  * this panel is a model's account of what a page said.
  */
-function Sources({ sources }: { sources: Source[] }) {
+function Sources({ sources, shownToReaders }: { sources: Source[]; shownToReaders: boolean }) {
   return (
     <div className="mt-6 border-t border-rule pt-4">
       <p className="type-label">Retrieved From The Web</p>
+      {/* Two captions, because the difference between them is the whole claim. A record checked
+          before retrieval existed can still show what the web says about its questions, but saying
+          the readers weighed it would be a lie about a record whose entire value is that it is
+          exactly what the pipeline produced. */}
       <p className="mt-1 type-caption text-ink-muted">
-        Fetched while the readers worked, and shown to both of them. No model wrote any of it, and no model outside the
-        Gonka network read it.
+        {shownToReaders
+          ? 'Fetched while the readers worked, and shown to both of them. No model wrote any of it, and no model outside the Gonka network read it.'
+          : 'Fetched after these readings, so the readers did not see them and no verdict or score above rests on them. No model wrote any of it, and no model outside the Gonka network read it.'}
       </p>
       <ol className="mt-3 flex flex-col gap-3">
         {sources.map((source, index) => (
@@ -223,7 +228,9 @@ export function EvidencePanel({ item }: { item: Item }) {
         )}
       </div>
 
-      {sources.length ? <Sources sources={sources} /> : null}
+      {sources.length ? (
+        <Sources sources={sources} shownToReaders={readers.some((attempt) => attempt.reading?.grounding)} />
+      ) : null}
 
       <div className="mt-6 flex items-center gap-2">
         <h3 className="type-eyebrow text-ink-muted">All Attempts</h3>
