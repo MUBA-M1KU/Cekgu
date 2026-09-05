@@ -588,7 +588,7 @@
       .cards {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 72px;
+        gap: 40px;
       }
       .card {
         padding: 34px 38px 38px;
@@ -1061,9 +1061,18 @@
       .proof {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 22px;
+        gap: 40px;
         align-items: stretch;
-        margin-top: 26px;
+        margin-top: 32px;
+      }
+      /* The proof slide carries a .foot, and .foot is absolutely positioned in
+         the pad's bottom padding. Without this reservation the body centres
+         over the caption and the url column lands on top of it. */
+      [data-section='Proof'] .body {
+        padding-bottom: 44px;
+      }
+      .cards .card {
+        padding: 28px 38px;
       }
       .proof .urlbar {
         margin: 0;
@@ -1076,13 +1085,13 @@
       }
       .receipt {
         margin: 0;
-        padding: 26px 30px;
+        padding: 16px 28px;
         border-radius: var(--r-sheet);
         border: 1px solid var(--rule);
         background: var(--well);
         font-family: var(--font-mono);
         font-size: 21px;
-        line-height: 1.6;
+        line-height: 1.45;
         color: var(--ink-muted);
         white-space: pre;
         overflow: hidden;
@@ -1471,8 +1480,8 @@
         gap: 12px;
       }
       .sdg svg {
-        width: 66px;
-        height: 66px;
+        width: 56px;
+        height: 56px;
         border-radius: 6px;
         flex-shrink: 0;
       }
@@ -1482,9 +1491,9 @@
       .sdg-lbl {
         white-space: nowrap;
         font-family: var(--font-mono);
-        font-size: 17px;
+        font-size: 15px;
         line-height: 1.35;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
         color: var(--ink-muted);
       }
@@ -2781,7 +2790,7 @@
           </div>
 
           <div class="body mid">
-            <p class="kx" style="margin: 0 0 26px">PUBLIC SAMPLE RECORD &middot; QUESTION 9</p>
+            <p class="kx" style="margin: 0 0 8px">PUBLIC SAMPLE RECORD &middot; QUESTION 9</p>
 
             <!-- Field order is the product's own. In EvidencePanel.tsx a reader
                  column runs Served Model over a mono model id, then Request ID,
@@ -2792,9 +2801,9 @@
               <div class="card">
                 <p class="kx" style="margin: 0">Served Model</p>
                 <p class="val">MiniMaxAI/MiniMax-M2.7</p>
-                <p class="kx" style="margin: 30px 0 0">Request ID</p>
+                <p class="kx" style="margin: 24px 0 0">Request ID</p>
                 <p class="val">req-1788427238422211326-414866</p>
-                <div class="row" style="margin-top: 30px">
+                <div class="row" style="margin-top: 24px">
                   <span class="kx">Receipt</span>
                   <span class="chip">Verified</span>
                 </div>
@@ -2803,9 +2812,9 @@
               <div class="card">
                 <p class="kx" style="margin: 0">Served Model</p>
                 <p class="val">moonshotai/Kimi-K2.6</p>
-                <p class="kx" style="margin: 30px 0 0">Request ID</p>
+                <p class="kx" style="margin: 24px 0 0">Request ID</p>
                 <p class="val">req-1788427238422211356-414867</p>
-                <div class="row" style="margin-top: 30px">
+                <div class="row" style="margin-top: 24px">
                   <span class="kx">Receipt</span>
                   <span class="chip">Verified</span>
                 </div>
@@ -2831,12 +2840,12 @@
         </div>
       </section>
 
-      <!-- ==================== 07 TECHNOLOGY AND TRACK ===================== -->
+      <!-- ========================= 08 ARCHITECTURE ======================== -->
       <section
         class="slide"
-        data-section="Build"
+        data-section="Architecture"
         data-budget="30"
-        data-speaker-notes="One Bun process. Hono serves the API, the queue worker runs inside it, Postgres holds the records. Every inference call leaves from one file, and it goes to GonkaRouter. There is no other AI provider in this repository, and you can grep for it. In fact a test asserts it on every run, which is the line on the diagram. The four things this track requires are the four things this product needs to work. We did not bolt them on. Three of the four track requirements land here and should be said out loud: all inference through GonkaRouter, at least two models cross-verifying, and a Gonka request ID shown for every step. The fourth, the printed rule, is on the concept slide, so refer back to it rather than repeating it. Do not read the band across the bottom word for word; name the four and move on, because the clock is tighter here than it feels."
+        data-speaker-notes="One Bun process on Cloud Run. Hono serves the API, the queue worker runs inside the same process, Neon Postgres holds the records. Follow the arrows left to right: the browser posts a paper, the queue claims one question at a time, and every model call leaves through one file. That file is the whole story of this track. There is no other AI provider in this repository, and a test asserts it on every run, which is the line under the gateway box. The four things the track requires are the four things this product needs to work, and three of them are on this diagram: all inference through GonkaRouter, two models cross-verifying, a request ID on every step. The fourth, the printed rule, is on the concept slide, so refer back to it. Do not read the band across the bottom word for word; name the four and move on, because the clock is tighter here than it feels."
       >
         <div class="pad">
           <div class="chrome">
@@ -2849,38 +2858,95 @@
           <div class="head">
             <p class="eyebrow">4. Technology and track</p>
             <h2 class="title">One server, one gateway, <em>two models.</em></h2>
-            <p class="sub">One Bun process, one gateway, four calls in flight, and a rule you can read off the screen.</p>
+            <p class="sub">Every model call in this product leaves from one file, and that file only knows how to reach GonkaRouter.</p>
           </div>
 
           <div class="body">
-            <ol class="flow" data-stagger>
-              <li><span class="ico"><svg aria-hidden="true"><use href="#i-submit" /></svg></span><span class="n">1</span><b>Submit</b><p>Checked locally. The record exists in under a second, before any model runs.</p></li>
-              <li><span class="ico"><svg aria-hidden="true"><use href="#i-queue" /></svg></span><span class="n">2</span><b>Queue</b><p>Postgres. One question claimed at a time, <code>SKIP LOCKED</code>. Four calls in flight.</p></li>
-              <li><span class="ico"><svg aria-hidden="true"><use href="#i-blind" /></svg></span><span class="n">3</span><b>Two models</b><p>Both through GonkaRouter, neither shown the answer key, no fallback allowed on any call.</p></li>
-              <li><span class="ico"><svg aria-hidden="true"><use href="#i-receipt" /></svg></span><span class="n">4</span><b>Receipt check</b><p><code>GET /v1/receipts/{id}</code>. The served model must equal the one asked for, within 5 s.</p></li>
-              <li><span class="ico"><svg aria-hidden="true"><use href="#i-rule" /></svg></span><span class="n">5</span><b>Fixed rule</b><p>Five verdicts, in a fixed order. Fewer than two verified answers means Unverified.</p></li>
-              <li><span class="ico"><svg aria-hidden="true"><use href="#i-record" /></svg></span><span class="n">6</span><b>Record</b><p>Verdict, every attempt, every request ID. Her decision is saved next to it, not instead of it.</p></li>
-            </ol>
+            <div class="full">
+              <svg preserveAspectRatio="xMidYMin meet"
+                viewBox="0 0 1736 500"
+                role="img"
+                aria-label="Architecture. The browser posts a paper to a single Bun process on Cloud Run, which runs the Hono API and the queue worker and stores records in Neon Postgres. Both reach GonkaRouter through one gateway client, which calls two models, MiniMax and Kimi, and then checks each receipt."
+              >
+                <text class="label f-muted" x="0" y="20" font-size="19">BROWSER</text>
+                <text class="label f-muted" x="1300" y="20" font-size="19">GONKAROUTER</text>
 
-            <div class="build-grid">
-              <div class="card">
-                <span class="panel-head"><span class="ico"><svg aria-hidden="true"><use href="#i-layers" /></svg></span><span class="kx">Stack</span></span>
-                <div class="stack-row"><b>Browser</b><span class="lgs"><span class="lg"><svg aria-hidden="true"><use href="#lg-react" /></svg>React 19</span><span class="lg"><svg aria-hidden="true"><use href="#lg-vite" /></svg>Vite</span></span></div>
-                <div class="stack-row"><b>Server</b><span class="lgs"><span class="lg"><svg aria-hidden="true"><use href="#lg-bun" /></svg>Bun</span><span class="lg"><svg aria-hidden="true"><use href="#lg-hono" /></svg>Hono</span></span></div>
-                <div class="stack-row"><b>Data</b><span class="lgs"><span class="lg"><svg aria-hidden="true"><use href="#lg-postgresql" /></svg>PostgreSQL</span><span class="lg"><svg aria-hidden="true"><use href="#lg-neon" /></svg>Neon</span><span class="lg"><svg aria-hidden="true"><use href="#lg-drizzle" /></svg>Drizzle</span></span></div>
-                <div class="stack-row"><b>Host</b><span class="lgs"><span class="lg"><svg aria-hidden="true"><use href="#lg-googlecloud" /></svg>Cloud Run</span></span></div>
-              </div>
-              <div class="card">
-                <span class="panel-head"><span class="ico"><svg aria-hidden="true"><use href="#i-clock" /></svg></span><span class="kx">When the gateway is slow</span></span>
-                <div class="kv"><b>Hedge at 45 s</b><span>a duplicate call to the same model, first answer wins</span></div>
-                <div class="kv"><b>Cutoff at 90 s</b><span>the call is aborted and recorded with no request ID</span></div>
-                <div class="kv"><b>3 attempts per family</b><span>then the question is marked Unverified</span></div>
-              </div>
-              <div class="card ink-card">
-                <span class="panel-head"><span class="ico"><svg aria-hidden="true"><use href="#i-shield" /></svg></span><span class="kx">Checked on every test run</span></span>
-                <p class="mono-line">only-gonkarouter.test.ts</p>
-                <p class="ink-p">No other AI provider exists anywhere in the code. A judge can search it and check.</p>
-              </div>
+                <!-- The deployment boundary is drawn, not described: everything
+                     inside the dashed rule is the one container image. -->
+                <rect x="420" y="0" width="740" height="372" rx="14" class="s-rule" stroke-dasharray="9 9" />
+                <use href="#lg-googlecloud" x="448" y="16" width="26" height="26" />
+                <use href="#lg-bun" x="482" y="16" width="26" height="26" />
+                <text class="label f-muted" x="520" y="35" font-size="19">GOOGLE CLOUD RUN &middot; ONE BUN PROCESS</text>
+
+                <rect x="0.5" y="36.5" width="251" height="169" rx="10" class="card-s" />
+                <text class="f-ink" x="28" y="76" font-size="25">Cekgu web app</text>
+                <use href="#lg-react" x="28" y="98" width="30" height="30" />
+                <text class="f-muted" x="70" y="120" font-size="21">React 19</text>
+                <use href="#lg-vite" x="28" y="144" width="30" height="30" />
+                <text class="f-muted" x="70" y="166" font-size="21">Vite</text>
+
+                <path class="conn" d="M252 121 H412" />
+                <path class="conn" d="M403 115 L412 121 L403 127" />
+                <text class="mono f-muted" x="332" y="103" font-size="16" text-anchor="middle">POST /api/checks</text>
+
+                <rect x="452.5" y="54.5" width="319" height="123" rx="10" class="card-s" />
+                <use href="#lg-hono" x="478" y="74" width="28" height="28" />
+                <text class="f-ink" x="516" y="97" font-size="25">Hono API</text>
+                <text class="f-muted" x="478" y="133" font-size="19">Validates the paper and writes</text>
+                <text class="f-muted" x="478" y="159" font-size="19">the record before any model runs.</text>
+
+                <rect x="452.5" y="210.5" width="319" height="123" rx="10" class="card-s" />
+                <use href="#lg-postgresql" x="478" y="230" width="28" height="28" />
+                <text class="f-ink" x="516" y="253" font-size="25">Queue worker</text>
+                <text class="f-muted" x="478" y="289" font-size="20">One question claimed at a time,</text>
+                <text class="mono f-muted" x="478" y="315" font-size="20">SKIP LOCKED</text>
+                <text class="f-muted" x="610" y="315" font-size="20">. Four in flight.</text>
+
+                <!-- Both halves of the process reach the network through the
+                     same box, which is the point of the slide. -->
+                <path class="conn" d="M772 116 H792 V194 H804" />
+                <path class="conn" d="M772 272 H792 V194" />
+                <path class="conn" d="M803 188 L812 194 L803 200" />
+
+                <rect x="812.5" y="110.5" width="327" height="167" rx="10" class="card-s" />
+                <text class="f-ink" x="840" y="151" font-size="25">Gateway client</text>
+                <text class="mono f-muted" x="840" y="185" font-size="20">src/server/gateway/</text>
+                <text class="f-muted" x="840" y="217" font-size="20">The only file that calls out.</text>
+                <text class="mono f-ink" x="840" y="251" font-size="20">X-Gonka-No-Fallback</text>
+
+                <path class="conn" d="M1140 194 H1292" />
+                <path class="conn" d="M1283 188 L1292 194 L1283 200" />
+                <text class="f-muted" x="1216" y="180" font-size="18" text-anchor="middle">two model calls</text>
+
+                <rect x="1300.5" y="36.5" width="435" height="339" rx="10" class="card-s" />
+                <text class="f-ink" x="1332" y="82" font-size="28">GonkaRouter</text>
+                <text class="mono f-muted" x="1332" y="114" font-size="20">api.gonkarouter.io</text>
+
+                <rect x="1332" y="138" width="372" height="68" rx="8" class="f-well" />
+                <text class="mono f-ink" x="1356" y="168" font-size="20">MiniMaxAI/MiniMax-M2.7</text>
+                <text class="f-muted" x="1356" y="194" font-size="19">Reader A, answers blind</text>
+
+                <rect x="1332" y="214" width="372" height="68" rx="8" class="f-well" />
+                <text class="mono f-ink" x="1356" y="244" font-size="20">moonshotai/Kimi-K2.6</text>
+                <text class="f-muted" x="1356" y="270" font-size="19">Reader B, answers blind</text>
+
+                <path class="s-rule" d="M1332 302 H1704" />
+                <text class="mono f-ink" x="1332" y="332" font-size="20">GET /v1/receipts/{id}</text>
+                <text class="f-muted" x="1332" y="360" font-size="19">The served model must match.</text>
+
+                <path class="conn" d="M612 334 V396" />
+                <path class="conn" d="M606 387 L612 396 L618 387" />
+
+                <rect x="452.5" y="404.5" width="687" height="87" rx="10" class="card-s" />
+                <use href="#lg-neon" x="478" y="428" width="30" height="30" />
+                <use href="#lg-drizzle" x="518" y="428" width="30" height="30" />
+                <text class="f-ink" x="564" y="441" font-size="24">Neon Postgres, Drizzle</text>
+                <text class="f-muted" x="564" y="471" font-size="20">Records, attempts and every request ID.</text>
+
+                <text class="mono f-ink" x="1300" y="420" font-size="20">only-gonkarouter.test.ts</text>
+                <text class="f-muted" x="1300" y="448" font-size="19">Fails the build if any other provider host</text>
+                <text class="f-muted" x="1300" y="474" font-size="19">appears anywhere in the code.</text>
+              </svg>
             </div>
 
             <div class="band">
