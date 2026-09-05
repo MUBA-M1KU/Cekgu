@@ -85,6 +85,27 @@ describe('a reading that omits its own answer from defensible', () => {
   })
 })
 
+// The defect this guards: queries.ts fed every admitted attempt on the item to the score, including
+// rounds before a retry, so an item whose stored verdict came from round two was scored from round
+// one. The fix filters on the retry_requested disposition; these assert the shape the fix relies on.
+describe('a retried item is scored from one round only', () => {
+  test('two rounds run together produce a pair that spans them, which is the bug', () => {
+    // Round one admitted a single reading, so the item stored Unverified. Round two admitted one
+    // more. Fed both, firstDistinctPair finds a pair and puts a number beside an Unverified chip.
+    const bothRounds = [read(DEEPSEEK, 'B'), read(MINIMAX, 'A')]
+    expect(truthScore(bothRounds, 'A')).toBe(50)
+  })
+
+  test('the second round alone scores null, matching the Unverified it stored', () => {
+    expect(truthScore([read(MINIMAX, 'A')], 'A')).toBeNull()
+  })
+
+  test('a complete second round scores on its own readings, not the first round', () => {
+    const roundTwo = [read(MINIMAX, 'A'), read(DEEPSEEK, 'A')]
+    expect(truthScore(roundTwo, 'A')).toBe(100)
+  })
+})
+
 describe('the pair is chosen the way the verdict chooses it', () => {
   test('the first distinct pair scores, and later readings do not move it', () => {
     const readings = [read(DEEPSEEK, 'A'), read(MINIMAX, 'A'), read(MINIMAX, 'C')]

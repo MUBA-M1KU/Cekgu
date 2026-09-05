@@ -22,10 +22,27 @@ function emptyCounts(): VerdictCounts {
    the attempts underneath it. It is read off the same admitted readings the verdict used, in the
    order the round produced them — attempts arrive newest first for the evidence view, and a score
    built in that order would pick a different pair from the rule and could then contradict the
-   verdict printed beside it. Sorting on finishedAt puts them back in completion order. */
-function admittedReadings(attemptsForItem: Attempt[]) {
+   verdict printed beside it. Sorting on finishedAt puts them back in completion order.
+
+   The retry boundary is the other half of that, and omitting it was a real defect rather than a
+   theoretical one. A retry leaves every earlier attempt row in place — requeue() resets the item and
+   deletes nothing — so an item checked twice carries both rounds. Taking the first distinct pair
+   across all of them selects the OLDEST two, while the stored verdict came from the newest round, and
+   the two then disagree on screen: an item whose chip says Unverified would print a number, which is
+   exactly what "Unverified scores null, never 0" exists to prevent.
+
+   POST /api/records/:id/items/:itemId/retry already writes a `retry_requested` disposition to make
+   this boundary visible, and says in its own comment that the rule only considers attempts started
+   after it. This is that rule. */
+function admittedReadings(attemptsForItem: Attempt[], dispositionsForItem: Disposition[]) {
+  const boundary = dispositionsForItem
+    .filter((disposition) => disposition.kind === 'retry_requested')
+    .map((disposition) => disposition.createdAt)
+    .at(-1)
+
   return attemptsForItem
     .filter((attempt) => attempt.admitted && attempt.reading)
+    .filter((attempt) => (boundary ? attempt.startedAt > boundary : true))
     .slice()
     .sort((a, b) => (a.finishedAt ?? '').localeCompare(b.finishedAt ?? ''))
     .map((attempt) => attempt.reading as NonNullable<Attempt['reading']>)
@@ -123,6 +140,7 @@ export async function recordDetail(recordId: string): Promise<RecordDetail | nul
 
   const built: Item[] = itemRows.map((row) => {
     const itemAttempts = attemptRows.filter((attempt) => attempt.itemId === row.id).map(toAttempt)
+    const itemDispositions = dispositionRows.filter((disposition) => disposition.itemId === row.id).map(toDisposition)
     return {
       id: row.id,
       position: row.position,
@@ -132,10 +150,10 @@ export async function recordDetail(recordId: string): Promise<RecordDetail | nul
       status: row.status,
       verdict: row.verdict,
       verdictReason: row.verdictReason,
-      truthScore: truthScore(admittedReadings(itemAttempts), row.key),
+      truthScore: truthScore(admittedReadings(itemAttempts, itemDispositions), row.key),
       attemptsUsed: row.attemptsUsed,
       attempts: itemAttempts,
-      dispositions: dispositionRows.filter((disposition) => disposition.itemId === row.id).map(toDisposition)
+      dispositions: itemDispositions
     }
   })
 
@@ -150,7 +168,7 @@ export async function recordDetail(recordId: string): Promise<RecordDetail | nul
     expiresAt: record.expiresAt?.toISOString() ?? null,
     counts,
     truthScore: recordScore(built.map((item) => item.truthScore)),
-    corroboration: corroboration(built.map((item) => admittedReadings(item.attempts))),
+    corroboration: corroboration(built.map((item) => admittedReadings(item.attempts, item.dispositions))),
     items: built
   }
 }

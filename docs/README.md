@@ -96,7 +96,7 @@ The product is built for practice papers and synthetic examples, not for confide
 <table>
   <tr>
     <td width="50%"><img src="assets/landing.png" alt="The Cekgu landing page" width="100%"></td>
-    <td width="50%"><img src="assets/sample-report.png" alt="The public sample report" width="100%"></td>
+    <td width="50%"><img src="assets/sample-report.png" alt="The public sample report, with its Truth Score and verdict breakdown" width="100%"></td>
   </tr>
   <tr>
     <td><sub>The landing page, signed out.</sub></td>
@@ -104,7 +104,7 @@ The product is built for practice papers and synthetic examples, not for confide
   </tr>
   <tr>
     <td width="50%"><img src="assets/dashboard.png" alt="The account dashboard" width="100%"></td>
-    <td width="50%"><img src="assets/item-evidence.png" alt="Item evidence showing two served models, two request ids, receipt states and every attempt" width="100%"></td>
+    <td width="50%"><img src="assets/item-evidence.png" alt="Item evidence showing two served models, two request ids, receipt states, the pages retrieved from the web and every attempt" width="100%"></td>
   </tr>
   <tr>
     <td><sub>The dashboard: verified readings against total, the verdict breakdown, and each family's share of the work.</sub></td>
@@ -120,7 +120,7 @@ The product is built for practice papers and synthetic examples, not for confide
    them, or upload a scan or photograph — and edit the draft that comes back. No draft ever submits itself; each one is
    corrected and sent by the educator.
 
-   <img src="assets/new-check.png" alt="The New Check form, with the upload card and the paper fields" width="100%">
+   <img src="assets/new-check.png" alt="The New Check form, with the Start From a Paper card offering a link or an upload, and the paper fields below" width="100%">
 
 1. **Two families read it blind.** Each question is queued. A round takes two seats and fills each from a different
    model family through GonkaRouter. The prompt carries the stem, the lettered options, the subject and the language —
@@ -202,7 +202,8 @@ The product is built for practice papers and synthetic examples, not for confide
   does not exist from a gateway it could not reach.
 - **Explicit consensus.** The five-outcome rule above is a pure function in `src/shared/verdict.ts` with the reason
   sentence it produced shown next to the verdict. The Truth Score beside it is a second pure function over the same two
-  readings, so a score can never disagree with the verdict printed next to it.
+  readings, drawn from the same round, so the number and the verdict always describe the same evidence. It grades within
+  a verdict rather than ranking across verdicts — [TRD section 14](TRD.md#truth-score) sets out where the bands overlap.
 - **Retrieval that decides nothing.** `src/server/retrieval/` reaches the public web for evidence and is held by
   `only-gonkarouter.test.ts` to the same rule the two provider directories are: it may not import the verdict rule, the
   schema, the round or the gateway client. It is not a third exemption, because it calls no model.

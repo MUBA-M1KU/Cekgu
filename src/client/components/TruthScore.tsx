@@ -26,12 +26,18 @@ const tint = (score: number): CSSProperties => ({ '--score': `var(${BAND_TOKEN[s
 function CorroborationLine({ tally }: { tally: Corroboration }) {
   if (!tally.retrieved) return null
 
+  const items = (count: number) => `${count} of ${tally.retrieved} checked ${tally.retrieved === 1 ? 'item' : 'items'}`
+
   // Contradiction leads when there is any, because it is the only one of the three that asks the
-  // educator to do something.
+  // educator to do something. It does not get to be the whole sentence, though: leading with one
+  // contradiction and saying nothing about eight corroborations describes the record wrongly, which
+  // is what the line looked like on the sample.
   const text = tally.contradicted
-    ? `The web pointed away from the readers on ${tally.contradicted} of ${tally.retrieved} checked ${tally.retrieved === 1 ? 'item' : 'items'}.`
+    ? tally.supported
+      ? `The web backed both readers on ${items(tally.supported)}, and pointed away from them on ${tally.contradicted}.`
+      : `The web pointed away from the readers on ${items(tally.contradicted)}.`
     : tally.supported
-      ? `The web backed both readers on ${tally.supported} of ${tally.retrieved} checked ${tally.retrieved === 1 ? 'item' : 'items'}.`
+      ? `The web backed both readers on ${items(tally.supported)}.`
       : `The web was searched on ${tally.retrieved} ${tally.retrieved === 1 ? 'item' : 'items'} and settled none of them.`
 
   return <p className="type-caption truth-score-basis">{text}</p>

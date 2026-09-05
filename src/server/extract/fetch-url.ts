@@ -59,20 +59,31 @@ function v6Groups(address: string): number[] | null {
 function isPrivateAddress(address: string): boolean {
   if (isIP(address) === 6) {
     const lower = address.toLowerCase()
-    // Unique local and link-local.
-    if (/^f[cd]/.test(lower) || lower.startsWith('fe80')) return true
-
     const groups = v6Groups(lower)
     if (!groups) return true
 
-    // ::ffff:x.x.x.x is an IPv4 address wearing a v6 hat, and WHATWG URL normalises the dotted form
-    // to hex groups — so the embedded v4 address has to be reassembled from them and judged as v4.
-    // Without this, http://[::ffff:169.254.169.254]/ reaches the cloud metadata service.
     const [g0, g1, g2, g3, g4, g5, g6, g7] = groups
-    if (g0 === undefined || g6 === undefined || g7 === undefined) return true
-    if (g0 === 0 && g1 === 0 && g2 === 0 && g3 === 0 && g4 === 0 && g5 === 0xffff) {
-      return isPrivateAddress(`${g6 >> 8}.${g6 & 0xff}.${g7 >> 8}.${g7 & 0xff}`)
-    }
+    if (g0 === undefined || g1 === undefined || g6 === undefined || g7 === undefined) return true
+
+    // Masked, not prefix-matched. fe80::/10 spans fe80 through febf and fec0::/10 through feff, so
+    // testing `startsWith('fe80')` let http://[fe90::1]/ and the deprecated site-local block through.
+    if ((g0 & 0xfe00) === 0xfc00) return true // unique local, fc00::/7
+    if ((g0 & 0xffc0) === 0xfe80) return true // link-local, fe80::/10
+    if ((g0 & 0xffc0) === 0xfec0) return true // site-local, deprecated but still not the internet
+    if ((g0 & 0xff00) === 0xff00) return true // multicast, ff00::/8
+
+    // Four ways to write an IPv4 address inside an IPv6 one, and the guard has to decode all of
+    // them or it judges the wrapper instead of the address. Only ::ffff: was handled, so
+    // http://[::169.254.169.254]/ and the NAT64 form http://[64:ff9b::a9fe:a9fe]/ both read as
+    // public and reached the cloud metadata service wherever a translator sat on the path.
+    const embedded = (hi: number, lo: number) => isPrivateAddress(`${hi >> 8}.${hi & 0xff}.${lo >> 8}.${lo & 0xff}`)
+    const topFive = g0 === 0 && g1 === 0 && g2 === 0 && g3 === 0 && g4 === 0
+
+    if (topFive && g5 === 0xffff) return embedded(g6, g7) // ::ffff:0:0/96, IPv4-mapped
+    if (g0 === 0x0064 && g1 === 0xff9b) return embedded(g6, g7) // 64:ff9b::/96, NAT64
+    if (g0 === 0x2002) return embedded(g1, g2 ?? 0) // 2002::/16, 6to4
+    // ::/96 IPv4-compatible. Excludes :: and ::1, which the unspecified/loopback test below owns.
+    if (topFive && g5 === 0 && !(g6 === 0 && (g7 === 0 || g7 === 1))) return embedded(g6, g7)
 
     // ::1 (loopback) and :: (unspecified), once expanded.
     return groups.every((group, index) => (index === 7 ? group === 0 || group === 1 : group === 0))
@@ -87,6 +98,8 @@ function isPrivateAddress(address: string): boolean {
   if (a === 172 && b >= 16 && b <= 31) return true
   if (a === 192 && b === 168) return true
   if (a === 100 && b >= 64 && b <= 127) return true // carrier-grade NAT
+  if (a === 192 && b === 0) return true // 192.0.0.0/24 protocol assignments, and 192.0.2.0/24 docs
+  if (a === 198 && (b === 18 || b === 19)) return true // 198.18.0.0/15 benchmarking
   if (a >= 224) return true // multicast and reserved
   return false
 }
@@ -169,11 +182,9 @@ export async function fetchUrl(raw: string): Promise<UrlFetch> {
     }
 
     const contentType = (response.headers.get('content-type') ?? '').split(';')[0]?.trim().toLowerCase() ?? ''
-    const buffer = await response.arrayBuffer()
-    // Checked again after reading: a content-length header is a claim, not a limit.
-    if (buffer.byteLength > URL_MAX_BYTES) {
-      return { ok: false, reason: 'That page is larger than 5 MB.' }
-    }
+    const read = await readCapped(response)
+    if (!read) return { ok: false, reason: 'That page is larger than 5 MB.' }
+    const buffer = read
 
     const finalUrl = checked.url.toString()
     if (HTML_TYPES.includes(contentType) || contentType === '') {
@@ -188,6 +199,47 @@ export async function fetchUrl(raw: string): Promise<UrlFetch> {
   }
 
   return { ok: false, reason: 'That link redirected too many times.' }
+}
+
+/**
+ * The body, or null if it goes past the ceiling.
+ *
+ * Read through the stream with a running count rather than buffered whole and measured afterwards.
+ * A chunked response sends no content-length, so the header check above cannot fire, and
+ * `arrayBuffer()` would hold the entire body in memory before anything measured it — a server the
+ * caller chose could stream for the full 15 s timeout, four times over across the redirect budget.
+ */
+async function readCapped(response: Response): Promise<Uint8Array | null> {
+  const body = response.body
+  if (!body) return new Uint8Array()
+
+  const reader = body.getReader()
+  const chunks: Uint8Array[] = []
+  let total = 0
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      if (!value) continue
+      total += value.byteLength
+      if (total > URL_MAX_BYTES) return null
+      chunks.push(value)
+    }
+  } catch {
+    return null
+  } finally {
+    // Releases the socket whether we finished or walked away at the ceiling.
+    void reader.cancel().catch(() => undefined)
+  }
+
+  const out = new Uint8Array(total)
+  let at = 0
+  for (const chunk of chunks) {
+    out.set(chunk, at)
+    at += chunk.byteLength
+  }
+  return out
 }
 
 const ENTITIES: Record<string, string> = {

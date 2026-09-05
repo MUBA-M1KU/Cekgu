@@ -107,3 +107,29 @@ evidence, Guest sign-in landing on the dashboard, and four workspace routes.
 
 All buttons carry accessible names; no horizontal overflow on any route. Screenshots were captured to the scratchpad
 directory. The live Guest-to-GonkaRouter submission was deliberately not exercised to avoid burning gateway tokens.
+
+## Verification pass, 6 September
+
+Run at 05:40 MYT on 6 September 2026 against `docs/session-screenshots`, covering the Truth Score, live retrieval, link
+ingestion and the New Check card merge added that morning.
+
+| Check                   | Result                                                    |
+| ----------------------- | --------------------------------------------------------- |
+| `bun run lint`          | Pass                                                      |
+| `bun run typecheck`     | Pass                                                      |
+| `bun run check:anchors` | Pass, 551 links across 42 files                           |
+| `bun test src/`         | Pass, 418 passed, 73 database-dependent skips, 0 failures |
+| `bun run e2e`           | Pass, 27 passed, 1 skipped                                |
+
+**The e2e run does not cover the work it was run beside, and that is the point worth recording.** `playwright.config.ts`
+targets the deployment, not the tree, and production was still serving a build from before this session because deploys
+are gated on exhausted GitHub Actions minutes. So the 27 green tests say the deployed demo path is healthy; they say
+nothing about the Truth Score, retrieval or link input. Only a deploy of this build, then a rerun, would. The same trap
+is recorded in [#148](https://github.com/MUBA-M1KU/Cekgu/issues/148).
+
+The opt-in `E2E_FLOW=1` live-gateway test stayed skipped. Against a deployment without this build it would exercise the
+old path at the cost of real gateway tokens, which buys nothing.
+
+Retrieval was exercised directly instead: one Tavily search per question across all twelve sample items returned four
+results each, and the SSRF guard refused `http://169.254.169.254/latest/meta-data/` while `https://example.com/` came
+back as clean text.

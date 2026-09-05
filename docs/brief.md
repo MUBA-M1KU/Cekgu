@@ -33,18 +33,24 @@ Contents:
 
 ## Dates
 
-| Date       | Time              | What                                                        |
-| ---------- | ----------------- | ----------------------------------------------------------- |
-| 26 Aug     | 8:00 PM           | Opening ceremony                                            |
-| 27 Aug     | 8:00 PM           | Thetanuts Finance workshop                                  |
-| **27 Aug** | **9:00 PM**       | **GonkaRouter workshop**, Jack, Tech Lead                   |
-| 31 Aug     | 9:00 PM           | Sui workshop, Rafael, Mysten Labs                           |
-| 1 Sept     | 5:00 PM           | UTAR Kampar bus reservation deadline                        |
-| **5 Sept** | **11:59 PM**      | **Submission deadline**, and extended registration deadline |
-| **6 Sept** | 8:00 AM - 6:00 PM | **Demo Day at APU**, physical                               |
+| Date       | Time              | What                                                         |
+| ---------- | ----------------- | ------------------------------------------------------------ |
+| 26 Aug     | 8:00 PM           | Opening ceremony                                             |
+| 27 Aug     | 8:00 PM           | Thetanuts Finance workshop                                   |
+| **27 Aug** | **9:00 PM**       | **GonkaRouter workshop**, Jack, Tech Lead                    |
+| 31 Aug     | 9:00 PM           | Sui workshop, Rafael, Mysten Labs                            |
+| 1 Sept     | 5:00 PM           | UTAR Kampar bus reservation deadline                         |
+| ~~5 Sept~~ | ~~11:59 PM~~      | Original submission deadline, extended — see the row below   |
+| **6 Sept** | **8:00 AM**       | **Submission deadline**, extended. Extended registration too |
+| **6 Sept** | 8:00 AM - 6:00 PM | **Demo Day at APU**, physical                                |
 
 **Registration was extended** from 25 Aug to 5 Sept 11:59 PM, announced at the ceremony and not yet reflected on the
 website.
+
+**The submission deadline was extended** from 5 Sept 11:59 PM to **6 Sept 8:00 AM MYT**, relayed by the team owner on 6
+September. It now falls on the morning of Demo Day, so submission and travel to APU happen the same morning — there is
+no overnight buffer between the two. [`docs/source/`](source/) predates the extension and still prints the original
+date; this file is the correction, per AGENTS.md.
 
 **Demo Day agenda** — "D-DAY AGENDA", 6th September (Sunday), announced on Discord, venue **Auditorium 1 @ Level 7, Asia
 Pacific University**:
@@ -102,8 +108,9 @@ code is not.
 
 ## What we submit
 
-By **5 Sept, 11:59 PM**, on [Devfolio][devfolio]. **No Devfolio submission means disqualification from pitching.** If
-Devfolio itself has problems, the organizers will open a **Google Form** as a fallback route and announce it on Discord.
+By **6 Sept, 8:00 AM** (extended from 5 Sept, 11:59 PM), on [Devfolio][devfolio]. **No Devfolio submission means
+disqualification from pitching.** If Devfolio itself has problems, the organizers will open a **Google Form** as a
+fallback route and announce it on Discord.
 
 | #   | Deliverable          | Notes                                   |
 | --- | -------------------- | --------------------------------------- |

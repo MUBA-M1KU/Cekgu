@@ -33,6 +33,8 @@ describe('addresses inside a private network', () => {
     'http://172.31.255.255/',
     'http://192.168.1.1/',
     'http://100.64.0.1/',
+    'http://192.0.0.1/',
+    'http://198.18.0.1/',
     'http://[::1]/',
     'http://[fd00::1]/',
     'http://[fe80::1]/'
@@ -79,6 +81,37 @@ describe('addresses inside a private network', () => {
   test('a v4-mapped loopback is refused', async () => {
     const result = await assertPublicUrl('http://[::ffff:127.0.0.1]/')
     expect(result.ok).toBe(false)
+  })
+
+  // Every one of these read as PUBLIC until 6 September. The guard decoded ::ffff: and nothing else,
+  // and matched link-local on the literal prefix fe80 rather than on the /10 it actually spans, so
+  // six ways of writing an address that is not the public internet walked straight through it.
+  const ONCE_MISSED = [
+    ['http://[::169.254.169.254]/', 'IPv4-compatible ::/96, the metadata service'],
+    ['http://[64:ff9b::a9fe:a9fe]/', 'NAT64 well-known prefix, reachable wherever a translator sits'],
+    ['http://[2002:a9fe:a9fe::]/', '6to4 encoding of the metadata service'],
+    ['http://[fe90::1]/', 'link-local is fe80::/10, not the literal prefix fe80'],
+    ['http://[febf::1]/', 'the top of fe80::/10'],
+    ['http://[fec0::1]/', 'deprecated site-local fec0::/10'],
+    ['http://[ff02::1]/', 'multicast ff00::/8']
+  ] as const
+
+  for (const [link, why] of ONCE_MISSED) {
+    test(`${link} is refused — ${why}`, async () => {
+      const result = await assertPublicUrl(link)
+      expect(result.ok).toBe(false)
+    })
+  }
+
+  test('a public 2002:: address that does not wrap a private v4 is still allowed', async () => {
+    // 6to4 wrapping 93.184.216.34, which is public. The decode must judge the embedded address
+    // rather than refuse the whole 2002::/16 block.
+    const result = await assertPublicUrl('http://[2002:5db8:d822::]/')
+    expect(result.ok).toBe(true)
+  })
+
+  test('the unspecified address is refused', async () => {
+    expect((await assertPublicUrl('http://[::]/')).ok).toBe(false)
   })
 })
 

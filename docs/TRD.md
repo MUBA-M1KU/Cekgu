@@ -1045,8 +1045,15 @@ number of options that reading would defend:
 The item score is the mean of the two, times 100, rounded. `defensible` is normalised through the same `defensibleOf`
 the rule uses, so a list omitting its own `answer` is treated as if it included it.
 
-This makes the score monotone with the verdict ladder while still separating items inside one verdict: two Clear items
-score 100 and 88 when one of them had a reader that hedged, which is information the categorical verdict cannot carry.
+The score separates items **inside** one verdict: two Clear items score 100 and 88 when one of them had a reader that
+hedged, which is information the categorical verdict cannot carry.
+
+**It is not a total order across verdicts, and must not be described as one.** Ungrounded, the bands only touch. Once
+grounding scales them, they overlap: a Clear item where both readers hedged widely and both report `contradicted` scores
+66, while a Split Opinion where the key-choosing reader is `supported` and the dissenter `contradicted` scores 69 — so a
+Split can print above a Clear on the same record. That is defensible, because the two numbers are answering "how much
+verified agreement backs this key" rather than ranking the verdicts, but the verdict remains the signal an educator acts
+on and the score never reorders it.
 
 | Situation                                           | Verdict            | Score |
 | --------------------------------------------------- | ------------------ | ----- |
@@ -1680,10 +1687,21 @@ answers 503 with a sentence saying so.
 - 15 s timeout, 5 MB ceiling enforced after reading as well as on `content-length`, and the extracted text is capped at
   40 000 characters
 
+**Known limits of the guard, recorded rather than implied away.**
+
+- **DNS rebinding is not closed.** `assertPublicUrl` resolves the host and judges those addresses; `fetch` then resolves
+  again for the connection. A name whose record changes between the two passes the check and connects elsewhere. Closing
+  it properly means connecting to the vetted literal with an explicit `Host` header, or pinning the resolver. Bun's
+  internal DNS cache narrows the window in practice, which is an accident of the runtime and not a control
+- Ports are not restricted, so the fetcher will open a connection to any port on a public host
+- The route is behind a session, but `POST /api/auth/guest` is public, so a session is free. There is no rate limit on
+  `/api/extract/url`
+
 `htmlToText` is deliberately crude: it drops `script`, `style`, `noscript`, `svg`, `head` and comments, turns block tags
 into line breaks and decodes the common entities. Anything cleverer would be a guess about which element holds the
 questions, and the Gonka model downstream is far better at that than a selector — finding stems, options and a key in
-loose text is its whole job.
+loose text is its whole job. Dropping `head` also drops `<title>`, which is often the paper's name; that is a known
+cost, not an oversight.
 
 ## 21. The readers' voice and the record assistant
 
@@ -1832,6 +1850,23 @@ said so, and as contradicted when **either** did. A single reader noticing the w
 single reader agreeing is not worth claiming.
 
 ### What a reader sees
+
+### What retrieval does not protect against
+
+Snippets are text a stranger published on a page that happened to rank for the question, and they are interpolated into
+the solver prompt. They are fenced between a per-call nonce and the model is told the fence marks data rather than
+instructions, which is a mitigation and not a guarantee.
+
+**The residual risk is specific and worth naming: both readers are shown the same snippets.** That is deliberate —
+retrieving per reader would make their disagreement a disagreement about evidence rather than about the question — but
+it means a poisoned search result reaches both models with the same payload, and their agreement stops being fully
+independent. Independence is the property track requirement 2 buys, so this is the one place where retrieval trades
+against it. A verdict still needs two receipt-verified readings from distinct served models, and the grounding a
+poisoned snippet could induce can only scale a reading's weight, never invert it.
+
+One further honesty note: Tavily's `content` field is an extractive selection Tavily makes from the page, not the raw
+page text. It is not model-written — that is what `include_answer: false` guarantees — but it is not the whole document
+either.
 
 `EvidencePanel` prints, under the two reader columns, every page that was retrieved — title, live link and the quoted
 snippet. They are links because the claim is checkable or it is nothing. Each reader column carries one sentence saying
