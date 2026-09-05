@@ -22,6 +22,11 @@ const complete = [
   { name: 'end', ms: 121_200 }
 ]
 
+// A cold Chromium launch on a CI runner took longer than bun's 5 s default and timed out the
+// first browser-backed test in the file while the later ones, launching against a warm cache,
+// passed. The budget is the fixture's start-up cost, not the assertion's.
+const BROWSER_TIMEOUT_MS = 60_000
+
 describe('demo recording beats', () => {
   test('rejects a take that omits the receipt beat', () => {
     expect(() => assertCompleteTake(complete.filter((beat) => beat.name !== 'shot-5'))).toThrow('shot-5')
@@ -61,7 +66,7 @@ describe('demo recording beats', () => {
     } finally {
       await browser.close()
     }
-  })
+  }, BROWSER_TIMEOUT_MS)
 
   test('frames evidence below the persistent top bar', async () => {
     const { chromium } = await import('playwright')
@@ -78,7 +83,7 @@ describe('demo recording beats', () => {
     } finally {
       await browser.close()
     }
-  })
+  }, BROWSER_TIMEOUT_MS)
 
   test('targets the attempt-table status when its reason repeats the label', async () => {
     const { chromium } = await import('playwright')
@@ -98,7 +103,7 @@ describe('demo recording beats', () => {
     } finally {
       await browser.close()
     }
-  })
+  }, BROWSER_TIMEOUT_MS)
 
   test('does not mistake a recorded disposition chip for an editable decision', async () => {
     const { chromium } = await import('playwright')
@@ -115,7 +120,7 @@ describe('demo recording beats', () => {
     } finally {
       await browser.close()
     }
-  })
+  }, BROWSER_TIMEOUT_MS)
 
   test('resets the sample through the current browser session', async () => {
     const { chromium } = await import('playwright')
@@ -138,5 +143,5 @@ describe('demo recording beats', () => {
     } finally {
       await browser.close()
     }
-  })
+  }, BROWSER_TIMEOUT_MS)
 })

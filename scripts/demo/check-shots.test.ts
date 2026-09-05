@@ -2,6 +2,11 @@ import { describe, expect, test } from 'bun:test'
 import { chromium } from 'playwright'
 import { correctedKeyOption, exactText, exitCodeFor, formatCheckTable, locatorIsVisible } from './check-shots.mjs'
 
+// A cold Chromium launch on a CI runner took longer than bun's 5 s default and timed out the
+// first browser-backed test in the file while the later ones, launching against a warm cache,
+// passed. The budget is the fixture's start-up cost, not the assertion's.
+const BROWSER_TIMEOUT_MS = 60_000
+
 describe('shot anchor checks', () => {
   test('matches visible text without depending on rendered case', () => {
     const pattern = exactText('All Attempts')
@@ -44,7 +49,7 @@ describe('shot anchor checks', () => {
     } finally {
       await browser.close()
     }
-  })
+  }, BROWSER_TIMEOUT_MS)
 
   test('targets the visible corrected-key bubble instead of its hidden radio', async () => {
     const browser = await chromium.launch({ channel: 'chrome', headless: true })
@@ -60,5 +65,5 @@ describe('shot anchor checks', () => {
     } finally {
       await browser.close()
     }
-  })
+  }, BROWSER_TIMEOUT_MS)
 })
