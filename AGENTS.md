@@ -126,9 +126,10 @@ YAML, Biome owns everything else**, split by file extension rather than an ignor
 formatter setting `biome.json` states, so both wrap at 120 and neither can undo the other. `embeddedLanguageFormatting`
 is off, so fenced code samples are never rewritten.
 
-`rtk` and `graphify`, both optional and per-machine, are documented in [`docs/agent-tooling.md`](docs/agent-tooling.md).
-The repository layout is not written down anywhere: `docs/README.md` is judge-facing and carries architecture rather
-than a directory tree. Read it off the tree itself.
+`rtk` and `graphify`, both optional and per-machine, are documented in
+[`docs/reference/agent-tooling.md`](docs/reference/agent-tooling.md). The repository layout is not written down
+anywhere: `docs/README.md` is judge-facing and carries architecture rather than a directory tree. Read it off the tree
+itself.
 
 ## CLI first, always
 
@@ -157,13 +158,13 @@ their behalf. Read the screen, do the navigation, hand back the one action that 
 - **Types:** no `any`; prefer `unknown` plus narrowing. Validate at system boundaries
 - **Error handling:** validate at boundaries; do not wrap internal framework calls in try/catch
 - **Comments:** default to none. Comment only when the _why_ is non-obvious. Never describe _what_ the code does
-- **Changes are surgical.** See [guideline 3](docs/coding-guidelines.md#3-surgical-changes)
+- **Changes are surgical.** See [guideline 3](docs/reference/coding-guidelines.md#3-surgical-changes)
 
 ## Documentation hygiene
 
-**[`docs/markdown-style.md`](docs/markdown-style.md) is the style guide for every Markdown file in this repo.** It
-covers document layout, headings, lists, code blocks, links, images and tables. Read it before restructuring a document.
-The rules below are this project's additions to it, not a replacement.
+**[`docs/reference/markdown-style.md`](docs/reference/markdown-style.md) is the style guide for every Markdown file in
+this repo.** It covers document layout, headings, lists, code blocks, links, images and tables. Read it before
+restructuring a document. The rules below are this project's additions to it, not a replacement.
 
 - **Sentence case for headings, bold lead-in labels and table headers**, per the style guide. Acronyms and proper names
   keep their form: AI, API, PR, MUBA, Gonka, Kimi, Biome, Devfolio
@@ -329,12 +330,12 @@ are informational.
 Moved out of this file so they are not reloaded into every session. **The sections above outrank them wherever they
 disagree.**
 
-| Reference                               | Lives in                                                                             | Applies                                                                                 |
-| --------------------------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
-| **Markdown style guide**                | [`docs/markdown-style.md`](docs/markdown-style.md)                                   | Every Markdown file in the repo                                                         |
-| **Coding guidelines (Andrej Karpathy)** | [`docs/coding-guidelines.md`](docs/coding-guidelines.md)                             | Always. Guideline 1 is overridden by **How to work** above; the file says so at the top |
-| **RTK (Rust Token Killer)**             | [`docs/agent-tooling.md`](docs/agent-tooling.md#rtk-the-rust-token-killer)           | Only if `which rtk` finds it                                                            |
-| **Graphify**                            | [`docs/agent-tooling.md`](docs/agent-tooling.md#graphify-a-codebase-knowledge-graph) | Only if `which graphify` finds it, and only once there is real code                     |
+| Reference                               | Lives in                                                                                                 | Applies                                                                                 |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **Markdown style guide**                | [`docs/reference/markdown-style.md`](docs/reference/markdown-style.md)                                   | Every Markdown file in the repo                                                         |
+| **Coding guidelines (Andrej Karpathy)** | [`docs/reference/coding-guidelines.md`](docs/reference/coding-guidelines.md)                             | Always. Guideline 1 is overridden by **How to work** above; the file says so at the top |
+| **RTK (Rust Token Killer)**             | [`docs/reference/agent-tooling.md`](docs/reference/agent-tooling.md#rtk-the-rust-token-killer)           | Only if `which rtk` finds it                                                            |
+| **Graphify**                            | [`docs/reference/agent-tooling.md`](docs/reference/agent-tooling.md#graphify-a-codebase-knowledge-graph) | Only if `which graphify` finds it, and only once there is real code                     |
 
 Two rules from them that change behaviour even if you never open them:
 

@@ -1,17 +1,17 @@
 # Coding guidelines
 
 Behavioural rules that reduce common LLM coding mistakes, from
-[Karpathy's observations](https://x.com/karpathy/status/2015883857489522876). Kept out of [`AGENTS.md`](../AGENTS.md) so
-it is not reloaded into every session.
+[Karpathy's observations](https://x.com/karpathy/status/2015883857489522876). Kept out of [`AGENTS.md`](../../AGENTS.md)
+so it is not reloaded into every session.
 
-**[`AGENTS.md`](../AGENTS.md) outranks this file wherever they disagree**, and the callout below is where they actually
-do.
+**[`AGENTS.md`](../../AGENTS.md) outranks this file wherever they disagree**, and the callout below is where they
+actually do.
 
-> **Where this conflicts with [How to work](../AGENTS.md#how-to-work), that section wins.** Guideline 1 says to stop and
-> ask when something is unclear. In this repo, across a ten day build, you do not. Pick the reading that ships, state
-> the assumption, and keep going. Stop only for the six cases in **Stop and ask only for these**. The rest of guideline
-> 1, surfacing tradeoffs and not hiding confusion, still applies: say the assumption out loud, just do not wait on an
-> answer.
+> **Where this conflicts with [How to work](../../AGENTS.md#how-to-work), that section wins.** Guideline 1 says to stop
+> and ask when something is unclear. In this repo, across a ten day build, you do not. Pick the reading that ships,
+> state the assumption, and keep going. Stop only for the six cases in **Stop and ask only for these**. The rest of
+> guideline 1, surfacing tradeoffs and not hiding confusion, still applies: say the assumption out loud, just do not
+> wait on an answer.
 
 ## 1. Think before coding
 
@@ -52,4 +52,4 @@ Turn tasks into verifiable goals, then loop until verified.
 - "Refactor X" becomes "ensure tests pass before and after"
 
 Strong success criteria let you loop on your own. Weak criteria force check-ins, which is exactly the cost
-[Proceed without asking](../AGENTS.md#how-to-work) exists to avoid.
+[Proceed without asking](../../AGENTS.md#how-to-work) exists to avoid.
