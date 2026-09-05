@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from 'bun:test'
 import { MODELS } from '../gateway/models'
 import { healthyOrder, recordOutcome, resetHealth, stats } from './health'
 
-const [DEEPSEEK, MINIMAX, KIMI] = MODELS
+const [DEEPSEEK, MINIMAX] = MODELS
 const NOW = Date.UTC(2026, 8, 3, 12, 0, 0)
 
 beforeEach(resetHealth)
@@ -11,19 +11,19 @@ describe('stats', () => {
   test('a model nobody has called reads as healthy with no latency', () => {
     const all = stats(NOW)
 
-    expect(all).toHaveLength(3)
+    expect(all).toHaveLength(2)
     expect(all.every((model) => model.healthy)).toBe(true)
     expect(all.every((model) => model.medianLatencyMs === null)).toBe(true)
   })
 
   test('the success rate counts only calls inside the window', () => {
-    recordOutcome(KIMI, false, 90_000, NOW - 16 * 60_000)
-    recordOutcome(KIMI, true, 12_000, NOW)
+    recordOutcome(DEEPSEEK, false, 90_000, NOW - 16 * 60_000)
+    recordOutcome(DEEPSEEK, true, 12_000, NOW)
 
-    const kimi = stats(NOW).find((model) => model.model === KIMI)
-    expect(kimi?.successes).toBe(1)
-    expect(kimi?.failures).toBe(0)
-    expect(kimi?.successRate).toBe(1)
+    const deepseek = stats(NOW).find((model) => model.model === DEEPSEEK)
+    expect(deepseek?.successes).toBe(1)
+    expect(deepseek?.failures).toBe(0)
+    expect(deepseek?.successRate).toBe(1)
   })
 
   test('median latency uses successes only, so a 90 second timeout does not skew it', () => {
@@ -56,32 +56,33 @@ describe('stats', () => {
 })
 
 describe('healthyOrder', () => {
-  test('it drops a family that is down while two healthy ones remain', () => {
+  // With two configured families the exclusion branch can never fire, and that is the correct
+  // behaviour rather than a gap: dropping the failing one leaves a single candidate, and one
+  // candidate cannot produce the two distinct readings a verdict requires. The round is better
+  // served attempting a family that has been failing than guaranteeing itself an Unverified.
+  test('a failing family is kept, because dropping it would leave one candidate', () => {
     for (let i = 0; i < 3; i += 1) recordOutcome(DEEPSEEK, false, 1_200, NOW)
 
-    expect(healthyOrder(NOW)).not.toContain(DEEPSEEK)
-    expect(healthyOrder(NOW)).toHaveLength(2)
+    const order = healthyOrder(NOW)
+    expect(order).toHaveLength(2)
+    expect(order).toContain(DEEPSEEK)
+    expect(order[0]).toBe(MINIMAX)
   })
 
   // Found on production, 3 September: MiniMax was the only healthy family, so the round had one
   // candidate and every item came back Unverified without a second call being attempted — while
   // both excluded families were answering ordinary prompts in under 25 seconds.
   test('a demoted family comes back when fewer than two are healthy', () => {
-    for (let i = 0; i < 3; i += 1) {
-      recordOutcome(DEEPSEEK, false, 1_200, NOW)
-      recordOutcome(KIMI, false, 90_000, NOW)
-    }
+    for (let i = 0; i < 3; i += 1) recordOutcome(DEEPSEEK, false, 1_200, NOW)
     recordOutcome(MINIMAX, true, 12_000, NOW)
 
     const order = healthyOrder(NOW)
-    expect(order).toHaveLength(3)
+    expect(order).toHaveLength(2)
     expect(order[0]).toBe(MINIMAX)
     expect(order.slice(1)).toContain(DEEPSEEK)
-    expect(order.slice(1)).toContain(KIMI)
   })
 
   test('a demoted family never outranks a healthy one', () => {
-    for (let i = 0; i < 3; i += 1) recordOutcome(KIMI, false, 90_000, NOW)
     for (let i = 0; i < 3; i += 1) recordOutcome(DEEPSEEK, false, 1_200, NOW)
     recordOutcome(MINIMAX, true, 12_000, NOW)
 
@@ -89,20 +90,22 @@ describe('healthyOrder', () => {
   })
 
   test('better success rate comes first', () => {
-    recordOutcome(KIMI, true, 50_000, NOW)
+    recordOutcome(DEEPSEEK, true, 50_000, NOW)
     recordOutcome(MINIMAX, true, 12_000, NOW)
     recordOutcome(MINIMAX, false, 90_000, NOW)
 
-    expect(healthyOrder(NOW)[0]).toBe(KIMI)
+    expect(healthyOrder(NOW)[0]).toBe(DEEPSEEK)
   })
 
-  // Kimi answered in 52 seconds and MiniMax in 12 on 3 September, both successfully. The reader that
-  // returns sooner is the one to ask first when nothing separates them on reliability.
+  // Probed on 5 September: DeepSeek answered in 7.2 s and MiniMax in 1.1 s, both HTTP 200. The
+  // reader that returns sooner is the one to ask first when nothing separates them on reliability.
+  // Which of the two is faster moves between measurements, so the assertion is on the ordering
+  // rule rather than on a family name.
   test('at equal success rate the faster family comes first', () => {
-    recordOutcome(KIMI, true, 52_000, NOW)
-    recordOutcome(MINIMAX, true, 12_000, NOW)
+    recordOutcome(DEEPSEEK, true, 7_200, NOW)
+    recordOutcome(MINIMAX, true, 1_100, NOW)
 
     const order = healthyOrder(NOW)
-    expect(order.indexOf(MINIMAX)).toBeLessThan(order.indexOf(KIMI))
+    expect(order.indexOf(MINIMAX)).toBeLessThan(order.indexOf(DEEPSEEK))
   })
 })

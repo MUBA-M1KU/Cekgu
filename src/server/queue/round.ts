@@ -73,7 +73,7 @@ export async function runRound(prompt: string, options: Option[], key: string, d
   // A seat never takes a family another seat holds, nor one that has already produced a reading.
   // Without the second condition a family that succeeded could fill both seats once the others
   // failed, and the round would end with two readings from one model — which the rule correctly
-  // refuses as non-distinct, but only after the third family was never tried.
+  // refuses as non-distinct, but only after a family that was never tried is passed over.
   const nextFamily = (): string | null =>
     order.find(
       (model) =>
