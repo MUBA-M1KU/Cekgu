@@ -915,7 +915,7 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
-        gap: 24px;
+        gap: 16px;
         padding-top: 22px;
         border-top: 1px solid var(--rule);
         font-family: var(--font-mono);
@@ -1480,10 +1480,16 @@
         gap: 10px;
       }
       .sdg svg {
-        width: 72px;
-        height: 72px;
+        width: 76px;
+        height: 76px;
         border-radius: 6px;
         flex-shrink: 0;
+      }
+      /* The cover is read from the back of the room, so its badges take every
+         pixel the footer's right column does not need. */
+      .cover-foot .sdg svg {
+        width: 92px;
+        height: 92px;
       }
       .sdg {
         flex-shrink: 0;
@@ -1491,9 +1497,9 @@
       .sdg-lbl {
         white-space: nowrap;
         font-family: var(--font-mono);
-        font-size: 15px;
+        font-size: 14px;
         line-height: 1.35;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.05em;
         text-transform: uppercase;
         color: var(--ink-muted);
       }
@@ -2216,9 +2222,9 @@
 
                 <div class="cover-foot">
                   <div class="sdg">
+                    <span class="sdg-lbl">Aligned with UN Global Goals 4 and 16</span>
                     <svg viewBox="0 0 100 100" role="img" aria-label="SDG 4, Quality Education"><use href="#sdg4" /></svg>
                     <svg viewBox="0 0 100 100" role="img" aria-label="SDG 16, Peace, Justice and Strong Institutions"><use href="#sdg16" /></svg>
-                    <span class="sdg-lbl">Aligned with UN Global Goals 4 and 16</span>
                   </div>
                   <div class="cover-foot-right">
                     <span class="url">cekgu-op7lf5dspq-as.a.run.app</span>
