@@ -1,5 +1,12 @@
 # Cekgu recording script
 
+> **Shot, and the film it produced is submitted and unchangeable.** It is public at
+> [youtu.be/zFASN69yQr8](https://youtu.be/zFASN69yQr8) at 4 minutes 42 seconds. Two things below have since moved and
+> this file is not being rewritten to match, because it is the record of what was filmed: the deck is now nine slides
+> rather than eleven, re-cut for a 3-minute stage pitch, and `moonshotai/Kimi-K2.6` was delisted on 5 September. Segment
+> 2 re-timed for a nine-slide deck is 9 x 12 s = 1:48, so a re-shoot would land at 4:18 and needs its own arithmetic.
+> Read [`pitch-script.md`](pitch-script.md) for the stage pitch; the two are different performances.
+
 This recording captures the Cekgu submission video in two segments: a live, end-to-end run of the deployed app at
 https://cekgu-op7lf5dspq-as.a.run.app, from the landing page through guest sign-in, the sample record, the flagged FIFO
 question with both models' receipts, a corrected disposition, and a new one-question check left Queued, followed by a

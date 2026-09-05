@@ -10,31 +10,63 @@
       CEKGU PITCH DECK - MUBA Blockchain Hackathon 2026, GonkaRouter track
       ============================================================================
 
-      4 September 2026, against the frozen build. The app is deployed at
+      5 September 2026, re-cut for a 3-minute pitch. The app is deployed at
       cekgu-op7lf5dspq-as.a.run.app and its sample record is public at
-      /api/sample, with no sign-in.
+      /sample and /api/sample, with no sign-in.
+
+      THE SLOT CHANGED, SO THE DECK DID
+      The organisers cut the physical pitch from 5 minutes plus 5 of Q&A to
+      3 plus 1. Eleven slides became nine, and this is what went:
+        - The persona slide, "Meet Cikgu Farah". Her problem is slide 02 and her
+          outcome is slide 03, so the portrait was the third telling.
+        - The demo-moment slide, a drawing of the evidence panel. The live demo
+          shows the real one and duplication is the first thing to cut at three
+          minutes. Slide 04 is now the fallback if the venue network dies; say
+          "this is the deck, not the app" before using it.
+      The running order is 4 slides, a 30-second live demo on /sample, then 5
+      slides. Budgets are on each section as data-budget and sum to 150s, which
+      with the demo is 180. They are the pitch script's own numbers; change one
+      here and change it there. The rehearsal timer warns at TOTAL = 170.
 
       WHERE THE NUMBERS COME FROM
-      Three different measurements, and the deck never mixes them. Slide 08
-      carries all three, each with its own label, and the pitch script's
-      section 9 says which is which out loud.
+      Two different measurements, and the deck never mixes them. Slide 07
+      carries both, each with its own label, and the pitch script says which is
+      which out loud.
         - The public sample record, capture-2026-09-03, is the current product.
-          Slides 03, 05 and 06 and the "12 of 12" on slide 08 are read from it:
-          9 Clear, 2 Possible Key Error, 1 Possible Ambiguity, 0 Unverified.
-          Every request ID on slide 06 is in that record and resolves against
-          GET api.gonkarouter.io/v1/receipts/{id}.
+          Slides 03 and 04 are read from it: 9 Clear, 2 Possible Key Error,
+          1 Possible Ambiguity, 0 Unverified. The request ID on slide 05 is in
+          that record and resolves against GET api.gonkarouter.io/v1/receipts/{id};
+          it was re-checked on 5 September.
         - The 3 September mechanism benchmark, in
           docs/superpowers/research/three-day-rescore.md, is history. It is on
-          slide 08 as the latency chart only, labelled as the benchmark, because
+          slide 07 as the latency chart only, labelled as the benchmark, because
           it is what killed the synchronous design. Its recorded verdict of
           "failed" judged that design, not the queue that replaced it, and
           nothing on this deck may imply otherwise.
         - The 30-question evaluation set, run twice through the deployed queue on
-          4 September, is the dot field on slide 08: 60 item-runs, 40 clean
+          4 September, is the dot field on slide 07: 60 item-runs, 40 clean
           controls with no false flag among them, 20 planted defects of which 14
           were caught, 5 abstained as Unverified and 1 came back Clear. Its own
           Unverified rate, 19 of 60, is deliberately absent: it is a load effect
           that needs a spoken sentence beside it, and the script carries it.
+
+      WHICH MODELS ARE NAMED, AND WHERE
+      The gateway stopped serving moonshotai/Kimi-K2.6 on 5 September and
+      src/server/gateway/models.ts now holds two families. So:
+        - Slides 04 and 06 name seats, "Reader A" and "Reader B", never a fixed
+          pair. Slide 06 prints the registry as it stands today.
+        - Slide 05 carries ONE receipt, MiniMax, because the pair on that
+          question was MiniMax and Kimi and a delisted model beside a live one
+          needs a footnote a wall cannot carry.
+        - Slide 07's latency chart names Kimi on purpose. It is labelled
+          "3 SEP BENCHMARK", its row reads "delisted 5 Sep", and its numbers are
+          exactly as recorded. NEVER EDIT A MEASURED NUMBER TO MATCH TODAY'S
+          ROSTER. Falsifying a benchmark is worse than the staleness it hides,
+          and this one stays checkable: every receipt Kimi produced still
+          resolves 200 from api.gonkarouter.io with no key, verified again on
+          5 September.
+      Do not add a request ID to this deck that you have not just resolved
+      against the public receipts endpoint. Never invent one.
 
       DIAGRAMS, NOT SCREENSHOTS. Every product surface below is drawn from
       DESIGN.md. The literal option letters, stems, model IDs, request IDs and
@@ -44,10 +76,10 @@
 
       DEVFOLIO REQUIRED SECTIONS -> SLIDES
         Problem Statement and Project Objective  02, 03
-        Motivation and Challenges                02, 03 (motivation), 08 (challenges)
-        Commercialisation and Business Model     09
-        Technology Stacks and Track Chosen       07
-        Overall Concept                          04, 05, 06
+        Motivation and Challenges                02 (motivation), 07 (challenges)
+        Commercialisation and Business Model     08
+        Technology Stacks and Track Chosen       06
+        Overall Concept                          04, 05
       Each of those slides names its section in the eyebrow above the rule, so a
       judge holding the checklist can tick it from the back row.
 
@@ -58,14 +90,15 @@
       copied from DESIGN.md, not reinvented. Four decisions are worth stating
       because a later editor will otherwise undo them:
 
-      1. THE ACCENT IS TONE, NOT RED. DESIGN.md legislates that ink is the paper
+      1. ONE RED, AND IT IS THE PEN. DESIGN.md legislates that ink is the paper
          and the machine, and red is the human hand: machine verdicts, model
-         names, request IDs and status text are never red. So the headline
-         payload device (.title em) is carried by tone, muted lead into
-         full-strength ink, and it flips with the ground class rather than
-         picking a second colour. The only red on this deck is the pen: the
-         check in the mark, the committee's sign-off on slide 02, and the
-         attention count on slide 03. Nothing else. Do not recolour a headline.
+         names, request IDs and status text are never red, and none of them are
+         here. Read that rule as governing the product's chrome. This deck also
+         spends the same --pen on two display devices that are not product
+         chrome and carry no state: the eyebrow, and the second half of every
+         headline (.title em). Both flip with the ground, so there is exactly
+         one red in the deck and never a second accent colour. Do not add one,
+         and do not recolour a headline to something else.
 
       2. THE TRACKING CONTRACT IS THE FINGERPRINT. You can tell what a string is
          from its letter-spacing alone. Display is Schibsted Grotesk 700 with
@@ -84,20 +117,23 @@
       3. ONE RADIUS LANGUAGE, BY DESCENT. --r-sheet 4px for anything descended
          from paper (cards, panels, wells, the emphasis band); --r-bubble 999px
          for anything descended from the OMR bubble (chips, bubbles). There is
-         no medium radius, and no surface takes a coloured left rail, because
-         DESIGN.md forbids one.
+         no medium radius. DESIGN.md forbids a coloured rail on a rounded card
+         and no card here takes one; the rails that do exist are inside two
+         diagrams, on slide 04's five rule rows and slide 02's defective
+         question, and each one is its verdict's own colour. A rail that names
+         a verdict is a legend, not decoration. Do not put one on a card.
 
       4. THE GROUND CARRIES EMPHASIS. Light paper is the default. The ink ground
-         is the emphasis mode and it is spent on exactly four of ten slides: the
-         cover, the demo moment, the proof and the close. Every accent-bearing
+         is the emphasis mode and it is spent on exactly three of nine slides:
+         the problem, the proof and the close. The cover is paper with a poster
+         wash, not ink. Every accent-bearing
          rule below ships both forms, keyed on .ink.
 
-      THE ONE THEATRICAL BEAT
-      Slide 05, at 0.9s and 1.2s: the two readers' bubbles fill against the
-      supplied key, 300ms apart. The offset is not decoration. DESIGN.md's
-      mascot rule says the two readers never move in unison, because
-      synchronised readers would say the opposite of what the product claims.
-      That is the whole deck's budget for theatre. Do not add a second one.
+      THEATRE
+      The deck's one theatrical beat left with the demo-moment slide it lived on.
+      Nothing on these nine slides animates beyond the staggered rise every
+      slide already uses, and that is correct for a three-minute pitch: a beat
+      the speaker has to wait for costs seconds nobody has. Do not add one.
 
       CAPITALISATION
       Slide headlines and prose are sentence case, and every headline is a
@@ -112,7 +148,7 @@
       model IDs and chart values are evidence, and they live inside the visual.
 
       GENERATED, NOT TYPED
-      The NN / 10 counter, the progress bar and the speaker-note index are all
+      The NN / NN counter, the progress bar and the speaker-note index are all
       derived from slides.length at load. Nothing about the slide count is typed
       into the markup, so inserting or deleting a slide cannot leave a stale
       number on a wall.
@@ -132,8 +168,27 @@
       Awaiting document.fonts.ready is NOT enough: it resolves once the faces
       the visible slide needs have arrived. See FONT PRIMING in the CSS.
       The print block freezes every animation at its end state, so no page can
-      be caught mid-rise. Verify the result with pdfinfo, never with file(1),
-      which reports 8 pages for this 10-page deck.
+      be caught mid-rise. Verify the page count with pdfinfo, never with file(1),
+      which undercounts this deck.
+
+      Then downsample, because Chromium does not. Skia embeds every raster at
+      300 ppi of the PAGE, so hero-cover.png goes in at 2645px wide however
+      small the source file is, and the raw print is 2.3 MB against a 2 MB
+      budget. One Ghostscript pass at 150 ppi brings it to 1.7 MB with the
+      fonts still embedded and subset:
+
+        gs -q -o out.pdf -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 \
+           -dPDFSETTINGS=/prepress -dDetectDuplicateImages=true \
+           -dDownsampleColorImages=true -dColorImageDownsampleType=/Bicubic \
+           -dColorImageResolution=150 -dDownsampleGrayImages=true \
+           -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=150 \
+           -dAutoRotatePages=/None -dEmbedAllFonts=true -dSubsetFonts=true \
+           raw.pdf
+
+      150 ppi of a 20in page is 3000px across, well over the 1920 the deck is
+      ever shown at. Check the result with pdfinfo for 9 pages at 1440 x 810 pts
+      and render a page with pdftoppm before shipping it: the faces are Type 3
+      glyph programs and a bad pass drops them silently.
 
       SELF-CONTAINED
       No network is needed to open this file. The CSS, the JS and all three
@@ -242,7 +297,7 @@
          document.fonts.status reports "loaded" as soon as the faces the FIRST
          slide needs have arrived, and only slide 01 is .active at load. Slide 01
          is set entirely in Schibsted Grotesk, so Source Serif 4 and Spline Sans
-         Mono stayed "unloaded". @media print then reveals all ten slides at once
+         Mono stayed "unloaded". @media print then reveals all nine slides at once
          and Chromium took the print snapshot before those two decoded, so every
          serif question stem and every request ID was dropped out of the PDF with
          no error anywhere. This element renders one glyph in each face at load,
@@ -335,8 +390,8 @@
       /* ======================================================================
          THE THREE-BAND STACK - identical on every slide, which is the point
          .pad safe area -> .chrome -> 40px -> .head closed by a hairline -> .body
-         The hairline lands at the same y on all ten slides, so the deck reads
-         as one document rather than ten posters.
+         The hairline lands at the same y on all nine slides, so the deck reads
+         as one document rather than nine posters.
          ====================================================================== */
       .pad {
         position: relative;
@@ -525,8 +580,12 @@
       .duo.fig-left {
         grid-template-columns: 1.3fr 1fr;
       }
+      /* The chart's height follows its column width, and .foot is absolutely
+         positioned at bottom 52. At 1.3fr the SVG ran to y=1028 and printed
+         straight through its own caption. 1.13fr lands it at 983, clear of the
+         foot, with the right edge still flush to the slide's margin. */
       .duo.chart-right {
-        grid-template-columns: 0.82fr 1.3fr;
+        grid-template-columns: 0.87fr 1.13fr;
       }
       .duo.chart-left {
         grid-template-columns: 1.2fr 1fr;
@@ -584,12 +643,7 @@
         height: 30px;
       }
 
-      /* Evidence cards, slide 06. Mono kicker, then the machine's own string. */
-      .cards {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 40px;
-      }
+      /* The receipt card, slide 05. Mono kicker, then the machine's own string. */
       .card {
         padding: 34px 38px 38px;
         border-radius: var(--r-sheet);
@@ -1041,23 +1095,6 @@
         color: var(--ink);
         font-weight: 600;
       }
-      .rulefired {
-        margin-top: 44px;
-        padding-top: 22px;
-        border-top: 1px solid var(--rule);
-        font-family: var(--font-mono);
-        font-size: 21px;
-        line-height: 1.5;
-        color: var(--ink-muted);
-      }
-      .rulefired span {
-        display: block;
-        margin-bottom: 8px;
-        font-size: 19px;
-        font-weight: 500;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-      }
       .proof {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -1070,12 +1107,6 @@
          over the caption and the url column lands on top of it. */
       [data-section='Proof'] .body {
         padding-bottom: 44px;
-      }
-      .cards .card {
-        padding: 28px 38px;
-      }
-      .proof .urlbar {
-        margin: 0;
       }
       .u-note {
         margin: 18px 0 0;
@@ -1158,25 +1189,28 @@
         font-size: 16px;
         color: rgb(255 255 255 / 0.55);
       }
+      /* No pen rail down the left edge. DESIGN.md forbids a coloured rail on a
+         card and the header comment above says so; the card carried one anyway
+         until impeccable's detector caught it. The Possible Key Error chip
+         inside already says what the rail was saying, in words. */
       .defect {
         background: var(--sheet);
         border: 1px solid var(--rule);
-        border-left: 6px solid var(--pen);
         border-radius: var(--r-sheet);
-        padding: 16px 20px 14px;
+        padding: 30px 34px 28px;
       }
       .defect-stem {
-        margin: 0 0 10px;
+        margin: 0 0 26px;
         font-family: var(--font-paper);
-        font-size: 22px;
+        font-size: 32px;
         line-height: 1.3;
         color: var(--ink);
       }
       .defect-row {
         display: flex;
         align-items: flex-end;
-        gap: 28px;
-        font-size: 19.5px;
+        gap: 40px;
+        font-size: 26px;
         color: var(--ink);
       }
       .defect-row i {
@@ -1611,191 +1645,6 @@
         box-shadow: inset 0 0 0 1.5px rgb(240 112 121 / 0.4);
         color: #f07079;
       }
-      /* The user slide: a persona card and an in / time / out panel. */
-      .slide[data-section="User"] .title {
-        font-size: 60px;
-      }
-      .user {
-        display: grid;
-        grid-template-columns: 0.92fr 1.08fr;
-        gap: 28px;
-        align-items: stretch;
-      }
-      .persona {
-        background: var(--ink);
-        color: var(--on-ink);
-        border-radius: var(--r-sheet);
-        padding: 22px 28px 20px;
-        display: flex;
-        flex-direction: column;
-      }
-      .persona-top {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 18px;
-      }
-      .persona-img {
-        position: relative;
-        width: 108px;
-        height: 108px;
-        border-radius: var(--r-bubble);
-        overflow: hidden;
-        flex-shrink: 0;
-        background: rgb(255 255 255 / 0.08);
-        box-shadow: inset 0 0 0 2px rgb(240 112 121 / 0.5);
-      }
-      .persona-img img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-      .persona-img .mono {
-        display: none;
-        position: absolute;
-        inset: 0;
-        align-items: center;
-        justify-content: center;
-        font-size: 44px;
-        font-weight: 500;
-        color: #f07079;
-      }
-      .persona-img.empty .mono {
-        display: flex;
-      }
-      .persona-name {
-        margin: 0;
-        font-size: 30px;
-        font-weight: 700;
-        letter-spacing: -0.01em;
-        color: var(--on-ink);
-      }
-      .persona-role {
-        margin: 6px 0 0;
-        font-family: var(--font-mono);
-        font-size: 17px;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: rgb(255 255 255 / 0.6);
-      }
-      .facts {
-        margin: 0;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0 24px;
-        border-top: 1px solid rgb(255 255 255 / 0.14);
-      }
-      .facts div {
-        padding: 14px 0;
-        border-bottom: 1px solid rgb(255 255 255 / 0.14);
-      }
-      .facts dt {
-        font-family: var(--font-mono);
-        font-size: 15px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: #f07079;
-        margin-bottom: 5px;
-      }
-      .facts dd {
-        margin: 0;
-        font-size: 21px;
-        line-height: 1.35;
-        color: rgb(255 255 255 / 0.84);
-      }
-      .persona-quote {
-        margin: auto 0 0;
-        padding: 12px 0 0 18px;
-        border-left: 3px solid #f07079;
-        font-family: var(--font-paper);
-        font-style: italic;
-        font-size: 26px;
-        line-height: 1.35;
-        color: var(--on-ink);
-      }
-      .io-col {
-        display: flex;
-        flex-direction: column;
-      }
-      .io {
-        background: var(--sheet);
-        border: 1px solid var(--rule);
-        border-radius: var(--r-sheet);
-        padding: 6px 28px;
-        flex: 1;
-      }
-      .io-row {
-        display: grid;
-        grid-template-columns: 104px 1fr;
-        gap: 20px;
-        padding: 18px 0;
-        border-bottom: 1px solid var(--rule);
-        align-items: start;
-      }
-      .io-row:last-child {
-        border-bottom: 0;
-      }
-      .io-tag {
-        font-family: var(--font-mono);
-        font-size: 21px;
-        font-weight: 500;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--pen);
-        padding-top: 3px;
-      }
-      .io-row p {
-        margin: 0;
-        font-size: 23px;
-        line-height: 1.4;
-        color: var(--ink-muted);
-      }
-      .io-row p b {
-        color: var(--ink);
-        font-weight: 600;
-      }
-      .io-note {
-        margin-top: 10px !important;
-        font-family: var(--font-mono);
-        font-size: 17px !important;
-        letter-spacing: 0.06em;
-        color: var(--ink-muted);
-      }
-      .delta {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
-        margin-top: 14px;
-      }
-      .delta-cell {
-        background: var(--sheet);
-        border: 1px solid var(--rule);
-        border-radius: var(--r-sheet);
-        padding: 12px 20px 14px;
-      }
-      .delta .today {
-        margin: 0 0 8px;
-        font-size: 20px;
-        line-height: 1.35;
-        color: var(--ink-muted);
-        text-decoration: line-through;
-        text-decoration-color: rgb(179 32 47 / 0.55);
-        text-decoration-thickness: 2px;
-      }
-      .delta .after {
-        margin: 0;
-        display: flex;
-        gap: 10px;
-        font-size: 22px;
-        line-height: 1.35;
-        font-weight: 600;
-        color: var(--ink);
-      }
-      .delta .after span {
-        color: var(--pen);
-        flex-shrink: 0;
-      }
       .stack-row {
         display: grid;
         grid-template-columns: 82px 1fr;
@@ -2006,29 +1855,6 @@
           animation: pop 0.5s 0.8s both;
           transform-box: fill-box;
           transform-origin: center;
-        }
-        /* The one theatrical beat, and it is slide 05's alone. Reader A's
-           bubble fills at 0.9s, reader B's at 1.2s. The 300ms offset is
-           DESIGN.md's rule that the two readers never move in unison, because
-           synchronised readers would say the opposite of what this product
-           claims. [data-verdict] at 1.62s closes that sequence, so it lives on
-           slide 05 and nowhere else: a slide with no reader beat in front of it
-           would hold a 1.1s dead pause and then pop a chip. Slide 04's own
-           key-error row carries no hook and rises with the body. */
-        .slide.active [data-reader='a'] {
-          animation: pop 0.46s 0.9s both;
-          transform-box: fill-box;
-          transform-origin: center;
-        }
-        .slide.active [data-reader='b'] {
-          animation: pop 0.46s 1.2s both;
-          transform-box: fill-box;
-          transform-origin: center;
-        }
-        .slide.active [data-verdict] {
-          animation: pop 0.5s 1.62s both;
-          transform-box: fill-box;
-          transform-origin: left center;
         }
       }
 
@@ -2358,8 +2184,8 @@
       <section
         class="slide cover active"
         data-section="Cover"
-        data-budget="15"
-        data-speaker-notes="We are Team M1KU and we built Cekgu. Every university in this room already vets its exam papers by committee. The committee reads the paper. Cekgu re-solves it, before a single student does. That is the whole handshake and it is thirty-two words, so land on before a single student does and then stop. Do not read the URL aloud and do not roll call four names; the grid on this slide already says them. The app is already open in the other window on the sign-in page, signed out, with the fields empty, and the driver is idle with the cursor off screen. If the room is still settling, wait for quiet rather than talking over it. The next slide is one real question off the public sample record, so do not preview it here."
+        data-budget="14"
+        data-speaker-notes="We are Team M1KU and we built Cekgu. Every university in this room already vets its exam papers by committee. The committee reads the paper. Cekgu re-solves it, before a single student does. Land on before a single student does and stop. Three minutes is the whole slot, so do not read the URL aloud and do not roll call four names; the grid on this slide already says them. The app is already open in the other window on slash sample, signed out and scrolled to the top, and the driver is idle with the cursor off screen. The next slide is one real question off that record, so do not preview it here."
       >
         <span class="spine" aria-hidden="true"></span>
         <div class="pad">
@@ -2383,7 +2209,7 @@
                     The answer key is wrong. <em>Nobody checked.</em>
                   </h1>
                   <p class="lead" style="margin-top: 26px; max-width: 44ch">
-                    Cekgu reviews a quiz for teachers and tutors, before students lose marks to a mistake in the answer key.
+                    A second opinion on every question, before the marks are in.
                   </p>
                 </div>
 
@@ -2433,7 +2259,7 @@
       <section
         class="slide ink problem"
         data-section="Problem"
-        data-budget="25"
+        data-budget="20"
         data-speaker-notes="Here is one question on a twelve-question quiz. Which data structure removes elements first in, first out? The answer key says Stack. The answer is Queue. Pause there for a second and let the room solve it, because most of them will. Then: that paper was vetted. Signed off. Published with the defect still in it. Not big questions. One wrong answer key, two defensible answers, a missing word. Small enough to survive a careful human read. The question on this slide is question three of the public sample record, verbatim, down to the four option texts, so a judge can open the Sample Report signed out and find it. The red pen at the bottom right is the committee's own sign-off; point at it on signed off if a hand is free, and do not explain the joke. Fifty-eight words in twenty-five seconds is about two seconds long, so if the rehearsal runs over, Not big questions is the line to cut."
       >
         <img class="hero-bg" src="assets/hero-problem.jpg" alt="" onerror="this.remove()" />
@@ -2448,21 +2274,17 @@
 
           <div class="head">
             <p class="eyebrow">1. Problem statement</p>
-            <h2 class="title">A quiz goes out with the wrong answer marked. <em>Every student loses that mark.</em></h2>
-            <p class="sub" style="max-width: 76ch">Teachers set quizzes with an answer key. When it is wrong, nobody finds out until the marks are in.</p>
+            <h2 class="title">The committee reads the paper. <em>Nobody re-solves it.</em></h2>
+            <p class="sub" style="max-width: 76ch">When the answer key is wrong, every student loses that mark.</p>
           </div>
 
           <div class="body">
             <div class="prob2">
               <div class="prob2-left" data-stagger>
-                <p class="kx on-ink">How a wrong answer key gets caught today</p>
-                <ul class="gap3">
-                  <li><b>She re-reads it</b><span>Reads straight past her own mistake.</span></li>
-                  <li><b>A colleague re-solves it</b><span>An hour of their time, every quiz.</span></li>
-                  <li><b>She asks a chatbot</b><span>One answer, no way to check it.</span></li>
-                </ul>
-
-                <p class="kx on-ink" style="margin-top: 30px">One from our sample quiz</p>
+                <!-- The three-row "how it gets caught today" list was cut with the
+                     slot. Twenty seconds buys one thing on this slide and it is the
+                     defective question; the alternatives are a spoken sentence. -->
+                <p class="kx on-ink">One question from our public sample</p>
                 <div class="defect on-ink">
                   <p class="defect-stem">Which data structure removes elements in first in, first out order?</p>
                   <div class="defect-row">
@@ -2475,94 +2297,8 @@
             </div>
 
             <div class="stamp on-ink">
-              Universities already put exam papers through a vetting committee.<span class="src inline">Source: UiTM procedure PKO09</span><br />
-              <b>Cekgu runs that check on every quiz, in minutes, before the committee does.</b>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ========================= 02b THE USER ============================ -->
-      <section
-        class="slide"
-        data-section="User"
-        data-budget="20"
-        data-speaker-notes="This is who we built it for. Not a university, not a student: one tutor who writes the paper and answers for it when a student pushes back. She is a composite of the primary operator in PRODUCT.md, so do not name a real person. The right side is the whole product in three rows. She types the paper in, stem, options, key. The record exists before any model runs and she can walk away, because a verdict takes minutes, not seconds. What comes back is one record with a verdict on every question, the risky ones first, two answers each with a model name and a request ID, and her own decision kept beside the verdict, never over it. Land on never over it. The rows are FR-CHECK-1 and 2, NFR-PERF-1 and 2, FR-RECORD-3 and 4 and FR-EVIDENCE-1 if a judge asks."
-      >
-        <div class="pad">
-          <div class="chrome">
-            <span class="lockup"
-              ><svg viewBox="0 0 64 64" role="img" aria-label="Cekgu"><use href="#cekgu-mark" /></svg><b>Cekgu</b></span
-            >
-            <span class="run" data-run></span>
-          </div>
-
-          <div class="head">
-            <p class="eyebrow">1. Problem statement &middot; the user</p>
-            <h2 class="title">Meet Cikgu Farah. <em>A private computer science tutor in Bukit Jalil.</em></h2>
-            <p class="sub" style="max-width: 90ch">She sets twelve-question quizzes several times a month. When her answer key is wrong, her students lose marks.</p>
-          </div>
-
-          <div class="body">
-            <div class="user">
-              <div class="persona" data-stagger>
-                <div class="persona-top">
-                  <span class="persona-img">
-                    <img src="assets/hero-user.jpg" alt="" onerror="this.parentNode.classList.add('empty'); this.remove()" />
-                    <span class="mono">F</span>
-                  </span>
-                  <div>
-                    <p class="persona-name">Cikgu Farah, 34</p>
-                    <p class="persona-role">Private tutor &middot; Computer Science &middot; Bukit Jalil</p>
-                  </div>
-                </div>
-                <dl class="facts">
-                  <div><dt>Publishes</dt><dd>Twelve questions, several times a month.</dd></div>
-                  <div><dt>Accountable for</dt><dd>Every question a student disputes.</dd></div>
-                  <div><dt>Wants</dt><dd>A second pair of eyes on her quizzes.</dd></div>
-                  <div><dt>Device</dt><dd>Writes on a laptop, checks on her phone.</dd></div>
-                </dl>
-                <blockquote class="persona-quote">&ldquo;Which three questions should I look at again, and why?&rdquo;</blockquote>
-              </div>
-
-              <div class="io-col">
-                <div class="io" data-stagger>
-                  <div class="io-row">
-                    <span class="io-tag">In &rarr;</span>
-                    <div>
-                      <p>She types each question in: the question, the options, the one she marks right. <b>Nothing to upload.</b></p>
-                      <p class="io-note">Checked for gaps before any model runs.</p>
-                    </div>
-                  </div>
-                  <div class="io-row">
-                    <span class="io-tag">&#9201;</span>
-                    <div>
-                      <p><b>Saved the moment she hits submit.</b> She can close the laptop.</p>
-                      <p class="io-note">Results in a few minutes.</p>
-                    </div>
-                  </div>
-                  <div class="io-row">
-                    <span class="io-tag">Out &rarr;</span>
-                    <div>
-                      <p><b>Every question with its result, worrying ones first,</b> plus what each of the two readers said, with a checkable receipt. She decides what to change.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="delta" data-stagger>
-              <div class="delta-cell">
-                <p class="today">Re-reads all twelve herself.</p>
-                <p class="after"><span>&rarr;</span>Reads the three that were flagged.</p>
-              </div>
-              <div class="delta-cell">
-                <p class="today">A colleague re-solves it.</p>
-                <p class="after"><span>&rarr;</span>Two models do, without the answer key, receipts included.</p>
-              </div>
-              <div class="delta-cell">
-                <p class="today">Hears about a wrong answer key after the marks.</p>
-                <p class="after"><span>&rarr;</span>Hears before the quiz goes out.</p>
-              </div>
+              Universities already vet exam papers by committee.<span class="src inline">Source: UiTM procedure PKO09</span><br />
+              <b>Cekgu re-solves every question, in minutes, before a student does.</b>
             </div>
           </div>
         </div>
@@ -2572,7 +2308,7 @@
       <section
         class="slide"
         data-section="Objective"
-        data-budget="20"
+        data-budget="16"
         data-speaker-notes="So the tutor re-reads all twelve, with the same attention on each. Cekgu turns twelve into three. Two possible key errors, one possible ambiguity, nine clear. Those are the live counts on our public sample. The three are where a human should spend the evening. Say possible both times, because the word is doing work: Cekgu never asserts that a key is wrong, only that it deserves a look. These counts are what a GET on slash api slash sample returns right now, so a judge can open the Sample Report signed out and count the chips themselves. One thing to be careful about: there is no Unverified question in this sample. Nothing in the pitch may promise a judge one. If asked, that is real product behaviour which this particular capture did not produce, and the Q and A has the full answer with the rejected attempts to back it."
       >
         <div class="pad">
@@ -2586,7 +2322,7 @@
           <div class="head">
             <p class="eyebrow">2. Project objective</p>
             <h2 class="title">She reads three questions <em>instead of twelve.</em></h2>
-            <p class="sub" style="max-width: 80ch">Cekgu uses two separate AI models on GonkaRouter to audit every answer, so the educator only reads the ones that came back flagged instead of all of them.</p>
+            <p class="sub" style="max-width: 80ch">Two models read every question. She opens only the flagged ones.</p>
           </div>
 
           <div class="body">
@@ -2693,8 +2429,8 @@
       <section
         class="slide"
         data-section="Concept"
-        data-budget="35"
-        data-speaker-notes="Three things matter here. One, the answer key is withheld. Two models on GonkaRouter answer it cold, never seeing the answer key and never seeing each other. Two, we compare the models to each other first, and only then to the answer key. Both said Queue. The key says Stack. Three, that rule was written down before any model answered, and it is the list on the right. Fewer than two verified answers is Unverified, never a guessed verdict. This is the track's explicit consensus logic, which the challenge document calls a major plus, so say the ordering out loud rather than gesturing at it. Do not read all five rows; they are already on the slide and a judge answer them is a judge not listening. The Unverified line is the rule, not a prediction: say is Unverified, never you will see one, because this record has none and the demo shows the rejected attempts instead."
+        data-budget="24"
+        data-speaker-notes="Three things matter here. One, the answer key is withheld. Two models on GonkaRouter answer it cold, never seeing the answer key and never seeing each other. Two, we compare the models to each other first, and only then to the answer key. Both said Queue. The key says Stack. Three, that rule was written down before any model answered, and it is the list on the right. Fewer than two verified answers is Unverified, never a guessed verdict. This is the track's explicit consensus logic, which the challenge document calls a major plus, so say the ordering out loud rather than gesturing at it. Do not read all five rows; they are already on the slide and a judge answer them is a judge not listening. The Unverified line is the rule, not a prediction: say is Unverified, never you will see one, because this record has none. Reader A and Reader B are seats, not fixed models, and that is deliberate; which family sits in each is on the architecture slide. Last line before the demo: here it is on the deployed app. Then stop talking and let the driver take the keyboard."
       >
         <div class="pad">
           <div class="chrome">
@@ -2706,8 +2442,8 @@
 
           <div class="head">
             <p class="eyebrow">3. Overall concept</p>
-            <h2 class="title">Two GonkaRouter models answer without seeing the answer key. <em>A fixed rule compares them.</em></h2>
-            <p class="sub" style="max-width: 80ch">Neither model is shown the teacher&rsquo;s answer or the other model&rsquo;s. The rule checks whether the two agree first, and only then whether they agree with the answer key.</p>
+            <h2 class="title">Two models, no answer key, <em>one fixed rule.</em></h2>
+            <p class="sub" style="max-width: 80ch">Compared to each other first. Only then to the answer key.</p>
           </div>
 
           <div class="body">
@@ -2743,13 +2479,13 @@
                 <path class="conn" d="M386 261l12 10-12 10" />
 
                 <!-- two readers, then and only then the key -->
-                <text class="label f-muted" x="428" y="20" font-size="20">BOTH MODELS, NO ANSWER KEY</text>
+                <text class="label f-muted" x="428" y="20" font-size="20">TWO MODEL FAMILIES, NO ANSWER KEY</text>
                 <rect x="412" y="44" width="516" height="262" rx="4" class="card-s" />
                 <rect x="412.5" y="44.5" width="515" height="261" rx="4" class="s-rule" fill="none" />
                 <rect x="412" y="404" width="516" height="96" rx="4" class="card-s" />
                 <rect x="412.5" y="404.5" width="515" height="95" rx="4" class="s-rule" fill="none" />
                 <rect x="413" y="405" width="6" height="94" class="f-pen" />
-                <text class="mono f-ink" x="428" y="90" font-size="24">MiniMax-M2.7</text>
+                <text class="f-ink" x="428" y="90" font-size="24" font-weight="500">Reader A</text>
                 <g>
                   <circle cx="716" cy="82" r="16" class="s-strong" />
                   <circle cx="776" cy="82" r="16" class="f-ink" />
@@ -2758,8 +2494,7 @@
                   <text x="776" y="130" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Queue</text>
                 </g>
                 <text x="776" y="186" font-size="30" text-anchor="middle" class="f-muted">=</text>
-                <text class="mono f-ink" x="428" y="242" font-size="24">Kimi-K2.6</text>
-                <text class="label f-muted" x="428" y="270" font-size="14">READ 3 SEP</text>
+                <text class="f-ink" x="428" y="242" font-size="24" font-weight="500">Reader B</text>
                 <g>
                   <circle cx="716" cy="234" r="16" class="s-strong" />
                   <circle cx="776" cy="234" r="16" class="f-ink" />
@@ -2832,138 +2567,12 @@
         </div>
       </section>
 
-      <!-- ======================= 05 THE DEMO MOMENT ======================= -->
-      <section
-        class="slide ink"
-        data-section="Demo"
-        data-budget="10"
-        data-speaker-notes="That is the question Cekgu flagged. Here it is on the deployed app, and I am signing in as a guest. Nineteen words, then stop talking and let the driver take the keyboard. This slide exists so the room already knows what it is about to look at, and so that if the venue network dies the whole demo is still on the wall behind us. If that happens, say this is the deck, not the app, before you start, and never present a recording or a diagram as live. The driver's path is: Sign In as Guest, then the row titled Introductory computer science practice set carrying the Sample chip, then the Possible Key Error filter which reads two, then Show Evidence on question three. The moment to hold is the three bubble rows: the answer key filled on A, and both models filled on B. A judge sees the disagreement before anyone explains it."
-      >
-        <div class="pad">
-          <div class="chrome">
-            <span class="lockup"
-              ><svg viewBox="0 0 64 64" role="img" aria-label="Cekgu"><use href="#cekgu-mark" /></svg><b>Cekgu</b></span
-            >
-            <span class="run" data-run></span>
-          </div>
-
-          <div class="head">
-            <p class="eyebrow">3. Overall concept &middot; the moment</p>
-            <h2 class="title">Nobody told them the answer key. <em>Both chose Queue.</em></h2>
-            <p class="sub">Question 3 of the public sample record, read on 3 September, unedited.</p>
-          </div>
-
-          <div class="body">
-            <div class="duo fig-left">
-              <svg
-                viewBox="0 0 940 700"
-                role="img"
-                aria-label="Question 3 of the sample record flagged Possible Key Error. The supplied key is A, Stack. Both blind readers, MiniMax and Kimi, chose B, Queue, and both readings carry a verified receipt. The readings are from 3 September; the gateway delisted Kimi on 5 September"
-              >
-                <rect x="0.5" y="0.5" width="939" height="699" rx="4" class="card-s" />
-
-                <text class="paper f-ink" x="44" y="60" font-size="31">Which data structure removes elements</text>
-                <text class="paper f-ink" x="44" y="98" font-size="31">in first in, first out order?</text>
-
-                <text class="label f-muted" x="44" y="146" font-size="19">SUPPLIED KEY</text>
-                <g>
-                  <circle cx="64" cy="190" r="19" class="f-ink" />
-                  <text x="64" y="197" font-size="18" font-weight="500" text-anchor="middle" class="f-sheet">A</text>
-                  <text x="64" y="238" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Stack</text>
-                  <circle cx="184" cy="190" r="19" class="s-strong" />
-                  <text x="184" y="197" font-size="18" font-weight="500" text-anchor="middle" class="f-ink">B</text>
-                  <circle cx="304" cy="190" r="19" class="s-strong" />
-                  <text x="304" y="197" font-size="18" font-weight="500" text-anchor="middle" class="f-ink">C</text>
-                  <circle cx="424" cy="190" r="19" class="s-strong" />
-                  <text x="424" y="197" font-size="18" font-weight="500" text-anchor="middle" class="f-ink">D</text>
-                </g>
-
-                <line x1="44" y1="278" x2="896" y2="278" class="s-rule" />
-
-                <!-- the evidence panel: two readers, side by side, recessed -->
-                <rect x="22" y="302" width="896" height="256" rx="4" class="f-well" />
-                <text class="mono f-ink" x="52" y="344" font-size="23">MiniMaxAI/MiniMax-M2.7</text>
-                <g>
-                  <circle cx="72" cy="406" r="19" class="s-strong" />
-                  <text x="72" y="413" font-size="18" font-weight="500" text-anchor="middle" class="f-ink">A</text>
-                  <g data-reader="a">
-                    <circle cx="152" cy="406" r="19" class="f-ink" />
-                    <text x="152" y="413" font-size="18" font-weight="500" text-anchor="middle" class="f-well">B</text>
-                    <text x="152" y="454" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Queue</text>
-                  </g>
-                  <circle cx="232" cy="406" r="19" class="s-strong" />
-                  <text x="232" y="413" font-size="18" font-weight="500" text-anchor="middle" class="f-ink">C</text>
-                  <circle cx="312" cy="406" r="19" class="s-strong" />
-                  <text x="312" y="413" font-size="18" font-weight="500" text-anchor="middle" class="f-ink">D</text>
-                </g>
-                <!-- Two things, not one string. The product never prints
-                     "Receipt Verified": EvidencePanel.tsx renders Receipt as
-                     the field and Verified as its value, as a dt/dd pair in the
-                     reader column and as a column header over a status chip in
-                     the attempt table. This is the table's form. -->
-                <text class="label f-muted" x="52" y="521" font-size="19">RECEIPT</text>
-                <g transform="translate(160 496)">
-                  <rect width="110" height="36" rx="18" class="f-sheet" />
-                  <text class="f-ink" x="22" y="25" font-size="20" font-weight="500">Verified</text>
-                </g>
-
-                <line x1="470" y1="326" x2="470" y2="534" class="s-rule" />
-
-                <text class="mono f-ink" x="502" y="344" font-size="23">moonshotai/Kimi-K2.6</text>
-                <g>
-                  <circle cx="522" cy="406" r="19" class="s-strong" />
-                  <text x="522" y="413" font-size="18" font-weight="500" text-anchor="middle" class="f-ink">A</text>
-                  <g data-reader="b">
-                    <circle cx="602" cy="406" r="19" class="f-ink" />
-                    <text x="602" y="413" font-size="18" font-weight="500" text-anchor="middle" class="f-well">B</text>
-                    <text x="602" y="454" font-size="21" font-weight="500" text-anchor="middle" class="f-ink">Queue</text>
-                  </g>
-                  <circle cx="682" cy="406" r="19" class="s-strong" />
-                  <text x="682" y="413" font-size="18" font-weight="500" text-anchor="middle" class="f-ink">C</text>
-                  <circle cx="762" cy="406" r="19" class="s-strong" />
-                  <text x="762" y="413" font-size="18" font-weight="500" text-anchor="middle" class="f-ink">D</text>
-                </g>
-                <text class="label f-muted" x="502" y="521" font-size="19">RECEIPT</text>
-                <g transform="translate(610 496)">
-                  <rect width="110" height="36" rx="18" class="f-sheet" />
-                  <text class="f-ink" x="22" y="25" font-size="20" font-weight="500">Verified</text>
-                </g>
-
-                <!-- The translate lives on the OUTER g. A CSS animation ending
-                     in transform: none overrides an SVG transform attribute on
-                     the same element, which silently threw this chip into the
-                     top left corner on top of the question stem. -->
-                <g transform="translate(44 596)">
-                  <g data-verdict>
-                    <rect width="271" height="40" rx="20" class="v-key-bg" />
-                    <circle cx="26" cy="20" r="8" class="v-key" />
-                    <circle cx="46" cy="20" r="8" class="v-key-s" />
-                    <text class="chipname v-key" x="68" y="27" font-size="21">Possible Key Error</text>
-                  </g>
-                </g>
-                <text x="44" y="676" font-size="24" class="f-muted">
-                  Both models chose Queue. The answer key says Stack.
-                </text>
-              </svg>
-
-              <div data-stagger>
-                <p class="lead">The answer key says Stack.</p>
-                <p class="lead"><strong>Cekgu flags it for a person to check.</strong> It does not touch her answer key.</p>
-                <p class="rulefired">
-                  <span>Why</span>Both verified answers agree, and neither matches the answer key.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- =========================== 06 THE PROOF ========================= -->
+      <!-- =========================== 05 THE PROOF ========================= -->
       <section
         class="slide ink"
         data-section="Proof"
-        data-budget="30"
-        data-speaker-notes="That is the part this track is actually about. Every answer carries a Gonka request ID. These two are from question nine on the record you just had open. Different models, different ids, both receipts verified. Paste either ID into that receipts URL and the gateway tells you which model served it. That is what proves this reasoning did not come out of our server. If a judge reaches for a phone here, stop and let them; it is the best thing that can happen in this pitch and both IDs were re-verified against the public receipts endpoint on the fourth of September, HTTP two hundred, outcome success, served model matching the slide. Be precise about what the receipt is: it is gateway metadata, not cryptographic proof and not an on-chain transaction, and our own product copy says so. On a centralised API I can tell you I used two models. Here you can check that I did."
+        data-budget="17"
+        data-speaker-notes="This is the part the track is actually about. Every answer carries a Gonka request ID. This one is from the record you just had open. Paste it into that URL and the gateway tells you which model served it, and that is what proves the reasoning did not come out of our server. On a centralised API I can tell you I used two models. Here you can check that I did. Say the last line and stop. One card, not two, and that is deliberate: the pair on this question was MiniMax and Kimi, Kimi was delisted on the fifth of September, and a wall is the wrong place for a footnote. The ID on screen is MiniMax and it was re-verified against the public receipts endpoint today, HTTP two hundred, outcome success, served model matching the slide. If a judge reaches for a phone here, stop and let them; it is the best thing that can happen in this pitch. Be precise about what the receipt is: gateway metadata, not cryptographic proof and not an on-chain transaction, and our own product copy says so."
       >
         <div class="pad">
           <div class="chrome">
@@ -2976,18 +2585,28 @@
           <div class="head">
             <p class="eyebrow">3. Overall concept &middot; the proof</p>
             <h2 class="title">Every answer comes with <em>a GonkaRouter request ID.</em></h2>
-            <p class="sub">Each answer has a GonkaRouter receipt, a record the gateway keeps, and anyone can open it. An answer without one is not counted.</p>
+            <p class="sub">The gateway keeps the record, not us. No receipt, no reading.</p>
           </div>
 
           <div class="body mid">
             <p class="kx" style="margin: 0 0 8px">PUBLIC SAMPLE RECORD &middot; QUESTION 9 &middot; READ 3 SEP</p>
 
-            <!-- Field order is the product's own. In EvidencePanel.tsx a reader
+            <!-- ONE card, not the pair this question actually produced. Both
+                 readings are real and both IDs still resolve, but the second was
+                 served by moonshotai/Kimi-K2.6, which the gateway delisted on
+                 5 September (src/server/gateway/models.ts). Printing a delisted
+                 model beside a live one needs a footnote, and a wall is the
+                 wrong place for one, so the pair claim is made by the foot line
+                 and shown live in the demo instead. The ID below is MiniMax and
+                 it resolves today; do not add a second card without a second
+                 real, current ID. Never invent one.
+
+                 Field order is the product's own. In EvidencePanel.tsx a reader
                  column runs Served Model over a mono model id, then Request ID,
                  then Receipt with Verified as its value. Verified belongs to
                  Receipt, never to Served Model, which is always followed by an
                  id and nothing else. -->
-            <div class="cards" data-stagger>
+            <div class="proof" data-stagger>
               <div class="card">
                 <p class="kx" style="margin: 0">Served Model</p>
                 <p class="val">MiniMaxAI/MiniMax-M2.7</p>
@@ -2999,24 +2618,6 @@
                 </div>
               </div>
 
-              <div class="card">
-                <p class="kx" style="margin: 0">Served Model</p>
-                <p class="val">moonshotai/Kimi-K2.6</p>
-                <p class="kx" style="margin: 24px 0 0">Request ID</p>
-                <p class="val">req-1788427238422211356-414867</p>
-                <div class="row" style="margin-top: 24px">
-                  <span class="kx">Receipt</span>
-                  <span class="chip">Verified</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="proof" data-stagger>
-              <div class="urlbar">
-                <p class="kx" style="margin: 0 0 16px">OPEN IT YOURSELF</p>
-                <p class="u" style="margin: 0">api.gonkarouter.io/v1/receipts/<br />req-1788427238422211326-414866</p>
-                <p class="u-note">No API key or login needed. Anyone in this room can open it now.</p>
-              </div>
               <pre class="receipt"><span class="k">"model"</span>: <span class="v">"MiniMaxAI/MiniMax-M2.7"</span>,
 <span class="k">"outcome"</span>: <span class="v">"success"</span>,
 <span class="k">"status_code"</span>: <span class="v">200</span>,
@@ -3024,18 +2625,24 @@
 <span class="k">"created_at"</span>: <span class="v">"2026-09-03T09:21:09Z"</span>,
 <span class="k">"x_devshard_id"</span>: <span class="v">"70340"</span></pre>
             </div>
+
+            <div class="urlbar">
+              <p class="kx" style="margin: 0 0 16px">OPEN IT YOURSELF</p>
+              <p class="u" style="margin: 0">api.gonkarouter.io/v1/receipts/req-1788427238422211326-414866</p>
+              <p class="u-note">No API key and no login. Anyone in this room can open it now.</p>
+            </div>
           </div>
 
-          <p class="foot">Both IDs are on the public sample record.</p>
+          <p class="foot">Every question gets two of these, from two different model families.</p>
         </div>
       </section>
 
-      <!-- ========================= 08 ARCHITECTURE ======================== -->
+      <!-- ========================= 06 ARCHITECTURE ======================== -->
       <section
         class="slide"
         data-section="Architecture"
-        data-budget="30"
-        data-speaker-notes="One Bun process on Cloud Run. Hono serves the API, the queue worker runs inside the same process, Neon Postgres holds the records. Follow the arrows left to right: the browser posts a paper, the queue claims one question at a time, and every model call leaves through one file. That file is the whole story of this track. There is no other AI provider in this repository, and a test asserts it on every run, which is the line under the gateway box. The four things the track requires are the four things this product needs to work, and three of them are on this diagram: all inference through GonkaRouter, two models cross-verifying, a request ID on every step. The fourth, the printed rule, is on the concept slide, so refer back to it. Do not read the band across the bottom word for word; name the four and move on, because the clock is tighter here than it feels."
+        data-budget="16"
+        data-speaker-notes="One Bun process on Cloud Run. Hono serves the API, the queue worker runs in the same process, Neon Postgres holds the records. Every model call leaves through one file, and that file only knows how to reach GonkaRouter. There is no other AI provider in this repository and a test fails the build if one appears, which is the line under the gateway box. Three of the four things this track requires are on this diagram: all inference through GonkaRouter, two families cross-verifying, a request ID on every step. The fourth, the printed rule, was the concept slide. Do not read the band across the bottom word for word; name the four and move on. If a judge asks why Reader A and Reader B are seats rather than fixed models, that is the next slide, so do not spend the answer here."
       >
         <div class="pad">
           <div class="chrome">
@@ -3046,9 +2653,9 @@
           </div>
 
           <div class="head">
-            <p class="eyebrow">4. Technology and track</p>
-            <h2 class="title">One server, one gateway, <em>two models.</em></h2>
-            <p class="sub">Every model call leaves from one file, and that file only knows how to reach GonkaRouter.</p>
+            <p class="eyebrow">4. Technology stack and track chosen</p>
+            <h2 class="title">One server, one gateway, <em>two model families.</em></h2>
+            <p class="sub">Every model call leaves from one file. It only reaches GonkaRouter.</p>
           </div>
 
           <div class="body">
@@ -3056,7 +2663,7 @@
               <svg preserveAspectRatio="xMidYMin meet"
                 viewBox="0 0 1736 500"
                 role="img"
-                aria-label="Architecture. The browser posts a paper to a single Bun process on Cloud Run, which runs the Hono API and the queue worker and stores records in Neon Postgres. Both reach GonkaRouter through one gateway client, which calls two models, MiniMax and DeepSeek, and then checks each receipt."
+                aria-label="Architecture. The browser posts a paper to a single Bun process on Cloud Run, which runs the Hono API and the queue worker and stores records in Neon Postgres. Both reach GonkaRouter through one gateway client, which seats two of the registry's model families, MiniMax and DeepSeek, as Reader A and Reader B, then checks each receipt."
               >
                 <!-- Three group labels on one baseline, three boxes whose tops
                      line up under them, and one 27.5 inset used by every box on
@@ -3108,31 +2715,35 @@
                 <path class="conn" d="M1283 200.5 L1292 206.5 L1283 212.5" />
                 <text class="f-muted" x="1234" y="190" font-size="16" text-anchor="middle">two model calls</text>
 
-                <rect x="1300.5" y="36.5" width="435" height="339" rx="10" class="card-s" />
+                <rect x="1300.5" y="36.5" width="435" height="360" rx="10" class="card-s" />
                 <text class="mono f-muted" x="1328" y="70" font-size="20">api.gonkarouter.io</text>
 
                 <!-- Tororo reads first and Hijiki second, the same two seats the
                      product puts on the evidence panel, so a judge who saw the
                      cats in the demo meets them again here. The seat is the
-                     mascot; the model id beside it is the model. What is true of
-                     both readers is said once, under them, rather than twice
-                     inside the chips where it read as filler. -->
-                <rect x="1328" y="86" width="380" height="72" rx="8" class="f-well" />
-                <image href="assets/tororo.png" x="1348" y="94" width="56" height="56" />
-                <text class="mono f-ink" x="1420" y="118" font-size="20">MiniMax-M2.7</text>
-                <text class="f-muted" x="1420" y="142" font-size="19">Reader A</text>
+                     mascot; the id under it is whichever family the queue put
+                     in that seat, and the two below are the whole registry as
+                     src/server/gateway/models.ts holds it today.
+                     moonshotai/Kimi-K2.6 was the third until 5 September, when
+                     the gateway began answering 400 for it and it was dropped.
+                     Two families is the floor, not a preference: one family
+                     cannot produce two distinct readings. -->
+                <rect x="1328" y="88" width="380" height="76" rx="8" class="f-well" />
+                <image href="assets/tororo.png" x="1346" y="94" width="40" height="40" />
+                <text class="f-ink" x="1398" y="120" font-size="22" font-weight="500">Reader A</text>
+                <text class="mono f-muted" x="1346" y="154" font-size="17">MiniMaxAI/MiniMax-M2.7</text>
 
-                <rect x="1328" y="168" width="380" height="72" rx="8" class="f-well" />
-                <image href="assets/hijiki.png" x="1348" y="176" width="56" height="56" />
-                <text class="mono f-ink" x="1420" y="200" font-size="20">DeepSeek-V4-Flash-0731</text>
-                <text class="f-muted" x="1420" y="224" font-size="19">Reader B</text>
+                <rect x="1328" y="176" width="380" height="76" rx="8" class="f-well" />
+                <image href="assets/hijiki.png" x="1346" y="182" width="40" height="40" />
+                <text class="f-ink" x="1398" y="208" font-size="22" font-weight="500">Reader B</text>
+                <text class="mono f-muted" x="1346" y="242" font-size="17">deepseek-ai/DeepSeek-V4-Flash-0731</text>
 
-                <text class="f-ink" x="1328" y="270" font-size="19">Neither reader sees the answer key,</text>
-                <text class="f-ink" x="1328" y="292" font-size="19">or the other reader&rsquo;s answer.</text>
+                <text class="f-ink" x="1328" y="286" font-size="19">Seated by a 15-minute health window.</text>
+                <text class="f-ink" x="1328" y="310" font-size="19">Two distinct families, or Unverified.</text>
 
-                <path class="s-rule" d="M1328 312 H1708" />
-                <text class="mono f-ink" x="1328" y="342" font-size="20">GET /v1/receipts/{id}</text>
-                <text class="f-muted" x="1328" y="366" font-size="19">The served model must match.</text>
+                <path class="s-rule" d="M1328 332 H1708" />
+                <text class="mono f-ink" x="1328" y="360" font-size="20">GET /v1/receipts/{id}</text>
+                <text class="f-muted" x="1328" y="384" font-size="19">The served model must match.</text>
 
                 <path class="conn" d="M612 349 V400" />
                 <path class="conn" d="M606 391 L612 400 L618 391" />
@@ -3143,9 +2754,9 @@
                 <text class="f-ink" x="566" y="441" font-size="24">Neon Postgres, Drizzle</text>
                 <text class="f-muted" x="566" y="471" font-size="20">Records, attempts and every request ID.</text>
 
-                <text class="mono f-ink" x="1300" y="420" font-size="20">only-gonkarouter.test.ts</text>
-                <text class="f-muted" x="1300" y="448" font-size="19">Fails the build if any other provider</text>
-                <text class="f-muted" x="1300" y="474" font-size="19">host appears anywhere else in the code.</text>
+                <text class="mono f-ink" x="1300" y="430" font-size="20">only-gonkarouter.test.ts</text>
+                <text class="f-muted" x="1300" y="458" font-size="19">Fails the build if any other provider</text>
+                <text class="f-muted" x="1300" y="484" font-size="19">host appears anywhere else in the code.</text>
               </svg>
             </div>
 
@@ -3154,7 +2765,7 @@
                 ><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#tick" /></svg>All AI calls via GonkaRouter</span
               >
               <span class="t"
-                ><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#tick" /></svg>Two models, distinct
+                ><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#tick" /></svg>Two families, distinct
                 receipts</span
               >
               <span class="t"
@@ -3168,12 +2779,12 @@
         </div>
       </section>
 
-      <!-- ================= 08 MOTIVATION AND CHALLENGES =================== -->
+      <!-- ================= 07 MOTIVATION AND CHALLENGES =================== -->
       <section
         class="slide"
         data-section="Challenges"
-        data-budget="30"
-        data-speaker-notes="We measured before we built, and it went against us. Twelve questions, two models, and not one had two answers inside thirty seconds. So we threw out the instant checker and built a queue that fails closed. Twelve of twelve got two verified answers. Then thirty questions, twice. It caught fourteen of twenty planted defects. And on forty clean-control runs it flagged nothing. Not one. Land on Not one and take a beat. Three separate measurements share this slide and the deck keeps them apart, so never blur them: the chart is the third of September benchmark that judged a synchronous design nobody shipped, the twelve of twelve is the public sample record, and the dot field is the thirty-question set run twice through the deployed queue. The thirty-question run's own Unverified rate, nineteen of sixty, is deliberately off the slide because it is a load effect that needs a spoken sentence, and the Q and A carries it."
+        data-budget="24"
+        data-speaker-notes="We measured before we built, and it went against us. Not one question got two answers inside thirty seconds, so we threw out the instant checker and built a queue that fails closed. Then thirty questions, twice: fourteen of twenty planted defects caught, and on forty clean control runs it flagged nothing. Not one. Then last night the gateway stopped serving one of our three model families. We changed one line, the list of families. The queue, the rule, the receipts and the screens are untouched. Land on untouched. Be exact if pushed: the family was moonshotai slash Kimi-K2.6, the track mentor took it offline, a GET on slash v1 slash models returned two ids where it had returned three, and that is issue two three nine, filed at twenty past seven on the fifth. The fix is pull request two five six and its own body says the production change is one line. Do not claim we designed for this or saw it coming, and do not claim we watched the health window demote it in production, because we did not. Two measurements share the right of this slide and the deck keeps them apart: the chart is the third of September benchmark that judged a synchronous design nobody shipped, and the dot field is the thirty-question set run twice through the deployed queue. The chart still names Kimi and its numbers are exactly as recorded. If asked, that is the point: every receipt Kimi produced still resolves against the public endpoint today, so the measurement is checkable even though the model is gone. Never edit a measured number to match today. That run's own Unverified rate, nineteen of sixty, is deliberately off the slide because it is a load effect that needs a spoken sentence, and the Q and A carries it."
       >
         <div class="pad">
           <div class="chrome">
@@ -3185,27 +2796,31 @@
 
           <div class="head">
             <p class="eyebrow">5. Motivation and challenges</p>
-            <h2 class="title">Two separate models on every question, <em>and we wait for both.</em></h2>
-            <p class="sub" style="max-width: 80ch">With two models on GonkaRouter, no verdict rests on one model&rsquo;s mistake. A second answer takes time, so the queue does the waiting while the teacher carries on.</p>
+            <h2 class="title">We measured first. <em>Then a model went dark.</em></h2>
+            <p class="sub" style="max-width: 80ch">The benchmark killed our first design. Then a model family vanished.</p>
           </div>
 
           <div class="body">
             <div class="duo chart-right">
               <div data-stagger>
+                <p class="kx" style="margin: 0 0 16px">5 SEPTEMBER, THE NIGHT BEFORE</p>
                 <p class="lead" style="margin-bottom: 46px">
-                  So Cekgu queues the work, retries, and <strong>marks the question Unverified rather than guessing.</strong>
+                  One of our reader families went offline. <strong>The queue seated the other two.</strong>
                 </p>
                 <div>
-                  <div class="fig">12 of 12</div>
-                  <p class="fig-cap">questions, two verified answers each</p>
-                  <p class="kx" style="margin: 14px 0 0">PUBLIC SAMPLE RECORD</p>
+                  <div class="fig">1 line</div>
+                  <p class="fig-cap">changed in production. The queue and the rule did not.</p>
+                  <!-- A file path is a machine string, not a label, so it keeps
+                       its own case and the mono face. .kx would uppercase it
+                       into a path that does not exist. -->
+                  <p class="kx" style="margin: 16px 0 0; font-family: var(--font-mono); text-transform: none; letter-spacing: 0; font-size: 19px">src/server/gateway/models.ts</p>
                 </div>
               </div>
 
                 <svg
                   viewBox="0 0 940 624"
                   role="img"
-                  aria-label="Above, the 3 September benchmark's call latency: MiniMax completed 24 of 24 calls between 14.3 and 73.8 seconds, Kimi 13 of 24 between 35.1 and 82.7 seconds, and no item got both of its readings inside the 30 second line. Below, 30 items run twice through the deployed queue: 40 clean control runs with no false flags, and 20 planted defect runs of which 14 were caught, 5 abstained as Unverified and 1 came back Clear"
+                  aria-label="Above, the 3 September benchmark's call latency: MiniMax completed 24 of 24 calls between 14.3 and 73.8 seconds, Kimi 13 of 24 between 35.1 and 82.7 seconds, and no item got both of its readings inside the 30 second line. Kimi was delisted by the gateway two days after this measurement and the numbers are left as they were recorded. Below, 30 items run twice through the deployed queue: 40 clean control runs with no false flags, and 20 planted defect runs of which 14 were caught, 5 abstained as Unverified and 1 came back Clear"
                 >
                   <text class="label f-muted" x="0" y="16" font-size="19">
                     SECONDS TO A COMPLETED CALL &middot; 3 SEP BENCHMARK
@@ -3223,7 +2838,7 @@
                   <text class="mono f-muted" x="780.9" y="104" font-size="22" text-anchor="middle">73.8</text>
 
                   <text class="mono f-ink" x="0" y="238" font-size="23">Kimi-K2.6</text>
-                  <text class="mono f-muted" x="0" y="270" font-size="23">13 of 24 calls</text>
+                  <text class="mono f-muted" x="0" y="270" font-size="23">13 of 24 calls &middot; delisted 5 Sep</text>
                   <line x1="468.1" y1="250" x2="853.1" y2="250" class="s-ink" stroke-width="10" stroke-linecap="round" />
                   <circle cx="468.1" cy="250" r="10" class="f-ink" />
                   <circle cx="853.1" cy="250" r="10" class="f-ink" />
@@ -3279,16 +2894,16 @@
             </div>
           </div>
 
-          <p class="foot">5 came back Unverified. 1 came back Clear.</p>
+          <p class="foot">Of the 20 planted defects, 5 came back Unverified and 1 came back Clear.</p>
         </div>
       </section>
 
-      <!-- ======================== 09 BUSINESS MODEL ======================= -->
+      <!-- ======================== 08 BUSINESS MODEL ======================= -->
       <section
         class="slide"
         data-section="Business"
-        data-budget="20"
-        data-speaker-notes="We charge for questions checked, not tokens. Free is twenty a month, Plus is three hundred for twenty-nine ringgit. The first buyer is an independent tutor, not a university procurement office. And I will say it before you do: nobody has paid us anything. This is a price to test. Saying the pricing is untested before a judge says it is worth more than the pricing is, so if the clock is tight, cut the plan list and keep the last sentence. The unit of value is deliberately questions rather than model tokens, because the model cost is invisible to the buyer and what they are actually buying is saved attention, a reusable record and dependable retries. The axis on the left is logarithmic and prints its own ticks, so nothing is encoded by a length that would misread twenty against fifteen hundred. Guest is the shared demo workspace and its content expires in twenty-four hours."
+        data-budget="10"
+        data-speaker-notes="We charge for questions checked, not tokens. Free is twenty a month, Plus is three hundred for twenty-nine ringgit. The first buyer is an independent tutor, not a university procurement office. And I will say it before you do: nobody has paid us anything. This is a price to test. Saying the pricing is untested before a judge says it is worth more than the pricing is, so if the clock is tight, cut the three plan names and keep the last sentence. The unit of value is deliberately questions rather than model tokens, because the model cost is invisible to the buyer and what they are actually buying is saved attention, a reusable record and dependable retries. The build roadmap that used to sit under the tiers is cut: ten seconds cannot read it, and this slide is about who buys, not about what we build next. If a judge asks what Cekgu Studio is, it is the same product at fifteen hundred questions a month for a tuition centre, and nobody is on any of the three plans."
       >
         <div class="pad">
           <div class="chrome">
@@ -3299,7 +2914,7 @@
           </div>
 
           <div class="head">
-            <p class="eyebrow">6. Business model</p>
+            <p class="eyebrow">6. Commercialisation and business model</p>
             <h2 class="title">We charge per question checked, <em>not per token.</em></h2>
             <p class="sub">Priced by questions checked, so the educator never sees a model bill.</p>
           </div>
@@ -3330,24 +2945,25 @@
               <b>Pilot pricing; no buyer has paid yet.</b>
             </div>
 
-            <p class="kx" style="margin: 30px 0 12px">What we build next, in order</p>
-            <ol class="phases">
-              <li><span class="n">Next</span><b>Get papers in faster</b><p>Paste and CSV import. Bahasa Malaysia product copy.</p></li>
-              <li><span class="n">Then</span><b>Keep the record useful</b><p>Trash restore, duplication, export, email when a record is ready.</p></li>
-              <li><span class="n">Later</span><b>Charge for it</b><p>Billing on the three tiers. Library search and filters.</p></li>
-            </ol>
+            <!-- The build roadmap that sat here is cut. Ten seconds cannot
+                 read three phases with descriptions, and this slide answers
+                 "commercialisation", which is who buys and why, not what we
+                 build next. The roadmap lives in PRODUCT.md's scope ladder. -->
+            <p class="lead" style="margin: 46px 0 0; max-width: 44ch">
+              The first buyer is an independent tutor, <strong>not a university procurement office.</strong>
+            </p>
           </div>
 
           <p class="foot">Guest is a shared demo workspace, expiring in 24 hours.</p>
         </div>
       </section>
 
-      <!-- ============================ 10 CLOSE ============================ -->
+      <!-- ============================ 09 CLOSE ============================ -->
       <section
         class="slide ink close"
         data-section="Close"
-        data-budget="10"
-        data-speaker-notes="We accept losing marks when we are wrong. Not when the paper is. Check the exam before the exam checks us. Beat before the last line, then stop talking and leave this slide up for the whole five minutes of Q and A. The URL row is the app root and the QR is the public sample record at /sample, which opens signed out, and it was decoded back from its rendered size to prove it scans, so a judge can open the Sample Report on their own phone while they ask their question. That is a good outcome, not an interruption. The four handles are on this slide and again on slide 01, so they are already read and do not need saying, and they are not a substitute for the Devfolio submission, which carries the same four members under their real names. If the first question is hostile, the ones we rehearsed cold are whether the demo is hardcoded, what stops two models agreeing, why this needs to be decentralised, and what happens when the gateway rate-limits."
+        data-budget="9"
+        data-speaker-notes="We accept losing marks when we are wrong. Not when the paper is. Check the exam before the exam checks us. Beat before the last line, then stop talking and leave this slide up for the whole minute of Q and A. The URL row is the app root and the QR is the public sample record at /sample, which opens signed out, and it was decoded back from its rendered size to prove it scans, so a judge can open the Sample Report on their own phone while they ask their question. That is a good outcome, not an interruption. The four handles are on this slide and again on slide 01, so they are already read and do not need saying, and they are not a substitute for the Devfolio submission, which carries the same four members under their real names. One minute of Q and A is one question and maybe a follow-up, so answer in three sentences and stop. The three we rehearsed cold are the Kimi one, whether the demo is hardcoded, and what stops two models agreeing."
       >
         <div class="pad">
           <div class="chrome">
@@ -3480,9 +3096,11 @@
           history.replaceState(null, '', '#' + (i + 1))
         }
 
-        // The slot is 5 minutes. The script targets 4:45 so the last 15 seconds
-        // stay as buffer, which is what the timer warns against.
-        var TOTAL = 285
+        // The slot is 3 minutes. The nine data-budget values sum to 150 and the
+        // live demo is 30, so a clean run lands on 180. TOTAL is 170 rather than
+        // 180 on purpose: red means "you are into your last ten seconds", not
+        // "you are already over", and amber lands at TOTAL - 30.
+        var TOTAL = 170
         var t0 = null
         var elapsed = 0
         function tick() {
