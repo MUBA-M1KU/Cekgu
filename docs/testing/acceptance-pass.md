@@ -88,3 +88,22 @@ Desktop acceptance is complete for normal use. Keep [#48](https://github.com/MUB
 remains open, because a live check can be delayed by GonkaRouter rate limiting or a stranded claim. The current
 deployment has no controlled **Unverified** record, so **Retry Verification** remains unwalked. Mobile rows are
 intentionally excluded from this project scope.
+
+## Phone walk at 375 px, 6 September
+
+Walked at 17:20 UTC on 5 September 2026 against production, which still served the 14:47 UTC build because deploys are
+gated ([#260](https://github.com/MUBA-M1KU/Cekgu/issues/260)). Headless Chromium emulating an iPhone SE at 375 px, not a
+physical phone. Covers steps 1 to 4 of the PRD demo acceptance test: the landing page, the public sample record with its
+evidence, Guest sign-in landing on the dashboard, and four workspace routes.
+
+| Route        | Elapsed (ms) | Console errors | Overflow (px) | Result | Note                                                         |
+| ------------ | ------------ | -------------- | ------------- | ------ | ------------------------------------------------------------ |
+| `/`          | 1727         | 0              | 0             | Pass   | Primary CTA visible unscrolled. H1 present.                  |
+| `/sample`    | 846          | 0              | 0             | Pass   | 12 items, 3 needing attention. Evidence opens, receipt link. |
+| `/dashboard` | 1584         | 0              | 0             | Pass   | Guest banner present. Sidebar rail accessible. H1 present.   |
+| `/records`   | 794          | 0              | 0             | Pass   | H1 present. New Check button present.                        |
+| `/new-check` | 937          | 0              | 0             | Pass   | H1 present. Demo prefill button present.                     |
+| `/settings`  | 818          | 0              | 0             | Pass   | H1 present. Sign Out button present.                         |
+
+All buttons carry accessible names; no horizontal overflow on any route. Screenshots were captured to the scratchpad
+directory. The live Guest-to-GonkaRouter submission was deliberately not exercised to avoid burning gateway tokens.
