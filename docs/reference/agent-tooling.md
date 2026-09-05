@@ -1,6 +1,6 @@
 # Agent tooling
 
-Standing reference for RTK and Graphify, kept out of [`AGENTS.md`](../AGENTS.md) so it is not reloaded into every
+Standing reference for RTK and Graphify, kept out of [`AGENTS.md`](../../AGENTS.md) so it is not reloaded into every
 session. Both tools are **optional and per-machine**: neither is a dependency of this repo, and every command documented
 anywhere in it works without them.
 

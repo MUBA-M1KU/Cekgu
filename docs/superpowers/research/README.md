@@ -46,7 +46,8 @@ one.
 - **Cite every claim** with publisher, title, date, URL and date accessed. An uncited number is unusable.
 - **Separate interpretation from evidence**, and say in the text which is which.
 - **Mark gaps.** `[ASSUMPTION]` for believed but unchecked, `[NEEDS SOURCE]` for unverified.
-- **Follow [`../../markdown-style.md`](../../markdown-style.md)** for structure, headings and when a table beats a list.
+- **Follow [`../../reference/markdown-style.md`](../../reference/markdown-style.md)** for structure, headings and when a
+  table beats a list.
 
 Never present an assumption as a researched fact, or an AI-generated statement as user research.
 
