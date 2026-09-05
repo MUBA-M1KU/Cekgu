@@ -181,6 +181,18 @@ prefilled from what it says.
   [NFR-PROV-3](#non-functional-requirements)
 - Given `GEMINI_API_KEY` is unset, then the control reports that uploads are off and every other route is unaffected
 
+**FR-CHECK-6.** An educator may paste a link to a page that already holds the questions, and the fields are prefilled
+from what is on it. **Added 6 September 2026**, closing the claim-extraction gap the compliance audit recorded: the
+product accepted typed text and files but not a web address.
+
+- Every clause of [FR-CHECK-5](#starting-a-check) applies unchanged — it prefills and stops, the draft lands whole or
+  not at all, the form locks while a request is in flight, and the structuring step's Gonka request id is displayed
+- A page of HTML is reduced to its words by a parser and reaches **no model outside GonkaRouter**, so this input works
+  when `GEMINI_API_KEY` is unset. A link to a PDF or an image needs the transcriber and says so when it is missing
+- A link is refused before a socket opens when it is not `http`/`https`, carries credentials, or resolves inside a
+  private network. Redirects are re-checked at every hop, to a limit of three
+- Refusal messages name what was wrong in a sentence the educator can act on, and never echo the fetched page back
+
 **The transcription step is the product's one call outside GonkaRouter**, and it is bounded by
 [NFR-SEC-1](#non-functional-requirements). Its instructions forbid it answering a question, marking an option correct or
 supplying a key that is not printed, so every judgement about what the words mean is made by Gonka models afterwards.
@@ -499,6 +511,7 @@ contract and where request ids are rendered without reading the code.
 | ---------------------------------------------------------------------------------------------------------- | --------------------------------------- |
 | As an educator, I sign in and see only my own records                                                      | FR-AUTH-1, FR-RECORD-5                  |
 | As an educator, I type a small quiz and am told about a missing key before anything is sent                | FR-CHECK-1, FR-CHECK-2                  |
+| As an educator, I paste a link to a paper already online and correct the draft it fills in                 | FR-CHECK-6, FR-CHECK-2                  |
 | As an educator, I submit and can close the tab, then come back to the same progress                        | FR-CHECK-3, FR-QUEUE-4, FR-AUTH-1       |
 | As an educator, I open a ready record and see the risky items first with the rule that flagged each        | FR-RECORD-3, FR-VERDICT-3, FR-VERDICT-4 |
 | As an educator, I compare two blind readings and their receipts before deciding                            | FR-EVIDENCE-1, FR-EVIDENCE-3            |

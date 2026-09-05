@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { fetchUrl } from '../extract/fetch-url'
 import { structurePaper } from '../extract/structure'
 import { callGonka } from '../gateway/client'
 import { healthyOrder } from '../queue/health'
@@ -28,7 +29,112 @@ import { ACCEPTED_TYPES, MAX_BYTES, transcribe, transcriptionUnavailable } from 
 // that day the same PNG hit this ceiling twice running, which is what put the race in structurePaper.
 const STRUCTURE_CEILING_MS = 100_000
 
+// Both input paths end here, so a pasted link and an uploaded scan are structured by exactly the
+// same Gonka step under exactly the same semaphore and ceiling.
+async function structure(text: string) {
+  return Promise.race([
+    structurePaper(text, {
+      call: async (model, prompt) => {
+        const release = await gatewaySemaphore.acquire()
+        try {
+          return await callGonka(model, prompt)
+        } finally {
+          release()
+        }
+      },
+      order: () => healthyOrder()
+    }),
+    new Promise<{ ok: false; reason: string }>((resolve) =>
+      setTimeout(
+        () =>
+          resolve({
+            ok: false,
+            reason: `The readers took longer than ${STRUCTURE_CEILING_MS / 1000} seconds. Try again, or type the questions in.`
+          }),
+        STRUCTURE_CEILING_MS
+      )
+    )
+  ])
+}
+
 export const extractRoutes = new Hono<AppEnv>()
+
+// TRD section 20's third input, and the one the compliance audit called out as missing: a link.
+// The page is fetched and reduced to its words by src/server/extract/fetch-url.ts, which calls no
+// model at all, and only then does a Gonka model decide what the questions are.
+//
+// A link to an HTML page needs no transcription, so unlike the upload route this one works on a
+// deployment with no GEMINI_API_KEY. A link to a PDF or an image still needs the transcriber, and
+// says so rather than failing vaguely.
+extractRoutes.post('/extract/url', async (c) => {
+  let raw: unknown
+  try {
+    raw = (await c.req.json())?.url
+  } catch {
+    return c.json({ error: { code: 'bad_body', message: 'Send a JSON body with a url.' } }, 400)
+  }
+
+  if (typeof raw !== 'string' || !raw.trim()) {
+    return c.json({ error: { code: 'no_url', message: 'Paste a link to the paper.' } }, 400)
+  }
+
+  if (raw.length > 2048) {
+    return c.json({ error: { code: 'url_too_long', message: 'That link is too long.' } }, 400)
+  }
+
+  const fetched = await fetchUrl(raw)
+  if (!fetched.ok) {
+    return c.json({ error: { code: 'unfetchable', message: fetched.reason } }, 422)
+  }
+
+  let text: string
+  let transcription = null
+  if (fetched.kind === 'text') {
+    text = fetched.text
+  } else {
+    if (!ACCEPTED_TYPES.includes(fetched.contentType)) {
+      return c.json(
+        { error: { code: 'unsupported_type', message: 'That link is not a web page, a PDF or an image.' } },
+        415
+      )
+    }
+    if (transcriptionUnavailable()) {
+      return c.json(
+        {
+          error: {
+            code: 'uploads_disabled',
+            message:
+              'That link is a file, and file reading is switched off on this deployment. Paste a web page instead.'
+          }
+        },
+        503
+      )
+    }
+    if (fetched.bytes.byteLength > MAX_BYTES) {
+      return c.json({ error: { code: 'too_large', message: 'That file is larger than 10 MB.' } }, 413)
+    }
+
+    const read = await transcribe(fetched.bytes, fetched.contentType)
+    if (!read.ok) {
+      return c.json({ error: { code: 'unreadable', message: read.reason } }, 422)
+    }
+    text = read.text
+    transcription = read.provenance
+  }
+
+  const structured = await structure(text)
+  if (!structured.ok) {
+    return c.json({ error: { code: 'not_structured', message: structured.reason } }, 422)
+  }
+
+  return c.json({
+    draft: structured.draft,
+    provenance: structured.provenance,
+    transcription,
+    warnings: structured.warnings,
+    source: fetched.finalUrl
+  })
+})
 
 extractRoutes.post('/extract', async (c) => {
   if (transcriptionUnavailable()) {
@@ -64,29 +170,7 @@ extractRoutes.post('/extract', async (c) => {
   // The same semaphore the queue holds, not a second one beside it. Gotcha 10 measured account
   // level 429s above four concurrent calls, and an upload that ignored the limit would take its
   // slots from the checks already running.
-  const structured = await Promise.race([
-    structurePaper(read.text, {
-      call: async (model, prompt) => {
-        const release = await gatewaySemaphore.acquire()
-        try {
-          return await callGonka(model, prompt)
-        } finally {
-          release()
-        }
-      },
-      order: () => healthyOrder()
-    }),
-    new Promise<{ ok: false; reason: string }>((resolve) =>
-      setTimeout(
-        () =>
-          resolve({
-            ok: false,
-            reason: `The readers took longer than ${STRUCTURE_CEILING_MS / 1000} seconds. Try again, or type the questions in.`
-          }),
-        STRUCTURE_CEILING_MS
-      )
-    )
-  ])
+  const structured = await structure(read.text)
 
   if (!structured.ok) {
     return c.json({ error: { code: 'not_structured', message: structured.reason } }, 422)

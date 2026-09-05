@@ -1,7 +1,7 @@
 import { type FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { createRecordSchema, GUEST_MAX_ITEM_CHARS, itemCharCount } from '../../shared/schemas'
-import { ApiError, createRecord, extractPaper } from '../api'
+import { ApiError, createRecord, type ExtractResponse, extractPaper, extractPaperFromUrl } from '../api'
 import { BubbleRow } from '../components/BubbleRow'
 import { Card, CardBody, CardHead } from '../components/Card'
 import { Field, inputClass } from '../components/Field'
@@ -88,6 +88,7 @@ export function NewCheck() {
   const [extracting, setExtracting] = useState(false)
   const [extractError, setExtractError] = useState<string | null>(null)
   const [extraction, setExtraction] = useState<Extraction | null>(null)
+  const [link, setLink] = useState('')
 
   function fillWithDemo() {
     setTitle(DEMO_PAPER.title)
@@ -119,11 +120,44 @@ export function NewCheck() {
     }
 
     try {
-      const response = await extractPaper(file)
+      applyDraft(await extractPaper(file), 'that file')
+    } catch (error) {
+      setExtractError(error instanceof ApiError ? error.message : 'We could not read that file, try again in a moment.')
+    } finally {
+      setExtracting(false)
+    }
+  }
+
+  // A link is the third way in, and the only one that reaches no model outside Gonka: a web page is
+  // reduced to its words by a parser, and the Gonka readers do the rest. The compliance audit had
+  // this input down as missing.
+  async function pastePaper(link: string) {
+    const trimmed = link.trim()
+    if (!trimmed) {
+      setExtractError('Paste a link to the paper.')
+      return
+    }
+
+    setExtracting(true)
+    setExtractError(null)
+    setExtraction(null)
+
+    try {
+      applyDraft(await extractPaperFromUrl(trimmed), 'that page')
+    } catch (error) {
+      setExtractError(error instanceof ApiError ? error.message : 'We could not read that link, try again in a moment.')
+    } finally {
+      setExtracting(false)
+    }
+  }
+
+  // Nothing is written until the whole draft has parsed, whichever input produced it.
+  function applyDraft(response: ExtractResponse, subject: string) {
+    {
       const draft = createRecordSchema.safeParse(response.draft)
 
       if (!draft.success) {
-        setExtractError('We could not read a usable paper out of that file. Try a clearer scan, or type it in.')
+        setExtractError(`We could not read a usable paper out of ${subject}. Try another, or type it in.`)
         return
       }
 
@@ -149,10 +183,6 @@ export function NewCheck() {
         transcription: response.transcription ?? null,
         warnings: response.warnings
       })
-    } catch (error) {
-      setExtractError(error instanceof ApiError ? error.message : 'We could not read that file, try again in a moment.')
-    } finally {
-      setExtracting(false)
     }
   }
 
@@ -255,6 +285,59 @@ export function NewCheck() {
                 />
               </Card>
             ) : null}
+
+            {/* The third way in, and the cheapest: a page of questions already on the web. It sits
+              above the upload because it needs no vision model, so it is the one input that works
+              on a deployment with no transcription key at all. */}
+            <Card>
+              <CardHead
+                title="Read a Link"
+                description="A link to a page with the questions on it fills the fields below for you to read and correct before you submit it."
+              />
+              <CardBody>
+                <Field
+                  label="Paper Link"
+                  htmlFor="paper-link"
+                  helper="A web page, or a link straight to a PDF or a scan."
+                >
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <input
+                      id="paper-link"
+                      type="url"
+                      inputMode="url"
+                      autoComplete="url"
+                      placeholder="https://example.edu/past-papers/2025-paper-1"
+                      className={inputClass}
+                      value={link}
+                      disabled={extracting}
+                      onChange={(event) => setLink(event.target.value)}
+                      onKeyDown={(event) => {
+                        // The form around this submits the whole record, and a stray Enter in a
+                        // link field must never do that.
+                        if (event.key !== 'Enter') return
+                        event.preventDefault()
+                        void pastePaper(link)
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-sm shrink-0"
+                      disabled={extracting || !link.trim()}
+                      onClick={() => void pastePaper(link)}
+                    >
+                      {extracting ? 'Reading the Page' : 'Read the Link'}
+                    </button>
+                  </div>
+                </Field>
+
+                {/* Said plainly, because the difference is the point: this is the one input that
+                  reaches nothing outside the Gonka network. */}
+                <p className="type-caption text-ink-muted">
+                  A web page is reduced to its words without any model at all. Every judgement about what it says is
+                  made by two Gonka models, receipted below. Links inside a private network are refused.
+                </p>
+              </CardBody>
+            </Card>
 
             {/* Second of the two ways to fill this form, and the one every account kind gets. Its
               head is the guest card's shape because they are the same kind of offer; what follows

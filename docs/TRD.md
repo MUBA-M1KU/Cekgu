@@ -1650,6 +1650,40 @@ file name. **Widening that exemption is a track requirement decision, not a refa
 
 That decision was taken once more on 4 September, and section 21 is what it bought.
 
+### Reading a paper from a link
+
+`POST /api/extract/url` is the same two-step design with a different first step, and for a web page there is no first
+step at all. It takes `{ "url": string }` and answers the shape `POST /api/extract` answers, plus `source` — the URL
+actually read, after redirects.
+
+| Content at the link     | Step 1                                      | Step 2                    |
+| ----------------------- | ------------------------------------------- | ------------------------- |
+| HTML, XHTML, plain text | `htmlToText`, a parser. **No model at all** | Structure, on GonkaRouter |
+| PDF, PNG, JPEG, WebP    | Transcribe, as an upload does               | Structure, on GonkaRouter |
+
+`src/server/extract/fetch-url.ts` calls no model, which is why it sits outside the two exempt directories rather than
+beside the transcriber. A link to a web page therefore works on a deployment with no `GEMINI_API_KEY`; a link to a file
+answers 503 with a sentence saying so.
+
+**The guard is the module.** Fetching a URL a stranger typed is a server-side request forgery primitive, so:
+
+- Only `http:` and `https:`. A URL carrying a username or password is refused
+- The **resolved** address is checked, never the hostname, because a name someone else controls can point at `127.0.0.1`
+  whenever it likes. Loopback, `0.0.0.0/8`, RFC 1918, carrier-grade NAT, link-local, unique-local, multicast and
+  reserved ranges are all refused
+- `::ffff:x.x.x.x` is reassembled and judged as IPv4. WHATWG `URL` normalises the dotted form to hex groups, so
+  `http://[::ffff:169.254.169.254]/` would otherwise reach the cloud metadata service — which on Cloud Run hands out
+  service-account tokens
+- Redirects are followed by hand, at most three, and **every hop is re-checked**. `fetch` would follow them for us
+  without looking at where they land, and a public URL redirecting to `169.254.169.254` is the whole attack
+- 15 s timeout, 5 MB ceiling enforced after reading as well as on `content-length`, and the extracted text is capped at
+  40 000 characters
+
+`htmlToText` is deliberately crude: it drops `script`, `style`, `noscript`, `svg`, `head` and comments, turns block tags
+into line breaks and decodes the common entities. Anything cleverer would be a guess about which element holds the
+questions, and the Gonka model downstream is far better at that than a selector — finding stems, options and a key in
+loose text is its whole job.
+
 ## 21. The readers' voice and the record assistant
 
 Two features on `/record/:id`, agreed 4 September. Design record:

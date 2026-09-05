@@ -40,6 +40,68 @@ describe('POST /api/extract without a transcription key', () => {
   })
 })
 
+const postUrl = (body: string) =>
+  extractRoutes.request('/extract/url', {
+    method: 'POST',
+    body,
+    headers: { 'content-type': 'application/json' }
+  })
+
+// The link route needs no transcription key for a web page, so unlike the upload route above these
+// paths are the real ones on any deployment. Every case here is refused before a socket is opened,
+// which is the half worth asserting: a fetcher that spends a request to find out a link was bad is
+// the server-side request forgery primitive this route exists to not be.
+describe('POST /api/extract/url', () => {
+  test('a body that is not JSON is refused', async () => {
+    const response = await postUrl('not json')
+    expect(response.status).toBe(400)
+    expect(((await response.json()) as { error: { code: string } }).error.code).toBe('bad_body')
+  })
+
+  test('a body with no url is refused', async () => {
+    const response = await postUrl(JSON.stringify({}))
+    expect(response.status).toBe(400)
+    expect(((await response.json()) as { error: { code: string } }).error.code).toBe('no_url')
+  })
+
+  test('a blank url is refused', async () => {
+    const response = await postUrl(JSON.stringify({ url: '   ' }))
+    expect(response.status).toBe(400)
+    expect(((await response.json()) as { error: { code: string } }).error.code).toBe('no_url')
+  })
+
+  test('a url that is not a string is refused', async () => {
+    const response = await postUrl(JSON.stringify({ url: 42 }))
+    expect(response.status).toBe(400)
+  })
+
+  test('an absurdly long url is refused before it is parsed', async () => {
+    const response = await postUrl(JSON.stringify({ url: `https://example.com/${'a'.repeat(3000)}` }))
+    expect(response.status).toBe(400)
+    expect(((await response.json()) as { error: { code: string } }).error.code).toBe('url_too_long')
+  })
+
+  test('a link into a private network is refused', async () => {
+    const response = await postUrl(JSON.stringify({ url: 'http://192.168.0.1/paper' }))
+    expect(response.status).toBe(422)
+    const body = (await response.json()) as { error: { code: string; message: string } }
+    expect(body.error.code).toBe('unfetchable')
+    expect(body.error.message).toContain('private network')
+  })
+
+  // The one that would matter on Cloud Run, where this address hands out service-account tokens.
+  test('the cloud metadata address is refused', async () => {
+    const response = await postUrl(JSON.stringify({ url: 'http://169.254.169.254/computeMetadata/v1/' }))
+    expect(response.status).toBe(422)
+  })
+
+  test('a non-http scheme is refused', async () => {
+    const response = await postUrl(JSON.stringify({ url: 'file:///etc/passwd' }))
+    expect(response.status).toBe(422)
+    expect(((await response.json()) as { error: { message: string } }).error.message).toContain('http and https')
+  })
+})
+
 describe('the route never creates a record', () => {
   // FR-RECORD-1 belongs to POST /api/records and this route must not reach for it. Asserted on the
   // source because the alternative is a database, and the point is that this file needs none.
