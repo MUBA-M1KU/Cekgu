@@ -9,19 +9,24 @@ const QUERY = '(prefers-reduced-motion: reduce)'
 
 // Three states rather than a checkbox, because the old boolean could only ever add reduction:
 // combined() was `stored() || systemPrefers()`, so a reader whose system asked for less motion had
-// no way back to it from inside the product. Windows' "show animations" toggle is what Chromium
-// reports through this query, and people turn that off for a snappier desktop as often as for
-// motion sensitivity — one OS switch, two unrelated intentions. So the system stays the default and
-// is still honoured by it, and an explicit choice here outranks it in both directions.
+// no way back to it from inside the product.
+//
+// The default is 'full' rather than 'system' because the query is one bit carrying two unrelated
+// intentions. Windows' "show animations" toggle is what Chromium reports through it, Firefox reports
+// the same OS switch, and it is thrown for a snappier desktop at least as often as for motion
+// sensitivity — it is off by default across most managed Windows fleets and every remote desktop.
+// Following it shipped a product that looked inert on those machines with no sign anything was
+// wrong. Follow System is one select away and Never Animate still wins outright, so the reader who
+// does want less motion loses nothing but the assumption.
 export function motionSetting(): MotionSetting {
   try {
     const stored = localStorage.getItem(KEY)
     if (stored === 'system' || stored === 'full' || stored === 'reduce') return stored
     // Anyone who ticked the old Reduce Motion box meant "reduce", so carry that across.
-    return localStorage.getItem(LEGACY_KEY) === 'true' ? 'reduce' : 'system'
+    return localStorage.getItem(LEGACY_KEY) === 'true' ? 'reduce' : 'full'
   } catch {
-    // A browser with storage blocked still follows the system preference below.
-    return 'system'
+    // A browser with storage blocked cannot have chosen, so it gets the default like anyone else.
+    return 'full'
   }
 }
 
