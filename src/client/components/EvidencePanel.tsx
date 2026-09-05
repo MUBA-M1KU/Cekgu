@@ -78,7 +78,7 @@ function ReaderColumn({ item, attempt, seat }: { item: Item; attempt: Attempt; s
       </dl>
 
       {attempt.requestId ? (
-        <Link to={receiptPath(attempt.requestId)} className="type-label mt-3 inline-block underline">
+        <Link to={receiptPath(attempt.requestId)} className="btn btn-ghost btn-sm mt-3">
           View Receipt
         </Link>
       ) : null}
@@ -157,29 +157,34 @@ export function EvidencePanel({ item }: { item: Item }) {
 
       <h3 className="type-eyebrow mt-6 text-ink-muted">All Attempts</h3>
       <div className="mt-3 overflow-x-auto">
-        <table className="w-full border-collapse text-left">
+        {/* The shared table, not a hand-rolled one. Two of these columns carry a status chip, which
+            is the case .data-table's row padding exists for: a chip is a painted edge rather than a
+            baseline, and the 8 px this table used to set read as a crowded row against the rule
+            below it. data-surface says the table is sitting on a well, so the head drops the well
+            background it would otherwise paint into an identical one. */}
+        <table className="data-table" data-surface="well">
           <thead>
-            <tr className="type-label border-b border-rule">
-              <th className="py-2 pr-4 font-medium">#</th>
-              <th className="py-2 pr-4 font-medium">Requested Model</th>
-              <th className="py-2 pr-4 font-medium">Served Model</th>
-              <th className="py-2 pr-4 font-medium">Status</th>
-              <th className="py-2 pr-4 font-medium">Request Id</th>
-              <th className="py-2 pr-4 font-medium">Shard</th>
-              <th className="py-2 pr-4 font-medium">Latency</th>
-              <th className="py-2 font-medium">Receipt</th>
+            <tr className="type-label">
+              <th>#</th>
+              <th>Requested Model</th>
+              <th>Served Model</th>
+              <th>Status</th>
+              <th>Request Id</th>
+              <th>Shard</th>
+              <th>Latency</th>
+              <th>Receipt</th>
             </tr>
           </thead>
           <tbody>
             {item.attempts.map((attempt, index) => (
-              <tr key={attempt.id} className="border-b border-rule align-top">
-                <td className="type-mono py-2 pr-4">{index + 1}</td>
-                <td className="type-mono py-2 pr-4 whitespace-nowrap">{attempt.requestedModel}</td>
-                <td className="type-mono py-2 pr-4 whitespace-nowrap">{attempt.servedModel ?? '-'}</td>
-                <td className="py-2 pr-4">
+              <tr key={attempt.id}>
+                <td className="type-mono">{index + 1}</td>
+                <td className="type-mono whitespace-nowrap">{attempt.requestedModel}</td>
+                <td className="type-mono whitespace-nowrap">{attempt.servedModel ?? '-'}</td>
+                <td>
                   <span className="status-chip type-label">{attemptStatus(attempt)}</span>
                 </td>
-                <td className="type-mono py-2 pr-4 whitespace-nowrap">
+                <td className="type-mono whitespace-nowrap">
                   {attempt.requestId ? (
                     <>
                       {attempt.requestId}{' '}
@@ -191,9 +196,9 @@ export function EvidencePanel({ item }: { item: Item }) {
                     <span className="type-caption text-ink-muted">No request id was returned.</span>
                   )}
                 </td>
-                <td className="type-mono py-2 pr-4">{attempt.devshardId ?? '-'}</td>
-                <td className="type-mono py-2 pr-4">{seconds(attempt.latencyMs)}</td>
-                <td className="py-2">
+                <td className="type-mono">{attempt.devshardId ?? '-'}</td>
+                <td className="type-mono">{seconds(attempt.latencyMs)}</td>
+                <td>
                   <span className="status-chip type-label">{RECEIPT_LABEL[attempt.receiptStatus]}</span>
                 </td>
               </tr>

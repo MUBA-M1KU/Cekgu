@@ -1885,6 +1885,15 @@ section[id] {
     white-space: nowrap;
   }
 
+  /* The same table inside a well, which is where the evidence panel puts it. The head's own well
+     would be painting one recess onto an identical one, so it drops out and the hairline carries
+     the separation on its own. Not the sheet the chips take on a tile: a chip is an object that has
+     to stay legible against the recess, a column head is a label and reads from its weight and its
+     rule. */
+  .data-table[data-surface="well"] thead th {
+    background: transparent;
+  }
+
   /* A full step, not 11 px. A row here can hold a status chip, and a chip is a painted edge
      rather than a baseline: half its own height between it and the row rule reads as a crowded
      row, where the same gap under plain text reads as fine. */

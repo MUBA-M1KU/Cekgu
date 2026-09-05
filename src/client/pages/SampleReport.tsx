@@ -108,7 +108,9 @@ export function SampleReport() {
               ) : undefined
             }
           />
-          <ul className="m-0 list-none border-t border-rule p-0 px-6">
+          {/* Same construction as the review document, and the same reason for no border-t: every
+              ItemRow opens on one already. */}
+          <ul className="m-0 list-none p-0 px-6">
             {shown.map((item) => (
               <ItemRow key={item.id} item={item} onDisposition={noop} onRetry={noop} readOnly />
             ))}
