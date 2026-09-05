@@ -74,13 +74,13 @@ $KOKORO_HOME/
 └── voices-v1.0.bin
 ```
 
-To create the documented default installation:
+To create the documented default installation, use `uv` for the required Python 3.11 environment:
 
 ```bash
 export KOKORO_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/cekgu-video/kokoro"
 mkdir -p "$KOKORO_HOME"
-python3.11 -m venv "$KOKORO_HOME/.venv"
-"$KOKORO_HOME/.venv/bin/python" -m pip install kokoro-onnx soundfile
+uv venv --python 3.11 "$KOKORO_HOME/.venv"
+uv pip install --python "$KOKORO_HOME/.venv/bin/python" kokoro-onnx soundfile
 curl -fL \
   https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx \
   -o "$KOKORO_HOME/kokoro-v1.0.onnx"
