@@ -6,7 +6,12 @@ import { itemUtterances } from '../mascot/speech'
 import { type SpeechHandle, speak } from '../mascot/voice'
 import { receiptPath } from '../pages/ReceiptView'
 import { BubbleRow } from './BubbleRow'
-import { VoiceOnIcon } from './icons'
+import { InfoIcon, VoiceOnIcon } from './icons'
+
+// The rule the attempts table is read by. One sentence, on the heading, rather than a paragraph
+// under every table on every open item.
+const ATTEMPTS_RULE =
+  'Every attempt is listed, admitted or not. A reading enters the verdict only when its receipt names the model that was requested.'
 
 const RECEIPT_LABEL: Record<ReceiptStatus, string> = {
   verified: 'Verified',
@@ -77,8 +82,11 @@ function ReaderColumn({ item, attempt, seat }: { item: Item; attempt: Attempt; s
         <dd className="m-0">{RECEIPT_LABEL[attempt.receiptStatus]}</dd>
       </dl>
 
+      {/* Outline rather than ghost: this panel is a well, and a ghost control on a recessed ground
+          is a text link with padding. The receipt is the product's whole claim, so the one control
+          that opens it gets a surface to sit on. */}
       {attempt.requestId ? (
-        <Link to={receiptPath(attempt.requestId)} className="btn btn-ghost btn-sm mt-3">
+        <Link to={receiptPath(attempt.requestId)} className="btn btn-outline btn-sm mt-3">
           View Receipt
         </Link>
       ) : null}
@@ -130,8 +138,6 @@ export function EvidencePanel({ item }: { item: Item }) {
     if (readers.length === 2) break
   }
 
-  const unadmitted = item.attempts.filter((attempt) => !readers.includes(attempt))
-
   return (
     <div className="mt-4 rounded-control bg-well p-4 sm:p-6">
       <div className="flex items-center justify-between gap-4">
@@ -155,21 +161,33 @@ export function EvidencePanel({ item }: { item: Item }) {
         )}
       </div>
 
-      <h3 className="type-eyebrow mt-6 text-ink-muted">All Attempts</h3>
+      <div className="mt-6 flex items-center gap-2">
+        <h3 className="type-eyebrow text-ink-muted">All Attempts</h3>
+        {/* The rule this table is read by, on the heading that names it. It was a sentence printed
+            under every attempts table on every open item, and it says the same thing every time. */}
+        <button type="button" className="attempts-tip" data-tip={ATTEMPTS_RULE} aria-label="How attempts are counted">
+          <InfoIcon size={15} />
+          <span className="sr-only">{ATTEMPTS_RULE}</span>
+        </button>
+      </div>
+
+      {/* Eight columns did not fit. At 1920 this panel gives a table 898 px, and requested model,
+          served model and a 30-character request id each wanted a column of their own, so the table
+          scrolled sideways and the receipt link sat off the visible edge — on the one screen whose
+          whole job is to be inspected.
+
+          Six columns, and the two that merged were the two that belong together: an attempt's id and
+          the receipt that proves it are one fact, not two, and they read better stacked under the
+          model than spread across the page. Requested model earns a line only when it differs from
+          what was served, which is the single case the rule below the heading is about; when they
+          match, saying so twice per row bought nothing and cost the scrollbar. */}
       <div className="mt-3 overflow-x-auto">
-        {/* The shared table, not a hand-rolled one. Two of these columns carry a status chip, which
-            is the case .data-table's row padding exists for: a chip is a painted edge rather than a
-            baseline, and the 8 px this table used to set read as a crowded row against the rule
-            below it. data-surface says the table is sitting on a well, so the head drops the well
-            background it would otherwise paint into an identical one. */}
         <table className="data-table" data-surface="well">
           <thead>
             <tr className="type-label">
               <th>#</th>
-              <th>Requested Model</th>
-              <th>Served Model</th>
+              <th>Attempt</th>
               <th>Status</th>
-              <th>Request Id</th>
               <th>Shard</th>
               <th>Latency</th>
               <th>Receipt</th>
@@ -178,27 +196,33 @@ export function EvidencePanel({ item }: { item: Item }) {
           <tbody>
             {item.attempts.map((attempt, index) => (
               <tr key={attempt.id}>
-                <td className="type-mono">{index + 1}</td>
-                <td className="type-mono whitespace-nowrap">{attempt.requestedModel}</td>
-                <td className="type-mono whitespace-nowrap">{attempt.servedModel ?? '-'}</td>
-                <td>
-                  <span className="status-chip type-label">{attemptStatus(attempt)}</span>
-                </td>
-                <td className="type-mono whitespace-nowrap">
+                <td className="type-mono align-top">{index + 1}</td>
+                <td className="align-top">
+                  {/* A span, not a p. scripts/demo/record.mjs finds shot 5's reader columns with
+                      p.type-mono and record.test.ts asserts that resolves to exactly one element,
+                      so a paragraph here would put three of them on an item with a retry and the
+                      recorder would throw on a strict-mode violation before the camera moved. */}
+                  <span className="type-mono block">{attempt.servedModel ?? attempt.requestedModel}</span>
+                  {attempt.servedModel && attempt.servedModel !== attempt.requestedModel ? (
+                    <p className="type-caption mt-1 text-pen">Requested {attempt.requestedModel}</p>
+                  ) : null}
                   {attempt.requestId ? (
-                    <>
-                      {attempt.requestId}{' '}
-                      <Link to={receiptPath(attempt.requestId)} className="type-label underline">
+                    <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <span className="type-mono text-ink-muted">{attempt.requestId}</span>
+                      <Link to={receiptPath(attempt.requestId)} className="btn btn-outline btn-sm">
                         View Receipt
                       </Link>
-                    </>
+                    </p>
                   ) : (
-                    <span className="type-caption text-ink-muted">No request id was returned.</span>
+                    <p className="type-caption mt-2 text-ink-muted">No request id was returned.</p>
                   )}
                 </td>
-                <td className="type-mono">{attempt.devshardId ?? '-'}</td>
-                <td className="type-mono">{seconds(attempt.latencyMs)}</td>
-                <td>
+                <td className="align-top">
+                  <span className="status-chip type-label">{attemptStatus(attempt)}</span>
+                </td>
+                <td className="type-mono align-top">{attempt.devshardId ?? '-'}</td>
+                <td className="type-mono align-top">{seconds(attempt.latencyMs)}</td>
+                <td className="align-top">
                   <span className="status-chip type-label">{RECEIPT_LABEL[attempt.receiptStatus]}</span>
                 </td>
               </tr>
@@ -206,18 +230,6 @@ export function EvidencePanel({ item }: { item: Item }) {
           </tbody>
         </table>
       </div>
-
-      {/* One line, and no rule of its own: the last row of the table already closes on a hairline,
-          so a second one under it drew two parallel edges 16 px apart. The per-status reasons that
-          used to hang here are gone at the owner's request. The Status chip is what names a failed
-          attempt now; the reason string itself is still on the record the API returns, but nothing
-          renders it. */}
-      {unadmitted.length > 0 ? (
-        <p className="type-caption mt-4 text-ink-muted">
-          Every attempt is listed, admitted or not; a reading enters the verdict only when its receipt names the model
-          that was requested.
-        </p>
-      ) : null}
     </div>
   )
 }

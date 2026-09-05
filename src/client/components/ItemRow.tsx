@@ -3,6 +3,7 @@ import type { DispositionInput } from '../../shared/schemas'
 import type { Attempt, Item } from '../../shared/types'
 import { DispositionGroup, dispositionLabel } from './DispositionGroup'
 import { EvidencePanel } from './EvidencePanel'
+import { ChevronDownIcon } from './icons'
 import { ReadRow } from './ReadRow'
 import { StatusChip } from './StatusChip'
 import { VerdictChip } from './VerdictChip'
@@ -44,7 +45,10 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
   // including the evidence, which stays reachable on every item because the receipts are the
   // product's claim and a judge must be able to open any of them.
   const [open, setOpen] = useState(false)
-  const quiet = item.verdict === 'clear' && item.status === 'done' && !latest && !open
+  // Whether this item has a collapsed state at all. quiet is that state right now; collapsible is
+  // the standing fact, and it is what tells an opened row it has somewhere to go back to.
+  const collapsible = item.verdict === 'clear' && item.status === 'done' && !latest
+  const quiet = collapsible && !open
 
   if (quiet) {
     return (
@@ -65,6 +69,7 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
           />
           <span className="type-body min-w-0 flex-1 truncate">{item.stem}</span>
           <VerdictChip verdict={item.verdict} />
+          <ChevronDownIcon size={16} className="shrink-0 text-ink-muted" />
         </button>
       </li>
     )
@@ -82,7 +87,25 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-          <p className="type-lead min-w-0">{item.stem}</p>
+          {/* An item that collapsed to one line has to be able to go back to it. Opening one was a
+              one-way door: the quiet row is a button, the row it opens into was not, so a reader who
+              opened a Clear question to look at its receipts was left with it open for the rest of
+              the session and no control anywhere saying otherwise. The stem is what they clicked, so
+              the stem is what closes it. Only for items that can be quiet — a flagged item has never
+              had a collapsed state to return to. */}
+          {collapsible ? (
+            <button
+              type="button"
+              aria-expanded={true}
+              onClick={() => setOpen(false)}
+              className="flex min-w-0 items-start gap-2 text-left"
+            >
+              <ChevronDownIcon size={16} className="mt-1.5 shrink-0 rotate-180 text-ink-muted" />
+              <span className="type-lead min-w-0">{item.stem}</span>
+            </button>
+          ) : (
+            <p className="type-lead min-w-0">{item.stem}</p>
+          )}
           <span className="flex shrink-0 flex-wrap items-center gap-2">
             {item.status === 'done' ? <VerdictChip verdict={item.verdict} /> : <StatusChip status={item.status} />}
             {latest ? <span className="status-chip type-label">{dispositionLabel(latest.kind)}</span> : null}

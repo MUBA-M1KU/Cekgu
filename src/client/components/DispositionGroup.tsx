@@ -42,9 +42,17 @@ export function DispositionGroup({ options, onRecord, busy }: Props) {
     <div className="disposition">
       <fieldset className="m-0 border-0 p-0">
         <legend className="type-eyebrow text-ink-muted">Your Decision</legend>
+        {/* data-tip puts each note on its own chip. The note below the row only ever describes the
+            chip already chosen, which is the one a reader no longer needs explained; the choice
+            being made is between the other four. */}
         <div className="disposition-row">
           {KINDS.map((entry) => (
-            <label key={entry.kind} className="disposition-chip type-label" data-chosen={kind === entry.kind}>
+            <label
+              key={entry.kind}
+              className="disposition-chip type-label"
+              data-chosen={kind === entry.kind}
+              data-tip={entry.note}
+            >
               <input
                 type="radio"
                 name={name}
