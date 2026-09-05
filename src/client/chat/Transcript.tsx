@@ -38,10 +38,12 @@ function Turn({ message, onCite }: { message: ChatMessage; onCite: CiteAction })
     <li className="min-w-0">
       <Speaker message={message} />
 
-      {/* The question is recessed in the well and set in the interface face, because it is the
-          reader's own input quoted back. The answer sits flat on the sheet in the paper face, the
-          same face the readings themselves are set in. */}
-      <div className={isUser ? 'mt-2 rounded-control bg-well px-3 py-2' : 'mt-2'}>
+      {/* Both voices get a bubble, and they are different surfaces rather than the same grey twice.
+          The question is filled in ink, the way every other filled marker in the product is: it is
+          short, it is the reader's own words, and it wants to be found when scrolling back. The
+          answer is recessed in the well and set in the paper face, the face the readings themselves
+          use, because it is the longer thing to actually read. */}
+      <div className={`mt-2 rounded-control px-3 py-2 ${isUser ? 'bg-ink text-on-ink' : 'bg-well'}`}>
         <p className={`${isUser ? 'type-ui' : 'type-body'} whitespace-pre-wrap`}>{message.text}</p>
       </div>
 

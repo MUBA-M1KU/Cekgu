@@ -151,8 +151,7 @@ export function RecordWorkspace() {
   return (
     <>
       <header className="page-head">
-        {/* data-mascot-slot is where Mascot.tsx portals the compact badge. */}
-        <div data-mascot-slot className="min-w-0">
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="page-title min-w-0">{record.title}</h1>
             <StatusChip status={record.status} />
@@ -232,19 +231,20 @@ export function RecordWorkspace() {
                 ) : null}
               </div>
             </div>
+
+            <Mascot
+              record={record}
+              chatOpen={chatOpen}
+              onOpenChat={() => {
+                // Rolled on open rather than on mount, so a second visit to the same record offers
+                // a different four.
+                if (messages.length === 0) setSuggestions(openingSuggestions(record))
+                setChatOpen(true)
+              }}
+            />
           </Card>
         </div>
       </div>
-
-      <Mascot
-        record={record}
-        onOpenChat={() => {
-          // Rolled on open rather than on mount, so a second visit to the same record offers a
-          // different four.
-          if (messages.length === 0) setSuggestions(openingSuggestions(record))
-          setChatOpen(true)
-        }}
-      />
 
       <ChatModal
         open={chatOpen}
