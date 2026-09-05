@@ -151,16 +151,24 @@ The product is built for practice papers and synthetic examples, not for confide
    the question, and both readers are shown the same snippets as background rather than authority. The supplied key is
    never in the query — searching for the key returns pages that agree with the key.
 
-   A record says which of two states it is in. Checked **with** retrieval, each reader reports what the pages did to its
-   answer, and every page is listed beneath the readings with a live link and the quoted text, so the evidence is
-   checkable rather than described. Checked **before** retrieval shipped, the record says so plainly rather than leaving
-   the feature looking absent. The sample report is in that second state and labels itself accordingly.
+**Every record says which of three states it is in**, and none of them is inferred — the record carries the fact.
 
-   This is a **search API, not a model**: it returns what other people published and forms no opinion. `include_answer`
-   is hard-coded false, because Tavily's own generated answer would be reasoning on a provider that is not the gateway,
-   and both that flag and the absence of any `answer` read are asserted by tests. Every judgement is still made by two
-   Gonka models with request ids. Without `TAVILY_API_KEY` the readers work from their own knowledge and every verdict
-   fires exactly as before. See [TRD section 22](TRD.md#22-live-retrieval-for-cross-verification).
+| State                                 | What the record shows                                                                                             |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Checked **with** retrieval            | Each page listed with a live link and the quoted text, and each reader reports what those pages did to its answer |
+| Checked **before** retrieval shipped  | Says so plainly, rather than leaving the feature looking absent                                                   |
+| Pages attached **after** the readings | The pages, labelled as fetched later — the readers did not see them and no verdict or score rests on them         |
+
+The third exists because the sample's pass was captured on 3 September and retrieval shipped on the 6th. Which state the
+sample is in depends on whether the current build has re-seeded it from the committed fixture
+([TRD section 22](TRD.md#22-live-retrieval-for-cross-verification)); the page itself is the answer, and it is written so
+that reading it is never guesswork.
+
+This is a **search API, not a model**: it returns what other people published and forms no opinion. `include_answer` is
+hard-coded false, because Tavily's own generated answer would be reasoning on a provider that is not the gateway, and
+both that flag and the absence of any `answer` read are asserted by tests. Every judgement is still made by two Gonka
+models with request ids. Without `TAVILY_API_KEY` the readers work from their own knowledge and every verdict fires
+exactly as before. See [TRD section 22](TRD.md#22-live-retrieval-for-cross-verification).
 
 1. **A score puts a number on it.** The same two readings produce a Truth Score from 0 to 100, shown on the record and
    on every item. A reader's commitment to an option is worth half the weight and the rest is split across the options
