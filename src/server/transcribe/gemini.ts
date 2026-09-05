@@ -11,10 +11,12 @@ import { env } from '../env'
 // question, which strings are its options, which option the key names — is made afterwards by two
 // Gonka models that each carry a request id. See docs/TRD.md section 20.
 //
-// The reason it exists at all is measured: of the three families the gateway serves, only Kimi-K2.6
-// reports vision, and it is the slowest of them (TRD section 3). A one-model transcription step
-// could not be cross-verified in any case, so putting it on the gateway would spend the demo path's
-// slowest model on the one job that needs no judgement.
+// The reason it exists at all is measured: of the three families the gateway served when this was
+// decided, only Kimi-K2.6 reported vision, and it was the slowest of them (TRD section 3). The
+// gateway has since delisted Kimi-K2.6 entirely (issue #239), so no family behind GonkaRouter
+// reports vision at all and the argument is now stronger than when it was written. A one-model
+// transcription step could not be cross-verified in any case, so putting it on the gateway would
+// spend the demo path's slowest model on the one job that needs no judgement.
 
 // Pick the id on measured availability, not on the docs. Every candidate below is a real id present
 // in GET /v1beta/models; being listed is not the same as answering. Measured 4 September against a

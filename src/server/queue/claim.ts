@@ -2,8 +2,9 @@ import { and, eq, lt, sql } from 'drizzle-orm'
 import { db } from '../db'
 import { items } from '../db/schema'
 
-// Longer than the worst-case round: two seats, three families, three attempts each at a 90-second
-// cutoff. A claim younger than this belongs to an instance that may still be working it.
+// Longer than the worst-case round: two seats, two families, three attempts each at a 90-second
+// cutoff. A claim younger than this belongs to an instance that may still be working it, and the
+// lease stays deliberately generous of that bound.
 export const CLAIM_LEASE_MS = 15 * 60 * 1000
 
 // TRD section 13. SKIP LOCKED is the whole point: a second worker, or the same worker after a

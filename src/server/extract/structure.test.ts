@@ -163,8 +163,11 @@ describe('structurePaper', () => {
     expect(result.ok && result.provenance.servedModel).toBe(second)
   })
 
+  // structurePaper waves over whatever deps.order() hands it, so the wave arithmetic is a property
+  // of the loop rather than of how many families ship. Three synthetic names keep this testing the
+  // batching after the registry dropped to two, and keep it honest if a third is ever restored.
   test('starts two models at once and leaves the third until that wave settles', async () => {
-    const [first, second, third] = MODELS
+    const [first, second, third] = ['family-a', 'family-b', 'family-c']
     const calls: string[] = []
     const settle: Record<string, (provenance: Provenance) => void> = {}
     const pending = structurePaper('paper', {
