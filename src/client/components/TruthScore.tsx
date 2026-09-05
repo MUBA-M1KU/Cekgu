@@ -19,12 +19,23 @@ const tint = (score: number): CSSProperties => ({ '--score': `var(${BAND_TOKEN[s
 /**
  * What live retrieval found, in a sentence.
  *
- * `retrieved: 0` is silence, not a finding, so it renders nothing at all: a record checked before
- * retrieval existed, or on a deployment without the key, must not carry a line implying the web was
- * consulted and had nothing to say.
+ * `retrieved: 0` never claims the web was consulted and had nothing to say — that is what `absent`
+ * means, and the two are different facts. It says the opposite instead, which #292 is about: every
+ * record a judge can open was checked before retrieval shipped on 6 September, so the panel rendered
+ * nothing at all and the feature read as missing rather than as dated. A record that was checked
+ * without retrieval should say so.
+ *
+ * The wording holds for both ways of getting here — a record older than the feature, and a
+ * deployment with no TAVILY_API_KEY — because from the reader's side they are the same fact and the
+ * client cannot tell them apart anyway.
+ *
+ * Only reached once the record has a score, so at least one item has two verified readings and the
+ * check has genuinely produced results rather than being mid-flight.
  */
 function CorroborationLine({ tally }: { tally: Corroboration }) {
-  if (!tally.retrieved) return null
+  if (!tally.retrieved) {
+    return <p className="type-caption truth-score-basis">This record was checked without live web retrieval.</p>
+  }
 
   const items = (count: number) => `${count} of ${tally.retrieved} checked ${tally.retrieved === 1 ? 'item' : 'items'}`
 

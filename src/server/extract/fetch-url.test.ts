@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test'
+import { isIP } from 'node:net'
 import { assertPublicUrl, htmlToText } from './fetch-url'
 
 describe('the scheme and shape of the link', () => {
@@ -20,6 +21,52 @@ describe('the scheme and shape of the link', () => {
   test('a link carrying credentials is refused', async () => {
     const result = await assertPublicUrl('https://user:pass@example.com/paper')
     expect(result).toEqual({ ok: false, reason: 'That link carries a username or password. Paste a plain link.' })
+  })
+})
+
+// #294. The guard used to resolve, judge, and then hand the NAME back to fetch, which resolved a
+// second time — so a record that changed between the two lookups passed the check and connected
+// somewhere else. It now returns the address it vetted and the caller connects to that.
+describe('the vetted address travels with the verdict', () => {
+  test('a literal address is returned unchanged', async () => {
+    const result = await assertPublicUrl('https://93.184.216.34/paper.html')
+    expect(result.ok).toBe(true)
+    expect(result.ok && result.address).toBe('93.184.216.34')
+  })
+
+  test('a hostname resolves to an address the caller can pin to', async () => {
+    const result = await assertPublicUrl('https://example.com/')
+    expect(result.ok).toBe(true)
+    // Whatever it resolved to, it must be a real address and not the name again.
+    expect(result.ok && isIP(result.address)).toBeGreaterThan(0)
+  })
+
+  test('an IPv6 literal is returned in bare form, for the caller to bracket', async () => {
+    const result = await assertPublicUrl('http://[2606:4700:4700::1111]/')
+    expect(result.ok).toBe(true)
+    expect(result.ok && result.address).not.toContain('[')
+  })
+})
+
+// #295. A port field turned the fetcher into a port scanner that reported back through timing and
+// error text. A paper is served over http or https and nothing else it could reach usefully is.
+describe('ports', () => {
+  test('a non-web port is refused', async () => {
+    const result = await assertPublicUrl('http://example.com:22/')
+    expect(result).toEqual({ ok: false, reason: 'Only the standard web ports can be read.' })
+  })
+
+  test('an unusual high port is refused', async () => {
+    expect((await assertPublicUrl('http://example.com:8080/')).ok).toBe(false)
+  })
+
+  test('an explicit 80 and 443 are allowed', async () => {
+    expect((await assertPublicUrl('http://93.184.216.34:80/')).ok).toBe(true)
+    expect((await assertPublicUrl('https://93.184.216.34:443/')).ok).toBe(true)
+  })
+
+  test('no port at all is allowed', async () => {
+    expect((await assertPublicUrl('https://93.184.216.34/')).ok).toBe(true)
   })
 })
 
