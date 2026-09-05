@@ -36,5 +36,22 @@ export const env = {
   // Optional on purpose: absent, POST /api/extract answers 503 with a sentence saying uploads are
   // off, and every other route is unaffected. A deployment without this key is a working product
   // with one affordance missing, not a broken one.
-  gemini: geminiApiKey ? { apiKey: geminiApiKey, model: optional('GEMINI_MODEL') ?? 'gemini-2.5-flash' } : null
+  gemini: geminiApiKey ? { apiKey: geminiApiKey, model: optional('GEMINI_MODEL') ?? 'gemini-2.5-flash' } : null,
+  // The record agent. Its provider is a one-word switch because it is a track requirement decision
+  // rather than a technical one: 'gemini' phrases answers off the gateway, 'gonka' keeps every
+  // inference on it and pays for that in latency. Both paths are built, so reversing the decision
+  // is an environment variable and not a release.
+  //
+  // CHAT_MODEL is separate from GEMINI_MODEL so the agent and the transcriber can differ, and its
+  // default is never gemini-3.5-flash-lite: TRD section 20 measured that id on 4 September as no
+  // response across three attempts, a 60 s timeout, a 503 and a 90 s timeout.
+  chat: {
+    // Gonka is the default because it is the compliant path and, measured on production at 06:16 on
+    // 5 September, the only working one: the Gemini key answered 429 on three attempts spaced 45 s
+    // apart, which is quota rather than a burst limit. CHAT_PROVIDER=gemini switches back if the
+    // quota resets.
+    provider: process.env.CHAT_PROVIDER === 'gemini' ? ('gemini' as const) : ('gonka' as const),
+    model:
+      optional('CHAT_MODEL') ?? (process.env.CHAT_PROVIDER === 'gemini' ? 'gemini-2.5-flash' : 'MiniMaxAI/MiniMax-M2.7')
+  }
 }

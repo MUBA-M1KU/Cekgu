@@ -94,6 +94,11 @@ Four things the CLI does that this layout does not want:
 **After any install**, confirm every `.claude/skills/*` entry resolves, `.claude/skills/impeccable/scripts/hook.mjs`
 still exists, and the seven `hackathon-*` skills still carry their `> ## This Event` block.
 
+**`impeccable` also owns four `devDependencies`.** Its static-html detector imports `htmlparser2`, `css-select`,
+`css-tree` and `domutils`. Without them it falls back to regex, skips custom properties, selector matching and computed
+contrast, and reports no issues from that undercount while still exiting 0 (#117). Nothing under `src/` uses them, so a
+dependency scan will call them unused; they leave only with the hook.
+
 **Copies here are Prettier-normalized, and that is expected.** `bun run format` and `bun run lint` cover every `.md` in
 the repo, `.agents/skills/` included, so a vendored `SKILL.md` is rewrapped to 120 columns on the way in and no longer
 matches its upstream byte for byte. Only line wrapping changes — verified word for word on `show-me`, where no word

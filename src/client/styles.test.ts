@@ -68,7 +68,20 @@ describe('glass surfaces', () => {
   })
 })
 
-// #195 asserted that the three rules opening the hover rail agreed on one condition. There is no
-// hover rail any more: the sidebar holds a width a person sets and does not react to the pointer,
-// so the bug class those tests guarded cannot occur and there are no .app-rail selectors left for
-// them to count. The sidebar has no equivalent to guard, which is the point of the change.
+// #195: three rules opened the old rail, and one stayed on :focus-within after the other two moved
+// to :has(:focus-visible). A mouse click leaves focus on the link it followed, so that one rule held
+// its part of the rail open after the pointer had gone. The rail peeks again, so the guard is back:
+// everything that opens it does so on the one selector, and nothing on :focus-within.
+describe('the sidebar peeks on one condition', () => {
+  const PEEK = '.app-sidebar:is(:hover, :has(:focus-visible))'
+  const openers = css.split('\n').filter((line) => /\.app-sidebar:(?!:)/.test(line))
+
+  test('the pointer and the keyboard open every part of it together', () => {
+    expect(openers.length).toBeGreaterThanOrEqual(4)
+    expect(openers.filter((line) => !line.includes(PEEK))).toEqual([])
+  })
+
+  test('nothing opens it on :focus-within', () => {
+    expect(css).not.toMatch(/\.app-sidebar[^\n{]*:focus-within/)
+  })
+})

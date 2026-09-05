@@ -1,6 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="Cekgu">
   <!-- Dark-ground lockup. Same tokens as cekgu-mark-dark.svg; see that file for why this exists. -->
-  <path fill="#eceae4" fill-rule="evenodd" d="M7 36a17 17 0 1 0 34 0a17 17 0 1 0-34 0M20.5 28a19.5 19.5 0 1 0 39 0a19.5 19.5 0 1 0-39 0M25.5 28a14.5 14.5 0 1 0 29 0a14.5 14.5 0 1 0-29 0"/>
-  <path fill="none" stroke="#f07079" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M16 36l11 12q13-20 27-33"/>
-  <text x="76" y="46" fill="#eceae4" font-family="'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="-0.8">Cekgu</text>
+  <!-- The art is drawn from x=7 and the wordmark ends near x=194, so it sat 19.4 units left of the
+       box centre and read as off-centre wherever the file is centred as a whole — the README banner
+       is the only place that happens. Measured off a render rather than from the font metrics,
+       because Schibsted Grotesk is absent on GitHub and the fallback is what a reader sees. The
+       box stays 0 0 240 64 as docs/DESIGN.md documents it; only the contents move. -->
+  <g transform="translate(19.4 0)">
+    <path fill="#eceae4" fill-rule="evenodd" d="M7 36a17 17 0 1 0 34 0a17 17 0 1 0-34 0M20.5 28a19.5 19.5 0 1 0 39 0a19.5 19.5 0 1 0-39 0M25.5 28a14.5 14.5 0 1 0 29 0a14.5 14.5 0 1 0-29 0"/>
+    <path fill="none" stroke="#f07079" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M16 36l11 12q13-20 27-33"/>
+    <text x="76" y="46" fill="#eceae4" font-family="'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="-0.8">Cekgu</text>
+  </g>
 </svg>

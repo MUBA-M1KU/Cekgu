@@ -1,12 +1,10 @@
 # Terms
 
-> Draft demo notice. Not final. Re-review against the deployed product and obtain owner approval before publication.
+<!-- Review baseline: 5 September 2026, main 8f8e890. -->
 
-<!-- Review baseline: 5 September 2026, main 2a0be68. -->
-
-Cekgu is a demo for educators checking multiple-choice practice questions before publication. It highlights possible
-problems for a human to review. It does not certify a paper as correct or replace subject expertise or institutional
-review.
+Cekgu is a demo for educators aged 18 or older who check multiple-choice practice questions before publication. It
+highlights possible problems for a human to review. It does not certify a paper as correct or replace subject expertise
+or institutional review.
 
 ## Accounts and records
 
@@ -36,6 +34,12 @@ unavailable.
 
 Cekgu detects disagreement between readers and ambiguity a reader declares, never ambiguity directly. Agreement does not
 establish that a question is unambiguous.
+
+If you use **Ask About This Record**, the deployed demo sends your question, recent conversation and the record material
+needed to answer it to Google's Gemini API. That material can include questions, answer keys, model readings, request
+IDs, receipts, attempts and dispositions. The assistant may explain recorded evidence, but it is not a third reader: it
+must not solve a question, confirm a key or make the final decision. Its response is labelled as Gemini, not as a Gonka
+request or receipt. It depends on that external provider and can be unavailable.
 
 ## Sample character attribution
 

@@ -18,7 +18,11 @@ const ALLOWED_DENIALS = [
   'It never means the question is certified correct.',
   'It is not cryptographic or on-chain proof, and model agreement is not the same as truth.',
   'It is gateway metadata, not cryptographic proof and not an on-chain transaction.',
-  'Cekgu never certifies a question as correct.'
+  'Cekgu never certifies a question as correct.',
+  'It does not certify a paper as correct or replace subject expertise or institutional review.',
+  'A receipt is gateway metadata, not cryptographic or on-chain proof.',
+  'Deleting a record does not delete your account or guarantee removal from infrastructure backups, service logs or third-party systems.',
+  'Review model suggestions before using them in an assessment; agreement between models is not a guarantee that an answer is correct.'
 ]
 
 describe('the Guest warning', () => {

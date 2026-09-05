@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
+import type { ChatMessage, Citation } from '../../shared/chat'
 import type { DispositionInput } from '../../shared/schemas'
 import type { ItemVerdict, RecordDetail } from '../../shared/types'
-import { getRecord, recordDisposition, retryItem, subscribeToRecord } from '../api'
+import { askRecord, getRecord, recordDisposition, retryItem, subscribeToRecord } from '../api'
+import { ChatModal } from '../chat/ChatModal'
+import { followUpSuggestions, openingSuggestions } from '../chat/suggestions'
+import type { TracedTool } from '../chat/ToolTrace'
 import { Card, CardBody, CardHead } from '../components/Card'
 import { ItemRow } from '../components/ItemRow'
 import { StatusChip } from '../components/StatusChip'
@@ -28,6 +32,11 @@ export function RecordWorkspace() {
   const [record, setRecord] = useState<RecordDetail | null>(null)
   const [failed, setFailed] = useState(false)
   const [filter, setFilter] = useState<ItemVerdict | null>(null)
+  const [chatOpen, setChatOpen] = useState(false)
+  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [pending, setPending] = useState(false)
+  const [tools, setTools] = useState<TracedTool[]>([])
+  const [suggestions, setSuggestions] = useState<string[]>([])
 
   const load = useCallback(() => {
     getRecord(id)
@@ -82,11 +91,69 @@ export function RecordWorkspace() {
     setRecord(await retryItem(id, itemId))
   }
 
+  // A citation pill is the claim that an answer came from THIS record, so following one has to land
+  // on the item itself. The modal closes first: the item is behind it, and a scroll under an open
+  // dialog moves something the reader cannot see.
+  function onCite(citation: Citation) {
+    if (citation.kind === 'receipt') return
+
+    setChatOpen(false)
+    setFilter(null)
+
+    // After the close has painted, or the row is still under the backdrop when it is scrolled to.
+    requestAnimationFrame(() => {
+      const row = document.querySelector(`[data-item-position="${citation.position}"]`)
+      row?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    })
+  }
+
+  async function onAsk(question: string) {
+    const asked: ChatMessage = {
+      id: crypto.randomUUID(),
+      role: 'user',
+      seat: null,
+      text: question,
+      citations: [],
+      provenance: null
+    }
+    const history = [...messages, asked]
+    setMessages(history)
+    setTools([])
+    setPending(true)
+
+    try {
+      // `messages`, not `history`: history already carries the question being asked, and the server
+      // appends it again, so sending history put the same user turn in twice.
+      const answer = await askRecord(id, question, messages, (event) =>
+        setTools((seen) => [...seen, { ...event, id: crypto.randomUUID() }])
+      )
+      setMessages([...history, ...answer])
+      // Fresh four after every answer, so the follow-ups track the conversation rather than
+      // repeating the openers the reader has already dismissed once.
+      setSuggestions(followUpSuggestions())
+    } catch (error) {
+      // The failure belongs in the transcript rather than in a toast: it is a turn in the
+      // conversation, and a person needs to see which question did not get answered.
+      setMessages([
+        ...history,
+        {
+          id: crypto.randomUUID(),
+          role: 'agent',
+          seat: null,
+          text: error instanceof Error ? error.message : 'The assistant could not answer that.',
+          citations: [],
+          provenance: null
+        }
+      ])
+    } finally {
+      setPending(false)
+    }
+  }
+
   return (
     <>
       <header className="page-head">
-        {/* data-mascot-slot is where Mascot.tsx portals the compact badge. */}
-        <div data-mascot-slot className="min-w-0">
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="page-title min-w-0">{record.title}</h1>
             <StatusChip status={record.status} />
@@ -130,7 +197,9 @@ export function RecordWorkspace() {
               /* Hairlines, not tiles. DESIGN.md keeps level 0 for rows that are the sheet's own and
                  names the review document's items among them: these are the paper, read in order,
                  not a set of separate objects. */
-              <ul className="m-0 list-none border-t border-rule p-0 px-5 sm:px-6">
+              /* No border-t here: every ItemRow already opens on one, and the two together drew a
+                 2 px edge above the first item that no other list in the product has. */
+              <ul className="m-0 list-none p-0 px-6">
                 {shown.map((item) => (
                   <ItemRow key={item.id} item={item} onDisposition={onDisposition} onRetry={onRetry} readOnly={false} />
                 ))}
@@ -166,11 +235,31 @@ export function RecordWorkspace() {
                 ) : null}
               </div>
             </div>
+
+            <Mascot
+              record={record}
+              chatOpen={chatOpen}
+              onOpenChat={() => {
+                // Rolled on open rather than on mount, so a second visit to the same record offers
+                // a different four.
+                if (messages.length === 0) setSuggestions(openingSuggestions(record))
+                setChatOpen(true)
+              }}
+            />
           </Card>
         </div>
       </div>
 
-      <Mascot record={record} />
+      <ChatModal
+        open={chatOpen}
+        messages={messages}
+        pending={pending}
+        tools={tools}
+        suggestions={suggestions}
+        onClose={() => setChatOpen(false)}
+        onSend={onAsk}
+        onCite={onCite}
+      />
     </>
   )
 }

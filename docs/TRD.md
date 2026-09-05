@@ -38,7 +38,8 @@ Contents:
 1. [Mascot runtime](#17-mascot-runtime)
 1. [Testing](#18-testing)
 1. [Decided](#19-decided)
-1. [Reading a paper from an upload](#20-reading-a-paper-from-an-upload) — the one non-Gonka call
+1. [Reading a paper from an upload](#20-reading-a-paper-from-an-upload) — the first non-Gonka call
+1. [The readers' voice and the record assistant](#21-the-readers-voice-and-the-record-assistant) — the second
 
 ## 1. Gateway, base URLs and auth
 
@@ -382,6 +383,12 @@ GUEST_EMAIL=                                            # The one seeded Guest u
 GUEST_PASSWORD=                                         # Used server-side only by POST /api/auth/guest
 
 MASCOT_ENABLED=false                                    # FR-MASCOT-1 feature flag. true for the demo
+
+GEMINI_API_KEY=                                         # Transcription only, section 20. Absent, uploads are off
+GEMINI_MODEL=gemini-2.5-flash                           # Verify against GET /v1beta/models before changing this
+
+CHAT_PROVIDER=gemini                                    # gemini | gonka. See section 21
+CHAT_MODEL=gemini-2.5-flash                             # Separate from GEMINI_MODEL. Never …-flash-lite
 ```
 
 The three model ids are not configuration. They are a constant list in `src/server/gateway/models.ts`. **They are not
@@ -1583,3 +1590,75 @@ ids, then verify it actually answers.
 
 Proven against the defect it names: planting the Gemini hostname in `src/server/queue/round.ts` fails assertion 3 by
 file name. **Widening that exemption is a track requirement decision, not a refactor.**
+
+That decision was taken once more on 4 September, and section 21 is what it bought.
+
+## 21. The readers' voice and the record assistant
+
+Two features on `/record/:id`, agreed 4 September. Design record:
+[`superpowers/specs/2026-09-04-talking-cats-and-record-agent-design.md`](superpowers/specs/2026-09-04-talking-cats-and-record-agent-design.md).
+
+### The cats are seats, and so are the voices
+
+`EvidencePanel.tsx` binds Tororo to Reader A and Hijiki to Reader B, never to a model family, because which family fills
+a seat varies per item ([section 3](#3-models-measured)). A voice is bound to a seat and never moves; the family that
+filled it is named in the caption and read from `attempt.servedModel`.
+
+**Nothing spoken is generated.** Every line is a template in `src/client/mascot/speech.ts` filled from a stored reading
+and a stored verdict, so the feature costs no inference, works with the gateway down, and cannot state anything the
+evidence panel does not already show.
+
+| Trigger                                | Who speaks                                              | Where                      |
+| -------------------------------------- | ------------------------------------------------------- | -------------------------- |
+| Record reaches a terminal status       | Tororo counts what needs a look; Hijiki only on a split | Once per record, per visit |
+| **Play Readers** in the evidence panel | Both seats, that item's exchange                        | On request only            |
+| Unverified item                        | Tororo alone. **Hijiki stays silent**                   | The absence is the verdict |
+| Clear item                             | Nobody                                                  | Silence is the signal      |
+
+**Engine.** `window.speechSynthesis`. No key, no host, no bytes, so the fence in
+[section 20](#20-reading-a-paper-from-an-upload) is untouched. Two voices are chosen from `getVoices()` by name
+heuristic; when a machine offers fewer than two, one voice is separated by pitch and rate. Chrome fills the list
+asynchronously, so `primeVoices()` warms it on mount — a first `getVoices()` returns nothing and would silently mute the
+first record of a session.
+
+**Captions are the authoritative channel, not a subtitle.** Every utterance renders with its served model and a receipt
+link. A muted browser, a machine with no installed voices and a hall with no speakers all still show what was found.
+Mute is a separate switch from Reduce Motion, persisted at `cekgu.mute`; neither implies the other.
+
+### The assistant, and what is true of it
+
+`POST /api/records/:id/chat`. Scoped to one record: the record is loaded by id against the session and handed to five
+pure tools in `src/server/chat/tools.ts`. No tool takes a record id and there is no cross-record search, which is what
+stops a prompt injected into an uploaded paper from reaching another account's questions.
+
+| Tool             | Answers                                              |
+| ---------------- | ---------------------------------------------------- |
+| `record_summary` | Title, subject, status, counts, how many are flagged |
+| `list_items`     | Position, truncated stem, verdict, whether decided   |
+| `get_item`       | Full stem, options, key, verdict and its reason      |
+| `get_readings`   | Both seats with served model, request id and receipt |
+| `get_attempts`   | Every attempt including rejected ones                |
+
+`get_attempts` is how an **Unverified** verdict gets explained: the honest answer is in the attempts that failed.
+
+**It runs on Gemini and that is the second exemption.** It is not claimed as a non-reasoning boundary — answering a
+question about a record sits closer to reasoning than transcription does. Four things hold instead, and all four are
+checkable:
+
+1. Every fact it states is retrieved by the tools from readings two Gonka models produced, each carrying an
+   `x-request-id` and a public receipt. The model phrases them and is forbidden from adding one
+1. It may not adjudicate: no saying which option is correct, no confirming or rejecting a key, no solving a question.
+   [`PRODUCT.md`](PRODUCT.md) defines Cekgu against "a single general AI chat", so an assistant that ruled on keys would
+   be the thing the product exists to replace
+1. Its own response id is labelled `Gemini · <id>` and rendered as a visibly different object — dashed, unlinked, no
+   receipt — because it is not a Gonka request id
+1. `CHAT_PROVIDER=gonka` moves it to MiniMax-M2.7 without a code change
+
+**Citations are resolved server-side, never trusted from the model.** It emits `[item:N]`, `[reading:N:A]` and
+`[receipt:<id>]` inline; `src/server/chat/citations.ts` resolves each against the loaded record and **drops any that
+does not resolve**, so an invented request id cannot become a pill a judge can click. Paragraphs become separate
+messages, and one citing a single seat is spoken by that seat.
+
+**Model choice is measured, not documented.** `CHAT_MODEL` defaults to `gemini-2.5-flash` at 5.9 s. It must never be
+`gemini-3.5-flash-lite`, which [section 20](#20-reading-a-paper-from-an-upload) measured as no response across three
+attempts. `GEMINI_MODEL` is separate, so the transcriber and the assistant can differ.

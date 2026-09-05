@@ -37,13 +37,7 @@ jobs:
         run: bun run test:guard
 
       - name: Test
-        run: |
-          if git ls-files -- '*.test.ts' '*.test.tsx' '*.test.js' '*.test.jsx' \
-                            '*.spec.ts' '*.spec.tsx' '*.spec.js' '*.spec.jsx' | grep -q .; then
-            bun test
-          else
-            echo 'No test files in the tree yet. bun test exits 1 on an empty suite, so it is skipped until the first test lands.'
-          fi
+        run: bun test
 
   preview:
     name: Preview deploy

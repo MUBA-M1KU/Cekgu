@@ -79,7 +79,7 @@ https://x.com/Cekgu0903
 
 ## Demo video URL
 
-Pending issue #47. Do not submit this placeholder.
+https://youtu.be/zFASN69yQr8
 
 ## Team
 

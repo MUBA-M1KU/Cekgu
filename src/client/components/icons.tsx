@@ -126,3 +126,48 @@ export const ChevronLeftIcon = (props: IconProps) => (
     <path d="M12 4.5 6.5 10l5.5 5.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
   </Icon>
 )
+
+export const ChevronDownIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M4.5 7.5 10 13l5.5-5.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+  </Icon>
+)
+
+// The family's own bubble, carrying a mark instead of a letter: the same ring the option bubbles
+// draw, so an explanation reads as one more thing the paper is telling you rather than a borrowed
+// help glyph.
+export const InfoIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.4" />
+    <circle cx="10" cy="6.6" r="0.95" fill="currentColor" />
+    <path d="M10 9.4v4.2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+  </Icon>
+)
+
+export const CloseIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M5.5 5.5l9 9M14.5 5.5l-9 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+  </Icon>
+)
+
+// A reader speaking is the filled bubble the product already uses for a chosen option, with the
+// carry of a voice drawn off it. Muted keeps the bubble and cuts the carry, so the two glyphs read
+// as one state changing rather than two unrelated symbols.
+export const VoiceOnIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <circle cx="7" cy="10" r="3" fill="currentColor" />
+    <path
+      d="M12 7.2a4 4 0 0 1 0 5.6M14.6 5a7.5 7.5 0 0 1 0 10"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+    />
+  </Icon>
+)
+
+export const VoiceOffIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <circle cx="7" cy="10" r="3" fill="currentColor" />
+    <path d="M12.5 8l4 4M16.5 8l-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+  </Icon>
+)

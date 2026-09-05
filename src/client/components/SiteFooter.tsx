@@ -5,7 +5,13 @@ import { Mark } from './Mark'
 // the end; the landing puts it in flow, because a fixed footer under a sticky hero would be pinned
 // against the shell rather than revealed by it. The content and the surface are the same in both,
 // which is the whole point of sharing it.
-export function SiteFooter() {
+type Props = {
+  // Public-only. The app shell mounts the same footer without them, because a signed-in workspace
+  // is not where someone goes looking for the terms they agreed to before signing up.
+  legal?: { href: string; label: string }[]
+}
+
+export function SiteFooter({ legal }: Props = {}) {
   return (
     <div className="app-footer-inner">
       <Link to="/" className="app-footer-brand" aria-label="Cekgu home">
@@ -16,6 +22,15 @@ export function SiteFooter() {
       <Link to="/#trust" className="app-footer-link type-caption">
         Trust and Privacy
       </Link>
+      {legal ? (
+        <nav aria-label="Legal" className="app-footer-legal">
+          {legal.map((item) => (
+            <Link key={item.href} to={item.href} className="app-footer-link type-caption">
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+      ) : null}
     </div>
   )
 }
