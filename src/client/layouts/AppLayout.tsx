@@ -9,15 +9,15 @@ import { SiteFooter } from '../components/SiteFooter'
 import { useSession } from '../session'
 
 // Whether the sidebar is pinned wide or rests as a rail is a preference a person sets once and
-// expects to find again, so it outlives the route. The rail is the default, because it is the state
-// that peeks; a browser with storage blocked gets the same default.
+// expects to find again, so it outlives the route. A first-time visitor sees the wide sidebar to
+// match the demo film; the rail peek still works once someone collapses it. Storage blocked gets the same default.
 const SIDEBAR_KEY = 'cekgu.sidebar'
 
 function readCollapsed(): boolean {
   try {
-    return localStorage.getItem(SIDEBAR_KEY) !== 'open'
+    return localStorage.getItem(SIDEBAR_KEY) === 'collapsed'
   } catch {
-    return true
+    return false
   }
 }
 
