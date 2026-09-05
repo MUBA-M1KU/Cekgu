@@ -91,11 +91,10 @@ intentionally excluded from this project scope.
 
 ## Phone walk at 375 px, 6 September
 
-Walked at 17:20 UTC on 5 September 2026 against production, which was still serving the build deployed at 14:47 UTC that
-day ([#260](https://github.com/MUBA-M1KU/Cekgu/issues/260)); the page does not expose a commit hash. Headless Chromium
-at a 375 px viewport with iPhone SE emulation, not a physical phone. Covers steps 1 to 4 of the PRD demo acceptance
-test: the landing page, the public sample record with its evidence, Guest sign-in landing on the dashboard, and four
-workspace routes.
+Walked at 17:20 UTC on 5 September 2026 against production, which still served the 14:47 UTC build because deploys are
+gated ([#260](https://github.com/MUBA-M1KU/Cekgu/issues/260)). Headless Chromium emulating an iPhone SE at 375 px, not a
+physical phone. Covers steps 1 to 4 of the PRD demo acceptance test: the landing page, the public sample record with its
+evidence, Guest sign-in landing on the dashboard, and four workspace routes.
 
 | Route        | Elapsed (ms) | Console errors | Overflow (px) | Result | Note                                                         |
 | ------------ | ------------ | -------------- | ------------- | ------ | ------------------------------------------------------------ |
