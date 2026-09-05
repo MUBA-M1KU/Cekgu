@@ -18,6 +18,8 @@
     <a href="https://cekgu-op7lf5dspq-as.a.run.app/sample">Sample Report</a>
     &middot;
     <a href="https://x.com/Cekgu0903">X</a>
+    &middot;
+    <a href="https://youtu.be/WjDuKuTG4Rk">Demo Video</a>
     <br />
   </p>
 
