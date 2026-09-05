@@ -2222,7 +2222,7 @@
 
                 <div class="cover-foot">
                   <div class="sdg">
-                    <span class="sdg-lbl">Aligned with UN Global Goals 4 and 16</span>
+                    <span class="sdg-lbl">Aligned with UN<br />Global Goals 4 and 16</span>
                     <svg viewBox="0 0 100 100" role="img" aria-label="SDG 4, Quality Education"><use href="#sdg4" /></svg>
                     <svg viewBox="0 0 100 100" role="img" aria-label="SDG 16, Peace, Justice and Strong Institutions"><use href="#sdg16" /></svg>
                   </div>
@@ -2874,57 +2874,84 @@
                 role="img"
                 aria-label="Architecture. The browser posts a paper to a single Bun process on Cloud Run, which runs the Hono API and the queue worker and stores records in Neon Postgres. Both reach GonkaRouter through one gateway client, which calls two models, MiniMax and Kimi, and then checks each receipt."
               >
-                <!-- A layered architecture, read top to bottom, with the edge
-                     between two layers naming what crosses it. Every logo sits
-                     on a light band: Bun's and Drizzle's marks are near-black
-                     and vanish on the ink one, which is why GonkaRouter, the
-                     layer this track is about, is the band that carries no
-                     third-party logo and takes the emphasis instead. -->
-                <rect x="0.5" y="0.5" width="1735" height="87" rx="10" class="card-s" />
-                <text class="label f-pen" x="32" y="34" font-size="17">CLIENT</text>
-                <text class="f-ink" x="32" y="68" font-size="26">React 19 and Vite</text>
-                <text class="mono f-muted" x="1600" y="68" font-size="20" text-anchor="end">New Check &middot; Records &middot; Evidence panel</text>
-                <use href="#lg-react" x="1642" y="31" width="26" height="26" />
-                <use href="#lg-vite" x="1678" y="31" width="26" height="26" />
+                <!-- Three group labels on one baseline, three boxes whose tops
+                     line up under them, and one 27.5 inset used by every box on
+                     the slide. -->
+                <text class="label f-muted" x="0" y="20" font-size="19">BROWSER</text>
+                <use href="#lg-googlecloud" x="420" y="0" width="24" height="24" />
+                <use href="#lg-bun" x="452" y="0" width="24" height="24" />
+                <text class="label f-muted" x="488" y="20" font-size="19">GOOGLE CLOUD RUN &middot; ONE BUN PROCESS</text>
+                <text class="label f-muted" x="1300" y="20" font-size="19">GONKAROUTER</text>
 
-                <text class="mono f-muted" x="868" y="116" font-size="19" text-anchor="middle">&darr;   POST /api/checks</text>
+                <rect x="420" y="36.5" width="748" height="339" rx="14" class="s-rule" stroke-dasharray="9 9" />
 
-                <rect x="0.5" y="128.5" width="1735" height="87" rx="10" class="card-s" />
-                <text class="label f-pen" x="32" y="162" font-size="17">SERVER &middot; ONE BUN PROCESS ON CLOUD RUN</text>
-                <text class="f-ink" x="32" y="196" font-size="26">Hono API, the queue worker and the gateway client</text>
-                <use href="#lg-bun" x="1596" y="158" width="28" height="28" />
-                <use href="#lg-hono" x="1636" y="158" width="28" height="28" />
-                <use href="#lg-googlecloud" x="1676" y="158" width="28" height="28" />
+                <rect x="0.5" y="36.5" width="251" height="179" rx="10" class="card-s" />
+                <text class="f-ink" x="28" y="78" font-size="25">Cekgu web app</text>
+                <use href="#lg-react" x="28" y="100" width="30" height="30" />
+                <text class="f-muted" x="70" y="122" font-size="21">React 19</text>
+                <use href="#lg-vite" x="28" y="148" width="30" height="30" />
+                <text class="f-muted" x="70" y="170" font-size="21">Vite</text>
 
-                <text class="mono f-muted" x="868" y="244" font-size="19" text-anchor="middle">&darr;   one question at a time, SKIP LOCKED</text>
+                <path class="conn" d="M252 126 H412" />
+                <path class="conn" d="M403 120 L412 126 L403 132" />
+                <text class="mono f-muted" x="336" y="108" font-size="16" text-anchor="middle">POST /api/checks</text>
 
-                <rect x="0.5" y="256.5" width="1179" height="103" rx="10" class="card-s" />
-                <text class="label f-pen" x="32" y="286" font-size="17">DATA</text>
-                <text class="f-ink" x="32" y="318" font-size="26">Neon Postgres</text>
-                <text class="f-muted" x="32" y="346" font-size="20">Records, attempts and every request ID.</text>
-                <use href="#lg-postgresql" x="1040" y="294" width="28" height="28" />
-                <use href="#lg-neon" x="1080" y="294" width="28" height="28" />
-                <use href="#lg-drizzle" x="1120" y="294" width="28" height="28" />
+                <rect x="452.5" y="64.5" width="319" height="123" rx="10" class="card-s" />
+                <use href="#lg-hono" x="480" y="84" width="28" height="28" />
+                <text class="f-ink" x="518" y="106" font-size="25">Hono API</text>
+                <text class="f-muted" x="480" y="142" font-size="18">Validates and writes the</text>
+                <text class="f-muted" x="480" y="168" font-size="18">record before any model runs.</text>
 
-                <rect x="1212.5" y="256.5" width="523" height="47" rx="8" class="card-s" />
-                <text class="mono f-muted" x="1240" y="286" font-size="19">&rarr; four calls in flight, hedge at 45 s</text>
-                <rect x="1212.5" y="312.5" width="523" height="47" rx="8" class="card-s" />
-                <text class="mono f-muted" x="1240" y="342" font-size="19">&rarr; three attempts, then Unverified</text>
+                <rect x="452.5" y="225.5" width="319" height="123" rx="10" class="card-s" />
+                <use href="#lg-postgresql" x="480" y="245" width="28" height="28" />
+                <text class="f-ink" x="518" y="267" font-size="25">Queue worker</text>
+                <text class="f-muted" x="480" y="303" font-size="18">Claims one question at a time.</text>
+                <text class="mono f-muted" x="480" y="329" font-size="17">SKIP LOCKED &middot; 4 in flight</text>
 
-                <text class="mono f-muted" x="868" y="388" font-size="19" text-anchor="middle">&darr;   every answer, twice, no fallback</text>
+                <!-- Both halves of the process reach the network through the
+                     same box, which is the point of the slide. -->
+                <path class="conn" d="M772 126 H792 V206.5 H804" />
+                <path class="conn" d="M772 287 H792 V206.5" />
+                <path class="conn" d="M803 200.5 L812 206.5 L803 212.5" />
 
-                <rect x="0.5" y="400" width="1735" height="100" rx="10" class="f-ink" />
-                <text class="label f-pen" x="32" y="430" font-size="17">GONKAROUTER &middot; THE ONLY AI PATH IN THIS PRODUCT</text>
-                <text class="mono" fill="rgb(255 255 255 / 0.55)" x="1704" y="430" font-size="18" text-anchor="end">only-gonkarouter.test.ts fails the build on any other provider</text>
+                <rect x="812.5" y="123" width="327" height="167" rx="10" class="card-s" />
+                <text class="f-ink" x="840" y="165" font-size="25">Gateway client</text>
+                <text class="mono f-muted" x="840" y="199" font-size="20">src/server/gateway/</text>
+                <text class="f-muted" x="840" y="231" font-size="20">The only file that calls out.</text>
+                <text class="mono f-ink" x="840" y="263" font-size="20">X-Gonka-No-Fallback</text>
 
-                <rect x="32" y="446" width="406" height="38" rx="8" fill="rgb(255 255 255 / 0.09)" />
-                <text class="mono" fill="var(--paper)" x="235" y="471" font-size="20" text-anchor="middle">MiniMaxAI/MiniMax-M2.7</text>
-                <rect x="454" y="446" width="406" height="38" rx="8" fill="rgb(255 255 255 / 0.09)" />
-                <text class="mono" fill="var(--paper)" x="657" y="471" font-size="20" text-anchor="middle">moonshotai/Kimi-K2.6</text>
-                <rect x="876" y="446" width="406" height="38" rx="8" fill="rgb(255 255 255 / 0.09)" />
-                <text class="mono" fill="var(--paper)" x="1079" y="471" font-size="20" text-anchor="middle">GET /v1/receipts/{id}</text>
-                <rect x="1298" y="446" width="406" height="38" rx="8" fill="rgb(255 255 255 / 0.09)" />
-                <text class="mono" fill="var(--paper)" x="1501" y="471" font-size="20" text-anchor="middle">X-Gonka-No-Fallback</text>
+                <path class="conn" d="M1140 206.5 H1292" />
+                <path class="conn" d="M1283 200.5 L1292 206.5 L1283 212.5" />
+                <text class="f-muted" x="1234" y="190" font-size="16" text-anchor="middle">two model calls</text>
+
+                <rect x="1300.5" y="36.5" width="435" height="339" rx="10" class="card-s" />
+                <text class="f-ink" x="1328" y="82" font-size="28">GonkaRouter</text>
+                <text class="mono f-muted" x="1328" y="114" font-size="20">api.gonkarouter.io</text>
+
+                <rect x="1328" y="138" width="380" height="68" rx="8" class="f-well" />
+                <text class="mono f-ink" x="1352" y="168" font-size="20">MiniMaxAI/MiniMax-M2.7</text>
+                <text class="f-muted" x="1352" y="194" font-size="19">Reader A, answers blind</text>
+
+                <rect x="1328" y="214" width="380" height="68" rx="8" class="f-well" />
+                <text class="mono f-ink" x="1352" y="244" font-size="20">moonshotai/Kimi-K2.6</text>
+                <text class="f-muted" x="1352" y="270" font-size="19">Reader B, answers blind</text>
+
+                <path class="s-rule" d="M1328 300 H1708" />
+                <text class="mono f-ink" x="1328" y="330" font-size="20">GET /v1/receipts/{id}</text>
+                <text class="f-muted" x="1328" y="356" font-size="19">The served model must match.</text>
+
+                <path class="conn" d="M612 349 V400" />
+                <path class="conn" d="M606 391 L612 400 L618 391" />
+
+                <rect x="452.5" y="404.5" width="687" height="87" rx="10" class="card-s" />
+                <use href="#lg-neon" x="480" y="433" width="30" height="30" />
+                <use href="#lg-drizzle" x="520" y="433" width="30" height="30" />
+                <text class="f-ink" x="566" y="441" font-size="24">Neon Postgres, Drizzle</text>
+                <text class="f-muted" x="566" y="471" font-size="20">Records, attempts and every request ID.</text>
+
+                <text class="mono f-ink" x="1300" y="420" font-size="20">only-gonkarouter.test.ts</text>
+                <text class="f-muted" x="1300" y="448" font-size="19">Fails the build if any other provider</text>
+                <text class="f-muted" x="1300" y="474" font-size="19">host appears anywhere in the code.</text>
               </svg>
             </div>
 
@@ -3163,7 +3190,7 @@
                   <div class="sdg">
                     <svg viewBox="0 0 100 100" role="img" aria-label="SDG 4, Quality Education"><use href="#sdg4" /></svg>
                     <svg viewBox="0 0 100 100" role="img" aria-label="SDG 16, Peace, Justice and Strong Institutions"><use href="#sdg16" /></svg>
-                    <span class="sdg-lbl">Aligned with UN Global Goals 4 and 16</span>
+                    <span class="sdg-lbl">Aligned with UN<br />Global Goals 4 and 16</span>
                   </div>
                   <p class="close-team">Team M1KU &middot; @chaosiris &middot; @AlaskanTuna &middot; @kymil4 &middot; @c3638<br />MUBA Blockchain Hackathon 2026 &middot; GonkaRouter Track<br />Submitted on Devfolio</p>
                 </div>
