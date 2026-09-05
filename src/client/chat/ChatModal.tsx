@@ -1,12 +1,16 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import type { ChatMessage, Citation } from '../../shared/chat'
 import { CloseIcon } from '../components/icons'
+import { useLiveViewport } from '../mascot/Mascot'
 import { STAGE_HEIGHT, STAGE_WIDTH } from '../mascot/motions'
 import { useReduceMotion } from '../mascot/preferences'
 import { Stage } from '../mascot/Stage'
 import { Composer } from './Composer'
 import { ToolTrace, type TracedTool } from './ToolTrace'
 import { Transcript } from './Transcript'
+
+// Half height on a phone, so the transcript keeps the room it needs.
+const SMALL = { w: 150, h: 100 }
 
 type Props = {
   open: boolean
@@ -41,18 +45,17 @@ export function ChatModal({ open, messages, pending, tools, suggestions, onSend,
   const scrollRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
   const reduceMotion = useReduceMotion()
-  // Stage builds its runtime and loads its models on mount, whatever its visibility, so rendering
-  // one behind a closed <dialog> would pull the Live2D chunk onto the record page for cats nobody
-  // has asked to see. Once opened it stays mounted, so closing and reopening does not tear the
-  // runtime down and build it again.
-  const [everOpened, setEverOpened] = useState(false)
+  // Only ever mounted while the dialog is open, and that is a correctness rule rather than a
+  // saving. Two Live2D stages load the same models and textures concurrently, and pixi keys its
+  // texture cache by URL, so the second load reaches into the first stage's textures and blanks
+  // the cats docked in the summary card. Mascot.tsx stands its stage down for exactly this window.
+  const live = useLiveViewport()
 
   useEffect(() => {
     const dialog = dialogRef.current
     if (!dialog) return
 
     if (open && !dialog.open) {
-      setEverOpened(true)
       dialog.showModal()
       composerRef.current?.focus()
     }
@@ -87,7 +90,7 @@ export function ChatModal({ open, messages, pending, tools, suggestions, onSend,
       }}
       // m-auto restores the centring a modal <dialog> gets from the UA sheet; Tailwind's reset
       // zeroes margin on every element and drops it into the top-left corner.
-      className={`${open ? 'flex' : 'hidden'} m-auto h-[44rem] max-h-[calc(100dvh-2rem)] w-[46rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-sheet border border-rule-strong bg-sheet p-6 text-ink shadow-[var(--shadow-overlay)] backdrop:bg-[var(--shadow-overlay-tint)]`}
+      className={`${open ? 'flex' : 'hidden'} m-auto h-[44rem] max-h-[calc(100dvh-2rem)] w-[46rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-sheet border border-rule-strong bg-sheet p-4 text-ink sm:p-6 shadow-[var(--shadow-overlay)] backdrop:bg-[var(--shadow-overlay-tint)]`}
     >
       <header className="flex shrink-0 items-center justify-between gap-4">
         <h2 id={titleId} className="card-title">
@@ -103,13 +106,18 @@ export function ChatModal({ open, messages, pending, tools, suggestions, onSend,
       <div
         data-chat-stage
         aria-hidden="true"
-        className="pointer-events-none mt-2 flex shrink-0 justify-center"
-        style={{ height: `${STAGE_HEIGHT}px` }}
+        className="pointer-events-none mt-2 flex shrink-0 justify-center overflow-hidden"
+        style={{ height: `${live ? STAGE_HEIGHT : SMALL.h}px` }}
       >
-        {everOpened && !reduceMotion ? (
+        {open && live && !reduceMotion ? (
           <Stage state={pending ? 'checking' : 'idle'} />
         ) : (
-          <img src="/brand/mascot-still.png" alt="" width={STAGE_WIDTH} height={STAGE_HEIGHT} />
+          <img
+            src="/brand/mascot-still.png"
+            alt=""
+            width={live ? STAGE_WIDTH : SMALL.w}
+            height={live ? STAGE_HEIGHT : SMALL.h}
+          />
         )}
       </div>
 
@@ -127,7 +135,7 @@ export function ChatModal({ open, messages, pending, tools, suggestions, onSend,
               <button
                 type="button"
                 onClick={() => onSend(question)}
-                className="status-chip type-ui border border-rule-strong bg-sheet text-left transition-colors hover:bg-well"
+                className="status-chip type-ui max-w-full whitespace-normal border border-rule-strong bg-sheet text-left transition-colors hover:bg-well"
               >
                 {question}
               </button>

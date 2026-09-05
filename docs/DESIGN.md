@@ -501,10 +501,20 @@ except opacity, which may keep `--t-quick`. This applies product-wide, not only 
 
 ### The mascot
 
-Tororo and Hijiki are the two readers made visible. They live on a 240 × 160 px stage at the sheet's bottom-right on
-viewports of 1024 px and above, lazy-loaded after the record content (FR-MASCOT-2). Between 600 and 1023 px the stage
-collapses to a 48 px static badge of both cats in the record header; below 600 px it is hidden. They are animated by
-default and static only under reduced motion or on load failure (FR-MASCOT-3).
+Tororo and Hijiki are the two readers made visible. They are docked at the foot of the record's summary card, sitting on
+its bottom edge, with their caption above them and the mute control beside them. The card is in the sticky rail, so the
+readers follow the reader down the page and the assistant behind them is one click from anywhere in the record. They
+used to live at the foot of the page, which meant scrolling past every item to reach them.
+
+On viewports of 1024 px and above the dock is a live 240 × 160 px stage scaled to 85% to sit inside the rail,
+lazy-loaded after the record content (FR-MASCOT-2). Below that it is a 168 × 112 px still of both cats, which is still
+the button that opens the assistant: the Live2D runtime is 469 kB of chunk plus 2.7 MB of models and a WebGL context,
+and none of that belongs on a phone, but the assistant does.
+
+**Only one stage exists at a time.** The chat modal mounts its own and the dock stands down for exactly that window. Two
+stages load the same models and textures concurrently, and because pixi keys its texture cache by URL the second load
+reaches into the first stage's textures — which blanked the docked cats while their button stayed clickable. They are
+animated by default and static only under reduced motion or on load failure (FR-MASCOT-3).
 
 The model files expose five motion groups per cat: `Idle`, `Tap`, `FlickUp`, `FlickDown` and `Flick`, plus eye-blink and
 lip-sync parameters and no hit areas. The mapping below names groups because the individual motion files carry no
