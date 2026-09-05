@@ -81,8 +81,19 @@ export function citationsIn(paragraph: string, record: RecordDetail): Citation[]
   return [...new Map(found.map((citation) => [key(citation), citation])).values()]
 }
 
-export function stripTokens(text: string): string {
+// The transcript renders plain text, so markdown arrives as literal punctuation: MiniMax answered
+// production with "**Possible key error on item 3:**" and the asterisks were on screen. The prompt
+// asks for plain sentences and this enforces it, because a prompt is a request and this is not.
+function plain(text: string): string {
   return text
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/(^|\s)\*([^*\n]+)\*(?=\s|$|[.,;:!?])/g, '$1$2')
+    .replace(/(^|\n)\s{0,3}#{1,6}\s+/g, '$1')
+    .replace(/(^|\n)\s{0,3}[-*+]\s+/g, '$1')
+}
+
+export function stripTokens(text: string): string {
+  return plain(text)
     .replace(ITEM, '')
     .replace(READING, '')
     .replace(RECEIPT, '')

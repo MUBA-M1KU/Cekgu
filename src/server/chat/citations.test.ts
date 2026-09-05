@@ -166,3 +166,22 @@ describe('toMessages', () => {
     expect(messages[0]?.citations).toHaveLength(1)
   })
 })
+
+describe('markdown', () => {
+  // MiniMax answered production with "**Possible key error on item 3:**" and the asterisks were
+  // rendered literally, because the transcript prints plain text.
+  test('drops emphasis the transcript would print literally', () => {
+    expect(stripTokens('**Possible key error on item 3:** both readers chose B.')).toBe(
+      'Possible key error on item 3: both readers chose B.'
+    )
+    expect(stripTokens('That is *defensible* either way.')).toBe('That is defensible either way.')
+  })
+
+  test('drops headings and bullet markers', () => {
+    expect(stripTokens('## Findings\n- item one\n- item two')).toBe('Findings\nitem one\nitem two')
+  })
+
+  test('leaves arithmetic and prose asterisks alone', () => {
+    expect(stripTokens('The rule is 2 * 3 = 6.')).toBe('The rule is 2 * 3 = 6.')
+  })
+})
