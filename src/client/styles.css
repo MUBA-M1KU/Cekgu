@@ -37,6 +37,9 @@
   --shadow-overlay-tint: light-dark(rgb(20 24 31 / 0.2), rgb(0 0 0 / 0.5));
   --shadow-sheet: 0 1px 2px var(--shadow-tint);
   --shadow-overlay: 0 12px 32px var(--shadow-overlay-tint);
+  /* For something resting on a surface rather than floating above the page: the readers' caption
+     inside the summary card. Sized down from --shadow-overlay, which is a modal's shadow. */
+  --shadow-soft: 0 2px 10px light-dark(rgb(20 24 31 / 0.07), rgb(0 0 0 / 0.3));
 }
 
 :root[data-theme="light"] {

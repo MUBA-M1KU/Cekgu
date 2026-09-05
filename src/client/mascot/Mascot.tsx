@@ -131,12 +131,12 @@ export function Mascot({ record, chatOpen, onOpenChat }: Props) {
   const size = live ? DOCK : STILL
 
   return (
-    <div className="border-t border-rule px-5 pt-4 sm:px-6">
+    <div className="mt-5 border-t border-rule px-5 pt-5 sm:px-6">
       {/* In flow rather than floating, so a caption arriving grows the card instead of covering the
           count above it. The rail is sticky and short; there is room to grow and none to overlap. */}
       {spoken ? <SpeechBubble utterance={spoken} /> : null}
 
-      <div className="mt-3 flex items-end justify-between gap-2">
+      <div className="mt-4 flex items-end justify-between gap-2">
         <button
           type="button"
           onClick={() => {

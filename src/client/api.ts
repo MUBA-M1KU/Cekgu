@@ -1,6 +1,7 @@
 import type { ChatMessage } from '../shared/chat'
 import type { CreateRecordInput, DispositionInput } from '../shared/schemas'
 import type { AccountStats, Health, ReceiptLookup, ReceiptStatus, RecordDetail, RecordSummary } from '../shared/types'
+import { readFrame, type SseFrame, takeFrames } from './sse'
 
 export type CreateRecordResponse = { id: string; status: string; itemCount: number; expiresAt: string | null }
 
@@ -251,28 +252,26 @@ export async function askRecord(
   let messages: ChatMessage[] = []
   let failure: string | null = null
 
+  const consume = (frame: SseFrame) => {
+    if (frame.event === 'tool') onTool(JSON.parse(frame.data) as ToolEvent)
+    if (frame.event === 'messages') messages = (JSON.parse(frame.data) as { messages: ChatMessage[] }).messages
+    if (frame.event === 'failed') failure = (JSON.parse(frame.data) as { message: string }).message
+  }
+
   while (true) {
     const { done, value } = await reader.read()
     if (done) break
+
     buffer += value
-
-    // A frame is complete only at the blank line, so a chunk that splits one mid-JSON is held
-    // rather than parsed into a throw.
-    let boundary = buffer.indexOf('\n\n')
-    while (boundary !== -1) {
-      const frame = buffer.slice(0, boundary)
-      buffer = buffer.slice(boundary + 2)
-      boundary = buffer.indexOf('\n\n')
-
-      const event = /^event:\s*(.+)$/m.exec(frame)?.[1]?.trim()
-      const data = /^data:\s*(.+)$/m.exec(frame)?.[1]
-      if (!event || !data) continue
-
-      if (event === 'tool') onTool(JSON.parse(data) as ToolEvent)
-      if (event === 'messages') messages = (JSON.parse(data) as { messages: ChatMessage[] }).messages
-      if (event === 'failed') failure = (JSON.parse(data) as { message: string }).message
-    }
+    const { frames, rest } = takeFrames(buffer)
+    buffer = rest
+    for (const frame of frames) consume(frame)
   }
+
+  // The tail, because a stream that closes straight after its last write leaves that frame without
+  // the blank line that would have completed it — and that frame is the answer.
+  const tail = readFrame(buffer)
+  if (tail) consume(tail)
 
   if (failure) throw new ApiError('agent_failed', failure, 502)
 

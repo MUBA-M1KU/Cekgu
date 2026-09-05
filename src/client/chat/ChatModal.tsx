@@ -90,7 +90,7 @@ export function ChatModal({ open, messages, pending, tools, suggestions, onSend,
       }}
       // m-auto restores the centring a modal <dialog> gets from the UA sheet; Tailwind's reset
       // zeroes margin on every element and drops it into the top-left corner.
-      className={`${open ? 'flex' : 'hidden'} m-auto h-[44rem] max-h-[calc(100dvh-2rem)] w-[46rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-sheet border border-rule-strong bg-sheet p-4 text-ink sm:p-6 shadow-[var(--shadow-overlay)] backdrop:bg-[var(--shadow-overlay-tint)]`}
+      className={`${open ? 'flex' : 'hidden'} m-auto h-[44rem] max-h-[calc(100dvh-2rem)] w-[46rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-sheet border border-rule-strong bg-sheet p-4 text-ink sm:p-6 shadow-[var(--shadow-overlay)] backdrop:bg-[var(--shadow-overlay-tint)] backdrop:backdrop-blur-[3px]`}
     >
       <header className="flex shrink-0 items-center justify-between gap-4">
         <h2 id={titleId} className="card-title">
