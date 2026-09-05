@@ -59,6 +59,15 @@ function ReaderColumn({ item, attempt, seat }: { item: Item; attempt: Attempt; s
       ) : null}
       <p className="type-eyebrow text-ink-muted">Served Model</p>
       <p className="type-mono mt-1 break-words">{attempt.servedModel}</p>
+      {/* Beside the served model rather than at the foot of the column. The receipt is what proves
+          this name, so the claim and the proof are one line apart instead of a panel apart, and it
+          is text because the model name it qualifies is text — a button here would outrank the
+          reading it belongs to. */}
+      {attempt.requestId ? (
+        <Link to={receiptPath(attempt.requestId)} className="type-caption mt-1 inline-block underline">
+          View Receipt
+        </Link>
+      ) : null}
 
       <div className="mt-3">
         <BubbleRow options={item.options} filled={reading.answer} label={`Answer chosen by ${attempt.servedModel}`} />
@@ -84,15 +93,6 @@ function ReaderColumn({ item, attempt, seat }: { item: Item; attempt: Attempt; s
         <dt className="text-ink-muted">Receipt</dt>
         <dd className="m-0">{RECEIPT_LABEL[attempt.receiptStatus]}</dd>
       </dl>
-
-      {/* Outline rather than ghost: this panel is a well, and a ghost control on a recessed ground
-          is a text link with padding. The receipt is the product's whole claim, so the one control
-          that opens it gets a surface to sit on. */}
-      {attempt.requestId ? (
-        <Link to={receiptPath(attempt.requestId)} className="btn btn-outline btn-sm mt-3">
-          View Receipt
-        </Link>
-      ) : null}
     </div>
   )
 }

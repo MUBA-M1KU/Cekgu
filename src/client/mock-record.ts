@@ -229,7 +229,25 @@ const SPECS: Spec[] = [
     reasons: [
       'Each comparison halves the remaining range, giving a logarithmic bound.',
       'Binary search discards half the array per step, so the worst case is O(log n).'
-    ]
+    ],
+    // A contradicted reading, so the state exists somewhere on the sample. What came back is about
+    // the right topic and the wrong claim, which is exactly the case the grounding field is for:
+    // the readers are right, the retrieved page is not, and the score is damped rather than flipped.
+    sources: [
+      {
+        title: 'Binary search algorithm - Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Binary_search',
+        snippet:
+          'Binary search runs in logarithmic time in the worst case, making O(log n) comparisons, where n is the number of elements in the array.'
+      },
+      {
+        title: 'Sorting and searching - cheat sheet',
+        url: 'https://en.wikipedia.org/wiki/Linear_search',
+        snippet:
+          'Linear search scans each element in turn and therefore runs in O(n) time in the worst case, examining every element before reporting failure.'
+      }
+    ],
+    grounding: ['supported', 'contradicted']
   },
   {
     stem: 'Which of the following best describes a pure function?',

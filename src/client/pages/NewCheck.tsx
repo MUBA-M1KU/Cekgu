@@ -286,13 +286,15 @@ export function NewCheck() {
               </Card>
             ) : null}
 
-            {/* The third way in, and the cheapest: a page of questions already on the web. It sits
-              above the upload because it needs no vision model, so it is the one input that works
-              on a deployment with no transcription key at all. */}
+            {/* One card, two ways in. They were two, and the split was arbitrary from the reader's
+              side: both fill the same fields from the same paper and differ only in what the paper
+              happens to be. Two heads also meant two provenance captions saying nearly the same
+              thing, and the one line that actually differs between them — whether a vision model
+              was needed — was buried in the second. */}
             <Card>
               <CardHead
-                title="Read a Link"
-                description="A link to a page with the questions on it fills the fields below for you to read and correct before you submit it."
+                title="Start From a Paper"
+                description="Paste a link or upload a scan, and the fields below fill themselves in for you to read and correct before you submit."
               />
               <CardBody>
                 <Field
@@ -330,23 +332,13 @@ export function NewCheck() {
                   </div>
                 </Field>
 
-                {/* Said plainly, because the difference is the point: this is the one input that
-                  reaches nothing outside the Gonka network. */}
-                <p className="type-caption text-ink-muted">
-                  A web page is reduced to its words without any model at all. Every judgement about what it says is
-                  made by two Gonka models, receipted below. Links inside a private network are refused.
-                </p>
-              </CardBody>
-            </Card>
+                {/* A rule that earns itself: these two are alternatives, not a sequence, and the
+                  word is what says so. DESIGN.md Layout. */}
+                <div className="fill-or" aria-hidden="true">
+                  <span>or</span>
+                </div>
 
-            {/* Second of the two ways to fill this form, and the one every account kind gets. Its
-              head is the guest card's shape because they are the same kind of offer; what follows
-              in the body is the part that has no equivalent. */}
-            <Card>
-              <CardHead
-                title="Upload a Paper"
-                description="A photo or a PDF of a printed paper fills the fields below for you to read and correct before you submit it."
-                action={
+                <div className="flex flex-wrap items-center gap-3">
                   <label className="btn btn-outline btn-sm cursor-pointer focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink has-disabled:cursor-not-allowed has-disabled:opacity-55">
                     <input
                       type="file"
@@ -362,15 +354,16 @@ export function NewCheck() {
                     />
                     {extracting ? 'Reading the Paper' : 'Choose a File'}
                   </label>
-                }
-              />
-              <CardBody>
-                {/* The split is stated rather than buried. Requirement 1 binds reasoning and
-                  verification to Gonka, and reading pixels into text decides nothing, but a judge
-                  who works that out for themselves reads silence as concealment. */}
+                  <span className="type-caption text-ink-muted">A photo or a PDF of a printed paper, to 10 MB.</span>
+                </div>
+
+                {/* One caption for both, and it names the only difference between them. Requirement 1
+                  binds reasoning and verification to Gonka; reducing a page or a scan to text decides
+                  nothing, but a judge who works that out for themselves reads silence as concealment. */}
                 <p className="type-caption text-ink-muted">
-                  The file is read by a vision model. Every judgement about what it says is made by two Gonka models.
-                  Both steps are receipted below, and the receipts say which is which.
+                  A web page is reduced to its words with no model at all. A photo or a PDF is read by a vision model
+                  first. Either way every judgement about what it says is made by two Gonka models, and the receipts
+                  below say which step ran where.
                 </p>
 
                 {extracting ? (
@@ -427,9 +420,8 @@ export function NewCheck() {
                 ) : null}
               </CardBody>
 
-              {/* Outside the guest card on purpose: an upload fills the form for any account, and the
-                one control that empties it again cannot be the one behind a gate. This card is the
-                one both fill paths have in common. */}
+              {/* Outside the guest card on purpose: a paper fills the form for any account, and the
+                one control that empties it again cannot be the one behind a gate. */}
               {prefilled ? (
                 <div className="card-foot">
                   <button type="button" onClick={clearForm} className="btn btn-ghost btn-sm">

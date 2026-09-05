@@ -2684,6 +2684,25 @@ section[id] {
     color: var(--ink);
   }
 
+  /* The word between the two ways to fill the form. A rule on each side rather than a centred word
+     alone, because the rule is what says these are alternatives instead of steps. */
+  .fill-or {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    color: var(--ink-muted);
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+  }
+
+  .fill-or::before,
+  .fill-or::after {
+    content: "";
+    flex: 1;
+    block-size: 1px;
+    background: var(--rule);
+  }
+
   /* The Truth Score. It sits above the verdict chips because it is the summary OF them, and a
      summary printed under its own detail reads as a footnote. */
   .truth-score {
