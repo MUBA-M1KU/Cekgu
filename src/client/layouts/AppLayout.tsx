@@ -8,15 +8,16 @@ import { GuestDrawer } from '../components/GuestBanner'
 import { SiteFooter } from '../components/SiteFooter'
 import { useSession } from '../session'
 
-// Whether the sidebar is wide or narrow is a preference a person sets once and expects to find
-// again, so it outlives the route. A browser with storage blocked gets the wide default.
+// Whether the sidebar is pinned wide or rests as a rail is a preference a person sets once and
+// expects to find again, so it outlives the route. The rail is the default, because it is the state
+// that peeks; a browser with storage blocked gets the same default.
 const SIDEBAR_KEY = 'cekgu.sidebar'
 
 function readCollapsed(): boolean {
   try {
-    return localStorage.getItem(SIDEBAR_KEY) === 'collapsed'
+    return localStorage.getItem(SIDEBAR_KEY) !== 'open'
   } catch {
-    return false
+    return true
   }
 }
 
@@ -87,8 +88,12 @@ export function AppLayout() {
   return (
     <div className="app-shell min-h-dvh bg-paper" data-side={side}>
       <AppSidebar onNavigate={() => setDrawer(false)} />
-      {/* Only under the md breakpoint does the sidebar overlay anything, and only then is there
-          something for a scrim to dim. */}
+      {/* Behind the rail while it peeks. It has to be the sidebar's next sibling, because
+          styles.css opens it off the sidebar's own hover and focus rather than off state held
+          here, and that is what leaves a route change nothing to lose. */}
+      <div className="app-peek-scrim" aria-hidden="true" />
+      {/* The drawer's scrim is the control that closes it, so it is mounted only while there is a
+          drawer to close. */}
       {drawer ? (
         <button
           type="button"
