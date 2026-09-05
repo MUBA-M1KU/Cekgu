@@ -524,6 +524,10 @@ runs `gcloud run services update-traffic cekgu --remove-tags pr-<number>` so rev
 **On merge to `main`** (`deploy.yml`): the same steps, then `gcloud run deploy cekgu --image <sha image>` with traffic,
 so the production URL always runs the head of `main`.
 
+**`scripts/deploy-local.sh` reproduces the production deploy from a laptop when Actions cannot run.** It inherits the
+live environment variables from the previous Cloud Run revision, so secrets live in GitHub and production, never in a
+laptop `.env`. Requires a logged-in `gcloud` and a running Docker daemon.
+
 **Traffic is routed explicitly, and the routing is asserted.** A preview deploy rewrites the service's traffic block
 from the implicit "latest revision" pointer to an explicit revision pin. Once pinned, a plain `gcloud run deploy`
 uploads a new revision and **does not move traffic to it**, while still reporting success.
