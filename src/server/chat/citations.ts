@@ -41,6 +41,17 @@ function key(citation: Citation): string {
   return `receipt:${citation.requestId}`
 }
 
+// A model that names "question 9" in prose and forgets the token leaves a sentence about this
+// record with nothing under it, which reads as ungrounded when it is not. Measured on production:
+// MiniMax answered correctly, named items 3, 9 and 11, and emitted no tokens at all.
+//
+// Recovering the citation from the prose is safe in a way inventing one would not be, because the
+// position still has to resolve against the loaded record before it becomes a pill. What this
+// cannot do is manufacture a reading or a receipt: only item pills are recovered, and a claim about
+// what a reader said still needs the model to have cited the reader.
+const NAMED_ITEM = /\b(?:question|item)s?\s+(\d+)(?:\s*(?:,|and)\s*(\d+))*/gi
+const NUMBER = /\d+/g
+
 /** The citations one paragraph carries, resolved against the record and de-duplicated in order. */
 export function citationsIn(paragraph: string, record: RecordDetail): Citation[] {
   const found: Citation[] = []
@@ -48,6 +59,13 @@ export function citationsIn(paragraph: string, record: RecordDetail): Citation[]
   for (const match of paragraph.matchAll(ITEM)) {
     const position = Number(match[1])
     if (itemAt(record, position)) found.push({ kind: 'item', position })
+  }
+
+  for (const match of paragraph.matchAll(NAMED_ITEM)) {
+    for (const digits of match[0].match(NUMBER) ?? []) {
+      const position = Number(digits)
+      if (itemAt(record, position)) found.push({ kind: 'item', position })
+    }
   }
 
   for (const match of paragraph.matchAll(READING)) {
@@ -63,8 +81,19 @@ export function citationsIn(paragraph: string, record: RecordDetail): Citation[]
   return [...new Map(found.map((citation) => [key(citation), citation])).values()]
 }
 
-export function stripTokens(text: string): string {
+// The transcript renders plain text, so markdown arrives as literal punctuation: MiniMax answered
+// production with "**Possible key error on item 3:**" and the asterisks were on screen. The prompt
+// asks for plain sentences and this enforces it, because a prompt is a request and this is not.
+function plain(text: string): string {
   return text
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/(^|\s)\*([^*\n]+)\*(?=\s|$|[.,;:!?])/g, '$1$2')
+    .replace(/(^|\n)\s{0,3}#{1,6}\s+/g, '$1')
+    .replace(/(^|\n)\s{0,3}[-*+]\s+/g, '$1')
+}
+
+export function stripTokens(text: string): string {
+  return plain(text)
     .replace(ITEM, '')
     .replace(READING, '')
     .replace(RECEIPT, '')

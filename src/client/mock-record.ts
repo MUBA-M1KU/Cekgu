@@ -503,3 +503,13 @@ export function mockAnswer(id: string): ChatMessage[] {
 
   return messages
 }
+
+// The tool trace the mock agent "makes", so the Codex-style in-flight list can be looked at without
+// a gateway key. Shape matches what the SSE route emits.
+export function mockTools(): { name: string; position: number | null }[] {
+  return [
+    { name: 'record_summary', position: null },
+    { name: 'list_items', position: null },
+    { name: 'get_readings', position: 4 }
+  ]
+}

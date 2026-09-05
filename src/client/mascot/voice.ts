@@ -83,6 +83,12 @@ export function primeVoices(): () => void {
 
 export type SpeechHandle = { cancel(): void }
 
+// speechSynthesis.cancel() is global: it stops every utterance in the browser, whoever queued it.
+// Each speak() takes the next turn and only the handle holding the current one may reach the
+// engine, so a stale handle — the summary dismissed on its timer after the chat began answering —
+// cannot cut off the speech that replaced it.
+let turn = 0
+
 /**
  * Speaks a sequence in order, one seat at a time. Returns a handle whose cancel() stops mid-line,
  * which is what an unmount, a mute or a second record landing needs.
@@ -101,6 +107,7 @@ export function speak(
   let cancelled = false
 
   engine.cancel()
+  const mine = ++turn
 
   utterances.forEach((line, index) => {
     const spoken = new SpeechSynthesisUtterance(line.text)
@@ -117,7 +124,7 @@ export function speak(
   return {
     cancel() {
       cancelled = true
-      engine.cancel()
+      if (mine === turn) engine.cancel()
     }
   }
 }

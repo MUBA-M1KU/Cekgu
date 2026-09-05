@@ -38,6 +38,15 @@ describe('the motion preference can overrule the system', () => {
 
   test('the old boolean setting still means reduce', () => {
     expect(preferences).toContain('LEGACY_KEY')
-    expect(preferences).toMatch(/localStorage\.getItem\(LEGACY_KEY\) === 'true' \? 'reduce' : 'system'/)
+    expect(preferences).toMatch(/localStorage\.getItem\(LEGACY_KEY\) === 'true' \? 'reduce' : 'full'/)
+  })
+
+  // The whole point of the 5 September change: an untouched install animates. Both no-choice paths
+  // have to agree, because a browser that refuses storage is exactly the machine nobody can fix from
+  // Settings afterwards.
+  test('an install that has chosen nothing animates', () => {
+    expect(preferences).toMatch(/=== 'true' \? 'reduce' : 'full'/)
+    expect(preferences).toMatch(/} catch \{[^}]*return 'full'/)
+    expect(preferences).not.toMatch(/return 'system'/)
   })
 })

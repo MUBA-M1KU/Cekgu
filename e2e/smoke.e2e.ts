@@ -315,3 +315,39 @@ test('signing in returns the visitor to the page they were refused', async ({ pa
 
   await expect(page).toHaveURL(/\/settings$/, { timeout: 20000 })
 })
+
+// PRODUCT.md lists Terms, Privacy and Acceptable Use as a launch requirement. The contract worth
+// holding is that a judge can reach all three from the product, so these assert hrefs and a
+// rendered heading rather than the prose: the copy is a legal notice that will be revised, and the
+// redesign in #44 rewrites the surface around it.
+const NOTICES = ['/terms', '/privacy', '/acceptable-use']
+
+test('every notice is reachable from Trust and Privacy', async ({ page }) => {
+  await page.goto('/trust')
+
+  // Scoped to the section: the footer carries the same three hrefs, so an unscoped locator
+  // matches twice and fails on strict mode rather than on the thing being asserted.
+  const trust = page.locator('#trust')
+  for (const href of NOTICES) {
+    await expect(trust.locator(`a[href="${href}"]`)).toBeVisible()
+  }
+})
+
+for (const href of NOTICES) {
+  test(`the notice at ${href} renders`, async ({ page }) => {
+    const response = await page.goto(href)
+
+    expect(response?.status()).toBe(200)
+    await expect(page.getByRole('heading', { level: 1 })).not.toBeEmpty()
+  })
+}
+
+test('the footer carries the notices on a page that is not the landing', async ({ page }) => {
+  await page.goto('/sample')
+
+  // SiteFooter names this nav for what it holds, not for where it sits: aria-label="Legal".
+  const footer = page.getByRole('navigation', { name: 'Legal' })
+  for (const href of NOTICES) {
+    await expect(footer.locator(`a[href="${href}"]`)).toBeVisible()
+  }
+})

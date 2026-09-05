@@ -1,6 +1,7 @@
 import type { ChatMessage } from '../shared/chat'
 import type { CreateRecordInput, DispositionInput } from '../shared/schemas'
 import type { AccountStats, Health, ReceiptLookup, ReceiptStatus, RecordDetail, RecordSummary } from '../shared/types'
+import { readFrame, type SseFrame, takeFrames } from './sse'
 
 export type CreateRecordResponse = { id: string; status: string; itemCount: number; expiresAt: string | null }
 
@@ -208,18 +209,80 @@ export async function signOut(): Promise<void> {
 // The agent is scoped to one record by its URL, and the history is sent back as prose only: the
 // server rebuilds every citation from the record it loads, so an edited request id in a client's
 // history buys nothing.
-export async function askRecord(id: string, question: string, history: ChatMessage[]): Promise<ChatMessage[]> {
+export type ToolEvent = { name: string; position: number | null }
+
+/**
+ * Streamed, so the tools the agent calls are visible while it is calling them rather than
+ * summarised after the fact. EventSource cannot POST, so the frames are parsed off the fetch body.
+ */
+export async function askRecord(
+  id: string,
+  question: string,
+  history: ChatMessage[],
+  onTool: (event: ToolEvent) => void
+): Promise<ChatMessage[]> {
   if (MOCK) {
-    const { mockAnswer } = await import('./mock-record')
+    const { mockAnswer, mockTools } = await import('./mock-record')
+    for (const event of mockTools()) {
+      await new Promise((resolve) => setTimeout(resolve, 550))
+      onTool(event)
+    }
+    await new Promise((resolve) => setTimeout(resolve, 400))
     return mockAnswer(id)
   }
 
-  const body = await request<{ messages: ChatMessage[] }>(`/api/records/${encodeURIComponent(id)}/chat`, {
+  const response = await fetch(`/api/records/${encodeURIComponent(id)}/chat`, {
     method: 'POST',
+    credentials: 'include',
+    headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ question, history })
   })
 
-  return body.messages
+  if (!response.ok || !response.body) {
+    const body = (await response.json().catch(() => null)) as { error?: { code: string; message: string } } | null
+    throw new ApiError(
+      body?.error?.code ?? 'unknown',
+      body?.error?.message ?? 'The assistant could not answer that.',
+      response.status
+    )
+  }
+
+  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
+  let buffer = ''
+  let messages: ChatMessage[] = []
+  let failure: string | null = null
+
+  const consume = (frame: SseFrame) => {
+    if (frame.event === 'tool') onTool(JSON.parse(frame.data) as ToolEvent)
+    if (frame.event === 'messages') messages = (JSON.parse(frame.data) as { messages: ChatMessage[] }).messages
+    if (frame.event === 'failed') failure = (JSON.parse(frame.data) as { message: string }).message
+  }
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+
+    buffer += value
+    const { frames, rest } = takeFrames(buffer)
+    buffer = rest
+    for (const frame of frames) consume(frame)
+  }
+
+  // The tail, because a stream that closes straight after its last write leaves that frame without
+  // the blank line that would have completed it — and that frame is the answer.
+  const tail = readFrame(buffer)
+  if (tail) consume(tail)
+
+  if (failure) throw new ApiError('agent_failed', failure, 502)
+
+  // A stream that ends carrying neither event is a dropped connection, not an empty answer. Without
+  // this the transcript would simply gain nothing and the reader would be left watching a question
+  // that never got a reply.
+  if (messages.length === 0) {
+    throw new ApiError('agent_failed', 'The answer did not arrive. Try asking again.', 502)
+  }
+
+  return messages
 }
 
 export async function getSample(): Promise<RecordDetail> {

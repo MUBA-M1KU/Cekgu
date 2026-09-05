@@ -79,10 +79,7 @@ https://x.com/Cekgu0903
 
 ## Demo video URL
 
-[Cekgu demo video (unlisted)](https://youtu.be/WjDuKuTG4Rk)
-
-Uploaded to the team's YouTube account on 5 September 2026. The 1:56 MP4 is the production-URL demo required by issue
-#47; the visibility is Unlisted for Devfolio review.
+https://youtu.be/zFASN69yQr8
 
 ## Team
 
@@ -120,5 +117,5 @@ The images are direct Playwright captures, not generated stand-ins. Preserve thi
 - Deadline: 5 September 2026 at 23:59 MYT; do not rely on Devfolio's later countdown
 - Drive folder: <https://drive.google.com/drive/folders/1MxznywqLC6gTLZecfbg5HO9vPxwtFDKg?usp=sharing>
 - Collected: final cover, five exported product screenshots and three LinkedIn URLs in Drive
-- Demo video: [unlisted YouTube link](https://youtu.be/WjDuKuTG4Rk)
+- Missing: demo video URL
 - Final check: links open, assets render, track is selected, team roster is correct and no placeholder text remains

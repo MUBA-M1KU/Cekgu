@@ -37,6 +37,9 @@
   --shadow-overlay-tint: light-dark(rgb(20 24 31 / 0.2), rgb(0 0 0 / 0.5));
   --shadow-sheet: 0 1px 2px var(--shadow-tint);
   --shadow-overlay: 0 12px 32px var(--shadow-overlay-tint);
+  /* For something resting on a surface rather than floating above the page: the readers' caption
+     inside the summary card. Sized down from --shadow-overlay, which is a modal's shadow. */
+  --shadow-soft: 0 2px 10px light-dark(rgb(20 24 31 / 0.07), rgb(0 0 0 / 0.3));
 }
 
 :root[data-theme="light"] {
@@ -946,14 +949,12 @@ section[id] {
 }
 
 /* ---------------------------------------------------------------------------------------------
-   The post-authentication shell: a sidebar that stays where you put it, a topbar that floats as
-   its own card, the content grid and a one-line footer.
+   The post-authentication shell: a sidebar that rests as a rail and peeks open, a topbar that
+   floats as its own card, the content grid and a one-line footer.
 
-   The rail this replaces opened on hover and dimmed the whole page behind itself while it did.
-   That is a menu pretending to be navigation: the labels were unreadable until the pointer was
-   already on top of them, so the first click of every session was a guess at four glyphs, and the
-   backdrop made a hover look like a modal. The sidebar is now a surface with a state a person
-   sets, and the topbar carries the control that sets it. */
+   The rail peeks while the pointer or keyboard focus is in it, widening over the page behind a
+   light scrim, and settles back when they leave. Pinning it wide from the topbar's control is the
+   answer for anyone who wants the labels there all the time, and the pin is remembered. */
 
 /* The footer is the same height wherever it is mounted, so the token is declared once for both the
    app shell and the landing's in-flow copy rather than owned by the shell. */
@@ -984,9 +985,11 @@ section[id] {
   background: var(--sheet);
   /* Animating width is what the usual advice forbids, and the detector flags it. Declined on
      purpose, twice over: a 3.75rem rail that becomes 15.5rem IS a width change, and faking it with
-     a transform would scale the icons it exists to leave still. It fires once, on a deliberate
-     click, never on hover or scroll. */
-  transition: width var(--t-panel) var(--ease-out);
+     a transform would scale the icons it exists to leave still. It fires on the pin and on the
+     peek, never on scroll. */
+  transition:
+    width var(--t-panel) var(--ease-out),
+    box-shadow var(--t-panel) var(--ease-out);
 }
 
 .app-sidebar-logo {
@@ -1103,6 +1106,51 @@ section[id] {
   flex: none;
   padding: var(--s-3) 0 var(--s-4);
   border-top: 1px solid var(--rule);
+}
+
+/* Behind the peeking rail: the page dims and softens a little, so the rail reads as the layer in
+   front rather than a wider column, and it settles back with the rail. Never interactive, so it
+   can sit over the page at all times and only ever changes opacity. */
+.app-peek-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 39;
+  background: light-dark(rgb(20 24 31 / 0.12), rgb(0 0 0 / 0.3));
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--t-panel) var(--ease-out),
+    visibility var(--t-panel);
+}
+
+/* The peek. A rail is four glyphs, so while the pointer or keyboard focus is in it the rail widens
+   over the page and settles back when they leave. The page itself does not move: --side-w stays
+   the rail's, and the scrim behind the rail is what says the page is not where the attention is.
+   Focus opens it through :focus-visible rather than :focus-within, because a mouse click leaves
+   focus on the link it followed and :focus-within held the old rail open after the pointer had
+   gone (#195). Every rule that opens it does so on the one selector, which styles.test.ts counts. */
+@media (min-width: 48rem) {
+  .app-shell[data-side="collapsed"] .app-sidebar:is(:hover, :has(:focus-visible)) {
+    width: 15.5rem;
+    box-shadow: var(--shadow-overlay);
+  }
+
+  .app-shell[data-side="collapsed"] .app-sidebar:is(:hover, :has(:focus-visible)) .app-sidebar-text {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .app-shell[data-side="collapsed"] .app-sidebar:is(:hover, :has(:focus-visible)) .app-sidebar-head hr {
+    display: none;
+  }
+
+  .app-shell[data-side="collapsed"] .app-sidebar:is(:hover, :has(:focus-visible)) ~ .app-peek-scrim {
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
 /* The topbar is a card floating on the page rather than a bar welded to the top of it, which is
@@ -1370,6 +1418,15 @@ section[id] {
    plus its own offset, or it sits on top of the Trust and Privacy link. */
 .public-footer .app-footer-inner {
   padding-inline-end: calc(2.75rem + var(--s-5) * 2);
+}
+
+/* The public footer's fourth row. Right aligned with the rest of the block, wrapping rather than
+   overflowing on a narrow window. */
+.app-footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--s-2) var(--s-4);
 }
 
 .app-footer-brand {
@@ -1914,6 +1971,32 @@ section[id] {
     box-shadow: inset 2px 0 0 0 var(--ink);
   }
 
+  /* The same table inside a well, which is where the evidence panel puts it. The head's own well
+     would be painting one recess onto an identical one, so it drops out and the hairline carries
+     the separation on its own. Not the sheet the chips take on a tile: a chip is an object that has
+     to stay legible against the recess, a column head is a label and reads from its weight and its
+     rule. */
+  /* The padding is the other half of sitting in a well. Eight columns inside a card inside a well
+     is 898 px of usable width at 1920, so this table scrolls sideways before anything is wrong with
+     it, and the row padding below is vertical clearance for the status chips two of these columns
+     carry. Only the vertical half earns its place here: a left gutter on every cell bought no
+     clearance and cost 128 px of width, taking the horizontal overflow from 135 px to 279 px and
+     pushing View Receipt off the visible edge. The columns keep the right-hand gutter they always
+     had and spend nothing on a left one. */
+  .data-table[data-surface="well"] thead th {
+    padding: var(--s-2) var(--s-4) var(--s-2) 0;
+    background: transparent;
+  }
+
+  .data-table[data-surface="well"] tbody td {
+    padding: var(--s-4) var(--s-4) var(--s-4) 0;
+  }
+
+  .data-table[data-surface="well"] thead th:last-child,
+  .data-table[data-surface="well"] tbody td:last-child {
+    padding-right: 0;
+  }
+
   .num {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums slashed-zero;
@@ -2410,6 +2493,73 @@ section[id] {
     .guest-drawer {
       margin-inline: var(--s-3);
     }
+  }
+
+  /* -------------------------------------------------------------------------------------------
+     An explanation that costs no space until it is asked for.
+
+     A one-sentence gloss that a reader needs once and then never again — what a disposition means,
+     why a rejected attempt is still listed — is expensive printed and cheap on hover. Printing them
+     is how the disposition list reached 300 px on every flagged item.
+
+     ::after rather than the title attribute, which waits about a second, cannot be styled, ignores
+     the theme, and never appears for a keyboard. The element carrying data-tip has to be focusable
+     for the keyboard half to work: a button, or a label wrapping a control. */
+  [data-tip] {
+    position: relative;
+  }
+
+  [data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + var(--s-2));
+    left: 50%;
+    z-index: 30;
+    width: max-content;
+    max-width: 20rem;
+    padding: var(--s-2) var(--s-3);
+    transform: translateX(-50%);
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--r-control);
+    background: var(--sheet);
+    box-shadow: var(--shadow-soft);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.45;
+    text-align: left;
+    text-transform: none;
+    letter-spacing: normal;
+    white-space: normal;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--t-quick) var(--ease-out);
+  }
+
+  [data-tip]:hover::after,
+  [data-tip]:focus-visible::after,
+  [data-tip]:has(:focus-visible)::after {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* The mark that carries one. Sized to the eyebrow it sits beside, and muted until asked for, so a
+     heading gains an explanation without gaining a second thing to look at. */
+  .attempts-tip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition: color var(--t-quick) var(--ease-out);
+  }
+
+  .attempts-tip:hover {
+    color: var(--ink);
   }
 
   /* -------------------------------------------------------------------------------------------

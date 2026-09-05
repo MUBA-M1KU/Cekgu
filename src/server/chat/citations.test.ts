@@ -84,8 +84,42 @@ describe('citationsIn', () => {
     expect(found[0]).toEqual({ kind: 'item', position: 4 })
   })
 
-  test('prose with no tokens produces none', () => {
+  test('prose with no tokens and no named question produces none', () => {
     expect(citationsIn('Both readers agreed.', record)).toEqual([])
+  })
+
+  // Measured on production: MiniMax answered correctly, named three items in prose, and emitted no
+  // tokens at all. A sentence about this record with nothing under it reads as ungrounded.
+  test('recovers an item named in prose when the model forgot the token', () => {
+    expect(citationsIn('Question 4 is flagged.', record)).toEqual([{ kind: 'item', position: 4 }])
+    expect(citationsIn('Item 4 came back Possible Key Error.', record)).toEqual([{ kind: 'item', position: 4 }])
+  })
+
+  test('recovers every position in a list', () => {
+    const many: RecordDetail = { ...record, items: [item, { ...item, id: 'i-9', position: 9 }] }
+
+    expect(citationsIn('Questions 4 and 9 are flagged.', many)).toEqual([
+      { kind: 'item', position: 4 },
+      { kind: 'item', position: 9 }
+    ])
+  })
+
+  // The recovery resolves against the record like every other citation, so a position that is not
+  // in this paper cannot become a pill however confidently it is named.
+  test('does not recover a question this record does not have', () => {
+    expect(citationsIn('Question 99 is flagged.', record)).toEqual([])
+  })
+
+  // Only item pills are recovered. A claim about what a reader said still needs the model to have
+  // cited that reader, because a reading pill carries a model name and a request id.
+  test('never invents a reading or a receipt from prose', () => {
+    const found = citationsIn('Reader A chose Queue on question 4, receipt req-aaa.', record)
+
+    expect(found).toEqual([{ kind: 'item', position: 4 }])
+  })
+
+  test('a prose mention and its token do not double up', () => {
+    expect(citationsIn('Question 4 is flagged. [item:4]', record)).toEqual([{ kind: 'item', position: 4 }])
   })
 })
 
@@ -130,5 +164,24 @@ describe('toMessages', () => {
     expect(messages).toHaveLength(1)
     expect(messages[0]?.role).toBe('agent')
     expect(messages[0]?.citations).toHaveLength(1)
+  })
+})
+
+describe('markdown', () => {
+  // MiniMax answered production with "**Possible key error on item 3:**" and the asterisks were
+  // rendered literally, because the transcript prints plain text.
+  test('drops emphasis the transcript would print literally', () => {
+    expect(stripTokens('**Possible key error on item 3:** both readers chose B.')).toBe(
+      'Possible key error on item 3: both readers chose B.'
+    )
+    expect(stripTokens('That is *defensible* either way.')).toBe('That is defensible either way.')
+  })
+
+  test('drops headings and bullet markers', () => {
+    expect(stripTokens('## Findings\n- item one\n- item two')).toBe('Findings\nitem one\nitem two')
+  })
+
+  test('leaves arithmetic and prose asterisks alone', () => {
+    expect(stripTokens('The rule is 2 * 3 = 6.')).toBe('The rule is 2 * 3 = 6.')
   })
 })

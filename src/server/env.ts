@@ -46,8 +46,12 @@ export const env = {
   // default is never gemini-3.5-flash-lite: TRD section 20 measured that id on 4 September as no
   // response across three attempts, a 60 s timeout, a 503 and a 90 s timeout.
   chat: {
-    provider: process.env.CHAT_PROVIDER === 'gonka' ? ('gonka' as const) : ('gemini' as const),
+    // Gonka is the default because it is the compliant path and, measured on production at 06:16 on
+    // 5 September, the only working one: the Gemini key answered 429 on three attempts spaced 45 s
+    // apart, which is quota rather than a burst limit. CHAT_PROVIDER=gemini switches back if the
+    // quota resets.
+    provider: process.env.CHAT_PROVIDER === 'gemini' ? ('gemini' as const) : ('gonka' as const),
     model:
-      optional('CHAT_MODEL') ?? (process.env.CHAT_PROVIDER === 'gonka' ? 'MiniMaxAI/MiniMax-M2.7' : 'gemini-2.5-flash')
+      optional('CHAT_MODEL') ?? (process.env.CHAT_PROVIDER === 'gemini' ? 'gemini-2.5-flash' : 'MiniMaxAI/MiniMax-M2.7')
   }
 }

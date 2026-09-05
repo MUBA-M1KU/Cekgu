@@ -171,7 +171,7 @@ Read `AGENTS.md` and `.agents/skills/VENDORED.md`. Short version:
   `impeccable` is the usual way this fails.
 - If `docs/DESIGN.md` exists, use it. Do not invent a second palette for the deck.
 - Anti-slop: no purple-to-blue gradient hero, no Inter as the safe default, nothing centre aligned by reflex.
-- Sentence case for headings and labels, per `docs/markdown-style.md`. UI chrome in the deck keeps TitleCase.
+- Sentence case for headings and labels, per `docs/reference/markdown-style.md`. UI chrome in the deck keeps TitleCase.
 
 ## Structure that works
 

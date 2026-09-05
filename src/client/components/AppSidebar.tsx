@@ -22,9 +22,9 @@ const GROUPS: { heading: string; items: RailItem[] }[] = [
 /**
  * The workspace sidebar.
  *
- * It holds the width the topbar's toggle sets and does not react to the pointer. The rail this
- * replaces expanded on hover and dimmed the page behind it while open, which meant the labels
- * were unreadable until the pointer was already on top of them and a hover looked like a modal.
+ * Pinned wide from the topbar's toggle it holds that width. As a rail it peeks: the pointer or
+ * keyboard focus arriving widens it over the page behind a light scrim, and leaving settles it
+ * back. Both live in styles.css, keyed off the rail itself, so a route change has no state to lose.
  *
  * `collapsed` only narrows it; the width itself lives on the shell as a custom property, so the
  * content and the footer follow it without either one measuring the sidebar.
