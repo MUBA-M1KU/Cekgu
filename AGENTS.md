@@ -244,7 +244,8 @@ Give it an absolute path, and resize before anything lands in the repo. Art dire
 
 ## How work ships
 
-**`main` is PR-gated. No stray commits.** `.claude/hooks/guard-git.sh` enforces it.
+**`main` is PR-gated. No stray commits.** Server-side branch protection (pull request required, force pushes and
+deletions blocked, admins included) enforces it; `.claude/hooks/guard-git.sh` enforces it locally.
 
 1. **Branch.** `<type>/<short-slug>`, matching the commit types below
 1. **Commit** in [Conventional Commits](https://www.conventionalcommits.org/) form: `<type>[scope]: <description>`, a

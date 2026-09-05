@@ -491,6 +491,12 @@ Artifact Registry Docker repository `cekgu` in the same region, at
 | Request timeout | 300 s                        | SSE connections in section 15 stay open; the client reconnects after this      |
 | Ingress, auth   | All traffic, unauthenticated | The app does its own auth; judges open the URL cold                            |
 
+**Every push to `main` deploys, and `--max-instances 1` means a rollout replaces the single instance.** Whatever it was
+serving dies with it (a chat answer mid-stream, a live check, a recording take); raising max instances does not help
+because the old revision still drains. Do not merge to `main` while anyone is recording, rehearsing or demoing, and
+batch merges into a window nobody is demoing against. A min-instances plus traffic-splitting change is the real fix and
+is deferred until after the event.
+
 **Why Cloud Run, and one region.** The team lead's GCP project is the account the team can reach by CLI today, and Cloud
 Run is the one managed runtime there that keeps a process alive between requests without a VM to patch. Singapore is the
 closest region to the Kuala Lumpur demo and to the Neon database, so the two hops the product cannot avoid, browser to
