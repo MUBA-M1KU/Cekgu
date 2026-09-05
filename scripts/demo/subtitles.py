@@ -106,7 +106,8 @@ def build(demo_dir):
         for index, (start, end, text) in enumerate(spans, 1)
     ]
     output = demo_dir / 'narration.srt'
-    output.write_text(f'{"\n\n".join(blocks)}\n', encoding='utf-8')
+    content = '\n\n'.join(blocks)
+    output.write_text(f'{content}\n', encoding='utf-8')
     print(f'built {len(blocks)} subtitle cards from {len(lines)} narration lines')
     return output
 
