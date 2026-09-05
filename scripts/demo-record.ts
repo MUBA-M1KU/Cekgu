@@ -1,8 +1,26 @@
+import { writeFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { createInterface } from 'node:readline'
 import { chromium, type Page } from 'playwright'
 
 const BASE_URL = process.env.DEMO_BASE_URL ?? 'https://cekgu-op7lf5dspq-as.a.run.app'
 const TOTAL_MS = 120_000
+
+// Nominal offsets of the nine shots, milliseconds from the start line. scripts/demo/schedule.py
+// and subtitles.py place the narration against these, so record.mjs and this driver write the
+// same beats.json shape whichever one captured the take.
+const BEATS = [
+  { name: 'shot-1', ms: 0 },
+  { name: 'shot-2', ms: 12_500 },
+  { name: 'shot-3', ms: 24_000 },
+  { name: 'shot-4', ms: 37_000 },
+  { name: 'shot-5', ms: 54_000 },
+  { name: 'shot-6', ms: 74_000 },
+  { name: 'shot-7', ms: 88_000 },
+  { name: 'shot-8', ms: 101_000 },
+  { name: 'shot-9', ms: 114_000 },
+  { name: 'end', ms: TOTAL_MS }
+]
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -106,28 +124,13 @@ try {
   await page.getByRole('link', { name: 'Try Cekgu Free' }).waitFor()
   await at(start, TOTAL_MS)
 
-  // Write beats.json with timeline offsets.
-  const beats = [
-    { name: 'shot-1', ms: 0 },
-    { name: 'shot-2', ms: 12_500 },
-    { name: 'shot-3', ms: 15_500 },
-    { name: 'shot-4', ms: 24_000 },
-    { name: 'shot-5', ms: 37_000 },
-    { name: 'shot-6', ms: 54_000 },
-    { name: 'shot-7', ms: 74_000 },
-    { name: 'shot-8', ms: 88_000 },
-    { name: 'shot-9', ms: 101_000 },
-    { name: 'end', ms: TOTAL_MS }
-  ]
-
-  const { writeFileSync } = await import('node:fs')
-  const { dirname } = await import('node:path')
-  const outputDir = dirname(new URL(import.meta.url).pathname.slice(1))
-  const beatsPath = `${outputDir}/demo/beats.json`
-
-  writeFileSync(beatsPath, JSON.stringify(beats, null, 2))
-  console.log('DONE: 120-second demo timeline completed.')
+  const beatsPath = join(import.meta.dir, 'demo', 'beats.json')
+  writeFileSync(beatsPath, `${JSON.stringify(BEATS, null, 2)}\n`)
+  console.log(`DONE: 120-second demo timeline completed. Beats written to ${beatsPath}`)
+} catch (error) {
+  console.error(error)
+  process.exitCode = 1
 } finally {
   await browser.close()
-  process.exit(0)
+  process.exit(process.exitCode ?? 0)
 }
