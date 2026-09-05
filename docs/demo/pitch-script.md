@@ -9,7 +9,6 @@ recorded separately. Owned by the `pitch-smith` subagent
 > theme and architecture or just the system, the organiser answered: more on the system, the demonstration of it
 > ([opening ceremony, 00:39](../source/opening-ceremony-transcript.md)). So the deck does not appear in it at all.
 >
-> The five-minute stage script and its Q&A now live in [`../archive/pitch-script.md`](../archive/pitch-script.md).
 > Recording this is issue #47.
 
 ## Before you record
