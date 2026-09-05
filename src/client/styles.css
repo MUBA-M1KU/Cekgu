@@ -2683,4 +2683,89 @@ section[id] {
   .attention-line[data-none="true"] .attention-figure {
     color: var(--ink);
   }
+
+  /* The Truth Score. It sits above the verdict chips because it is the summary OF them, and a
+     summary printed under its own detail reads as a footnote. */
+  .truth-score {
+    padding-block-end: var(--s-4);
+    margin-block-end: var(--s-4);
+    border-block-end: 1px solid var(--rule);
+  }
+
+  .truth-score-caption {
+    color: var(--ink-muted);
+  }
+
+  .truth-score-figure {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-1);
+    margin-block-start: var(--s-2);
+    font-family: var(--font-mono);
+    font-size: 2.75rem;
+    line-height: 1;
+    font-variant-numeric: tabular-nums slashed-zero;
+    letter-spacing: -0.03em;
+    color: var(--score);
+  }
+
+  /* The denominator is not the number, so it does not get the number's weight. */
+  .truth-score-of {
+    font-size: 1rem;
+    letter-spacing: 0;
+    color: var(--ink-muted);
+  }
+
+  .truth-score-track {
+    /* Capped: across a full-width card a 6px rule stretched past 1000px stops reading as a
+       measurement and starts reading as a divider. */
+    max-inline-size: 280px;
+    block-size: 6px;
+    margin-block-start: var(--s-3);
+    background: var(--rule);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .truth-score-fill {
+    display: block;
+    block-size: 100%;
+    background: var(--score);
+  }
+
+  .truth-score-basis {
+    margin-block-start: var(--s-2);
+    color: var(--ink-muted);
+  }
+
+  .truth-score-empty {
+    margin-block-start: var(--s-2);
+    font-family: var(--font-ui);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+
+  /* The item mark. A short rule rather than a second chip, so the row still has exactly one
+     element shaped like a verdict. */
+  .truth-score-mark {
+    display: inline-flex;
+    align-items: baseline;
+    /* Fixed width and flush right, so a two-digit score and a three-digit one do not shunt the
+       verdict chip beside them and leave the column visibly ragged down the page. */
+    justify-content: flex-end;
+    min-inline-size: 4rem;
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums slashed-zero;
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+
+  .truth-score-mark-value {
+    color: var(--score);
+  }
+
+  .truth-score-mark-of {
+    color: var(--ink-muted);
+  }
 }

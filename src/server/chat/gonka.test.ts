@@ -15,6 +15,7 @@ const record: RecordDetail = {
   isSample: false,
   expiresAt: null,
   counts: { clear: 1, possible_key_error: 0, possible_ambiguity: 0, split_opinion: 0, unverified: 0, pending: 0 },
+  truthScore: { score: null, scored: 0, total: 0 },
   items: []
 }
 

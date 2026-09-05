@@ -10,6 +10,7 @@ import type { TracedTool } from '../chat/ToolTrace'
 import { Card, CardBody, CardHead } from '../components/Card'
 import { ItemRow } from '../components/ItemRow'
 import { StatusChip } from '../components/StatusChip'
+import { TruthScoreSummary } from '../components/TruthScore'
 import { ATTENTION_VERDICTS, VerdictFilters } from '../components/VerdictFilters'
 import { Mascot } from '../mascot/Mascot'
 import { count } from '../plural'
@@ -212,6 +213,9 @@ export function RecordWorkspace() {
           <Card className="sticky-rail">
             <CardHead title="Summary" />
             <CardBody>
+              {/* The score first, then the chips it was drawn from. It is a summary of them, and
+                  a summary printed under its own detail reads as a footnote. */}
+              <TruthScoreSummary score={record.truthScore} />
               {/* The chips are both the counts and the filter, so the same numbers are never printed
                   twice. DESIGN.md Layout. */}
               <VerdictFilters counts={record.counts} active={filter} onChange={setFilter} />

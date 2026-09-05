@@ -5,6 +5,7 @@ import { getSample } from '../api'
 import { Card, CardBody, CardHead } from '../components/Card'
 import { ItemRow } from '../components/ItemRow'
 import { ArrowRightIcon } from '../components/icons'
+import { TruthScoreSummary } from '../components/TruthScore'
 import { VerdictFilters } from '../components/VerdictFilters'
 import { count } from '../plural'
 
@@ -93,6 +94,7 @@ export function SampleReport() {
             }
           />
           <CardBody>
+            <TruthScoreSummary score={record.truthScore} />
             <VerdictFilters counts={record.counts} active={filter} onChange={setFilter} />
           </CardBody>
         </Card>

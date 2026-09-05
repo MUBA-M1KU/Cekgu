@@ -1,6 +1,7 @@
 import type { ChatMessage, Citation, Seat } from '../shared/chat'
 import { seatedAttempts } from '../shared/chat'
 import type { DispositionInput } from '../shared/schemas'
+import { recordScore, truthScore } from '../shared/truth-score'
 import type { AccountStats, Attempt, Item, Reading, RecordDetail, RecordSummary, VerdictCounts } from '../shared/types'
 import { verdict } from '../shared/verdict'
 
@@ -162,6 +163,7 @@ function buildItem(position: number, spec: Spec): Item {
     status: 'done',
     verdict: decided.verdict,
     verdictReason: decided.reason,
+    truthScore: truthScore(admitted, spec.key),
     attemptsUsed: attempts.length,
     attempts,
     dispositions: []
@@ -321,6 +323,7 @@ export function mockRecord(id: string): RecordDetail {
     isSample: true,
     expiresAt: null,
     counts: countBy(items),
+    truthScore: recordScore(items.map((item) => item.truthScore)),
     items: items.map((item) => ({ ...item }))
   }
 }

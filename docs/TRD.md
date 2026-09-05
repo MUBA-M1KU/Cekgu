@@ -1024,6 +1024,49 @@ Key Error** on the shared answer; the reason text names the single reader's seco
 **The rule must be unit-tested before any UI is written.** The table above is the test case list, plus the two edge
 cases: same model twice (Unverified) and a `defensible` list that omits `answer` (treated as if it included it).
 
+### Truth Score
+
+The track brief asks for a Truth Score from 0 to 100. `src/shared/truth-score.ts` computes one over the **same pair**
+`firstDistinctPair` hands the verdict rule, so a score can never contradict the verdict shown beside it. No gateway call
+is made: a model's own confidence report is not evidence, no receipt could back it, and putting one on the critical path
+would cost a second inference per item for a number nobody could check.
+
+Each of the two readings contributes between 0 and 1. Commitment is worth 0.5, and the remaining 0.5 is divided by the
+number of options that reading would defend:
+
+| The reading                                      | Contributes   |
+| ------------------------------------------------ | ------------- |
+| Answered the key, defends only the key           | `1.0`         |
+| Answered the key, defends `n` options            | `0.5 + 0.5/n` |
+| Answered another option, still defends the key   | `0.5/n`       |
+| Answered another option, will not defend the key | `0`           |
+
+The item score is the mean of the two, times 100, rounded. `defensible` is normalised through the same `defensibleOf`
+the rule uses, so a list omitting its own `answer` is treated as if it included it.
+
+This makes the score monotone with the verdict ladder while still separating items inside one verdict: two Clear items
+score 100 and 88 when one of them had a reader that hedged, which is information the categorical verdict cannot carry.
+
+| Situation                                           | Verdict            | Score |
+| --------------------------------------------------- | ------------------ | ----- |
+| Both chose the key, neither hedged                  | Clear              | `100` |
+| Both chose the key, one hedged across two           | Clear              | `88`  |
+| Both chose the key, both hedged across two          | Possible Ambiguity | `75`  |
+| One chose the key, the other will not defend it     | Split Opinion      | `50`  |
+| Both chose the same non-key option, both defend key | Possible Key Error | `25`  |
+| Both chose the same non-key option, neither defends | Possible Key Error | `0`   |
+
+**Unverified scores `null`, never 0.** 0 is what two readers agreeing against the key earns; an item nobody could read
+has not earned it, and collapsing the two would let a gateway outage read on screen as a paper full of wrong keys.
+
+`recordScore` averages the items that have a score and returns `{ score, scored, total }`. All three travel together and
+the UI prints the denominator, because three verified items out of twelve can average 100 and that number alone would
+describe nine items nobody read.
+
+The score is **derived in the read path** (`src/server/records/queries.ts`), not stored, so no column can drift from the
+attempts underneath it. Attempts are selected newest-first for the evidence view, so the readings are re-sorted on
+`finishedAt` ascending to recover the order the round produced them before the pair is chosen.
+
 ## 15. API contracts
 
 All routes are JSON under `/api`, require a session cookie unless marked public, and validate bodies with the zod
@@ -1104,6 +1147,7 @@ the polling fallback for the events route.
     "unverified": 1,
     "pending": 0
   },
+  "truthScore": { "score": 79, "scored": 11, "total": 12 },
   "items": [
     {
       "id": "<uuid>",
@@ -1114,6 +1158,7 @@ the polling fallback for the events route.
       "status": "done",
       "verdict": "possible_key_error",
       "verdictReason": "Both readers chose B. The supplied key is A.",
+      "truthScore": 0,
       "attemptsUsed": 2,
       "attempts": [
         {

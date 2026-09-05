@@ -146,6 +146,17 @@ The product is built for practice papers and synthetic examples, not for confide
    | **Clear**              | Both readers chose the supplied key.                                          |
    | **Possible Key Error** | Both readers agreed on the same option, and it is not the key.                |
 
+1. **A score puts a number on it.** The same two readings produce a Truth Score from 0 to 100, shown on the record and
+   on every item. A reader's commitment to an option is worth half the weight and the rest is split across the options
+   it would still defend, so a hedge costs the key something without erasing the commitment. It is computed in
+   `src/shared/truth-score.ts` from readings already on the record — no extra inference call, and no model asked how
+   confident it feels, because a model's report about itself is not evidence and no receipt could back it.
+
+   The number says how much of the verified reader agreement backs the supplied key. It is not a claim that the question
+   is correct. An **Unverified** item scores null rather than 0: 0 is what two readers agreeing against the key earns,
+   and an item nobody could read has not earned it. The record figure always prints its own denominator, because three
+   verified items out of twelve can average 100 and printing that alone would describe nine items nobody read.
+
 1. **A human decides.** The verdict is an attention signal, not a mark. The educator records what they did about it:
    corrected the key, revised the wording, confirmed the key, dismissed the flag, or asked for a retry. That decision is
    stored with the item.
@@ -171,7 +182,8 @@ The product is built for practice papers and synthetic examples, not for confide
   gateway sends no CORS header and a browser cannot fetch it directly. The receipt viewer distinguishes a receipt that
   does not exist from a gateway it could not reach.
 - **Explicit consensus.** The five-outcome rule above is a pure function in `src/shared/verdict.ts` with the reason
-  sentence it produced shown next to the verdict.
+  sentence it produced shown next to the verdict. The Truth Score beside it is a second pure function over the same two
+  readings, so a score can never disagree with the verdict printed next to it.
 
 **The checking pipeline.**
 

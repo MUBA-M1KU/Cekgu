@@ -55,3 +55,6 @@ playwright-report/
 
 # Playwright MCP scratch output, machine-local
 .playwright-mcp/
+
+# Agent scratch: audits and working notes, never part of the repo
+.tmp/

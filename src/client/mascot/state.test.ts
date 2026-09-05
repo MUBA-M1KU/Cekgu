@@ -25,6 +25,7 @@ function item({ id, verdict, dispositions = 0 }: ItemSpec, position: number): It
     status: verdict === 'pending' ? 'running' : 'done',
     verdict,
     verdictReason: null,
+    truthScore: null,
     attemptsUsed: 0,
     attempts: [],
     dispositions: Array.from({ length: dispositions }, (_, index) => disposition(index))
@@ -53,6 +54,7 @@ function record(status: RecordStatus, specs: ItemSpec[]): RecordDetail {
     isSample: false,
     expiresAt: null,
     counts,
+    truthScore: { score: null, scored: 0, total: 0 },
     items
   }
 }

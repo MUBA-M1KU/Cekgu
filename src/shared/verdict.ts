@@ -8,13 +8,13 @@ import type { Option, Reading, Verdict } from './types'
 const UNVERIFIED = 'Fewer than two distinct, receipt-verified readings survived, so no verdict is given.'
 
 // A reading that omits its own answer from defensible is treated as if it included it.
-const defensibleOf = (reading: Reading): string[] =>
+export const defensibleOf = (reading: Reading): string[] =>
   reading.defensible.includes(reading.answer)
     ? [...new Set(reading.defensible)]
     : [...new Set([reading.answer, ...reading.defensible])]
 
 // Distinctness is by the receipt model carried on the reading, never by the model requested.
-const firstDistinctPair = (readings: Reading[]): [Reading, Reading] | null => {
+export const firstDistinctPair = (readings: Reading[]): [Reading, Reading] | null => {
   const [first, ...rest] = readings
   if (!first) return null
 

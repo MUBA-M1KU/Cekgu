@@ -49,12 +49,17 @@ export type Item = {
   status: ItemStatus
   verdict: ItemVerdict
   verdictReason: string | null
+  /** 0 to 100, or null when the verdict is Unverified. See truth-score.ts. */
+  truthScore: number | null
   attemptsUsed: number
   attempts: Attempt[]
   dispositions: Disposition[]
 }
 
 export type VerdictCounts = Record<ItemVerdict, number>
+
+/** A record's Truth Score beside the item counts it was drawn from. See truth-score.ts. */
+export type RecordScore = { score: number | null; scored: number; total: number }
 
 export type RecordSummary = {
   id: string
@@ -78,6 +83,8 @@ export type RecordDetail = {
   isSample: boolean
   expiresAt: string | null
   counts: VerdictCounts
+  /** The mean of the items that have a score, with how many of them there were. */
+  truthScore: RecordScore
   items: Item[]
 }
 
