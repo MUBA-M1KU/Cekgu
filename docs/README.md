@@ -84,18 +84,7 @@ The product is built for practice papers and synthetic examples, not for confide
 
 ### Demo Video
 
-Four and a half minutes: the product walked end to end, then the case for it. Request ids and receipts are on screen
-throughout, because they are the claim.
-
-<a href="https://github.com/MUBA-M1KU/Cekgu/releases/download/demo-video-v1/Cekgu-Demo-Full.mp4">
-  <img src="assets/demo-poster.jpg" alt="Play the Cekgu demo video" width="100%">
-</a>
-
-<sub>
-  <a href="https://github.com/MUBA-M1KU/Cekgu/releases/download/demo-video-v1/Cekgu-Demo-Full.mp4">Download the film
-  (33 MB)</a> &middot; 1:55 live walkthrough, then 2:35 of deck &middot; 1920&times;1080, narrated, subtitles burned in.
-  It is a release asset rather than a committed file: media stays out of the repository, so a clone does not carry it.
-</sub>
+https://github.com/user-attachments/assets/877946c5-7eb4-4c2a-91ad-ca1127363ff4
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
