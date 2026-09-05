@@ -10,7 +10,9 @@ Contents:
 1. [Install Kokoro once](#install-kokoro-once)
 1. [Recorder contract](#recorder-contract)
 1. [Assemble the deck](#assemble-the-deck)
+1. [Assemble the deck alone](#assemble-the-deck-alone)
 1. [Narrate and subtitle](#narrate-and-subtitle)
+1. [Narrate with a cloned voice](#narrate-with-a-cloned-voice)
 1. [Environment overrides](#environment-overrides)
 1. [Verify the result](#verify-the-result)
 1. [Troubleshooting](#troubleshooting)
@@ -137,6 +139,49 @@ It also writes `$DEMO_DIR/slides.json` and extends `beats.json` with one beat pe
 distributed across the slide pages. Each slide must receive at least five seconds; assembly stops if the capture is too
 long for that floor.
 
+## Assemble the deck alone
+
+Use this when the product walkthrough was recorded somewhere else and only the slide half needs making. `assemble.sh` is
+still the path when one run produces both halves.
+
+Two differences from `assemble.sh` matter. It takes no browser capture, so the timeline starts at the first slide. And
+it shoots the slides from `pitch-deck.html` with Playwright rather than rendering `pitch-deck.pdf`, so the deck that
+ships is whatever the HTML currently says.
+
+```bash
+export DEMO_DIR="$(mktemp -d -t cekgu-deck.XXXXXX)"
+DECK_HTML="$PWD/docs/demo/pitch-deck.html" DECK_SHOTS="$DEMO_DIR/shots" bun scripts/demo/shoot-deck.mjs
+bash scripts/demo/assemble-deck.sh
+```
+
+`shoot-deck.mjs` captures one 1920x1080 still per slide, waiting past the staggered reveals so nothing is caught
+mid-transition. `assemble-deck.sh` then sizes each slide to the narration it carries, joins the stills with a crossfade,
+and writes `$DEMO_DIR/deck-silent.mp4` plus a `beats.json` that `narrate.sh` reads unchanged.
+
+**Slide length comes from the narration, not from a weight table.** Each slide outlasts its own sentences, and whatever
+is left against `DECK_TARGET_MS` is shared out evenly. That needs the narration rendered first, into `DECK_SEGMENTS` as
+`0.wav`, `1.wav` and so on in script order:
+
+```bash
+mkdir -p "$DEMO_DIR/deck-segments"
+grep -E '^slide-' scripts/demo/narration.txt > "$DEMO_DIR/deck-narration.txt"
+index=0
+while IFS='|' read -r beat offset text; do
+  printf '%s' "${text# }" | "$DEMO_PYTHON" "$DEMO_SPEAK" "$DEMO_DIR/deck-segments/$index.wav"
+  index=$((index + 1))
+done < "$DEMO_DIR/deck-narration.txt"
+```
+
+Only the `slide-` lines are spoken. The `shot-` lines belong to the recorded walkthrough, which carries its own voice
+already, so speaking them over the slides would double the audio.
+
+Then narrate as usual, pointing the narrator at the deck video and the deck script:
+
+```bash
+DEMO_SOURCE="$DEMO_DIR/deck-silent.mp4" DEMO_OUT="$DEMO_DIR/deck.mp4" \
+  DEMO_SCRIPT="$DEMO_DIR/deck-narration.txt" bash scripts/demo/narrate.sh
+```
+
 ## Narrate and subtitle
 
 Run assembly first, then:
@@ -166,27 +211,82 @@ The narrator writes these scratch artifacts:
 - `$DEMO_DIR/narration.wav`, the mixed narration timeline
 - `$DEMO_DIR/cekgu-demo.mp4`, the final H.264/AAC video
 
+## Narrate with a cloned voice
+
+`speak.py` renders Kokoro's generic `af_heart`. `speak-chatterbox.py` is a drop-in that clones a voice from a reference
+recording instead, honouring the same contract: the WAV path as its argument, the text on stdin, PCM_16 out.
+
+**Read the cost warning at the end of this section before choosing it.**
+
+Install it beside Kokoro rather than over it:
+
+```bash
+export CHATTERBOX_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/cekgu-video/chatterbox"
+uv venv --python 3.11 "$CHATTERBOX_HOME/.venv"
+uv pip install --python "$CHATTERBOX_HOME/.venv/bin/python" \
+  --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple \
+  --index-strategy unsafe-best-match torch torchaudio
+uv pip install --python "$CHATTERBOX_HOME/.venv/bin/python" chatterbox-tts soundfile "setuptools<81"
+```
+
+**The `setuptools<81` pin is required, and the failure it prevents is unhelpful.** Chatterbox's `perth` watermarker
+imports `pkg_resources`, which setuptools removed in version 81. Without the pin the model loads to
+`TypeError: 'NoneType' object is not callable`, which names neither package.
+
+The reference wants a short, clean, single-speaker clip, not a long recording. Cut one and normalise it:
+
+```bash
+ffmpeg -y -ss <start> -t 18 -i <source> -ac 1 -ar 24000 \
+  -af "highpass=f=60,afftdn=nf=-28,loudnorm=I=-20:TP=-2:LRA=9" voice-ref.wav
+```
+
+Then pre-render the whole script in one process before narrating:
+
+```bash
+export CHATTERBOX_VOICE="$PWD/voice-ref.wav"
+export DEMO_PYTHON="$CHATTERBOX_HOME/.venv/bin/python"
+export DEMO_SPEAK=scripts/demo/speak-chatterbox.py
+"$DEMO_PYTHON" "$DEMO_SPEAK" --batch "$DEMO_DIR/lines.json"
+bash scripts/demo/narrate.sh
+```
+
+The batch pass is what makes this usable at all. `narrate.sh` starts a new process per line, and the model load costs
+far more than one sentence of generation, so without a warm cache the model is loaded once per line. Rendered audio is
+cached by a hash of reference, speed and text, and the cache is checked before any heavy import.
+
+**Chatterbox is a GPU path.** Measured on an eight-core CPU with no GPU: roughly 3 seconds per sampling step against a
+limit of 1000 steps per line, which puts one narration line in the tens of minutes and a fourteen-line script far
+outside a working session. On CPU-only machines `speak.py` remains the default, and it is what the pipeline above
+assumes.
+
 ## Environment overrides
 
 The normal run only needs `DEMO_DIR` and `KOKORO_HOME`.
 
-| Variable               | Default                                       | Purpose                                      |
-| ---------------------- | --------------------------------------------- | -------------------------------------------- |
-| `DEMO_DIR`             | System temporary directory under `cekgu-demo` | All capture, intermediate, and final media   |
-| `DEMO_URL`             | Deployed Cekgu URL in `record.mjs`            | Product deployment to capture                |
-| `DEMO_DECK`            | `docs/demo/pitch-deck.pdf`                    | PDF whose pages are appended                 |
-| `DEMO_TOTAL_SECONDS`   | `285`                                         | Joined capture and deck duration             |
-| `KOKORO_HOME`          | `$XDG_DATA_HOME/cekgu-video/kokoro`           | Model, voices, and Kokoro Python environment |
-| `DEMO_VOICE`           | `af_heart`                                    | Kokoro voice                                 |
-| `DEMO_SPEED`           | `1.0`                                         | Kokoro speech speed                          |
-| `DEMO_LANGUAGE`        | `en-us`                                       | Kokoro language                              |
-| `DEMO_SCRIPT`          | `scripts/demo/narration.txt`                  | Beat-keyed narration text                    |
-| `DEMO_SOURCE`          | `$DEMO_DIR/capture-joined.mp4`                | Video that receives narration                |
-| `DEMO_OUT`             | `$DEMO_DIR/cekgu-demo.mp4`                    | Final MP4 path                               |
-| `DEMO_PYTHON`          | `$KOKORO_HOME/.venv/bin/python`               | Python executable with Kokoro installed      |
-| `DEMO_BROWSER_CHANNEL` | `chrome`                                      | Playwright browser channel                   |
-| `DEMO_HEADLESS`        | Headless unless set to `false`                | Show the recording browser                   |
-| `DEMO_STILLS`          | Enabled unless set to `0`                     | Save per-shot review frames                  |
+| Variable               | Default                                       | Purpose                                       |
+| ---------------------- | --------------------------------------------- | --------------------------------------------- |
+| `DEMO_DIR`             | System temporary directory under `cekgu-demo` | All capture, intermediate, and final media    |
+| `DEMO_URL`             | Deployed Cekgu URL in `record.mjs`            | Product deployment to capture                 |
+| `DEMO_DECK`            | `docs/demo/pitch-deck.pdf`                    | PDF whose pages are appended                  |
+| `DEMO_TOTAL_SECONDS`   | `285`                                         | Joined capture and deck duration              |
+| `KOKORO_HOME`          | `$XDG_DATA_HOME/cekgu-video/kokoro`           | Model, voices, and Kokoro Python environment  |
+| `DEMO_VOICE`           | `af_heart`                                    | Kokoro voice                                  |
+| `DEMO_SPEED`           | `1.0`                                         | Kokoro speech speed                           |
+| `DEMO_LANGUAGE`        | `en-us`                                       | Kokoro language                               |
+| `DEMO_SCRIPT`          | `scripts/demo/narration.txt`                  | Beat-keyed narration text                     |
+| `DEMO_SOURCE`          | `$DEMO_DIR/capture-joined.mp4`                | Video that receives narration                 |
+| `DEMO_OUT`             | `$DEMO_DIR/cekgu-demo.mp4`                    | Final MP4 path                                |
+| `DEMO_PYTHON`          | `$KOKORO_HOME/.venv/bin/python`               | Python executable with Kokoro installed       |
+| `DEMO_BROWSER_CHANNEL` | `chrome`                                      | Playwright browser channel                    |
+| `DECK_HTML`            | none, required by `shoot-deck.mjs`            | Deck HTML whose slides are captured           |
+| `DECK_SHOTS`           | `$DEMO_DIR/shots`                             | Captured slide stills                         |
+| `DECK_SEGMENTS`        | `$DEMO_DIR/deck-segments`                     | Pre-rendered deck narration, one WAV per line |
+| `DECK_TARGET_MS`       | `160000`                                      | Deck-only runtime the slides are paced to     |
+| `DECK_XFADE`           | `0.45`                                        | Crossfade seconds between slides              |
+| `CHATTERBOX_VOICE`     | none, required by `speak-chatterbox.py`       | Reference WAV the voice is cloned from        |
+| `CHATTERBOX_CACHE`     | `$DEMO_DIR/chatterbox-cache`                  | Rendered line cache, keyed by content         |
+| `DEMO_HEADLESS`        | Headless unless set to `false`                | Show the recording browser                    |
+| `DEMO_STILLS`          | Enabled unless set to `0`                     | Save per-shot review frames                   |
 
 `DEMO_FFMPEG`, `DEMO_FFPROBE`, `DEMO_PDFINFO`, and `DEMO_PDFTOPPM` may point to non-default command locations.
 `DEMO_PRESET` and `DEMO_FPS` override the H.264 preset and frame rate.
