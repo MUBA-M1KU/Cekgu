@@ -127,6 +127,12 @@ export const ChevronLeftIcon = (props: IconProps) => (
   </Icon>
 )
 
+export const CloseIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M5.5 5.5l9 9M14.5 5.5l-9 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+  </Icon>
+)
+
 // A reader speaking is the filled bubble the product already uses for a chosen option, with the
 // carry of a voice drawn off it. Muted keeps the bubble and cuts the carry, so the two glyphs read
 // as one state changing rather than two unrelated symbols.

@@ -1,5 +1,6 @@
 import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
+import { streamSSE } from 'hono/streaming'
 import type { ChatMessage } from '../../shared/chat'
 import { toMessages } from '../chat/citations'
 import { agentUnavailable, ask } from '../chat/gemini'
@@ -60,8 +61,23 @@ chatRoutes.post('/records/:id/chat', async (c) => {
         .map((entry) => String(entry.text))
     : []
 
-  const answer = await ask(detail, question, history)
-  if (!answer.ok) return c.json(invalid(answer.reason, 'agent_failed'), 502)
+  // Streamed rather than answered in one piece, so the tools the agent calls are visible while it
+  // is calling them. A grounded answer that arrives with no account of how it was found asks to be
+  // taken on trust, which is the one thing this product does not do.
+  return streamSSE(c, async (stream) => {
+    const answer = await ask(detail, question, history, (name, args) => {
+      const position = typeof args.position === 'number' ? args.position : null
+      void stream.writeSSE({ event: 'tool', data: JSON.stringify({ name, position }) })
+    })
 
-  return c.json({ messages: toMessages(answer.text, detail, answer.provenance) })
+    if (!answer.ok) {
+      await stream.writeSSE({ event: 'failed', data: JSON.stringify({ message: answer.reason }) })
+      return
+    }
+
+    await stream.writeSSE({
+      event: 'messages',
+      data: JSON.stringify({ messages: toMessages(answer.text, detail, answer.provenance) })
+    })
+  })
 })
