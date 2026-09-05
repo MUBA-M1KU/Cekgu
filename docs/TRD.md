@@ -412,8 +412,7 @@ precondition. The Anthropic surface is unused by the product; the base-URL rule 
 `env-drift` hook compares `.env` against it, so the two files change together. Two further variables exist in the
 server's environment and deliberately do not appear here: `MIGRATE_ON_START` and `WORKER_ENABLED`, both defaulting to
 on, which only a preview revision sets to `false`. They are explained in [section 10](#10-hosting-and-cicd), because
-they are a deployment concern rather than part of the contract a developer fills in. `WORKER_CONCURRENCY` appears above.
-`PORT` defaults to `8080`.
+they are a deployment concern rather than part of the contract a developer fills in. `PORT` defaults to `8080`.
 
 **Account state, 2026-08-29:** balance **20.00 USDT**, monthly cost 0.00 after 9 test requests and 1,011 tokens. Tokens
 are unlimited for the event; email Jack if the credit is ever exhausted.
