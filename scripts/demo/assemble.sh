@@ -45,7 +45,7 @@ video_filter="scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080
 : > "$work_dir/concat.txt"
 printf "file 'segment-capture.mp4'\n" >> "$work_dir/concat.txt"
 
-while IFS='|' read -r name duration_seconds; do
+while IFS='|' read -r name duration_seconds <&3; do
   page="${name#slide-}"
   frame="$work_dir/$name.png"
   segment="$work_dir/segment-$name.mp4"
@@ -54,7 +54,7 @@ while IFS='|' read -r name duration_seconds; do
   "$ffmpeg" -y -loglevel error -loop 1 -framerate "$fps" -i "$frame" -t "$duration_seconds" \
     -vf "fps=$fps,format=yuv420p" -an -c:v libx264 -preset "$preset" -crf 20 "$segment"
   printf "file 'segment-%s.mp4'\n" "$name" >> "$work_dir/concat.txt"
-done < <(python3 - "$demo_dir/slides.json" <<'PY'
+done 3< <(python3 - "$demo_dir/slides.json" <<'PY'
 import json
 import sys
 from pathlib import Path

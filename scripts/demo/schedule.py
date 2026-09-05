@@ -3,8 +3,10 @@
 
 import json
 import sys
+import wave
 from pathlib import Path
 
+GAP_MS = 260
 MIN_SLIDE_MS = 5_000
 SHOT_NAMES = [f'shot-{index}' for index in range(1, 10)]
 SLIDE_WEIGHTS = [10, 14, 13, 11, 18, 10, 14, 17, 18, 17, 10]
@@ -110,6 +112,72 @@ def apply_slides(demo_dir):
     return output
 
 
+def resolve_narration(demo_dir, script_path):
+    beats = validate_beats(read_json(demo_dir / 'beats.json'))
+    offsets = {beat['name']: beat['ms'] for beat in beats}
+    end_ms = offsets['end']
+    lines = []
+    for line_number, raw in enumerate(script_path.read_text(encoding='utf-8').splitlines(), 1):
+        source = raw.strip()
+        if not source or source.startswith('#'):
+            continue
+        parts = [part.strip() for part in source.split('|', 2)]
+        if len(parts) != 3:
+            raise ValueError(f'narration line {line_number} must be beat | offset_ms | text')
+        name, raw_offset, text = parts
+        if name not in offsets:
+            raise ValueError(f'unknown beat {name!r} on narration line {line_number}')
+        try:
+            offset_ms = int(raw_offset)
+        except ValueError as error:
+            raise ValueError(f'narration line {line_number} offset must be an integer') from error
+        if offset_ms < 0:
+            raise ValueError(f'narration line {line_number} offset must not be negative')
+        if not text:
+            raise ValueError(f'narration line {line_number} has no text')
+        ms = offsets[name] + offset_ms
+        if ms >= end_ms:
+            raise ValueError(f'narration line {line_number} starts at or after end')
+        lines.append({'beat': name, 'offset_ms': offset_ms, 'ms': ms, 'text': text})
+    if not lines:
+        raise ValueError('no narration lines resolved')
+    lines.sort(key=lambda line: line['ms'])
+    write_json(demo_dir / 'lines.json', lines)
+    return lines
+
+
+def wav_duration_ms(path):
+    with wave.open(str(path), 'rb') as audio:
+        if audio.getframerate() <= 0:
+            raise ValueError(f'{path.name} has no sample rate')
+        return round(audio.getnframes() * 1000 / audio.getframerate())
+
+
+def deconflict(demo_dir, gap_ms=GAP_MS):
+    lines = read_json(demo_dir / 'lines.json')
+    if not isinstance(lines, list) or not lines:
+        raise ValueError('lines.json must contain at least one narration line')
+    previous_end = None
+    shifted = 0
+    for index, line in enumerate(lines):
+        if not isinstance(line, dict) or not isinstance(line.get('ms'), int):
+            raise ValueError(f'narration line {index} must contain integer ms')
+        segment = demo_dir / 'narration-segments' / f'{index}.wav'
+        if not segment.is_file():
+            raise ValueError(f'missing narration segment {segment.name}')
+        duration_ms = wav_duration_ms(segment)
+        if duration_ms <= 0:
+            raise ValueError(f'narration segment {segment.name} is empty')
+        wanted_ms = line['ms']
+        if previous_end is not None and wanted_ms < previous_end + gap_ms:
+            line['ms'] = previous_end + gap_ms
+            shifted += 1
+        line['dur_ms'] = duration_ms
+        previous_end = line['ms'] + duration_ms
+    write_json(demo_dir / 'lines.json', lines)
+    return lines, shifted
+
+
 def parse_positive_int(value, label):
     try:
         parsed = int(value)
@@ -122,7 +190,10 @@ def parse_positive_int(value, label):
 
 def main(argv):
     if len(argv) < 3:
-        print('usage: schedule.py <plan-slides|apply-slides> <demo-dir> [arguments]', file=sys.stderr)
+        print(
+            'usage: schedule.py <plan-slides|apply-slides|resolve|deconflict> <demo-dir> [arguments]',
+            file=sys.stderr,
+        )
         return 2
 
     command = argv[1]
@@ -143,9 +214,19 @@ def main(argv):
                 raise ValueError('apply-slides takes only the demo directory')
             beats = apply_slides(demo_dir)
             print(f'extended beats.json to {beats[-1]["ms"]}ms')
+        elif command == 'resolve':
+            if len(argv) != 4:
+                raise ValueError('resolve needs the narration script path')
+            lines = resolve_narration(demo_dir, Path(argv[3]))
+            print(f'resolved {len(lines)} narration lines against measured beats')
+        elif command == 'deconflict':
+            if len(argv) != 3:
+                raise ValueError('deconflict takes only the demo directory')
+            lines, shifted = deconflict(demo_dir)
+            print(f'scheduled {len(lines)} narration lines; moved {shifted} to prevent overlap')
         else:
             raise ValueError(f'unknown command {command}')
-    except (FileNotFoundError, json.JSONDecodeError, ValueError) as error:
+    except (FileNotFoundError, json.JSONDecodeError, ValueError, wave.Error) as error:
         print(f'schedule failed: {error}', file=sys.stderr)
         return 1
     return 0
