@@ -1885,32 +1885,6 @@ section[id] {
     white-space: nowrap;
   }
 
-  /* The same table inside a well, which is where the evidence panel puts it. The head's own well
-     would be painting one recess onto an identical one, so it drops out and the hairline carries
-     the separation on its own. Not the sheet the chips take on a tile: a chip is an object that has
-     to stay legible against the recess, a column head is a label and reads from its weight and its
-     rule. */
-  /* The padding is the other half of sitting in a well. Eight columns inside a card inside a well
-     is 898 px of usable width at 1920, so this table scrolls sideways before anything is wrong with
-     it, and the row padding below is vertical clearance for the status chips two of these columns
-     carry. Only the vertical half earns its place here: a left gutter on every cell bought no
-     clearance and cost 128 px of width, taking the horizontal overflow from 135 px to 279 px and
-     pushing View Receipt off the visible edge. The columns keep the right-hand gutter they always
-     had and spend nothing on a left one. */
-  .data-table[data-surface="well"] thead th {
-    padding: var(--s-2) var(--s-4) var(--s-2) 0;
-    background: transparent;
-  }
-
-  .data-table[data-surface="well"] tbody td {
-    padding: var(--s-4) var(--s-4) var(--s-4) 0;
-  }
-
-  .data-table[data-surface="well"] thead th:last-child,
-  .data-table[data-surface="well"] tbody td:last-child {
-    padding-right: 0;
-  }
-
   /* A full step, not 11 px. A row here can hold a status chip, and a chip is a painted edge
      rather than a baseline: half its own height between it and the row rule reads as a crowded
      row, where the same gap under plain text reads as fine. */
@@ -1941,6 +1915,32 @@ section[id] {
   .data-table tbody tr[data-selected="true"] {
     background: var(--well);
     box-shadow: inset 2px 0 0 0 var(--ink);
+  }
+
+  /* The same table inside a well, which is where the evidence panel puts it. The head's own well
+     would be painting one recess onto an identical one, so it drops out and the hairline carries
+     the separation on its own. Not the sheet the chips take on a tile: a chip is an object that has
+     to stay legible against the recess, a column head is a label and reads from its weight and its
+     rule. */
+  /* The padding is the other half of sitting in a well. Eight columns inside a card inside a well
+     is 898 px of usable width at 1920, so this table scrolls sideways before anything is wrong with
+     it, and the row padding below is vertical clearance for the status chips two of these columns
+     carry. Only the vertical half earns its place here: a left gutter on every cell bought no
+     clearance and cost 128 px of width, taking the horizontal overflow from 135 px to 279 px and
+     pushing View Receipt off the visible edge. The columns keep the right-hand gutter they always
+     had and spend nothing on a left one. */
+  .data-table[data-surface="well"] thead th {
+    padding: var(--s-2) var(--s-4) var(--s-2) 0;
+    background: transparent;
+  }
+
+  .data-table[data-surface="well"] tbody td {
+    padding: var(--s-4) var(--s-4) var(--s-4) 0;
+  }
+
+  .data-table[data-surface="well"] thead th:last-child,
+  .data-table[data-surface="well"] tbody td:last-child {
+    padding-right: 0;
   }
 
   .num {
