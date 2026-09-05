@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { and, eq, inArray, isNull } from 'drizzle-orm'
 import { z } from 'zod'
 import type { Option, RecordDetail, VerdictCounts } from '../shared/types'
@@ -120,29 +121,124 @@ function attemptTimes(row: PassAttempt): { startedAt: Date; finishedAt: Date } {
   return { startedAt, finishedAt }
 }
 
+/**
+ * JSON with object keys sorted, at every depth.
+ *
+ * Postgres normalises `jsonb` key order on the way in, so a reading read back out does not stringify
+ * to the same bytes as the one in the file even when nothing about it changed. Comparing raw
+ * `JSON.stringify` output would therefore report a difference on every boot and re-seed forever.
+ */
+export function stableStringify(value: unknown): string {
+  if (value === null || typeof value !== 'object') return JSON.stringify(value) ?? 'null'
+  if (Array.isArray(value)) return `[${value.map(stableStringify).join(',')}]`
+
+  const entries = Object.entries(value as Record<string, unknown>)
+    .filter(([, item]) => item !== undefined)
+    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+
+  return `{${entries.map(([key, item]) => `${JSON.stringify(key)}:${stableStringify(item)}`).join(',')}}`
+}
+
+/**
+ * A fingerprint of everything the sample renders from, independent of row order.
+ *
+ * Sorted before hashing because the database makes no promise about the order it returns rows in,
+ * and an order-sensitive fingerprint would re-seed on a whim.
+ */
+function fingerprint(parts: string[]): string {
+  return createHash('sha256')
+    .update([...parts].sort().join('\u0000'))
+    .digest('hex')
+}
+
+export function passFingerprint(pass: PassFile): string {
+  return fingerprint([
+    ...pass.items.map((item) => `i:${stableStringify([item.stem, item.key, item.options])}`),
+    ...pass.items.flatMap((item) =>
+      item.attempts.map((row) => `a:${row.requestId ?? ''}:${stableStringify(row.readingJson)}`)
+    )
+  ])
+}
+
+async function storedFingerprint(recordId: string): Promise<string> {
+  const itemRows = await db
+    .select({ id: items.id, stem: items.stem, key: items.key, options: items.options })
+    .from(items)
+    .where(eq(items.recordId, recordId))
+
+  const ids = itemRows.map((row) => row.id)
+  const attemptRows = ids.length
+    ? await db
+        .select({ requestId: attempts.requestId, readingJson: attempts.readingJson })
+        .from(attempts)
+        .where(inArray(attempts.itemId, ids))
+    : []
+
+  return fingerprint([
+    ...itemRows.map((row) => `i:${stableStringify([row.stem, row.key, row.options])}`),
+    ...attemptRows.map((row) => `a:${row.requestId ?? ''}:${stableStringify(row.readingJson)}`)
+  ])
+}
+
+/**
+ * Seed the sample, and re-seed it when the committed fixture no longer matches the stored row.
+ *
+ * The early return on "a sample already exists" was the whole of this function's guard, which meant
+ * an updated fixture never reached a deployment that had ever booted — #299 added 24 real retrieved
+ * pages and production kept serving a row seeded weeks earlier ([#301]).
+ *
+ * Every branch below is written so a failure leaves the existing sample untouched, because the
+ * sample is the demo surface and a half-replaced one is worse than a stale one:
+ *
+ * - the fixture is loaded and validated BEFORE anything is deleted, and an unreadable file keeps
+ *   whatever is already stored
+ * - a missing Guest user aborts rather than deleting a record it could not re-insert
+ * - the delete and the re-insert share one transaction, so a throw halfway rolls the delete back
+ */
 export async function seedSample(path: string): Promise<string | null> {
   const existing = await sampleRecordId()
-  if (existing) return existing
 
   const pass = await loadPass(path)
   if (!pass) {
+    // Nothing is destroyed for a file we cannot read: a bad deploy must not take the sample with it.
+    if (existing) {
+      console.log(`no readable benchmark pass at ${path}; keeping the sample already stored`)
+      return existing
+    }
     console.log(`no benchmark pass at ${path}; GET /api/sample will report the sample is not loaded`)
     return null
   }
 
+  if (existing) {
+    if ((await storedFingerprint(existing)) === passFingerprint(pass)) return existing
+    console.log('the benchmark pass differs from the stored sample; re-seeding it from the fixture')
+  }
+
   const userId = await guestUserId()
-  if (!userId) return null
+  if (!userId) return existing
 
-  // expires_at stays null so the Guest sweep's expiry comparison never matches it, which is the
-  // second of the two protections is_sample already gives it.
-  const [record] = await db
-    .insert(records)
-    .values({ ...pass.record, userId, isSample: true, status: 'ready', expiresAt: null })
-    .returning({ id: records.id })
+  return db.transaction(async (tx) => {
+    // Cascades from records to items to attempts and dispositions, so one delete clears the lot.
+    if (existing) await tx.delete(records).where(eq(records.id, existing))
 
-  const recordId = record?.id
-  if (!recordId) return null
+    // expires_at stays null so the Guest sweep's expiry comparison never matches it, which is the
+    // second of the two protections is_sample already gives it.
+    const [record] = await tx
+      .insert(records)
+      .values({ ...pass.record, userId, isSample: true, status: 'ready', expiresAt: null })
+      .returning({ id: records.id })
 
+    const recordId = record?.id
+    if (!recordId) throw new Error('the sample record could not be inserted')
+
+    await insertPassItems(tx, recordId, pass)
+    return recordId
+  })
+}
+
+type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0]
+
+async function insertPassItems(tx: Tx, recordId: string, pass: PassFile): Promise<void> {
   for (const [index, source] of pass.items.entries()) {
     const decided = verdictFor(
       source.attempts.filter((row) => row.admitted),
@@ -150,7 +246,7 @@ export async function seedSample(path: string): Promise<string | null> {
       source.options
     )
 
-    const [item] = await db
+    const [item] = await tx
       .insert(items)
       .values({
         recordId,
@@ -168,7 +264,7 @@ export async function seedSample(path: string): Promise<string | null> {
     const itemId = item?.id
     if (!itemId || source.attempts.length === 0) continue
 
-    await db.insert(attempts).values(
+    await tx.insert(attempts).values(
       source.attempts.map((row) => ({
         itemId,
         requestedModel: row.requestedModel,
@@ -187,8 +283,6 @@ export async function seedSample(path: string): Promise<string | null> {
       }))
     )
   }
-
-  return recordId
 }
 
 // FR-SAMPLE-3. Clears every disposition on the sample and returns it to ready, so a rehearsal
