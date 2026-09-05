@@ -1,0 +1,26 @@
+# One record per spoken line: beat | offset_ms | text
+# Browser beats are measured by record.mjs. Slide beats are appended by assemble.sh.
+
+shot-1 | 400 | A learner can know the subject and still lose marks because the answer key is wrong. Cekgu gives every question a second look before the learner sees it.
+shot-2 | 400 | For this walkthrough, we use the shared Guest workspace and a public sample. Confidential papers and learner data do not belong here.
+shot-3 | 400 | This sample has twelve computer science questions. Nine are clear; three need attention, so the teacher starts with those.
+shot-4 | 400 | The key says Stack. Both readers, working without the key, chose Queue. Cekgu flags a possible key error and explains the rule.
+shot-5 | 400 | Here are two distinct GonkaRouter model families, their request IDs, and verified receipts. This is the trail behind the verdict.
+shot-6 | 400 | Failed calls stay visible too. A timeout does not become evidence; without two verified readings, Cekgu returns Unverified instead of inventing consensus.
+shot-7 | 400 | Cekgu never edits the key by itself. The teacher reviews the evidence, records a correction, and the machine verdict stays in history.
+shot-8 | 400 | That is the loop: focus human attention, show both readings, then leave the decision with the educator.
+
+slide-1 | 500 | That was Cekgu in action. Now, the case for putting it in a teacher's workflow.
+slide-2 | 400 | A wrong answer key survives because rereading is not re-solving. One quiet defect can take marks from every learner who receives the paper.
+slide-3 | 400 | Our first user is Cikgu Farah, a private computer science tutor who publishes short practice sets several times each month.
+slide-4 | 400 | Instead of checking all twelve questions again, she gets three attention items, with the nine clear items still recorded.
+slide-5 | 400 | The supplied key is withheld. Two distinct model families answer independently, and a fixed rule compares them with each other before comparing them with the key.
+slide-5 | 10500 | Fewer than two receipt-verified readings means Unverified, never a guessed verdict.
+slide-6 | 400 | On this sample, both readers chose Queue while the key says Stack. Cekgu asks a person to check it; it changes nothing.
+slide-7 | 400 | Every admitted answer carries a GonkaRouter request ID and a public receipt naming the model that actually served it.
+slide-8 | 400 | The app, queue worker, and API run in one Bun process. PostgreSQL keeps the record; every reasoning call goes through one GonkaRouter gateway.
+slide-8 | 10500 | Four calls can run at once, but the verdict waits for two distinct verified model families.
+slide-9 | 400 | The gateway was slower than an instant checker could honestly hide. So Cekgu queues, retries, and fails closed.
+slide-9 | 9000 | In the deployed evaluation, forty clean control runs produced no false flags, while fourteen of twenty planted-defect runs were caught.
+slide-10 | 400 | The pilot charges by questions checked, not tokens: free for twenty a month, then twenty-nine ringgit for three hundred. No buyer has paid yet; these are prices to test.
+slide-11 | 400 | Two blind readers, one fixed rule, and a receipt trail. Check the paper before the students sit it.
