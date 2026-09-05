@@ -354,7 +354,7 @@ is not meant to be one.
 ```sh
 bun run lint           # Biome across the code, Prettier across Markdown and YAML
 bun run typecheck      # tsc --noEmit, strict, noUncheckedIndexedAccess
-bun test               # 312 pass, 73 skip, 0 fail across 39 files
+bun test               # 369 pass, 73 skip, 0 fail across 47 files
 bun run e2e            # Playwright against the deployment named by E2E_BASE_URL
 bun run check:anchors
 ```
@@ -363,6 +363,10 @@ bun run check:anchors
 `bun run e2e:local` against a local server, or set `E2E_BASE_URL` to a PR preview URL. The 73 skipped unit tests need a
 live gateway key or database and are opt-in on purpose: gateway latency varies, and **Unverified** is a valid result
 rather than a failure.
+
+One local-only trap: `src/server/routes/extract.test.ts` asserts the 503 that a missing transcription key produces, so a
+`.env` that sets `GEMINI_API_KEY` sends it down the live path and into a database that is not running. Run
+`GEMINI_API_KEY= bun test` for a clean local pass. CI has no `.env` and is unaffected.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
