@@ -19,18 +19,28 @@ export function SiteFooter({ legal }: Props = {}) {
         <span className="app-footer-name">Cekgu</span>
       </Link>
       <p className="type-ui text-ink-muted">Two readers, and the receipts to prove it.</p>
-      <Link to="/#trust" className="app-footer-link type-caption">
-        Trust and Privacy
-      </Link>
-      {legal ? (
-        <nav aria-label="Legal" className="app-footer-legal">
-          {legal.map((item) => (
-            <Link key={item.href} to={item.href} className="app-footer-link type-caption">
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-      ) : null}
+      {/* One row. The notices and the way to reach us used to be cards on the landing; the footer is
+          the only place that carries them now, so they read as a single line of exits rather than a
+          stack. The nav keeps its own landmark inside the row so the legal links stay addressable. */}
+      <div className="app-footer-links">
+        <Link to="/#trust" className="app-footer-link type-caption">
+          Trust and Privacy
+        </Link>
+        {legal ? (
+          <nav aria-label="Legal" className="app-footer-links">
+            {legal.map((item) => (
+              <Link key={item.href} to={item.href} className="app-footer-link type-caption">
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        ) : null}
+        {legal ? (
+          <a href="https://x.com/Cekgu0903" target="_blank" rel="noreferrer" className="app-footer-link type-caption">
+            @Cekgu0903
+          </a>
+        ) : null}
+      </div>
     </div>
   )
 }
