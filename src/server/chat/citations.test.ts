@@ -34,6 +34,7 @@ const item: Item = {
   status: 'done',
   verdict: 'possible_key_error',
   verdictReason: null,
+  truthScore: null,
   attemptsUsed: 2,
   attempts: [attempt('kimi', 'B', 'req-aaa'), attempt('minimax', 'B', 'req-bbb')],
   dispositions: []
@@ -49,6 +50,7 @@ const record: RecordDetail = {
   isSample: false,
   expiresAt: null,
   counts: { clear: 0, possible_key_error: 1, possible_ambiguity: 0, split_opinion: 0, unverified: 0, pending: 0 },
+  truthScore: { score: null, scored: 0, total: 0 },
   items: [item]
 }
 

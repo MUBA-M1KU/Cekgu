@@ -56,6 +56,7 @@ export function listItems(record: RecordDetail, verdict?: unknown): ToolResult {
       stem: truncateStem(item.stem),
       verdict: item.verdict,
       verdictReason: item.verdictReason,
+      truthScore: item.truthScore,
       decided: item.dispositions.length > 0
     }))
   return { ok: true, data }
@@ -74,6 +75,7 @@ export function getItem(record: RecordDetail, position: unknown): ToolResult {
       key: item.key,
       verdict: item.verdict,
       verdictReason: item.verdictReason,
+      truthScore: item.truthScore,
       attemptsUsed: item.attemptsUsed,
       dispositions: item.dispositions
     }

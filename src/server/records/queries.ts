@@ -1,4 +1,5 @@
 import { and, asc, desc, eq, ilike, inArray, isNull, or, sql } from 'drizzle-orm'
+import { recordScore, truthScore } from '../../shared/truth-score'
 import type { Attempt, Disposition, Item, RecordDetail, RecordSummary, VerdictCounts } from '../../shared/types'
 import { db } from '../db'
 import { attempts, dispositions, items, records } from '../db/schema'
@@ -15,6 +16,21 @@ function emptyCounts(): VerdictCounts {
     unverified: 0,
     pending: 0
   }
+}
+
+/* The Truth Score is derived here rather than stored, so there is no column that can disagree with
+   the attempts underneath it. It is read off the same admitted readings the verdict used, in the
+   order the round produced them — attempts arrive newest first for the evidence view, and a score
+   built in that order would pick a different pair from the rule and could then contradict the
+   verdict printed beside it. Sorting on finishedAt puts them back in completion order. */
+function itemScore(row: { key: string }, attemptsForItem: Attempt[]): number | null {
+  const readings = attemptsForItem
+    .filter((attempt) => attempt.admitted && attempt.reading)
+    .slice()
+    .sort((a, b) => (a.finishedAt ?? '').localeCompare(b.finishedAt ?? ''))
+    .map((attempt) => attempt.reading as NonNullable<Attempt['reading']>)
+
+  return truthScore(readings, row.key)
 }
 
 export type ListFilters = { status?: string; subject?: string; attention?: boolean; q?: string }
@@ -107,19 +123,23 @@ export async function recordDetail(recordId: string): Promise<RecordDetail | nul
   const counts = emptyCounts()
   for (const row of itemRows) counts[row.verdict] += 1
 
-  const built: Item[] = itemRows.map((row) => ({
-    id: row.id,
-    position: row.position,
-    stem: row.stem,
-    options: row.options,
-    key: row.key,
-    status: row.status,
-    verdict: row.verdict,
-    verdictReason: row.verdictReason,
-    attemptsUsed: row.attemptsUsed,
-    attempts: attemptRows.filter((attempt) => attempt.itemId === row.id).map(toAttempt),
-    dispositions: dispositionRows.filter((disposition) => disposition.itemId === row.id).map(toDisposition)
-  }))
+  const built: Item[] = itemRows.map((row) => {
+    const itemAttempts = attemptRows.filter((attempt) => attempt.itemId === row.id).map(toAttempt)
+    return {
+      id: row.id,
+      position: row.position,
+      stem: row.stem,
+      options: row.options,
+      key: row.key,
+      status: row.status,
+      verdict: row.verdict,
+      verdictReason: row.verdictReason,
+      truthScore: itemScore(row, itemAttempts),
+      attemptsUsed: row.attemptsUsed,
+      attempts: itemAttempts,
+      dispositions: dispositionRows.filter((disposition) => disposition.itemId === row.id).map(toDisposition)
+    }
+  })
 
   return {
     id: record.id,
@@ -131,6 +151,7 @@ export async function recordDetail(recordId: string): Promise<RecordDetail | nul
     isSample: record.isSample,
     expiresAt: record.expiresAt?.toISOString() ?? null,
     counts,
+    truthScore: recordScore(built.map((item) => item.truthScore)),
     items: built
   }
 }

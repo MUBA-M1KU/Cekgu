@@ -38,6 +38,7 @@ function makeItem(overrides: Partial<Item> & { position: number }): Item {
     status: 'done',
     verdict: 'pending',
     verdictReason: null,
+    truthScore: null,
     attemptsUsed: 0,
     attempts: [],
     dispositions: [],
@@ -65,6 +66,7 @@ const record: RecordDetail = {
     unverified: 1,
     pending: 1
   },
+  truthScore: { score: null, scored: 0, total: 0 },
   items: [
     makeItem({
       position: 1,
@@ -77,6 +79,7 @@ const record: RecordDetail = {
       key: 'B',
       verdict: 'clear',
       verdictReason: 'Both readers chose B.',
+      truthScore: null,
       attemptsUsed: 2,
       attempts: [
         makeAttempt({
@@ -118,6 +121,7 @@ const record: RecordDetail = {
       key: 'C',
       verdict: 'possible_key_error',
       verdictReason: 'Both readers chose A.',
+      truthScore: null,
       attemptsUsed: 2,
       attempts: [
         makeAttempt({
@@ -160,6 +164,7 @@ const record: RecordDetail = {
       status: 'done',
       verdict: 'unverified',
       verdictReason: 'No reading survived verification.',
+      truthScore: null,
       attemptsUsed: 2,
       attempts: [
         makeAttempt({
@@ -197,6 +202,7 @@ const record: RecordDetail = {
       status: 'running',
       verdict: 'pending',
       verdictReason: null,
+      truthScore: null,
       attemptsUsed: 0,
       attempts: []
     }),
@@ -211,6 +217,7 @@ const record: RecordDetail = {
       key: 'C',
       verdict: 'possible_key_error',
       verdictReason: 'Both readers chose B.',
+      truthScore: null,
       attemptsUsed: 2,
       attempts: [
         makeAttempt({
@@ -257,6 +264,7 @@ const record: RecordDetail = {
       options: [{ letter: 'A', text: 'Short' }],
       key: 'A',
       verdict: 'clear',
+      truthScore: null,
       attemptsUsed: 2,
       attempts: [
         makeAttempt({
@@ -283,6 +291,7 @@ const record: RecordDetail = {
       options: [{ letter: 'A', text: 'Long' }],
       key: 'A',
       verdict: 'clear',
+      truthScore: null,
       attemptsUsed: 2,
       attempts: [
         makeAttempt({

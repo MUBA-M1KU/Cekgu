@@ -6,6 +6,7 @@ import { EvidencePanel } from './EvidencePanel'
 import { ChevronDownIcon } from './icons'
 import { ReadRow } from './ReadRow'
 import { StatusChip } from './StatusChip'
+import { TruthScoreMark } from './TruthScore'
 import { VerdictChip } from './VerdictChip'
 
 type Props = {
@@ -108,6 +109,7 @@ export function ItemRow({ item, onDisposition, onRetry, readOnly }: Props) {
           )}
           <span className="flex shrink-0 flex-wrap items-center gap-2">
             {item.status === 'done' ? <VerdictChip verdict={item.verdict} /> : <StatusChip status={item.status} />}
+            {item.status === 'done' ? <TruthScoreMark score={item.truthScore} /> : null}
             {latest ? <span className="status-chip type-label">{dispositionLabel(latest.kind)}</span> : null}
           </span>
         </div>
