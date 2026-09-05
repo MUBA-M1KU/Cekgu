@@ -14,6 +14,15 @@ const PUBLIC_NAV = [
   { href: '/#trust', label: 'Trust and Privacy' }
 ]
 
+// The three notices this branch adds. The other footer links this list used to carry are now in
+// SiteFooter, which the app shell shows too; these are public-only, so they are passed in rather
+// than baked into the shared block.
+const LEGAL_LINKS = [
+  { href: '/terms', label: 'Terms' },
+  { href: '/privacy', label: 'Privacy' },
+  { href: '/acceptable-use', label: 'Acceptable Use' }
+]
+
 // The hero is full-bleed and the nav sits over it, so the bar is transparent until the page has
 // moved. Solid from the first pixel would put an empty white band across the clip.
 function useSolidNav(threshold: number) {
@@ -108,7 +117,7 @@ export function PublicLayout() {
       {/* shrink-0 because .public-footer sets a definite height and a flex child would otherwise
           give it up to a long page. */}
       <footer className="public-footer shrink-0" role="contentinfo">
-        <SiteFooter />
+        <SiteFooter legal={LEGAL_LINKS} />
       </footer>
 
       <BackToTop />

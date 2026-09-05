@@ -1,3 +1,5 @@
+import { Link } from 'react-router'
+
 // FR-PUBLIC-2. The claims here are deliberately smaller than the product feels, because prompts
 // traverse a decentralised network and a receipt is metadata rather than proof.
 //
@@ -35,6 +37,21 @@ const FAQ = [
   }
 ]
 
+// PRODUCT.md's Terms, Privacy and Acceptable Use rows. The pages carry the notices; this is the way in.
+const NOTICES = [
+  { to: '/terms', name: 'Terms', gist: 'What Cekgu is for, the limits it sets, and how accounts and records work.' },
+  {
+    to: '/privacy',
+    name: 'Privacy',
+    gist: 'What is stored, where processing happens, who can see a record, and what deletion does.'
+  },
+  {
+    to: '/acceptable-use',
+    name: 'Acceptable Use',
+    gist: 'What must never be submitted, and how the shared Guest workspace may be used.'
+  }
+]
+
 export function TrustSection() {
   return (
     <section id="trust" className="bg-well py-[clamp(4rem,8vw,7rem)]">
@@ -61,6 +78,36 @@ export function TrustSection() {
               <p className="faq-a type-body">{entry.a}</p>
             </details>
           ))}
+        </div>
+
+        {/* Held to the same measure as the questions above. These cards were written when the FAQ
+            was a full-width two-column grid; #173 narrowed it to a reading measure, which left the
+            cards running past it and the section reading as two different widths. */}
+        <div className="mt-5 grid max-w-[52rem] gap-5 lg:grid-cols-2">
+          <div className="card-soft p-6">
+            <h3 className="type-label">Notices</h3>
+            <ul className="mt-3 m-0 list-none p-0">
+              {NOTICES.map((notice) => (
+                <li key={notice.to} className="mt-3 first:mt-0">
+                  <Link to={notice.to} className="type-label underline">
+                    {notice.name}
+                  </Link>
+                  <p className="type-body m-0 mt-1 max-w-[64ch] text-ink-muted">{notice.gist}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="card-soft p-6">
+            <h3 className="type-label">Reach the Team</h3>
+            <p className="type-body mt-3 max-w-[64ch] text-ink-muted">
+              Cekgu is a hackathon demo built by a small team, not a staffed product. Reach us on X at{' '}
+              <a href="https://x.com/Cekgu0903" target="_blank" rel="noreferrer" className="underline">
+                @Cekgu0903
+              </a>
+              . There is no support desk behind that account and no promised reply time.
+            </p>
+          </div>
         </div>
       </div>
     </section>

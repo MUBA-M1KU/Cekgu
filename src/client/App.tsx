@@ -1,15 +1,18 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import { AppLayout } from './layouts/AppLayout'
 import { PublicLayout } from './layouts/PublicLayout'
+import { AcceptableUse } from './pages/AcceptableUse'
 import { Dashboard } from './pages/Dashboard'
 import { Home } from './pages/Home'
 import { NewCheck } from './pages/NewCheck'
+import { Privacy } from './pages/Privacy'
 import { ReceiptView } from './pages/ReceiptView'
 import { Records } from './pages/Records'
 import { RecordWorkspace } from './pages/RecordWorkspace'
 import { SampleReport } from './pages/SampleReport'
 import { Settings } from './pages/Settings'
 import { SignIn } from './pages/SignIn'
+import { Terms } from './pages/Terms'
 
 // A record is the route back to progress, results and evidence: these are states of one
 // object, not disconnected tools. PRODUCT.md Navigation model.
@@ -31,6 +34,9 @@ export function App() {
               whole point of it (FR-SAMPLE-4). A signed-in reader arrives here from the evidence
               panel and the page's own Back returns them to it. */}
           <Route path="receipt/:requestId" element={<ReceiptView />} />
+          <Route path="terms" element={<Terms />} />
+          <Route path="privacy" element={<Privacy />} />
+          <Route path="acceptable-use" element={<AcceptableUse />} />
           <Route path="sign-in" element={<SignIn />} />
         </Route>
         <Route element={<AppLayout />}>

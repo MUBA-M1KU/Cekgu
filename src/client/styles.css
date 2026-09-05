@@ -1375,6 +1375,15 @@ section[id] {
   padding-inline-end: calc(2.75rem + var(--s-5) * 2);
 }
 
+/* The public footer's fourth row. Right aligned with the rest of the block, wrapping rather than
+   overflowing on a narrow window. */
+.app-footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--s-2) var(--s-4);
+}
+
 .app-footer-brand {
   display: inline-flex;
   align-items: center;
