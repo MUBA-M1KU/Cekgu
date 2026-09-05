@@ -275,6 +275,14 @@ export async function askRecord(
   }
 
   if (failure) throw new ApiError('agent_failed', failure, 502)
+
+  // A stream that ends carrying neither event is a dropped connection, not an empty answer. Without
+  // this the transcript would simply gain nothing and the reader would be left watching a question
+  // that never got a reply.
+  if (messages.length === 0) {
+    throw new ApiError('agent_failed', 'The answer did not arrive. Try asking again.', 502)
+  }
+
   return messages
 }
 
