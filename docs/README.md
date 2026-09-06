@@ -449,7 +449,7 @@ Built by **Team M1KU** for the MUBA Blockchain Hackathon 2026, GonkaRouter — A
     <td align="center"><sub>The gateway client, verdict rule, queue and schema — and the client built on them.</sub></td>
     <td align="center"><sub>The Truth Score, live retrieval, the sample record, and the paper-from-a-link path.</sub></td>
     <td align="center"><sub>The record assistant on the gateway, the readers' voice and mascot, and the deck.</sub></td>
-    <td align="center"><sub>Legal notices, the judge-facing README, acceptance testing, and the submission.</sub></td>
+    <td align="center"><sub>Legal notices, the judge-facing README, acceptance testing, and the Devfolio draft.</sub></td>
   </tr>
 </table>
 </div>
