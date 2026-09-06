@@ -21,7 +21,7 @@
     <br />
   </p>
 
-[![4th Place][Placing]][Placing-url] [![Prize][Prize]][Prize-url] [![MUBA Hackathon][MUBA]][MUBA-url]
+[![MUBA Blockchain Hackathon 2026: GonkaRouter Track][MUBA]][MUBA-url] [![4th Place][Placing]][Placing-url]
 
 [![Bun][Bun]][Bun-url] [![Hono][Hono.dev]][Hono-url] [![React][React.js]][React-url]
 [![TypeScript][TypeScript]][TypeScript-url] [![Tailwind CSS][Tailwind]][Tailwind-url]
@@ -72,14 +72,18 @@ complaint rather than from the paper.
 
 **Cekgu** puts one evidence step in front of that. An educator submits a small multiple-choice paper with its answer
 key. Two different model families solve each question through GonkaRouter, neither shown the key, and a fixed rule
-compares the two readings with each other before it ever compares them to the key. Back comes a verdict, the rule
-sentence behind it, both readers' reasoning, and the request ids to check the readings happened.
+compares the two readings with each other before it ever compares them to the key.
 
-**The scope is deliberately narrow.** Cekgu flags disagreement between two readers and ambiguity a reader declares. It
-does not mark a paper, certify a question as correct, or prove a question unambiguous — two confident readers who agree
-are indistinguishable from an unambiguous question. The sample record carries a real instance: a question written to be
-ambiguous came back **Clear** because both readers committed to the same single answer. Built for practice papers and
-synthetic examples, not for confidential or unreleased examinations.
+| Cekgu does                                                | Cekgu does not                  |
+| --------------------------------------------------------- | ------------------------------- |
+| Flag disagreement between two independent readers         | Mark a paper or grade a learner |
+| Flag ambiguity a reader declares for itself               | Certify a question as correct   |
+| Show both readings, the rule sentence and the request ids | Prove a question is unambiguous |
+
+**Why the right-hand column matters.** Two confident readers who agree are indistinguishable from an unambiguous
+question. The sample carries a real instance: a question written to be ambiguous came back **Clear** because both
+readers committed to the same single answer. Built for practice papers and synthetic examples, not for confidential or
+unreleased examinations.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -127,10 +131,15 @@ synthetic examples, not for confidential or unreleased examinations.
    model family through GonkaRouter. The prompt carries the stem, the lettered options, the subject and the language —
    never the supplied key, and never the other reader's output.
 
-1. **Evidence is admitted, not assumed.** A reply becomes a usable reading only if the call returned 200, carried no
-   fallback header, parsed as the requested JSON, answered with a letter that is actually an option, and matched a
-   public Gonka receipt naming the same model that was requested. Anything else is written down as a refused attempt
-   with the reason, and takes no part in the verdict.
+1. **Evidence is admitted, not assumed.** A reply becomes a usable reading only if all five hold:
+
+   - Returned HTTP 200
+   - Carried no fallback header
+   - Parsed as the requested JSON
+   - Answered with a letter that is actually one of the options
+   - Matched a public Gonka receipt naming the model that was requested
+
+   Anything else is written down as a refused attempt with its reason, and takes no part in the verdict.
 
    <img src="assets/receipt.png" alt="The receipt viewer for one request id, showing the served model, outcome, devshard and timings, next to the public gateway URL to check them against" width="100%">
 
@@ -170,19 +179,25 @@ synthetic examples, not for confidential or unreleased examinations.
    [TRD section 22](TRD.md#22-live-retrieval-for-cross-verification).
 
 1. **A score puts a number on it.** The same two readings produce a Truth Score from 0 to 100, shown on the record and
-   on every item. A reader's commitment to an option is worth half the weight, the rest split across the options it
-   would still defend, so a hedge costs the key something without erasing the commitment. It is computed in
-   `src/shared/truth-score.ts` from readings already on the record — no extra inference call, and no model is asked how
-   confident it feels, because no receipt could back that.
+   on every item. Computed in `src/shared/truth-score.ts` from readings already on the record — no extra inference call,
+   and no model is asked how confident it feels, because no receipt could back that.
 
-   Where retrieval ran, each reader also reports what the pages did to its own answer, folded in as a **confidence
-   adjustment rather than a vote**: corroboration makes a reading count for more, contradiction makes it count for half,
-   and neither can flip a reading into meaning its opposite. Finding nothing is exactly neutral, because most exam items
+   | Input                            | Weight                            |
+   | -------------------------------- | --------------------------------- |
+   | A reader's committed option      | Half the score                    |
+   | Options it would still defend    | The other half, split across them |
+   | Retrieval corroborates a reading | That reading counts for more      |
+   | Retrieval contradicts a reading  | That reading counts for half      |
+   | Retrieval finds nothing          | Exactly neutral                   |
+
+   A hedge therefore costs the key something without erasing the commitment. Retrieval is a **confidence adjustment, not
+   a vote**, and can never flip a reading into meaning its opposite; finding nothing is neutral because most exam items
    have no page that settles them.
 
-   The number says how much of the verified reader agreement backs the supplied key, not that the question is correct.
-   An **Unverified** item scores null rather than 0, because 0 is what two readers agreeing _against_ the key earns. The
-   record figure always prints its own denominator: three verified items out of twelve can average 100.
+   **Reading the number.** It says how much of the verified reader agreement backs the supplied key, not that the
+   question is correct. An **Unverified** item scores null rather than 0, because 0 is what two readers agreeing
+   _against_ the key earns. The record figure always prints its own denominator: three verified items out of twelve can
+   average 100.
 
 1. **A human decides.** The verdict is an attention signal, not a mark. The educator records what they did — corrected
    the key, revised the wording, confirmed the key, dismissed the flag, or asked for a retry — and that decision is
@@ -196,25 +211,27 @@ synthetic examples, not for confidential or unreleased examinations.
 
 **The GonkaRouter integration.** The track's four requirements are enforced in code, not asserted in prose.
 
-- **One inference path.** `src/server/gateway/client.ts` is the only file that calls a model for reasoning, and
-  `src/server/gateway/only-gonkarouter.test.ts` fails the build if a provider hostname or SDK appears anywhere in `src/`
-  outside the two documented provider directories named below.
-- **Two families, proven distinct by receipt.** A verdict needs two admitted readings whose **served** models differ.
-  Distinctness comes from the receipt the gateway wrote, never from the model requested, so two calls to one family can
-  never count as two readers.
+| Track requirement                 | How it is enforced                                                                           | Where                    |
+| --------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------ |
+| All reasoning through GonkaRouter | One file calls a model; the guard fails the build if a provider appears anywhere else        | `gateway/client.ts`      |
+| Two models cross-verify           | A verdict needs two admitted readings whose **served** models differ, taken from the receipt | `gateway/`, `verdict.ts` |
+| Request IDs surfaced in the UI    | Every reading shows request id, devshard, requested and served model, and receipt state      | `/receipt/:requestId`    |
+| Explicit consensus logic          | The five-outcome rule is a pure function, with its reason sentence shown beside the verdict  | `shared/verdict.ts`      |
+
+Three guarantees sit behind that table:
+
 - **No silent substitution.** Every call sends `X-Gonka-No-Fallback: true`, and any reply carrying an `X-Gonka-Fallback`
   header is refused even when its body is a perfectly good completion.
-- **Request ids in the product.** Each reading shows its Gonka Request ID, devshard, requested model, served model and
-  receipt state, as selectable text. `/receipt/:requestId` reads the receipt back live through the server, because the
-  gateway sends no CORS header; the viewer distinguishes a receipt that does not exist from a gateway it could not
-  reach.
-- **Explicit consensus.** The five-outcome rule above is a pure function in `src/shared/verdict.ts`, with the reason
-  sentence it produced shown next to the verdict. The Truth Score is a second pure function over the same two readings
-  from the same round, so number and verdict always describe the same evidence. It grades within a verdict rather than
-  ranking across verdicts — [TRD section 14](TRD.md#truth-score) sets out where the bands overlap.
-- **Retrieval that decides nothing.** `src/server/retrieval/` reaches the public web and is held by
+- **Distinctness comes from the receipt**, never from the model requested, so two calls to one family can never count as
+  two readers. `/receipt/:requestId` reads the receipt back through the server, because the gateway sends no CORS
+  header; the viewer distinguishes a receipt that does not exist from a gateway it could not reach.
+- **Retrieval decides nothing.** `src/server/retrieval/` reaches the public web and is held by
   `only-gonkarouter.test.ts` to the same rule as the two provider directories: it may not import the verdict rule, the
   schema, the round or the gateway client. It is not a third exemption, because it calls no model.
+
+The Truth Score is a second pure function over the same two readings from the same round, so number and verdict always
+describe the same evidence. It grades within a verdict rather than ranking across verdicts —
+[TRD section 14](TRD.md#truth-score) sets out where the bands overlap.
 
 **The checking pipeline.**
 
@@ -256,28 +273,36 @@ synthetic examples, not for confidential or unreleased examinations.
     width="100%">
 </p>
 
-The browser talks to one Hono process on Cloud Run that serves both the API and the built client. Accounts, records,
-attempts and decisions live in PostgreSQL; the attempts table is the evidence trail, holding the request id, devshard,
-requested and served model, receipt JSON, latency and rejection reason for every call ever made about an item.
+| Piece                 | What it holds or does                                                                     |
+| --------------------- | ----------------------------------------------------------------------------------------- |
+| Hono on Cloud Run     | One process serving both the API and the built client                                     |
+| PostgreSQL            | Accounts, records and decisions — plus `attempts`, which is the evidence trail            |
+| An `attempts` row     | Request id, devshard, requested and served model, receipt JSON, latency, rejection reason |
+| Queue worker          | Claims one item, runs its round, writes the verdict, moves on                             |
+| 15-minute claim lease | Released when it expires, so a Cloud Run restart cannot strand a question                 |
 
-Checking is asynchronous because a decentralised network is sometimes slow and sometimes unavailable. The worker claims
-one queued item, runs its round, writes the verdict and moves on; a claim outliving its 15-minute lease is released, so
-a Cloud Run restart cannot strand a question. Where evidence is insufficient the pipeline fails closed to **Unverified**
-rather than manufacturing a second opinion.
+Checking is asynchronous because a decentralised network is sometimes slow and sometimes unavailable. Where evidence is
+insufficient the pipeline fails closed to **Unverified** rather than manufacturing a second opinion.
 
-**The two directories that may name a provider**, stated here rather than left to be found.
+**The two directories that may name a provider**, stated here rather than left to be found. Neither decides anything,
+and the guard test holds both to that.
 
-_Transcription decides nothing._ An uploaded image or PDF goes to a vision model to transcribe the words already printed
-on it. Its own prompt forbids it from answering a question, marking an option correct, or supplying a key that is not
-printed, and it creates no record. Every judgement about what those words mean is made afterwards by Gonka models
-carrying request ids ([TRD section 20](TRD.md#20-reading-a-paper-from-an-upload)).
+| Directory                | Role                                                           | Its own prompt forbids                                                                        |
+| ------------------------ | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `src/server/transcribe/` | Transcribes the words already printed on an image or PDF       | Answering a question, marking an option correct, supplying an unprinted key, writing a record |
+| `src/server/chat/`       | Phrases the record assistant's answers from readers' own facts | Naming a correct option, confirming or rejecting a key, solving a question                    |
 
-_The record assistant runs on the gateway._ It was briefly phrased off-gateway — the more serious of the two exemptions,
-since answering a question about a record sits closer to reasoning than transcription does. It no longer is.
-`CHAT_PROVIDER` defaults to `gonka`, its inference goes to MiniMax-M2.7 through GonkaRouter, and **its turn carries a
-real `x-request-id` with a public receipt** rather than a provider response id. Measured on production at 06:35 on 5
-September: two tool calls and an answer in 15 s, `req-1788590155239980984-1077255`. Four things hold, all checkable in
-the code:
+Every judgement about what transcribed words mean is made afterwards by Gonka models carrying request ids
+([TRD section 20](TRD.md#20-reading-a-paper-from-an-upload)).
+
+**The record assistant runs on the gateway.** It was briefly phrased off-gateway — the more serious of the two
+exemptions, since answering a question about a record sits closer to reasoning than transcription does. It no longer is:
+`CHAT_PROVIDER` defaults to `gonka`, and its inference goes to MiniMax-M2.7 through GonkaRouter.
+
+**Its turn carries a real `x-request-id` with a public receipt**, not a provider response id. Measured on production at
+06:35 on 5 September: two tool calls and an answer in 15 s, `req-1788590155239980984-1077255`.
+
+Four things hold, all checkable in the code:
 
 - Every fact it states is retrieved by pure functions in [`src/server/chat/`](../src/server/chat/) from readings two
   Gonka models produced, each carrying an `x-request-id` and a public receipt. The model phrases those facts, and may
@@ -485,13 +510,11 @@ See [LICENSE](../LICENSE) for more information.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 
-[Placing]:
-  https://img.shields.io/badge/%F0%9F%8F%85_4th_Place-GonkaRouter_Track-B3202F?labelColor=14181F&style=for-the-badge
-[Placing-url]: https://devfolio.co/projects/cekgu
-[Prize]: https://img.shields.io/badge/Prize-20M_Tokens_%C2%B7_6_Months-2C6E49?labelColor=14181F&style=for-the-badge
-[Prize-url]: https://gonkarouter.io
-[MUBA]: https://img.shields.io/badge/MUBA_Blockchain_Hackathon-2026-2456A6?labelColor=14181F&style=for-the-badge
+[MUBA]:
+  https://img.shields.io/badge/MUBA_Blockchain_Hackathon_2026-GonkaRouter_Track-2456A6?labelColor=14181F&style=for-the-badge
 [MUBA-url]: brief.md
+[Placing]: https://img.shields.io/badge/%F0%9F%8F%85_4th_Place-B3202F?style=for-the-badge
+[Placing-url]: https://devfolio.co/projects/cekgu
 [Bun]: https://img.shields.io/badge/Bun-14151A?style=for-the-badge&logo=bun&logoColor=white
 [Bun-url]: https://bun.sh
 [Hono.dev]: https://img.shields.io/badge/Hono-E36002?style=for-the-badge&logo=hono&logoColor=white
